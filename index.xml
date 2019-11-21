@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>zoux的博客</title>
+    <link>https://zoux86.github.io/</link>
+    <description>Recent content on zoux的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 20 Nov 2019 20:31:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://zoux86.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>第一篇文章</title>
+      <link>https://zoux86.github.io/post/first/</link>
+      <pubDate>Wed, 20 Nov 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/first/</guid>
+      <description> Hello Hugo  aaa bbb ccc  </description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>https://zoux86.github.io/about/</link>
+      <pubDate>Wed, 20 Nov 2019 20:30:33 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/about/</guid>
+      <description>待更新。。。</description>
+    </item>
+    
+    <item>
+      <title>实用工具</title>
+      <link>https://zoux86.github.io/tools/</link>
+      <pubDate>Wed, 20 Nov 2019 20:30:33 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tools/</guid>
+      <description>待更新。。。</description>
+    </item>
+    
+    <item>
+      <title>目录归档</title>
+      <link>https://zoux86.github.io/archives/</link>
+      <pubDate>Wed, 20 Nov 2019 20:30:33 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/archives/</guid>
+      <description>待更新。。。</description>
+    </item>
+    
+  </channel>
+</rss>
