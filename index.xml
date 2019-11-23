@@ -359,7 +359,7 @@
       <pubDate>Tue, 21 Aug 2018 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/uml%E7%B1%BB%E5%9B%BE%E4%BB%8B%E7%BB%8D/</guid>
-      <description>话不多说，开门见山！ 写类图之前看见一篇写的很好的文章，所以直接引用推荐。 https://www.cnblogs.com/shindo/p/5579191.html 关键知识点： （1）类自身属性 （2）类自身方法 （3）类与类的关系 其中类与类之间有依赖、关联、聚合，组合，继承，接口实现六种方法。 下面说一下个人对这几种方法的看法，可以方便大家理解。 六种方法可以分为四类，方便理</description>
+      <description>话不多说，开门见山！ 写类图之前看见一篇写的很好的文章，所以直接引用推荐。 https://www.cnblogs.com/shindo/p/5579191.html 关键知识点： （1）类自身属性 （2）类自身方法 （3）类与类的关系 其中类与类之间有依赖、关联、聚合，组合，继承，接口实现六种方法。下面说一下个人对这几种方法的看法，可以方便大家理解。 六种方法可以分为四类，方便理</description>
     </item>
     
     <item>
