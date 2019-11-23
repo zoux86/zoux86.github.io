@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>VMware on zoux的博客</title>
+    <link>https://zoux86.github.io/categories/vmware/</link>
+    <description>Recent content in VMware on zoux的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 10 Jul 2018 20:31:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://zoux86.github.io/categories/vmware/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>VM 安装VMware tools</title>
+      <link>https://zoux86.github.io/post/vmware%E5%AE%89%E8%A3%85/</link>
+      <pubDate>Tue, 10 Jul 2018 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/vmware%E5%AE%89%E8%A3%85/</guid>
+      <description>在VM安装ubuntu的朋友都会发现, 安装好的ubuntu用起来会很不方便，不能全屏放大，本机系统和ubuntu系统传输文件也不方便。所以这个时候就很需要一个工具，VMware tools。 1.首先，我们要打开运行一个虚拟机系统，然后如图所示点击“安装VMware tools”。 2.</description>
+    </item>
+    
+    <item>
+      <title>VM解决黑屏问题</title>
+      <link>https://zoux86.github.io/post/vmware%E9%BB%91%E5%B1%8F/</link>
+      <pubDate>Tue, 10 Jul 2018 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/vmware%E9%BB%91%E5%B1%8F/</guid>
+      <description>VMware 解决所有所有虚拟机都黑屏的办法 以前电脑安装了VM，在VM上也安装了好几个虚拟机，都能正常使用。 隔了几个月没有使用这几个虚拟机，今天发现所有的虚拟机打开都是黑屏状态，没有一点反应。 解决办法： 管理员身份运行cmd，输入如下命令，作用：重置winsock网络规范。 cmd命令：nets</description>
+    </item>
+    
+  </channel>
+</rss>

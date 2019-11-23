@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.59.1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Hadoop | zoux的博客</title>
+    <meta property="og:title" content="Hadoop - zoux的博客">
+    <meta property="og:type" content="article">
+        
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
+    <meta name="description" content="Hadoop">
+        
+    <meta name="author" content="zoux">
+    <meta property="og:url" content="https://zoux86.github.io/tags/hadoop/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="alternate" type="application/rss+xml+xml" href="https://zoux86.github.io/tags/hadoop/index.xml" title="zoux的博客" />
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+
+
+    
+    
+</head>
+
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zoux86.github.io/">
+                        zoux的博客
+                    </a>
+                
+                <p class="description">对Go语言(golang)、k8s、kubeflow，容器云，云原生感兴趣</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="" href="https://zoux86.github.io/">首页</a>
+                    
+                    <a  href="https://zoux86.github.io/tools/" title="工具">工具</a>
+                    
+                    <a  href="https://zoux86.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://zoux86.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    
+                    <h3 class="archive-title">
+                        包含标签
+                        <span class="keyword">Hadoop</span>
+                        的文章
+                    </h3>
+                    
+
+                    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/hadoop-%E5%90%AF%E5%8A%A8%E9%9B%86%E7%BE%A4%E8%83%8C%E5%90%8E%E7%9A%84%E4%BA%8B/">Hadoop 启动集群背后的事</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2018年11月12日
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                |
+                                
+                                    <a href="https://zoux86.github.io/categories/hadoop">Hadoop</a>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                在我们布置好Hadoop环境后我们做的第一件就是 执行 start-all.sh 命令。 那么这个命令都做了什么，今天来探讨一下这个。 start-all.sh内容 Start all hadoop daemons. Run this on master node. bin=`dirname &quot;$0&quot;` bin=`cd &quot;$bin&quot;; pwd` . &quot;$bin&quot;/hadoop-config.sh start dfs daemons &quot;$bin&quot;/start-dfs.sh --config $HADOOP_CONF_DIR ### start mapred daemons &quot;$bin&quot;/start-mapred.sh --config $HADOOP_CONF_DIR 从上面可以看出来这个脚本，执行了三个脚本，分别是： hadoop-config.sh start-dfs.sh start-mapred.sh hadoop-config.sh 内容 this=&quot;$0&quot; while [ -h &quot;$this&quot; ]; do ls=`ls -ld &quot;$this&quot;` link=`expr &quot;$ls&quot; : '.*-&gt;……
+                                <p class="readmore"><a href="https://zoux86.github.io/post/hadoop-%E5%90%AF%E5%8A%A8%E9%9B%86%E7%BE%A4%E8%83%8C%E5%90%8E%E7%9A%84%E4%BA%8B/">阅读全文</a></p>
+                            </div>
+                        </article>
+                    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/hadoop-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-configuration.java/">Hadoop 源码分析-Configuration.java</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2018年11月12日
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                |
+                                
+                                    <a href="https://zoux86.github.io/categories/hadoop">Hadoop</a>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                万事开头难，今天开始Hadoop源码分析的第一天。首先从简单的入手，分析Configuration.java 【没有特别声明，源码都是Hadoop 0.20版本】 类结构 主要类成员介绍： 类方法介绍： 上面是我按照主要的功能将函数分了类，这样方便理解。 Configuration类分析 研究一……
+                                <p class="readmore"><a href="https://zoux86.github.io/post/hadoop-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-configuration.java/">阅读全文</a></p>
+                            </div>
+                        </article>
+                    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/hadoop%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/">Hadoop 每次打开虚拟机重启hadoop都要重新格式化才能启动Namenode</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2018年11月5日
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                |
+                                
+                                    <a href="https://zoux86.github.io/categories/hadoop">Hadoop</a>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                前面配置好hadoop后，每次开启虚拟机，启动集群后，总是有一些节点起不来。要不就是namenode，要不就是datanode。后面百度找到了原因所在： 在配置hdfs时，我们只配置了datanode的目录，而没有配置namdenode的相关信息。默认的tmp文件每次重新开机会被清……
+                                <p class="readmore"><a href="https://zoux86.github.io/post/hadoop%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/">阅读全文</a></p>
+                            </div>
+                        </article>
+                    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/hadoop-%E9%85%8D%E7%BD%AEeclipse/">Hadoop 配置eclipse</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2018年11月5日
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                |
+                                
+                                    <a href="https://zoux86.github.io/categories/hadoop">Hadoop</a>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                通过前面几篇，我们已经布置好Hadoop集群环境了。接下来配置eclipse，使用eclipse编写Hadoop代码。 （1）安装好eclipse 省略，参加网上其他博客 （2）找到安装hadoop安装目录下的 contrib/eclipse-plugin的jar文件。这是hadoop给……
+                                <p class="readmore"><a href="https://zoux86.github.io/post/hadoop-%E9%85%8D%E7%BD%AEeclipse/">阅读全文</a></p>
+                            </div>
+                        </article>
+                    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/hadoop-%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%9D%8F%E5%A2%83%E6%90%AD%E5%BB%BA/">Hadoop伪分布式环境搭建</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2018年11月5日
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                |
+                                
+                                    <a href="https://zoux86.github.io/categories/hadoop">Hadoop</a>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                环境说明：VM上ubuntu 16.04版本 安装hadoop前的准备 （1）ssh 免密登录 （2）配置好Java环境 （1）（2）步骤的安装见网上博客 安装Hadoop （1）下载hadoop 到上一篇博客给出的网下载hadoop-0.20.2.tar.gz,到随便一个目录解压 我这里是解压到了……
+                                <p class="readmore"><a href="https://zoux86.github.io/post/hadoop-%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%9D%8F%E5%A2%83%E6%90%AD%E5%BB%BA/">阅读全文</a></p>
+                            </div>
+                        </article>
+                    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/hadoop-%E5%90%84%E4%B8%AA%E7%89%88%E6%9C%AC%E4%B8%8B%E8%BD%BD/">Hadoop各个版本下载</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2018年11月5日
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                |
+                                
+                                    <a href="https://zoux86.github.io/categories/hadoop">hadoop</a>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                工欲善其事必先利其器。 在官网中 https://hadoop.apache.org/releases.html能下载到最新的Hadoop. 但是有时为了学习，我们需要下载很久之前的版本，比如haodoop.0.20.2版本 这时需要到下面的网址进行下载： https://hadoop.apache.org/releases.html 这里能看到所有的Hadoop版……
+                                <p class="readmore"><a href="https://zoux86.github.io/post/hadoop-%E5%90%84%E4%B8%AA%E7%89%88%E6%9C%AC%E4%B8%8B%E8%BD%BD/">阅读全文</a></p>
+                            </div>
+                        </article>
+                    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/hadoop-%E9%87%8D%E6%96%B0%E6%A0%BC%E5%BC%8F%E5%8C%96hdfs/">Hadoop重新格式化HDFS</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2018年11月5日
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                |
+                                
+                                    <a href="https://zoux86.github.io/categories/hadoop">Hadoop</a>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                有时候因为自己的一些错误修改，导致Hadoop集群总是有些节点启动不起来。 这是就需要重新格式化HDFS，在重启。 但是重新格式化会导致一个问题，就是以前的namenode中已经记录了datanode的namespaceId了，重新启动会给datanode另一个Id,导致最终启动集群……
+                                <p class="readmore"><a href="https://zoux86.github.io/post/hadoop-%E9%87%8D%E6%96%B0%E6%A0%BC%E5%BC%8F%E5%8C%96hdfs/">阅读全文</a></p>
+                            </div>
+                        </article>
+                    
+
+                    
+
+
+
+
+
+                </div>
+            </div>
+
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zoux86.github.io/post/first/" title="开启新的博客历程">开启新的博客历程</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%95%86%E6%B1%A4%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019商汤面经">2019商汤面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E8%85%BE%E8%AE%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019腾讯校招">2019腾讯校招</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E9%98%BF%E9%87%8C%E4%BA%91%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019阿里云面经">2019阿里云面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019文远知行面经">2019文远知行面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%BE%AE%E8%BD%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019微软面经">2019微软面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E6%B7%B1%E4%BF%A1%E6%9C%8D%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019深信服面经">2019深信服面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E7%BD%91%E6%98%93%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019网易面经">2019网易面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%8D%8E%E4%B8%BA%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019华为面经">2019华为面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E7%94%B5%E4%BF%A1%E4%BA%91%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019电信云面经">2019电信云面经</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/java/">Java (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/ubuntu/">ubuntu (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/uml/">UML (8)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/vmware/">VMware (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/window%E5%B7%A5%E5%85%B7/">window工具 (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E4%B8%AA%E4%BA%BA%E6%84%9F%E6%82%9F/">个人感悟 (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题 (2)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="https://zoux86.github.io/tags/hadoop/">Hadoop</a>
+    
+    <a href="https://zoux86.github.io/tags/java/">Java</a>
+    
+    <a href="https://zoux86.github.io/tags/ubuntu/">ubuntu</a>
+    
+    <a href="https://zoux86.github.io/tags/uml/">UML</a>
+    
+    <a href="https://zoux86.github.io/tags/vmware/">VMware</a>
+    
+    <a href="https://zoux86.github.io/tags/window%E5%B7%A5%E5%85%B7/">window工具</a>
+    
+    <a href="https://zoux86.github.io/tags/%E5%8D%9A%E5%AE%A2/">博客</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%84%9F%E6%82%9F/">感悟</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%A0%A1%E6%8B%9B/">校招</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://www.jianshu.com/u/305d8226ced4" title="个人简书主页">个人简书主页</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zoux86.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2019 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+
+</body>
+</html>

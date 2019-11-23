@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.59.1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Hadoop 源码分析-Configuration.java | zoux的博客</title>
+    <meta property="og:title" content="Hadoop 源码分析-Configuration.java - zoux的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2018-11-12T20:31:20&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2018-11-12T20:31:20&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
+    <meta name="description" content="Hadoop 源码分析-Configuration.java">
+        
+    <meta name="author" content="zoux">
+    <meta property="og:url" content="https://zoux86.github.io/post/hadoop-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-configuration.java/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+
+
+    
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zoux86.github.io/">
+                        zoux的博客
+                    </a>
+                
+                <p class="description">对Go语言(golang)、k8s、kubeflow，容器云，云原生感兴趣</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zoux86.github.io/">首页</a>
+                    
+                    <a  href="https://zoux86.github.io/tools/" title="工具">工具</a>
+                    
+                    <a  href="https://zoux86.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://zoux86.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+        
+        
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">Hadoop 源码分析-Configuration.java</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2018年11月12日
+                        </date>
+                        
+                        <div class="post-meta">
+                            <span>|</span>
+                            
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/hadoop">Hadoop</a></span>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        
+                        <div class="post-content">
+                            
+
+<p>万事开头难，今天开始Hadoop源码分析的第一天。首先从简单的入手，分析Configuration.java
+【没有特别声明，源码都是Hadoop 0.20版本】</p>
+
+<h2 id="类结构">类结构</h2>
+
+<p>主要类成员介绍：
+<img src="Hadoop 源码分析-Configuration.java.assets/12370223-6e0c00be6e9c3b36.png" alt="image.png" /></p>
+
+<h2 id="类方法介绍">类方法介绍：</h2>
+
+<p><img src="Hadoop 源码分析-Configuration.java.assets/12370223-ddbf063b97adbd18.png" alt="image.png" /></p>
+
+<p>上面是我按照主要的功能将函数分了类，这样方便理解。</p>
+
+<h2 id="configuration类分析">Configuration类分析</h2>
+
+<h3 id="研究一个类-我们先从类的构造函数分析">研究一个类，我们先从类的构造函数分析。</h3>
+
+<p>Configuration类有三个构造函数：
+1.Configuration()
+2.Configuration(boolean loadDefaults)
+3.Configuration(Configuraiont other)</p>
+
+<p>前两个Constructor使用的是典型的重叠构造器模式，也就是默认的无参Constructor会生成一个加载了默认配置文件得Configuration对象，其中Configuration(boolean loadDefaults)中的参数就是为了控制构造出来的对象是加载了默认配置文件还是没有的标识。后一个是拷贝另一个Configuration实例。
+但是从这条路开始我们就会发现走不下去了。因为构造函数只是将创建好的实例放入REGISTRY中。如下面代码所示。根本就没有下文。</p>
+
+<pre><code>public Configuration(boolean loadDefaults) {
+    this.loadDefaults = loadDefaults;
+    if (LOG.isDebugEnabled()) {
+      LOG.debug(StringUtils.stringifyException(new IOException(&quot;config()&quot;)));
+    }
+    synchronized(Configuration.class) {
+      REGISTRY.put(this, null);
+    }
+  }
+</code></pre>
+
+<p>刚开始看到这里，我也觉得很奇怪，后面发现这里是采用了延迟加载的设计模式，当真正需要配置数据的时候，才开始分析配置文件。</p>
+
+<h3 id="什么时候解析配置数据">什么时候解析配置数据</h3>
+
+<p>回想一下，我们需要实例化一个配置后，需要获取配置数据时，调用的是不是
+conf.get(String name), 然后我们就能得到name对应的值了。
+（一般我们是调用getInt,getFloat,getString等方法，但是这些方法都是调用get，然后转换为输出类型）</p>
+
+<p>所以接下来我们看看get方法做了什么事</p>
+
+<pre><code>  public String get(String name, String defaultValue) {
+    return substituteVars(getProps().getProperty(name, defaultValue));
+  }
+</code></pre>
+
+<p>定位substituteVars可以看出，这是解析一个字符串。
+举例说明：getProperty(String name)得到的这个</p>
+
+<pre><code>&lt;property&gt;
+  &lt;name&gt;hadoop.tmp.dir&lt;/name&gt;
+  &lt;value&gt;build/test&lt;/value&gt;
+  &lt;description&gt;A base for other temporary directories.&lt;/description&gt;
+  &lt;final&gt;true&lt;/final&gt;
+&lt;/property&gt;
+</code></pre>
+
+<p>通过substituteVars，我们得到的字符串就是 “build/test”这个。</p>
+
+<p>所以接下来的关键就是看getProperty（）做了什么事情。</p>
+
+<pre><code>private synchronized Properties getProps() {
+    if (properties == null) {
+      properties = new Properties();
+      loadResources(properties, resources, quietmode);
+      if (overlay!= null)
+        properties.putAll(overlay);
+    }
+    return properties;
+  }
+</code></pre>
+
+<p>终于看到了loadResources，从函数名字我们就能看出这是开始加载资源了，这就是开始解析配置数据了。
+可以看出来如果是第一次（properties == null)），我们就加载资源，如果不是第一次就直接返回。注意这里还有  if (overlay!= null)   properties.putAll(overlay);这个语句。我们分两步分析：
+（1）loadResources做了什么
+（2）if (overlay!= null)   properties.putAll(overlay);是什么意思</p>
+
+<h4 id="loadresources做了什么">loadResources做了什么</h4>
+
+<p><img src="Hadoop 源码分析-Configuration.java.assets/12370223-5bd28bfd48fc6b70.png" alt="image.png" /></p>
+
+<p>从这里可以看出来loadDefaults的作用了，如果loadDefaults=true,就先加载默认的配置。可以看出来这里的关键是loadResource函数，我们看看这个函数做了什么。</p>
+
+<p>这个函数太长，我们直接看最后
+<img src="Hadoop 源码分析-Configuration.java.assets/12370223-be9bf546f586062d.png" alt="image.png" />
+从这里我们可以看出来，已经开始读取配置数据了，读取的<property></property>都存放在properties变量里面。</p>
+
+<p>到这一步，我们已经知道了，整个流程：
+<img src="Hadoop 源码分析-Configuration.java.assets/12370223-cc9deecd14d36228.png" alt="image.png" />
+到这里我们就已经知道解析配置数据的整个过程了。</p>
+
+<p>但是我还想弄清楚添加默认配置文件和不添加的区别。我们回到loadResources中，可以发现的是，先添加默认配置，然后再添加已经存在的资源配置，最终所有的<property></property>对都存放在properties变量中了。
+<img src="Hadoop 源码分析-Configuration.java.assets/12370223-18af8e69d439d68f.png" alt="image.png" /></p>
+
+<p>接下来还有一个变量我们还是有疑惑：overlay
+即：了解 if (overlay!= null)   properties.putAll(overlay);是什么意思
+先剧透一下，可以将overlay看成properties的副本，但是它一直存在内存中，不清空。这样下次addResource的时候，properties但是overlay没清空。
+所以 if (overlay!= null)   properties.putAll(overlay);
+意思也很清楚了，当副本还存在的时候，将副本的值在赋回properties。</p>
+
+<p>我们再看看addDefaultResource(String name)，addResource(String resoruce)的区别。</p>
+
+<p><img src="Hadoop 源码分析-Configuration.java.assets/12370223-9c2eacede54144b5.png" alt="image.png" /></p>
+
+<p><img src="Hadoop 源码分析-Configuration.java.assets/12370223-a9967d2125ffd188.png" alt="image.png" />
+可以看出来他们做法很简单。
+resources添加的是增加的配置文件。defaultResources添加默认的配置文件。但是他们都有一个conf.reloadConfiguration();方法。我们看看这个方法；
+public synchronized void reloadConfiguration() {
+    properties = null;                            // trigger reload
+    finalParameters.clear();                      // clear site-limits
+  }
+可以看出来，每次向conf添加一个配置对象（例如：一个配置文件）的时候，properties 会清空，然后再从默认配置文件，已经存在的资源，overlay副本中读取所有的<property></property>对。</p>
+
+<p>总结：
+至此， Configuration的分析已经结束了。最后做个总结：
+（1）Configuration采用了延迟加载的设计模式，当真正需要配置数据的时候，才开始分析配置文件。
+（2） 在作业运行过程中不要使用addDefaultResources(&hellip;)和addResourceObject(&hellip;)加载资源，因为这会导致properties对象重构一遍，建议此时使用setType(&hellip;)</p>
+
+<p>（3）最终所有的<property></property>对都存在properties 中。</p>
+
+                        </div>
+
+                        
+
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/hadoop-%E5%90%AF%E5%8A%A8%E9%9B%86%E7%BE%A4%E8%83%8C%E5%90%8E%E7%9A%84%E4%BA%8B/">Hadoop 启动集群背后的事</a></li>
+        
+        <li><a href="/post/hadoop%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/">Hadoop 每次打开虚拟机重启hadoop都要重新格式化才能启动Namenode</a></li>
+        
+        <li><a href="/post/hadoop-%E9%85%8D%E7%BD%AEeclipse/">Hadoop 配置eclipse</a></li>
+        
+        <li><a href="/post/hadoop-%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%9D%8F%E5%A2%83%E6%90%AD%E5%BB%BA/">Hadoop伪分布式环境搭建</a></li>
+        
+        <li><a href="/post/hadoop-%E9%87%8D%E6%96%B0%E6%A0%BC%E5%BC%8F%E5%8C%96hdfs/">Hadoop重新格式化HDFS</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="https://zoux86.github.io/tags/hadoop">Hadoop</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+    
+
+    
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zoux86.github.io/post/first/" title="开启新的博客历程">开启新的博客历程</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%95%86%E6%B1%A4%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019商汤面经">2019商汤面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E8%85%BE%E8%AE%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019腾讯校招">2019腾讯校招</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E9%98%BF%E9%87%8C%E4%BA%91%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019阿里云面经">2019阿里云面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019文远知行面经">2019文远知行面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%BE%AE%E8%BD%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019微软面经">2019微软面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E6%B7%B1%E4%BF%A1%E6%9C%8D%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019深信服面经">2019深信服面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E7%BD%91%E6%98%93%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019网易面经">2019网易面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%8D%8E%E4%B8%BA%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019华为面经">2019华为面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E7%94%B5%E4%BF%A1%E4%BA%91%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019电信云面经">2019电信云面经</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/java/">Java (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/ubuntu/">ubuntu (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/uml/">UML (8)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/vmware/">VMware (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/window%E5%B7%A5%E5%85%B7/">window工具 (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E4%B8%AA%E4%BA%BA%E6%84%9F%E6%82%9F/">个人感悟 (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题 (2)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="https://zoux86.github.io/tags/hadoop/">Hadoop</a>
+    
+    <a href="https://zoux86.github.io/tags/java/">Java</a>
+    
+    <a href="https://zoux86.github.io/tags/ubuntu/">ubuntu</a>
+    
+    <a href="https://zoux86.github.io/tags/uml/">UML</a>
+    
+    <a href="https://zoux86.github.io/tags/vmware/">VMware</a>
+    
+    <a href="https://zoux86.github.io/tags/window%E5%B7%A5%E5%85%B7/">window工具</a>
+    
+    <a href="https://zoux86.github.io/tags/%E5%8D%9A%E5%AE%A2/">博客</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%84%9F%E6%82%9F/">感悟</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%A0%A1%E6%8B%9B/">校招</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://www.jianshu.com/u/305d8226ced4" title="个人简书主页">个人简书主页</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zoux86.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2019 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        
+        (function () {
+            $("pre code").parent().addClass("line-numbers")
+        }());
+
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+</body>
+</html>

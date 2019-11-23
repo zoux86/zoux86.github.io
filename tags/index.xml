@@ -12,20 +12,92 @@
     
     
     <item>
-      <title>Blog</title>
-      <link>https://zoux86.github.io/tags/blog/</link>
+      <title>博客</title>
+      <link>https://zoux86.github.io/tags/%E5%8D%9A%E5%AE%A2/</link>
       <pubDate>Wed, 20 Nov 2019 20:31:20 +0800</pubDate>
       
-      <guid>https://zoux86.github.io/tags/blog/</guid>
+      <guid>https://zoux86.github.io/tags/%E5%8D%9A%E5%AE%A2/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Hugo</title>
-      <link>https://zoux86.github.io/tags/hugo/</link>
+      <title>感悟</title>
+      <link>https://zoux86.github.io/tags/%E6%84%9F%E6%82%9F/</link>
       <pubDate>Wed, 20 Nov 2019 20:31:20 +0800</pubDate>
       
-      <guid>https://zoux86.github.io/tags/hugo/</guid>
+      <guid>https://zoux86.github.io/tags/%E6%84%9F%E6%82%9F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>校招</title>
+      <link>https://zoux86.github.io/tags/%E6%A0%A1%E6%8B%9B/</link>
+      <pubDate>Sun, 10 Nov 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/%E6%A0%A1%E6%8B%9B/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>算法题</title>
+      <link>https://zoux86.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/</link>
+      <pubDate>Fri, 08 Mar 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Hadoop</title>
+      <link>https://zoux86.github.io/tags/hadoop/</link>
+      <pubDate>Mon, 12 Nov 2018 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/hadoop/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>UML</title>
+      <link>https://zoux86.github.io/tags/uml/</link>
+      <pubDate>Fri, 19 Oct 2018 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/uml/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Java</title>
+      <link>https://zoux86.github.io/tags/java/</link>
+      <pubDate>Sat, 13 Oct 2018 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/java/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>window工具</title>
+      <link>https://zoux86.github.io/tags/window%E5%B7%A5%E5%85%B7/</link>
+      <pubDate>Fri, 21 Sep 2018 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/window%E5%B7%A5%E5%85%B7/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ubuntu</title>
+      <link>https://zoux86.github.io/tags/ubuntu/</link>
+      <pubDate>Tue, 17 Jul 2018 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/ubuntu/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>VMware</title>
+      <link>https://zoux86.github.io/tags/vmware/</link>
+      <pubDate>Tue, 10 Jul 2018 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/vmware/</guid>
       <description></description>
     </item>
     

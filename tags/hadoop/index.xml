@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Hadoop on zoux的博客</title>
+    <link>https://zoux86.github.io/tags/hadoop/</link>
+    <description>Recent content in Hadoop on zoux的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 12 Nov 2018 20:31:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://zoux86.github.io/tags/hadoop/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Hadoop 启动集群背后的事</title>
+      <link>https://zoux86.github.io/post/hadoop-%E5%90%AF%E5%8A%A8%E9%9B%86%E7%BE%A4%E8%83%8C%E5%90%8E%E7%9A%84%E4%BA%8B/</link>
+      <pubDate>Mon, 12 Nov 2018 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/hadoop-%E5%90%AF%E5%8A%A8%E9%9B%86%E7%BE%A4%E8%83%8C%E5%90%8E%E7%9A%84%E4%BA%8B/</guid>
+      <description>在我们布置好Hadoop环境后我们做的第一件就是 执行 start-all.sh 命令。 那么这个命令都做了什么，今天来探讨一下这个。 start-all.sh内容 Start all hadoop daemons. Run this on master node. bin=`dirname &amp;quot;$0&amp;quot;` bin=`cd &amp;quot;$bin&amp;quot;; pwd` . &amp;quot;$bin&amp;quot;/hadoop-config.sh start dfs daemons &amp;quot;$bin&amp;quot;/start-dfs.sh --config $HADOOP_CONF_DIR ### start mapred daemons &amp;quot;$bin&amp;quot;/start-mapred.sh --config $HADOOP_CONF_DIR 从上面可以看出来这个脚本，执行了三个脚本，分别是： hadoop-config.sh start-dfs.sh start-mapred.sh hadoop-config.sh 内容 this=&amp;quot;$0&amp;quot; while [ -h &amp;quot;$this&amp;quot; ]; do ls=`ls -ld &amp;quot;$this&amp;quot;` link=`expr &amp;quot;$ls&amp;quot; : &#39;.*-&amp;gt;</description>
+    </item>
+    
+    <item>
+      <title>Hadoop 源码分析-Configuration.java</title>
+      <link>https://zoux86.github.io/post/hadoop-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-configuration.java/</link>
+      <pubDate>Mon, 12 Nov 2018 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/hadoop-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-configuration.java/</guid>
+      <description>万事开头难，今天开始Hadoop源码分析的第一天。首先从简单的入手，分析Configuration.java 【没有特别声明，源码都是Hadoop 0.20版本】 类结构 主要类成员介绍： 类方法介绍： 上面是我按照主要的功能将函数分了类，这样方便理解。 Configuration类分析 研究一</description>
+    </item>
+    
+    <item>
+      <title>Hadoop 每次打开虚拟机重启hadoop都要重新格式化才能启动Namenode</title>
+      <link>https://zoux86.github.io/post/hadoop%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Mon, 05 Nov 2018 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/hadoop%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/</guid>
+      <description>前面配置好hadoop后，每次开启虚拟机，启动集群后，总是有一些节点起不来。要不就是namenode，要不就是datanode。后面百度找到了原因所在： 在配置hdfs时，我们只配置了datanode的目录，而没有配置namdenode的相关信息。默认的tmp文件每次重新开机会被清</description>
+    </item>
+    
+    <item>
+      <title>Hadoop 配置eclipse</title>
+      <link>https://zoux86.github.io/post/hadoop-%E9%85%8D%E7%BD%AEeclipse/</link>
+      <pubDate>Mon, 05 Nov 2018 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/hadoop-%E9%85%8D%E7%BD%AEeclipse/</guid>
+      <description>通过前面几篇，我们已经布置好Hadoop集群环境了。接下来配置eclipse，使用eclipse编写Hadoop代码。 （1）安装好eclipse 省略，参加网上其他博客 （2）找到安装hadoop安装目录下的 contrib/eclipse-plugin的jar文件。这是hadoop给</description>
+    </item>
+    
+    <item>
+      <title>Hadoop伪分布式环境搭建</title>
+      <link>https://zoux86.github.io/post/hadoop-%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%9D%8F%E5%A2%83%E6%90%AD%E5%BB%BA/</link>
+      <pubDate>Mon, 05 Nov 2018 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/hadoop-%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%9D%8F%E5%A2%83%E6%90%AD%E5%BB%BA/</guid>
+      <description>环境说明：VM上ubuntu 16.04版本 安装hadoop前的准备 （1）ssh 免密登录 （2）配置好Java环境 （1）（2）步骤的安装见网上博客 安装Hadoop （1）下载hadoop 到上一篇博客给出的网下载hadoop-0.20.2.tar.gz,到随便一个目录解压 我这里是解压到了</description>
+    </item>
+    
+    <item>
+      <title>Hadoop各个版本下载</title>
+      <link>https://zoux86.github.io/post/hadoop-%E5%90%84%E4%B8%AA%E7%89%88%E6%9C%AC%E4%B8%8B%E8%BD%BD/</link>
+      <pubDate>Mon, 05 Nov 2018 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/hadoop-%E5%90%84%E4%B8%AA%E7%89%88%E6%9C%AC%E4%B8%8B%E8%BD%BD/</guid>
+      <description>工欲善其事必先利其器。 在官网中 https://hadoop.apache.org/releases.html能下载到最新的Hadoop. 但是有时为了学习，我们需要下载很久之前的版本，比如haodoop.0.20.2版本 这时需要到下面的网址进行下载： https://hadoop.apache.org/releases.html 这里能看到所有的Hadoop版</description>
+    </item>
+    
+    <item>
+      <title>Hadoop重新格式化HDFS</title>
+      <link>https://zoux86.github.io/post/hadoop-%E9%87%8D%E6%96%B0%E6%A0%BC%E5%BC%8F%E5%8C%96hdfs/</link>
+      <pubDate>Mon, 05 Nov 2018 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/hadoop-%E9%87%8D%E6%96%B0%E6%A0%BC%E5%BC%8F%E5%8C%96hdfs/</guid>
+      <description>有时候因为自己的一些错误修改，导致Hadoop集群总是有些节点启动不起来。 这是就需要重新格式化HDFS，在重启。 但是重新格式化会导致一个问题，就是以前的namenode中已经记录了datanode的namespaceId了，重新启动会给datanode另一个Id,导致最终启动集群</description>
+    </item>
+    
+  </channel>
+</rss>

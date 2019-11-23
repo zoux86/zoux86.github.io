@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ubuntu on zoux的博客</title>
+    <link>https://zoux86.github.io/categories/ubuntu/</link>
+    <description>Recent content in ubuntu on zoux的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 17 Jul 2018 20:31:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://zoux86.github.io/categories/ubuntu/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>ubuntu俩台机器之间免密登录</title>
+      <link>https://zoux86.github.io/post/ubuntu%E4%BF%A9%E5%8F%B0%E6%9C%BA%E5%99%A8%E4%B9%8B%E9%97%B4%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/</link>
+      <pubDate>Tue, 17 Jul 2018 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/ubuntu%E4%BF%A9%E5%8F%B0%E6%9C%BA%E5%99%A8%E4%B9%8B%E9%97%B4%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/</guid>
+      <description>1.首先使用 ipconfig 命令查看俩台电脑的ip地址 图中的192.168.111.136 就是这个机器的ip地址。 2.安装ssh 使用 ps -e | grep ssh 命令查看是否安装了ssh。没有的话，使用 sudo apt-get install openssh-server命令安装即可。 3.生成A机器的公钥 输入ssh-keygen，然后一路回车下去。</description>
+    </item>
+    
+  </channel>
+</rss>

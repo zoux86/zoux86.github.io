@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>算法题 on zoux的博客</title>
+    <link>https://zoux86.github.io/categories/%E7%AE%97%E6%B3%95%E9%A2%98/</link>
+    <description>Recent content in 算法题 on zoux的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 08 Mar 2019 20:31:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://zoux86.github.io/categories/%E7%AE%97%E6%B3%95%E9%A2%98/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>链表常考点</title>
+      <link>https://zoux86.github.io/post/%E9%93%BE%E8%A1%A8%E5%B8%B8%E8%80%83%E7%82%B9/</link>
+      <pubDate>Fri, 08 Mar 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/%E9%93%BE%E8%A1%A8%E5%B8%B8%E8%80%83%E7%82%B9/</guid>
+      <description>最近一口气刷完了Leetcode上链表专栏下的所有题。有好几题非常有意思，记录一下： 感觉链表的题，大部分都是考察细心的题。你定义好的遍历指针，一定要细心的检查当它遍历时，它的子节点正确赋值，同时要非常注意链表指针非空的情况。 寻找链表的倒数第K个，或者类似的题目。类似的比如：输出链</description>
+    </item>
+    
+    <item>
+      <title>算法 ： 数字转罗马数字</title>
+      <link>https://zoux86.github.io/post/%E7%AE%97%E6%B3%95-%E6%95%B0%E5%AD%97%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97/</link>
+      <pubDate>Sun, 14 Oct 2018 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/%E7%AE%97%E6%B3%95-%E6%95%B0%E5%AD%97%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97/</guid>
+      <description>https://www.cnblogs.com/masterlibin/p/5531399.html</description>
+    </item>
+    
+  </channel>
+</rss>
