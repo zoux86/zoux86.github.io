@@ -116,7 +116,7 @@ bin=`cd &quot;$bin&quot;; pwd`
 <pre><code>&quot;$bin&quot;/start-dfs.sh --config $HADOOP_CONF_DIR
 </code></pre>
 
-<h1 id="start-mapred-daemons">### start mapred daemons</h1>
+<h3 id="start-mapred-daemons">start mapred daemons</h3>
 
 <pre><code>&quot;$bin&quot;/start-mapred.sh --config $HADOOP_CONF_DIR
 </code></pre>
@@ -138,7 +138,13 @@ while [ -h &quot;$this&quot; ]; do
 done
 </code></pre>
 
-<h1 id="convert-relative-path-to-absolute-path">### convert relative path to absolute path</h1>
+<h3 id="convert-relative-path-to-absolute-path">convert relative path to absolute path</h3>
+
+<pre><code>bin=`dirname &quot;$this&quot;`
+script=`basename &quot;$this&quot;`
+bin=`cd &quot;$bin&quot;; pwd`
+this=&quot;$bin/$script&quot;
+</code></pre>
 
 <pre><code>bin=`dirname &quot;$this&quot;`
 script=`basename &quot;$this&quot;`
@@ -297,10 +303,6 @@ bin=`cd &quot;$bin&quot;; pwd`
     </li>
     
     <li>
-        <a href="https://zoux86.github.io/post/2019-%E5%95%86%E6%B1%A4%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019商汤面经">2019商汤面经</a>
-    </li>
-    
-    <li>
         <a href="https://zoux86.github.io/post/2019-%E8%85%BE%E8%AE%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019腾讯校招">2019腾讯校招</a>
     </li>
     
@@ -310,6 +312,10 @@ bin=`cd &quot;$bin&quot;; pwd`
     
     <li>
         <a href="https://zoux86.github.io/post/2019-%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019文远知行面经">2019文远知行面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%95%86%E6%B1%A4%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019商汤面经">2019商汤面经</a>
     </li>
     
     <li>

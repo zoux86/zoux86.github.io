@@ -21,15 +21,6 @@
     </item>
     
     <item>
-      <title>2019商汤面经</title>
-      <link>https://zoux86.github.io/post/2019-%E5%95%86%E6%B1%A4%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/</link>
-      <pubDate>Sun, 10 Nov 2019 20:31:20 +0800</pubDate>
-      
-      <guid>https://zoux86.github.io/post/2019-%E5%95%86%E6%B1%A4%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/</guid>
-      <description>面试时间：2019年9月 岗位：容器云研发 形式：现场面试 一二三面 因为参加了商汤的交流活动获得的面试机会，面试是三个面试官一起面的，一下子面完了。并且有个项目和他们做的事情很像，所以仔细想了想也没有其他能参考的点。</description>
-    </item>
-    
-    <item>
       <title>2019腾讯校招</title>
       <link>https://zoux86.github.io/post/2019-%E8%85%BE%E8%AE%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/</link>
       <pubDate>Sun, 10 Nov 2019 20:31:20 +0800</pubDate>
@@ -54,6 +45,15 @@
       
       <guid>https://zoux86.github.io/post/2019-%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/</guid>
       <description>面试时间：2019年8-10月 岗位：基础架构研发工程师 形式：视频面试 一面（国内视频面试） 1.自我介绍 2.介绍k8s的组件 3.k8s服务是如何实现的 4.k8s deployment的实现 5.C++虚函数相关的知识 6.算法题： 给定一个循环数组，求最长的环。 例如（1,3，-1,2,1），正数表示</description>
+    </item>
+    
+    <item>
+      <title>2019商汤面经</title>
+      <link>https://zoux86.github.io/post/2019-%E5%95%86%E6%B1%A4%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/</link>
+      <pubDate>Fri, 08 Nov 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-%E5%95%86%E6%B1%A4%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/</guid>
+      <description>面试时间：2019年9月 岗位：容器云研发 形式：现场面试 一二三面 因为参加了商汤的交流活动获得的面试机会，面试是三个面试官一起面的，一下子面完了。并且有个项目和他们做的事情很像，所以仔细想了想也没有其他能参考的点。</description>
     </item>
     
     <item>
@@ -188,7 +188,7 @@
       <pubDate>Mon, 12 Nov 2018 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/hadoop-%E5%90%AF%E5%8A%A8%E9%9B%86%E7%BE%A4%E8%83%8C%E5%90%8E%E7%9A%84%E4%BA%8B/</guid>
-      <description>在我们布置好Hadoop环境后我们做的第一件就是 执行 start-all.sh 命令。 那么这个命令都做了什么，今天来探讨一下这个。 start-all.sh内容 Start all hadoop daemons. Run this on master node. bin=`dirname &amp;quot;$0&amp;quot;` bin=`cd &amp;quot;$bin&amp;quot;; pwd` . &amp;quot;$bin&amp;quot;/hadoop-config.sh start dfs daemons &amp;quot;$bin&amp;quot;/start-dfs.sh --config $HADOOP_CONF_DIR ### start mapred daemons &amp;quot;$bin&amp;quot;/start-mapred.sh --config $HADOOP_CONF_DIR 从上面可以看出来这个脚本，执行了三个脚本，分别是： hadoop-config.sh start-dfs.sh start-mapred.sh hadoop-config.sh 内容 this=&amp;quot;$0&amp;quot; while [ -h &amp;quot;$this&amp;quot; ]; do ls=`ls -ld &amp;quot;$this&amp;quot;` link=`expr &amp;quot;$ls&amp;quot; : &#39;.*-&amp;gt;</description>
+      <description>在我们布置好Hadoop环境后我们做的第一件就是 执行 start-all.sh 命令。 那么这个命令都做了什么，今天来探讨一下这个。 start-all.sh内容 Start all hadoop daemons. Run this on master node. bin=`dirname &amp;quot;$0&amp;quot;` bin=`cd &amp;quot;$bin&amp;quot;; pwd` . &amp;quot;$bin&amp;quot;/hadoop-config.sh start dfs daemons &amp;quot;$bin&amp;quot;/start-dfs.sh --config $HADOOP_CONF_DIR start mapred daemons &amp;quot;$bin&amp;quot;/start-mapred.sh --config $HADOOP_CONF_DIR 从上面可以看出来这个脚本，执行了三个脚本，分别是： hadoop-config.sh start-dfs.sh start-mapred.sh hadoop-config.sh 内容 this=&amp;quot;$0&amp;quot; while [ -h &amp;quot;$this&amp;quot; ]; do ls=`ls -ld &amp;quot;$this&amp;quot;` link=`expr &amp;quot;$ls&amp;quot; : &#39;.*-&amp;gt; \(.*\)$&#39;`</description>
     </item>
     
     <item>
@@ -305,7 +305,7 @@
       <pubDate>Sat, 08 Sep 2018 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/uml%E5%AF%B9%E8%B1%A1%E5%9B%BE/</guid>
-      <description>话不多说，开门见山！先看目录 （1）什么是对象图 （2）对象图作用 （3）对象图的核心概念 （4）如果快速分辨出对象图 （1）什么是对象图 对象图：描述的是 某个特定时刻 类的具体实例 以及 它们如何联系起来等相关信息。 （2）对象图的作用 在分析和设计阶段创建；捕获实例和连接；捕获交互的静态部分；举例</description>
+      <description>话不多说，开门见山！先看目录 （1）什么是对象图 （2）对象图作用 （3）对象图的核心概念 （4）如果快速分辨出对象图 什么是对象图 对象图：描述的是 某个特定时刻 类的具体实例 以及 它们如何联系起来等相关信息。 对象图的作用 在分析和设计阶段创建；捕获实例和连接；捕获交互的静态部分；举例说明数据/对</description>
     </item>
     
     <item>
@@ -341,7 +341,7 @@
       <pubDate>Tue, 21 Aug 2018 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/uml%E7%B1%BB%E5%9B%BE%E4%BB%8B%E7%BB%8D/</guid>
-      <description>话不多说，开门见山！ 写类图之前看见一篇写的很好的文章，所以直接引用推荐。 https://www.cnblogs.com/shindo/p/5579191.html 关键知识点： （1）类自身属性 （2）类自身方法 （3）类与类的关系 其中类与类之间有依赖、关联、聚合，组合，继承，接口实现六种方法。下面说一下个人对这几种方法的看法，可以方便大家理解。 六种方法可以分为四类，方便理</description>
+      <description>话不多说，开门见山！ 写类图之前看见一篇写的很好的文章，所以直接引用推荐。 https://www.cnblogs.com/shindo/p/5579191.html 关键知识点： （1）类自身属性 （2）类自身方法 （3）类与类的关系 其中类与类之间有依赖、关联、聚合，组合，继承，接口实现六种方法。下面说一下个人对这几种方法的看法，可以方便大家理解。 六种方法可以分为三类，方便理</description>
     </item>
     
     <item>
