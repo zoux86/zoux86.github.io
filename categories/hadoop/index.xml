@@ -53,7 +53,7 @@
       <pubDate>Mon, 05 Nov 2018 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/hadoop-%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%9D%8F%E5%A2%83%E6%90%AD%E5%BB%BA/</guid>
-      <description>环境说明：VM上ubuntu 16.04版本 安装hadoop前的准备 （1）ssh 免密登录 （2）配置好Java环境 （1）（2）步骤的安装见网上博客 安装Hadoop （1）下载hadoop 到上一篇博客给出的网下载hadoop-0.20.2.tar.gz,到随便一个目录解压 我这里是解压到了</description>
+      <description>环境说明：VM上ubuntu 16.04版本 安装hadoop前的准备 （1）ssh 免密登录 （2）配置好Java环境 第一二步骤的安装见网上博客 安装Hadoop 下载hadoop 到上一篇博客给出的网下载hadoop-0.20.2.tar.gz,到随便一个目录解压，我这里是解压到了/zoux</description>
     </item>
     
     <item>

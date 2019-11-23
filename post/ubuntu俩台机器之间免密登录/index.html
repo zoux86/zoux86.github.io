@@ -97,28 +97,27 @@
                         
                         <div class="post-content">
                             <p>1.首先使用 ipconfig 命令查看俩台电脑的ip地址
-<img src="ubuntu俩台机器之间免密登录.assets/12370223-3117b4804796941d.png" alt="image.png" />
+<img src="../../resources/images/ubuntu/image1.png" alt="image1" />
 图中的192.168.111.136 就是这个机器的ip地址。</p>
 
 <p>2.安装ssh
 使用 ps -e | grep ssh 命令查看是否安装了ssh。没有的话，使用 sudo apt-get install openssh-server命令安装即可。</p>
 
 <p>3.生成A机器的公钥
-<img src="ubuntu俩台机器之间免密登录.assets/12370223-f3d240acbe07fca8.png" alt="image.png" />
 输入ssh-keygen，然后一路回车下去。直至生成了id_rsa.pub文件。</p>
 
 <p>4.将机器A生成的公钥发送给B机器
  scp /home/zoux/.ssh/id_rsa.pub zoux@192.168.111.137:root
 这个命令是将A机器的id_rsa.pub 传送的zoux机器的root目录。
 可能出现的问题：
-<img src="ubuntu俩台机器之间免密登录.assets/12370223-22cf5d6b4f8ff303.png" alt="image.png" /></p>
+<img src="../../resources/images/ubuntu/image2.png" alt="image2" /></p>
 
 <p>5.在B机器中，将id_rsa.pub追加到authorized_keys文件中。
 使用以下的命令：
 cat /root/id_rsa.pub &gt;&gt; /home/zoux/.ssh/authorized_keys</p>
 
 <p>6.返回A机器中，执行ssh B机器ip，如果能直接登录B机器。则说明A-&gt;B的免密码登录成功。
-<img src="ubuntu俩台机器之间免密登录.assets/12370223-a17a9b028e81dec3.png" alt="image.png" /></p>
+<img src="../../resources/images/ubuntu/image3.png" alt="image3" /></p>
 
 <p>7.现在我们已经能A-&gt;B直接免密码通信了，发现A自己登录还需要密码。在A机器上运行：ssh localhost。如果发现要输入密码，即A-&gt;A还没实现免密码登录。实现方式很简单。在A机器的ssh目录下，加入这条语句即可。（将A的公钥加入keys文件中）
 cat ./id_rsa.pub &gt;&gt; ./authorized_keys  # 加入授权</p>

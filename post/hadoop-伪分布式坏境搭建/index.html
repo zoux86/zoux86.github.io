@@ -96,85 +96,109 @@
                         
                         
                         <div class="post-content">
-                            <p>环境说明：VM上ubuntu 16.04版本</p>
+                            
 
-<p>安装hadoop前的准备
-（1）ssh 免密登录
-（2）配置好Java环境</p>
+<h3 id="环境说明-vm上ubuntu-16-04版本">环境说明：VM上ubuntu 16.04版本</h3>
 
-<p>（1）（2）步骤的安装见网上博客</p>
+<h3 id="安装hadoop前的准备">安装hadoop前的准备</h3>
 
-<p>安装Hadoop
-（1）下载hadoop
-到上一篇博客给出的网下载hadoop-0.20.2.tar.gz,到随便一个目录解压
-我这里是解压到了/zoux目录，并将hadoop-0.20.2重名为hadoop</p>
+<p>（1）ssh 免密登录</p>
 
-<p>（2）编辑配置文件
-进入hadoop/conf目录下
-编辑以下文件</p>
+<p>（2）配置好Java环境</p>
 
-<p>core-site.xml
-<property>
-    <name>fs.default.name</name>
-    <value>hdfs://localhost:9000</value>
-</property></p>
+<p>第一二步骤的安装见网上博客</p>
 
-<p>下面需要注意data目录是存放Hdfs文件的目录，需要自己提前建立，并使hadoop有权限操作它（简单方法：sudo chmod 777 -R data,将data目录的权限设置为777）
-hdfs.site.xml
-  <property>
-        <name>dfs.data.dir</name>
-        <value>/zoux/hadoop/data</value>
-    </property>
-    <property>
-        <name>dfs.replication</name>
-        <value>1</value>
-    </property></p>
+<h3 id="安装hadoop">安装Hadoop</h3>
 
-<p>mapred-site.xml
-<property>
-<name>mapred.job.tracker</name>
-<value>localhost:9001</value>
-</property></p>
+<h4 id="下载hadoop">下载hadoop</h4>
 
-<p>接下来还有一个重要的配置文件 hadoop-env.sh
-这里只要配置java的环境变量即可
-export JAVA_HOME=/java/jdk1.8.0_171
-这里/java/jdk1.8.0_171是我前面配置java的环境变量。</p>
+<p>到上一篇博客给出的网下载hadoop-0.20.2.tar.gz,到随便一个目录解压，我这里是解压到了/zoux目录，并将hadoop-0.20.2重名为hadoop</p>
 
-<p>（3）设置hadoop环境变量
-打开/etc/profile文件</p>
+<h4 id="编辑配置文件">编辑配置文件</h4>
 
-<p>export HADOOP_HOME=/zoux/hadoop
+<h5 id="进入hadoop-conf目录下-编辑core-site-xml文件">进入hadoop/conf目录下，编辑core-site.xml文件</h5>
+
+<pre><code>&lt;property&gt;
+    &lt;name&gt;fs.default.name&lt;/name&gt;
+    &lt;value&gt;hdfs://localhost:9000&lt;/value&gt;
+&lt;/property&gt;
+</code></pre>
+
+<h5 id="编辑hdfs-site-xml文件">编辑hdfs.site.xml文件</h5>
+
+<p>下面需要注意data目录是存放Hdfs文件的目录，需要自己提前建立，并使hadoop有权限操作它</p>
+
+<p>（方法：sudo chmod 777 -R data,将data目录的权限设置为777）</p>
+
+<pre><code>&lt;property&gt;
+        &lt;name&gt;dfs.data.dir&lt;/name&gt;
+        &lt;value&gt;/zoux/hadoop/data&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;dfs.replication&lt;/name&gt;
+        &lt;value&gt;1&lt;/value&gt;
+    &lt;/property&gt;
+</code></pre>
+
+<h5 id="编辑mapred-site-xml">编辑mapred-site.xml</h5>
+
+<pre><code>&lt;property&gt;
+&lt;name&gt;mapred.job.tracker&lt;/name&gt;
+&lt;value&gt;localhost:9001&lt;/value&gt;
+&lt;/property&gt;
+</code></pre>
+
+<p>接下来还有一个重要的配置文件 hadoop-env.sh, 这里只要配置java的环境变量即可:</p>
+
+<pre><code>export JAVA_HOME=/java/jdk1.8.0_171
+</code></pre>
+
+<p>这里/java/jdk1.8.0_171是我前面配置java的环境变量。</p>
+
+<h3 id="设置hadoop环境变量">设置hadoop环境变量</h3>
+
+<p>打开/etc/profile文件, 末尾加入这俩句话即可。 /zoux/hadoop是解压完重命名的目录</p>
+
+<pre><code>export HADOOP_HOME=/zoux/hadoop
 export PATH=${JAVA_HOME}/bin:$PATH:$HADOOP_HOME/bin
-末尾加入这俩句话即可。 /zoux/hadoop是解压完重命名的目录</p>
+</code></pre>
 
-<p>然后输入 source /etc/profile是配置文件生效
-这时命令行输入 hadoop -version
-出现版本号信息就行。（我这里出现的事java的版本，但是后面的hadoop命名是生效的）</p>
+<p>然后输入 source /etc/profile是配置文件生效。</p>
 
-<p>（4）接下来我们需要格式化hdfs目录
-输入 hadoop namenode -format</p>
+<p>这时命令行输入 hadoop -version，出现版本号信息就行。（我这里出现的事java的版本，但是后面的hadoop命名是生效的）</p>
 
-<p>（5）上一步成功后我们需要判断集群是否能正常启动
-在/zoux/hadoop目录下 输入 bin/start-all.sh启动集群
-<img src="Hadoop 伪分布式坏境搭建.assets/12370223-204b1baa16bb9ecf.png" alt="image.png" />
-这是正常的运行目录，这一步并不是成功，如果log的输出都是正常的话，就成功了。</p>
+<h3 id="接下来我们需要格式化hdfs目录">接下来我们需要格式化hdfs目录</h3>
+
+<p>输入 hadoop namenode -format</p>
+
+<h3 id="上一步成功后我们需要判断集群是否能正常启动">上一步成功后我们需要判断集群是否能正常启动</h3>
+
+<p>（1） 在/zoux/hadoop目录下 输入 bin/start-all.sh启动集群
+<img src="../../resources/images/hadoop/image1.png" alt="image.png" /></p>
+
+<p>这是正常的运行目录，这一步并不是成功，如果log的输出都是正常的话，就成功了。</p>
 
 <p>如果遇到以下的问题
-<img src="Hadoop 伪分布式坏境搭建.assets/12370223-16180d0540456911.png" alt="image.png" />
-这是logs目录的权限太大，hadoop命令写不进去。
-这时 sudo chmod -R 777 logs 将logs文件夹权限降下了就可以了。</p>
+<img src="../../resources/images/hadoop/image2.png" alt="image2" /></p>
 
-<p>在 bin/start-all.sh没有报错后，输入jps查看所有的进程
-3222 SecondaryNameNode
+<p>这是logs目录的权限太大，hadoop命令写不进去。这时使用下面的命令将logs文件夹权限降下了就可以了。</p>
+
+<pre><code> sudo chmod -R 777 logs 
+</code></pre>
+
+<p>（2）在 bin/start-all.sh没有报错后，输入jps查看所有的进程</p>
+
+<pre><code>3222 SecondaryNameNode
 5707 Jps
 3099 DataNode
 3419 TaskTracker
-2974 NameNode<br />
-3295 JobTracker<br />
-出现上面这些进程表示集群安装成功。恭喜你，进入下一步开发了。</p>
+2974 NameNode              
+3295 JobTracker    
+</code></pre>
 
-<p>bin/stop-all.sh关闭集群</p>
+<p>出现上面这些进程表示集群安装成功。恭喜你，进入下一步开发了。</p>
+
+<p>（3）bin/stop-all.sh关闭集群</p>
 
                         </div>
 
