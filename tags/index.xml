@@ -156,20 +156,20 @@
     </item>
     
     <item>
-      <title>[pipelines]</title>
-      <link>https://zoux86.github.io/tags/pipelines/</link>
-      <pubDate>Fri, 01 Feb 2019 20:31:20 +0800</pubDate>
-      
-      <guid>https://zoux86.github.io/tags/pipelines/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>kubeflow</title>
       <link>https://zoux86.github.io/tags/kubeflow/</link>
       <pubDate>Fri, 01 Feb 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/tags/kubeflow/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>pipelines</title>
+      <link>https://zoux86.github.io/tags/pipelines/</link>
+      <pubDate>Fri, 01 Feb 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/pipelines/</guid>
       <description></description>
     </item>
     
