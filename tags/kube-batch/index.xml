@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>kube-batch on zoux的博客</title>
+    <link>https://zoux86.github.io/tags/kube-batch/</link>
+    <description>Recent content in kube-batch on zoux的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 21 Apr 2019 20:31:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://zoux86.github.io/tags/kube-batch/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>kube-batch 修改默认的配置</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E7%9A%84%E9%85%8D%E7%BD%AE/</link>
+      <pubDate>Sun, 21 Apr 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E7%9A%84%E9%85%8D%E7%BD%AE/</guid>
+      <description>在kube-batch V0.4及以上版本中，kube-batch默认的配置 只包含两个 Action(allocate, backfill)。 具体可以参考： https://github.com/kubernetes-sigs/kube-batch/blob/6e560929dcafec91b2b9a24f246a20b4569b39a8/pkg/scheduler/util.go 在自己的需求中，我们可能需要定义自己的配置。 思路： 查看util.go中的代码发现，Kube-batch在发现用户指定配置文件后，会自动地读取该文件的内容，而不</description>
+    </item>
+    
+    <item>
+      <title>kube-batch 从代码中找出gang scheduler这个过程</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BB%8E%E4%BB%A3%E7%A0%81%E4%B8%AD%E6%89%BE%E5%87%BAgang-scheduler%E8%BF%99%E4%B8%AA%E8%BF%87%E7%A8%8B/</link>
+      <pubDate>Sun, 14 Apr 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BB%8E%E4%BB%A3%E7%A0%81%E4%B8%AD%E6%89%BE%E5%87%BAgang-scheduler%E8%BF%99%E4%B8%AA%E8%BF%87%E7%A8%8B/</guid>
+      <description>从之前的分析中，已经知道了kube-batch的启动过程。kube-batch总共有4个过程。这里我们从Allocate开始。 目录： 一： 流程解释 二：代码说明 一： 流程解释 在allocate.go中：找到Execute函数。首先用文字解释一下整个的过程： （1）将kube-batch的</description>
+    </item>
+    
+    <item>
+      <title>kube-batch如何实现gang-scheduler</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0gang-scheduler/</link>
+      <pubDate>Sun, 07 Apr 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0gang-scheduler/</guid>
+      <description>gang scheduler介绍：一个job，可能有多个tasks,这些tasks要不全部执行，要不一个都不执行。 上面说到 kube-batch自定义了一个podGroup，调度时以podGroup为单位的。现在说一下调度podGroup的整个过程。 本文分为四个部分： 一：介绍kube-ba</description>
+    </item>
+    
+    <item>
+      <title>kube-batch--启动过程</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/</link>
+      <pubDate>Mon, 25 Mar 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/</guid>
+      <description>追踪整个代码跳过过程 cmd/kube-batch/main.go:39 main -&amp;gt; cmd/kube-batch/main.go:53 app.Run cmd/kube-batch/app/server.go:60 Run -&amp;gt; cmd/kube-batch/app/server.go:86 sched.Run cmd/kube-batch/app/server.go:86 sched.Run-&amp;gt; pkg/scheduler/scheduler.go:59 cmd/kube-batch/app/server.go:59 sched.Run-&amp;gt; pkg/scheduler/scheduler.runOnce:84 cmd/kube-batch/app/server.go:59 行代码 func (pc *Scheduler) Run(stopCh &amp;lt;-chan struct{}) { var err error // Start cache for policy. go pc.cache.Run(stopCh) pc.cache.WaitForCacheSync(stopCh) // Load configuration of scheduler schedConf := defaultSchedulerConf if len(pc.schedulerConf) != 0 { if schedConf, err = readSchedulerConf(pc.schedulerConf); err != nil { glog.Errorf(&amp;quot;Failed to read scheduler configuration &#39;%s&#39;, using default configuration: %v&amp;quot;, pc.schedulerConf, err) schedConf = defaultSchedulerConf } } pc.actions, pc.plugins, err = loadSchedulerConf(schedConf) if err != nil { panic(err) } // 这里又开始周期性调用 runOnce了。开始调用 go wait.Until(pc.runOnce, pc.schedulePeriod, stopCh) } cmd/kube-batch/app/server.go:84 行代码 func (pc *Scheduler) runOnce() { glog.V(4).Infof(&amp;quot;Start scheduling ...&amp;quot;)</description>
+    </item>
+    
+    <item>
+      <title>kube-batch--简介</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kube-batch-%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Mon, 25 Mar 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kube-batch-%E7%AE%80%E4%BB%8B/</guid>
+      <description>1.背景介绍 K8s本身的调度器具有一些缺陷： （1） 默认的调度器是以 pod 为粒度的，对机器学习任务很不利。 （2）默认的调度器无法提供队列调度的功能 2.kube-batch介绍 Kube-batch 目前是 Kubernetes SIGs 旗下的一个孵化项目，是一个运行在 Kubernetes 上面向机器学习 / 大数据 /HPC 的批调度器（batch scheduler）</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>docker</title>
+      <link>https://zoux86.github.io/tags/docker/</link>
+      <pubDate>Wed, 20 Nov 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/docker/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>博客</title>
       <link>https://zoux86.github.io/tags/%E5%8D%9A%E5%AE%A2/</link>
       <pubDate>Wed, 20 Nov 2019 20:31:20 +0800</pubDate>
@@ -30,11 +39,110 @@
     </item>
     
     <item>
+      <title>环境搭建</title>
+      <link>https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</link>
+      <pubDate>Wed, 20 Nov 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>镜像</title>
+      <link>https://zoux86.github.io/tags/%E9%95%9C%E5%83%8F/</link>
+      <pubDate>Wed, 20 Nov 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/%E9%95%9C%E5%83%8F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>校招</title>
       <link>https://zoux86.github.io/tags/%E6%A0%A1%E6%8B%9B/</link>
       <pubDate>Sun, 10 Nov 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/tags/%E6%A0%A1%E6%8B%9B/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tf-operator</title>
+      <link>https://zoux86.github.io/tags/tf-operator/</link>
+      <pubDate>Tue, 10 Sep 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/tf-operator/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tfjob</title>
+      <link>https://zoux86.github.io/tags/tfjob/</link>
+      <pubDate>Tue, 10 Sep 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/tfjob/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>volcano</title>
+      <link>https://zoux86.github.io/tags/volcano/</link>
+      <pubDate>Tue, 10 Sep 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/volcano/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>k8s</title>
+      <link>https://zoux86.github.io/tags/k8s/</link>
+      <pubDate>Sun, 21 Apr 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/k8s/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kube-batch</title>
+      <link>https://zoux86.github.io/tags/kube-batch/</link>
+      <pubDate>Sun, 21 Apr 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/kube-batch/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>源码</title>
+      <link>https://zoux86.github.io/tags/%E6%BA%90%E7%A0%81/</link>
+      <pubDate>Sun, 21 Apr 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/%E6%BA%90%E7%A0%81/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>调度</title>
+      <link>https://zoux86.github.io/tags/%E8%B0%83%E5%BA%A6/</link>
+      <pubDate>Sun, 21 Apr 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/%E8%B0%83%E5%BA%A6/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>go</title>
+      <link>https://zoux86.github.io/tags/go/</link>
+      <pubDate>Mon, 01 Apr 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/go/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ubuntu</title>
+      <link>https://zoux86.github.io/tags/ubuntu/</link>
+      <pubDate>Mon, 01 Apr 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/ubuntu/</guid>
       <description></description>
     </item>
     
@@ -48,7 +156,61 @@
     </item>
     
     <item>
-      <title>hadoop</title>
+      <title>[pipelines]</title>
+      <link>https://zoux86.github.io/tags/pipelines/</link>
+      <pubDate>Fri, 01 Feb 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/pipelines/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kubeflow</title>
+      <link>https://zoux86.github.io/tags/kubeflow/</link>
+      <pubDate>Fri, 01 Feb 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/kubeflow/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>jupyter</title>
+      <link>https://zoux86.github.io/tags/jupyter/</link>
+      <pubDate>Wed, 09 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/jupyter/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ks</title>
+      <link>https://zoux86.github.io/tags/ks/</link>
+      <pubDate>Mon, 07 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/ks/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>NFS</title>
+      <link>https://zoux86.github.io/tags/nfs/</link>
+      <pubDate>Mon, 07 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/nfs/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>私有仓库</title>
+      <link>https://zoux86.github.io/tags/%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/</link>
+      <pubDate>Sun, 06 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Hadoop</title>
       <link>https://zoux86.github.io/tags/hadoop/</link>
       <pubDate>Mon, 12 Nov 2018 20:31:20 +0800</pubDate>
       
@@ -80,15 +242,6 @@
       <pubDate>Fri, 21 Sep 2018 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/tags/window%E5%B7%A5%E5%85%B7/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>ubuntu</title>
-      <link>https://zoux86.github.io/tags/ubuntu/</link>
-      <pubDate>Tue, 17 Jul 2018 20:31:20 +0800</pubDate>
-      
-      <guid>https://zoux86.github.io/tags/ubuntu/</guid>
       <description></description>
     </item>
     

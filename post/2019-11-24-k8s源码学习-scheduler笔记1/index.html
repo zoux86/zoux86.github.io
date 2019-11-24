@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.59.1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>k8s源码学习 - Scheduler笔记（1） | zoux的博客</title>
+    <meta property="og:title" content="k8s源码学习 - Scheduler笔记（1） - zoux的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2019-04-21T20:31:20&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2019-04-21T20:31:20&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
+    <meta name="description" content="k8s源码学习 - Scheduler笔记（1）">
+        
+    <meta name="author" content="zoux">
+    <meta property="og:url" content="https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B01/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+
+
+    
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zoux86.github.io/">
+                        zoux的博客
+                    </a>
+                
+                <p class="description">对Go语言(golang)、k8s、kubeflow，容器云，云原生感兴趣</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zoux86.github.io/">首页</a>
+                    
+                    <a  href="https://zoux86.github.io/tools/" title="工具">工具</a>
+                    
+                    <a  href="https://zoux86.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://zoux86.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+        
+        
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">k8s源码学习 - Scheduler笔记（1）</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2019年4月21日
+                        </date>
+                        
+                        <div class="post-meta">
+                            <span>|</span>
+                            
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/k8s">k8s</a></span>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        
+                        <div class="post-content">
+                            
+
+<h4 id="任务-找到scheduler的入口">任务：找到scheduler的入口</h4>
+
+<h5 id="k8s-代码目录结构">k8s 代码目录结构</h5>
+
+<p>cmd：所有的二进制可执行文件入口代码，也就是各种命令的接口代码。</p>
+
+<p>pkg：项目diamante主目录，cmd只是接口，这里是具体实现。cmd类似业务代码，pkg类似核心</p>
+
+<h5 id="寻找k8s入口函数">寻找k8s入口函数</h5>
+
+<pre><code class="language-rust">cmd/kube-scheduler/scheduler.go:34  main函数 -&gt;
+cmd/kube-scheduler/app/server.go:70  NewSchedulerCommand-&gt;
+cmd/kube-scheduler/app/server.go:117  runCommand -&gt;
+cmd/kube-scheduler/app/server.go:167 Run -&gt;
+pkg/scheduler/scheduler.go:276 run 
+(cmd/kube-scheduler/scheduler.go:34 表示cmd/kube-scheduler/scheduler.go文件的第34行)
+
+</code></pre>
+
+<p>可以看到，CMD目录果然是入口，到了pkg/scheduler/scheduler.go就到了真正运行调度了。下面是 pkg/scheduler/scheduler.go:276 run 的函数。</p>
+
+<pre><code class="language-rust">// Run begins watching and scheduling. It waits for cache to be synced, then starts a goroutine and returns immediately.
+func (sched *Scheduler) Run() {
+	//检查是否同步，这个先不用管
+	if !sched.config.WaitForCacheSync() {
+		return
+	}
+	//语句含义：每隔 0 秒， 执行一次sched.scheduleOne函数，直到sched.config.StopEverything信号的到来。
+	go wait.Until(sched.scheduleOne, 0, sched.config.StopEverything)
+}
+</code></pre>
+
+<p>可以看到，这里就是周期行的执行调度函数了。</p>
+
+<p>sched.scheduleOne：调度一个pending的pod.</p>
+
+<h5 id="补充">补充：</h5>
+
+<p>sched 是一个Scheduler结构体的对象。Scheduler结构体的内容可以在</p>
+
+<p>pkg/scheduler/factory/factory.go:96 中查看。</p>
+
+<p>看名字是使用了工厂模式。</p>
+
+<h4 id="k8s代码的结构">k8s代码的结构</h4>
+
+<p>api: 输出接口文档用，基本是json源码</p>
+
+<p>build：构建脚本</p>
+
+<p>cmd：所有的二进制可执行文件入口代码，也就是各种命令的接口代码。</p>
+
+<p>pkg：项目diamante主目录，cmd只是接口，这里是具体实现。cmd类似业务代码，pkg类似核心</p>
+
+<p>plugin：插件</p>
+
+<p>test：测试相关的工具</p>
+
+<p>third_party：第三方工具</p>
+
+<p>docs：文档</p>
+
+<p>example：使用例子</p>
+
+<p>Godeps：项目依赖的Go的第三方包，比如docker客户端sdk，rest等</p>
+
+<p>hack：工具箱，各种编译，构建，校验的脚本都在这。</p>
+
+<pre><code class="language-rust">/cmd/kube-scheduler
+├── app  
+│   ├── BUILD
+│   ├── server.go  //schedule初始化以及运行启动函数
+├── BUILD
+├── OWNERS
+├── scheduler.go   //schedule main函数
+/pkg
+├── plugin/pkg/admission
+├── plugin/pkg/auth  //相关认证
+├── plugin/pkg/scheduler  //schedule主要逻辑，包含预选优选算法、测量等
+├── plugin/pkg/scheduler/algorithm  //schedule预选优选算法
+├── ...
+├── plugin/pkg/scheduler/schedulercache //schedule缓存，便于业务逻辑
+├── plugin/pkg/scheduler/metrics// 测量相关
+├── BUILD
+├── testutil.go    
+├── OWNERS
+├── scheduler.go // scheduler的代码逻辑入口，其中scheduleOne函数就在里面
+├── scheduler_test.go
+</code></pre>
+
+<h4 id="参考的学习资料">参考的学习资料</h4>
+
+<p><a href="https://github.com/farmer-hutao/k8s-source-code-analysis/blob/master/README.md">https://github.com/farmer-hutao/k8s-source-code-analysis/blob/master/README.md</a></p>
+
+                        </div>
+
+                        
+
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B02/">k8s源码学习 - Scheduler笔记（2）</a></li>
+        
+        <li><a href="/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84/">k8s源码学习--代码结构</a></li>
+        
+        <li><a href="/post/2019-11-24-k8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85helm/">k8s集群安装helm</a></li>
+        
+        <li><a href="/post/2019-11-24-%E6%90%AD%E5%BB%BAk8s%E9%9B%86%E7%BE%A4/">ubuntu搭建k8s机器</a></li>
+        
+        <li><a href="/post/2019-11-24-ubuntu%E6%9C%BA%E5%99%A8%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">ubuntu机器之间免密登录</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="https://zoux86.github.io/tags/k8s">k8s</a></li>
+                                
+                                <li><a href="https://zoux86.github.io/tags/%E8%B0%83%E5%BA%A6">调度</a></li>
+                                
+                                <li><a href="https://zoux86.github.io/tags/%E6%BA%90%E7%A0%81">源码</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zoux86/blog"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-11-24-%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F%E9%97%AE%E9%A2%98/" title="下载镜像问题">下载镜像问题</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/first/" title="开启新的博客历程">开启新的博客历程</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E8%85%BE%E8%AE%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019腾讯校招">2019腾讯校招</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E9%98%BF%E9%87%8C%E4%BA%91%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019阿里云面经">2019阿里云面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019文远知行面经">2019文远知行面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%95%86%E6%B1%A4%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019商汤面经">2019商汤面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%BE%AE%E8%BD%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019微软面经">2019微软面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E6%B7%B1%E4%BF%A1%E6%9C%8D%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019深信服面经">2019深信服面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E7%BD%91%E6%98%93%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019网易面经">2019网易面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%8D%8E%E4%B8%BA%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019华为面经">2019华为面经</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/java/">Java (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (3)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kubeflow/">kubeflow (6)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/ubuntu/">ubuntu (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/uml/">UML (8)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/vmware/">VMware (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/volcano/">volcano (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/window%E5%B7%A5%E5%85%B7/">window工具 (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E4%B8%AA%E4%BA%BA%E6%84%9F%E6%82%9F/">个人感悟 (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建 (10)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题 (2)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="https://zoux86.github.io/tags/docker/">docker</a>
+    
+    <a href="https://zoux86.github.io/tags/go/">go</a>
+    
+    <a href="https://zoux86.github.io/tags/hadoop/">Hadoop</a>
+    
+    <a href="https://zoux86.github.io/tags/java/">Java</a>
+    
+    <a href="https://zoux86.github.io/tags/jupyter/">jupyter</a>
+    
+    <a href="https://zoux86.github.io/tags/k8s/">k8s</a>
+    
+    <a href="https://zoux86.github.io/tags/ks/">ks</a>
+    
+    <a href="https://zoux86.github.io/tags/kube-batch/">kube-batch</a>
+    
+    <a href="https://zoux86.github.io/tags/kubeflow/">kubeflow</a>
+    
+    <a href="https://zoux86.github.io/tags/nfs/">NFS</a>
+    
+    <a href="https://zoux86.github.io/tags/pipelines/">[pipelines]</a>
+    
+    <a href="https://zoux86.github.io/tags/tf-operator/">tf-operator</a>
+    
+    <a href="https://zoux86.github.io/tags/tfjob/">tfjob</a>
+    
+    <a href="https://zoux86.github.io/tags/ubuntu/">ubuntu</a>
+    
+    <a href="https://zoux86.github.io/tags/uml/">UML</a>
+    
+    <a href="https://zoux86.github.io/tags/vmware/">VMware</a>
+    
+    <a href="https://zoux86.github.io/tags/volcano/">volcano</a>
+    
+    <a href="https://zoux86.github.io/tags/window%E5%B7%A5%E5%85%B7/">window工具</a>
+    
+    <a href="https://zoux86.github.io/tags/%E5%8D%9A%E5%AE%A2/">博客</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%84%9F%E6%82%9F/">感悟</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%A0%A1%E6%8B%9B/">校招</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%BA%90%E7%A0%81/">源码</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/">私有仓库</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题</a>
+    
+    <a href="https://zoux86.github.io/tags/%E8%B0%83%E5%BA%A6/">调度</a>
+    
+    <a href="https://zoux86.github.io/tags/%E9%95%9C%E5%83%8F/">镜像</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://www.jianshu.com/u/305d8226ced4" title="个人简书主页">个人简书主页</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zoux86.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2019 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        
+        (function () {
+            $("pre code").parent().addClass("line-numbers")
+        }());
+
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+</body>
+</html>

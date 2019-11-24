@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>go on zoux的博客</title>
+    <link>https://zoux86.github.io/tags/go/</link>
+    <description>Recent content in go on zoux的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 01 Apr 2019 20:31:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://zoux86.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>ubuntua安装go语言环境</title>
+      <link>https://zoux86.github.io/post/2019-11-24-ubuntu%E5%AE%89%E8%A3%85go/</link>
+      <pubDate>Mon, 01 Apr 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-ubuntu%E5%AE%89%E8%A3%85go/</guid>
+      <description>地址：https://studygolang.com/dl 注意下载Linux-amd64(64位)版本的 ，例如我下载的就是 go1.13.4.linux-amd64.tar.gz 安装 go语言有两个很重要的环境变量 gopath和goroot。 GOROOT：go的安装路径。一般是-C /usr/local/ GOPATH: GOPATH是作为编译后二进制的存放目的地和imp</description>
+    </item>
+    
+  </channel>
+</rss>

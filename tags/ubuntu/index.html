@@ -80,6 +80,98 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/2019-11-24-k8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85helm/">k8s集群安装helm</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2019年4月1日
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                |
+                                
+                                    <a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                helm介绍 helm的作用： Kubernetes一个包管理引擎 tiller的作用：功能和软件仓库一样，类似于/etc/yum.repos.d目录下的xxx.repo。 安装helm的目的是为了后面安装kube-batch 环境说明 环境：4台ubuntu16.04 1个master 3个n……
+                                <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-k8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85helm/">阅读全文</a></p>
+                            </div>
+                        </article>
+                    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/2019-11-24-ubuntu%E5%AE%89%E8%A3%85go/">ubuntua安装go语言环境</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2019年4月1日
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                |
+                                
+                                    <a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                地址：https://studygolang.com/dl 注意下载Linux-amd64(64位)版本的 ，例如我下载的就是 go1.13.4.linux-amd64.tar.gz 安装 go语言有两个很重要的环境变量 gopath和goroot。 GOROOT：go的安装路径。一般是-C /usr/local/ GOPATH: GOPATH是作为编译后二进制的存放目的地和imp……
+                                <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-ubuntu%E5%AE%89%E8%A3%85go/">阅读全文</a></p>
+                            </div>
+                        </article>
+                    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/2019-11-24-%E6%90%AD%E5%BB%BAk8s%E9%9B%86%E7%BE%A4/">ubuntu搭建k8s机器</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2019年3月5日
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                |
+                                
+                                    <a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                本次在搭建k8s集群的过程中，遇到了很多问题，幸好最后终于成功。故将整个过程记录下来，希望对大家有所帮助。 环境说明 环境：4台ubuntu16.04 1个master 3个node k8s版本：V1.13.2 搭建说明 本教程采用kubeadm的方式安装，主要针对的是国内用户，因为安装k8s……
+                                <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-%E6%90%AD%E5%BB%BAk8s%E9%9B%86%E7%BE%A4/">阅读全文</a></p>
+                            </div>
+                        </article>
+                    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/2019-11-24-ubuntu%E6%9C%BA%E5%99%A8%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">ubuntu机器之间免密登录</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2018年11月5日
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                |
+                                
+                                    <a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                在自己动手搭建k8s集群环境之前，经常遇到的一个问题就是，集群机器之间能互相免密登录。故在此记录整个搭建过程。 假设有俩台机器： 192.168.115.70 zx-1 master 192.168.115.66 zx-2 现在要修改成密码登录，并且这俩台机器免密登录。步骤如下： 修改 etc/hosts zx-1机器上 127.0.0.1 localhost zx-1 192.168.14.70 zx-1 192.168.14.66 zx-2 zx-2机器上 127.0.0.1 localhost zx-2 192.168.14.70 zx-1 192.168.14.66 zx-2 修改登录密码 修改root密……
+                                <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-ubuntu%E6%9C%BA%E5%99%A8%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">阅读全文</a></p>
+                            </div>
+                        </article>
+                    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
                                     <a href="https://zoux86.github.io/post/ubuntu%E4%BF%A9%E5%8F%B0%E6%9C%BA%E5%99%A8%E4%B9%8B%E9%97%B4%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">ubuntu俩台机器之间免密登录</a>
                                 </h1>
                             </header>
@@ -125,6 +217,10 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://zoux86.github.io/post/2019-11-24-%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F%E9%97%AE%E9%A2%98/" title="下载镜像问题">下载镜像问题</a>
+    </li>
+    
+    <li>
         <a href="https://zoux86.github.io/post/first/" title="开启新的博客历程">开启新的博客历程</a>
     </li>
     
@@ -160,10 +256,6 @@
         <a href="https://zoux86.github.io/post/2019-%E5%8D%8E%E4%B8%BA%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019华为面经">2019华为面经</a>
     </li>
     
-    <li>
-        <a href="https://zoux86.github.io/post/2019-%E7%94%B5%E4%BF%A1%E4%BA%91%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019电信云面经">2019电信云面经</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -175,9 +267,15 @@
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/hadoop/">hadoop (7)</a></li>
+    <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/java/">Java (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (3)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kubeflow/">kubeflow (6)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/ubuntu/">ubuntu (1)</a></li>
     
@@ -185,9 +283,13 @@
     
     <li><a href="https://zoux86.github.io/categories/vmware/">VMware (2)</a></li>
     
+    <li><a href="https://zoux86.github.io/categories/volcano/">volcano (1)</a></li>
+    
     <li><a href="https://zoux86.github.io/categories/window%E5%B7%A5%E5%85%B7/">window工具 (1)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/%E4%B8%AA%E4%BA%BA%E6%84%9F%E6%82%9F/">个人感悟 (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建 (10)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题 (2)</a></li>
     
@@ -198,15 +300,39 @@
         <h3 class="widget-title">标签</h3>
 <div class="tagcloud">
     
-    <a href="https://zoux86.github.io/tags/hadoop/">hadoop</a>
+    <a href="https://zoux86.github.io/tags/docker/">docker</a>
+    
+    <a href="https://zoux86.github.io/tags/go/">go</a>
+    
+    <a href="https://zoux86.github.io/tags/hadoop/">Hadoop</a>
     
     <a href="https://zoux86.github.io/tags/java/">Java</a>
+    
+    <a href="https://zoux86.github.io/tags/jupyter/">jupyter</a>
+    
+    <a href="https://zoux86.github.io/tags/k8s/">k8s</a>
+    
+    <a href="https://zoux86.github.io/tags/ks/">ks</a>
+    
+    <a href="https://zoux86.github.io/tags/kube-batch/">kube-batch</a>
+    
+    <a href="https://zoux86.github.io/tags/kubeflow/">kubeflow</a>
+    
+    <a href="https://zoux86.github.io/tags/nfs/">NFS</a>
+    
+    <a href="https://zoux86.github.io/tags/pipelines/">[pipelines]</a>
+    
+    <a href="https://zoux86.github.io/tags/tf-operator/">tf-operator</a>
+    
+    <a href="https://zoux86.github.io/tags/tfjob/">tfjob</a>
     
     <a href="https://zoux86.github.io/tags/ubuntu/">ubuntu</a>
     
     <a href="https://zoux86.github.io/tags/uml/">UML</a>
     
     <a href="https://zoux86.github.io/tags/vmware/">VMware</a>
+    
+    <a href="https://zoux86.github.io/tags/volcano/">volcano</a>
     
     <a href="https://zoux86.github.io/tags/window%E5%B7%A5%E5%85%B7/">window工具</a>
     
@@ -216,7 +342,17 @@
     
     <a href="https://zoux86.github.io/tags/%E6%A0%A1%E6%8B%9B/">校招</a>
     
+    <a href="https://zoux86.github.io/tags/%E6%BA%90%E7%A0%81/">源码</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/">私有仓库</a>
+    
     <a href="https://zoux86.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题</a>
+    
+    <a href="https://zoux86.github.io/tags/%E8%B0%83%E5%BA%A6/">调度</a>
+    
+    <a href="https://zoux86.github.io/tags/%E9%95%9C%E5%83%8F/">镜像</a>
     
 </div>
     </section>

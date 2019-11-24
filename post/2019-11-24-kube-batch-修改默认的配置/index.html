@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.59.1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>kube-batch 修改默认的配置 | zoux的博客</title>
+    <meta property="og:title" content="kube-batch 修改默认的配置 - zoux的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2019-04-21T20:31:20&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2019-04-21T20:31:20&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
+    <meta name="description" content="kube-batch 修改默认的配置">
+        
+    <meta name="author" content="zoux">
+    <meta property="og:url" content="https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E7%9A%84%E9%85%8D%E7%BD%AE/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+
+
+    
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zoux86.github.io/">
+                        zoux的博客
+                    </a>
+                
+                <p class="description">对Go语言(golang)、k8s、kubeflow，容器云，云原生感兴趣</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zoux86.github.io/">首页</a>
+                    
+                    <a  href="https://zoux86.github.io/tools/" title="工具">工具</a>
+                    
+                    <a  href="https://zoux86.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://zoux86.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+        
+        
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">kube-batch 修改默认的配置</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2019年4月21日
+                        </date>
+                        
+                        <div class="post-meta">
+                            <span>|</span>
+                            
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kube-batch">kube-batch</a></span>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        
+                        <div class="post-content">
+                            
+
+<p>在kube-batch V0.4及以上版本中，kube-batch默认的配置 只包含两个 Action(allocate, backfill)。</p>
+
+<p>具体可以参考：
+<a href="https://github.com/kubernetes-sigs/kube-batch/blob/6e560929dcafec91b2b9a24f246a20b4569b39a8/pkg/scheduler/util.go">https://github.com/kubernetes-sigs/kube-batch/blob/6e560929dcafec91b2b9a24f246a20b4569b39a8/pkg/scheduler/util.go</a></p>
+
+<p>在自己的需求中，我们可能需要定义自己的配置。</p>
+
+<p>思路： 查看util.go中的代码发现，Kube-batch在发现用户指定配置文件后，会自动地读取该文件的内容，而不是使用自定义的config。所以，一个想法就是，使用NFS挂载卷，先生成自己的config file。然后修改kube-batch的deployment，让他读取这个config file。</p>
+
+<p>修改方式如下：</p>
+
+<h5 id="创建pv-pvc-然后将自己的conf文件放到本地挂载的地方">创建pv,pvc,然后将自己的conf文件放到本地挂载的地方</h5>
+
+<p>pvc.yaml</p>
+
+<pre><code class="language-rust">apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kubebatch-pvc
+  namespace: kube-system   # 一定要加namespace,否则找不到
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+</code></pre>
+
+<p>pv.yaml</p>
+
+<pre><code class="language-rust">apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: kubebatch-pv
+  namespace: kube-system
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  nfs:
+    server: 192.168.14.69
+    path: /nfs-data/kube-batch
+</code></pre>
+
+<p>自定义的配置文件 kube-batch-conf.yaml</p>
+
+<pre><code class="language-rust">actions: &quot;reclaim, allocate, backfill, preempt&quot;
+tiers:
+- plugins:
+  - name: priority
+  - name: gang
+  - name: conformance
+- plugins:
+  - name: drf
+  - name: predicates
+  - name: proportion
+  - name: nodeorder
+</code></pre>
+
+<h5 id="修改kube-batch-deployment-设置volumes和-mountpath-同时args加上对应的参数">修改kube-batch deployment，设置Volumes和 mountPath，同时args加上对应的参数</h5>
+
+<p>使用kubectl edit deployment kube-batch -n kube-system 然后做以下的修改：</p>
+
+<h6 id="修改args参数">修改args参数</h6>
+
+<pre><code class="language-rust"> containers:
+      - args:
+        - --logtostderr
+        - --v
+        - &quot;3&quot;
+        - --scheduler-conf
+        - /etc/zoux/kube-batch-conf.yaml  (与下面对应)
+</code></pre>
+
+<h6 id="设置volumes和-mountpath">设置Volumes和 mountPath</h6>
+
+<pre><code class="language-rust">volumeMounts:
+        - mountPath: /etc/zoux   (换成你自己的)
+          name: kube-batch
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: kube-batch
+        persistentVolumeClaim:
+          claimName: kubebatch-pvc  （换成你自己的pvc)
+</code></pre>
+
+<h6 id="成功保存退出即可-修改后kube-batch会自动重启">成功保存退出即可。（修改后kube-batch会自动重启）</h6>
+
+<p>最后感谢義洋同学 一起讨论提供思路。</p>
+
+                        </div>
+
+                        
+
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/2019-11-24-kube-batch-%E4%BB%8E%E4%BB%A3%E7%A0%81%E4%B8%AD%E6%89%BE%E5%87%BAgang-scheduler%E8%BF%99%E4%B8%AA%E8%BF%87%E7%A8%8B/">kube-batch 从代码中找出gang scheduler这个过程</a></li>
+        
+        <li><a href="/post/2019-11-24-kube-batch-%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0gang-scheduler/">kube-batch如何实现gang-scheduler</a></li>
+        
+        <li><a href="/post/2019-11-24-kube-batch-%E7%AE%80%E4%BB%8B/">kube-batch--简介</a></li>
+        
+        <li><a href="/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B01/">k8s源码学习 - Scheduler笔记（1）</a></li>
+        
+        <li><a href="/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B02/">k8s源码学习 - Scheduler笔记（2）</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="https://zoux86.github.io/tags/kube-batch">kube-batch</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zoux86/blog"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-11-24-%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F%E9%97%AE%E9%A2%98/" title="下载镜像问题">下载镜像问题</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/first/" title="开启新的博客历程">开启新的博客历程</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E8%85%BE%E8%AE%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019腾讯校招">2019腾讯校招</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E9%98%BF%E9%87%8C%E4%BA%91%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019阿里云面经">2019阿里云面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019文远知行面经">2019文远知行面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%95%86%E6%B1%A4%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019商汤面经">2019商汤面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%BE%AE%E8%BD%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019微软面经">2019微软面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E6%B7%B1%E4%BF%A1%E6%9C%8D%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019深信服面经">2019深信服面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E7%BD%91%E6%98%93%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019网易面经">2019网易面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%8D%8E%E4%B8%BA%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019华为面经">2019华为面经</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/java/">Java (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (3)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kubeflow/">kubeflow (6)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/ubuntu/">ubuntu (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/uml/">UML (8)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/vmware/">VMware (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/volcano/">volcano (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/window%E5%B7%A5%E5%85%B7/">window工具 (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E4%B8%AA%E4%BA%BA%E6%84%9F%E6%82%9F/">个人感悟 (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建 (10)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题 (2)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="https://zoux86.github.io/tags/docker/">docker</a>
+    
+    <a href="https://zoux86.github.io/tags/go/">go</a>
+    
+    <a href="https://zoux86.github.io/tags/hadoop/">Hadoop</a>
+    
+    <a href="https://zoux86.github.io/tags/java/">Java</a>
+    
+    <a href="https://zoux86.github.io/tags/jupyter/">jupyter</a>
+    
+    <a href="https://zoux86.github.io/tags/k8s/">k8s</a>
+    
+    <a href="https://zoux86.github.io/tags/ks/">ks</a>
+    
+    <a href="https://zoux86.github.io/tags/kube-batch/">kube-batch</a>
+    
+    <a href="https://zoux86.github.io/tags/kubeflow/">kubeflow</a>
+    
+    <a href="https://zoux86.github.io/tags/nfs/">NFS</a>
+    
+    <a href="https://zoux86.github.io/tags/pipelines/">[pipelines]</a>
+    
+    <a href="https://zoux86.github.io/tags/tf-operator/">tf-operator</a>
+    
+    <a href="https://zoux86.github.io/tags/tfjob/">tfjob</a>
+    
+    <a href="https://zoux86.github.io/tags/ubuntu/">ubuntu</a>
+    
+    <a href="https://zoux86.github.io/tags/uml/">UML</a>
+    
+    <a href="https://zoux86.github.io/tags/vmware/">VMware</a>
+    
+    <a href="https://zoux86.github.io/tags/volcano/">volcano</a>
+    
+    <a href="https://zoux86.github.io/tags/window%E5%B7%A5%E5%85%B7/">window工具</a>
+    
+    <a href="https://zoux86.github.io/tags/%E5%8D%9A%E5%AE%A2/">博客</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%84%9F%E6%82%9F/">感悟</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%A0%A1%E6%8B%9B/">校招</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%BA%90%E7%A0%81/">源码</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/">私有仓库</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题</a>
+    
+    <a href="https://zoux86.github.io/tags/%E8%B0%83%E5%BA%A6/">调度</a>
+    
+    <a href="https://zoux86.github.io/tags/%E9%95%9C%E5%83%8F/">镜像</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://www.jianshu.com/u/305d8226ced4" title="个人简书主页">个人简书主页</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zoux86.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2019 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        
+        (function () {
+            $("pre code").parent().addClass("line-numbers")
+        }());
+
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+</body>
+</html>

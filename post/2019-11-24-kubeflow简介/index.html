@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.59.1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>kubeflow简介 | zoux的博客</title>
+    <meta property="og:title" content="kubeflow简介 - zoux的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2019-01-23T20:31:20&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2019-01-23T20:31:20&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
+    <meta name="description" content="kubeflow简介">
+        
+    <meta name="author" content="zoux">
+    <meta property="og:url" content="https://zoux86.github.io/post/2019-11-24-kubeflow%E7%AE%80%E4%BB%8B/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+
+
+    
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zoux86.github.io/">
+                        zoux的博客
+                    </a>
+                
+                <p class="description">对Go语言(golang)、k8s、kubeflow，容器云，云原生感兴趣</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zoux86.github.io/">首页</a>
+                    
+                    <a  href="https://zoux86.github.io/tools/" title="工具">工具</a>
+                    
+                    <a  href="https://zoux86.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://zoux86.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+        
+        
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">kubeflow简介</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2019年1月23日
+                        </date>
+                        
+                        <div class="post-meta">
+                            <span>|</span>
+                            
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kubeflow">kubeflow</a></span>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        
+                        <div class="post-content">
+                            
+
+<p>前面都是在介绍如何安装Kubeflow和pipelines，今天补一下Kubeflow的pipelines的知识，让大家知道他们是什么，能做什么。</p>
+
+<h2 id="背景">背景</h2>
+
+<p>Kubernetes 本来是一个用来管理无状态应用的容器平台，但是在近两年，有越来越多的公司用它来运行各种各样的工作负载，尤其是机器学习炼丹。各种 AI 公司或者互联网公司的 AI 部门都会尝试在 Kubernetes 上运行 TensorFlow，Caffe，MXNet 等等分布式学习的任务，这为 Kubernetes 带来了新的挑战。</p>
+
+<p>首先，分布式的机器学习任务一般会涉及参数服务器（以下称为 PS）和工作节点（以下成为 worker）两种不同的工作类型。而且不同领域的学习任务对 PS 和 worker 有不同的需求，这体现在 Kubernetes 中就是配置难的问题。以 TensorFlow 为例，TensorFlow 的分布式学习任务通常会启动多个 PS 和多个 worker，而且在 TensorFlow 提供的最佳实践中，每个 worker 和 PS 要求传入不同的命令行参数。</p>
+
+<p>其次，Kubernetes 默认的调度器对于机器学习任务的调度并不友好。如果说之前的问题只是在应用与部署阶段比较麻烦，那调度引发的资源利用率低，或者机器学习任务效率下降的问题，就格外值得关注。机器学习任务对于计算和网络的要求相对较高，一般而言所有的 worker 都会使用 GPU 进行训练，而且为了能够得到一个较好的网络支持，尽可能地同一个机器学习任务的 PS 和 worker 放在同一台机器或者网络较好的相邻机器上会降低训练所需的时间。</p>
+
+<p>针对这些问题，Kubeflow 项目应运而生，它以 TensorFlow 作为第一个支持的框架，在 Kubernetes 上定义了一个新的资源类型：TFJob，即 TensorFlow Job 的缩写。通过这样一个资源类型，使用 TensorFlow 进行机器学习训练的工程师们不再需要编写繁杂的配置，只需要按照他们对业务的理解，确定 PS 与 worker 的个数以及数据与日志的输入输出，就可以进行一次训练任务。</p>
+
+<p>一句话总结就是：kubeflow是一个为 Kubernetes 构建的可组合，便携式，可扩展的机器学习技术栈。</p>
+
+<h2 id="kubeflow核心组件简介">kubeflow核心组件简介</h2>
+
+<p>kubeflow是一个胶水项目，它把诸多对机器学习的支持，比如模型训练，超参数训练，模型部署等进行组合并已容器化的方式进行部署，提供整个流程各个系统的高可用及方便的进行扩展部署了 kubeflow的用户就可以利用它进行不同的机器学习任务。</p>
+
+<p><img src="../../resources/images/kubeflow/image5.png" alt="image5" /></p>
+
+<p>上面这个图体现了工业上机器学习的整体流程，从数据采集，验证，到模型训练再到服务发布等。而图中的每一个小组件都是Kubeflow中包含的。可见，kubeflow的野心之大，同时另一方面也表达了它的功能之强。
+下面简单介绍一下其他的组件。想要更详细的了解某个组件，可以在去官网查看。</p>
+
+<h3 id="2-1-jupyter">2.1 jupyter</h3>
+
+<p>jupyter 创建和管理多用户交互式Jupyter notebooks。</p>
+
+<h3 id="2-2-seldon">2.2 seldon</h3>
+
+<p>Seldon 提供在Kubernetes上对机器学习模型的部署</p>
+
+<h3 id="2-3-tf-serving">2.3 TF-Serving</h3>
+
+<p>TF-Serving 提供对Tensorflow模型的在线部署，支持版本控制及无需停止线上服务，切换模型等功能</p>
+
+<h3 id="2-4-ambassador">2.4 Ambassador</h3>
+
+<p>Ambassador 对外提供统一服务的网关(API Gateway)，它是一个 Kubernetes 原生的微服务 API 网关，它部署在网络边缘，将传入网络的流量路由到相应的内部服务（也被称为“南北”流量）。</p>
+
+<h3 id="2-5-istio">2.5 Istio</h3>
+
+<p>Istio 提供微服务的管理，Telemetry收集</p>
+
+<h3 id="2-6-ksonnet">2.6 Ksonnet</h3>
+
+<p>Ksonnet Kubeflow使用ksonnet来向kubernetes集群部署需要的k8s资源</p>
+
+<h3 id="2-7-pachyderm">2.7 Pachyderm</h3>
+
+<p>Pachyderm版本控制数据，类似于Git对代码的处理。 您可以跟踪一段时间内的数据状态，对历史数据进行回溯测试，与队友共享数据，以及恢复到以前的数据状态。</p>
+
+<h3 id="2-8-argo">2.8 Argo</h3>
+
+<p>Argo是一个开源的基于容器的工作流引擎，并实现为一个K8S的CRD(CustomResourceDefinition)。</p>
+
+<h3 id="2-9-pipelines">2.9 pipelines</h3>
+
+<p>pipelines是 Kubeflow 社区新近开源的端到端的 ML/DL 工作流系统。实现了一个工作流模型。所谓工作流，或者称之为流水线（pipeline），可以将其当做一个有向无环图（DAG）。其中的每一个节点，在 kubeflow/pipelines 的语义下被称作组件（component）。组件在图中作为一个节点，其会处理真正的逻辑，比如预处理，数据清洗，模型训练等等。每一个组件负责的功能不同，但有一个共同点，即组件都是以 Docker 镜像的方式被打包，以容器的方式被运行的。</p>
+
+<h3 id="2-10-katib">2.10 Katib</h3>
+
+<p>Katib是一个超参数训练系统。它是对 Google Vizier 的开源实现，Google Vizier 是 Google 内部的机器学习超参数训练系统的一个子系统。</p>
+
+<h3 id="2-11支持的机器学习引擎">2.11支持的机器学习引擎</h3>
+
+<p>PyTorch,MXnet,TF。TF为当前主要支持的机器学习引擎</p>
+
+<p><strong>全部组件</strong>：<a href="https://www.kubeflow.org/docs/guides/components/components/">https://www.kubeflow.org/docs/guides/components/components/</a></p>
+
+<h2 id="3-pipelines组件介绍">3 pipelines组件介绍</h2>
+
+<h3 id="3-1-pipelines设计时的目标">3.1 Pipelines设计时的目标：</h3>
+
+<p>（1）端到端编排：启用和简化端到端机器学习管道的编排</p>
+
+<p>（2）简单的实验：让您轻松尝试各种想法和技术，并管理您的各种试验/实验。</p>
+
+<p>（3）易于重复使用：使您能够重复使用组件和管道，快速拼凑端到端解决方案，而无需每次都重新构建。</p>
+
+<h3 id="3-2-pipelines的组成部分">3.2 pipelines的组成部分</h3>
+
+<p>pipelines整个的架构可以分为五个部分，分别是:</p>
+
+<p>（1）ScheduledWorkflow CRD以及其 operator</p>
+
+<p>（2） 流水线前端</p>
+
+<p>（3） 流水线后端</p>
+
+<p>（4）Python SDK</p>
+
+<p>（5）persistence agent</p>
+
+<p>ScheduledWorkflow CRD 扩展了 argoproj/argo 的 Workflow 定义，这也是流水线项目中的核心部分，它负责真正地在 Kubernetes 上按照拓扑序创建出对应的容器完成流水线的逻辑。</p>
+
+<p>Python SDK 负责构造出流水线，并且根据流水线构造出 ScheduledWorkflow 的 YAML 定义，随后将其作为参数传递给流水线系统的后端服务。</p>
+
+<p>后端服务依赖关系存储数据库（如 MySQL）和对象存储（如 Amazon S3），处理所有流水线中的 CRUD 请求。</p>
+
+<p>前端负责可视化整个流水线的过程，以及获取日志，发起新的运行等</p>
+
+<p>Persistence agent 负责把数据从 Kubernetes Master 的 etcd 中 sync 到后端服务的关系型数据库中，其实现的方式与 CRD operator 类似，通过 informer 来监听 Kubernetes apiserver 对应资源实现。</p>
+
+<p>pipelines的结构图如下所示：</p>
+
+<p><img src="../../resources/images/kubeflow/image6.png" alt="image6" /></p>
+
+<h3 id="3-3-piplelines中的概念">3.3 piplelines中的概念</h3>
+
+<p><a href="https://www.kubeflow.org/docs/guides/pipelines/pipelines-concepts/">https://www.kubeflow.org/docs/guides/pipelines/pipelines-concepts/</a></p>
+
+<h3 id="3-4-pipelines示例">3.4 pipelines示例</h3>
+
+<p><a href="https://www.kubeflow.org/docs/guides/pipelines/pipelines-overview/">https://www.kubeflow.org/docs/guides/pipelines/pipelines-overview/</a></p>
+
+<h3 id="3-5-运行pipelines步骤">3.5 运行pipelines步骤</h3>
+
+<p>1) 定义一个Experiment（具体pipeline的运行需要一个Experiment）</p>
+
+<p>2) 定义一个pipeline</p>
+
+<p>3) 执行该pipeline</p>
+
+<p>参考：</p>
+
+<p><a href="https://github.com/kubeflow/pipelines/blob/master/samples/notebooks/KubeFlow%20Pipeline%20Using%20TFX%20OSS%20Components.ipynb">https://github.com/kubeflow/pipelines/blob/master/samples/notebooks/KubeFlow%20Pipeline%20Using%20TFX%20OSS%20Components.ipynb</a></p>
+
+                        </div>
+
+                        
+
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/2019-11-24-kubeflow-pipelines-%E4%BD%BF%E7%94%A8ui%E7%95%8C%E9%9D%A2/">kubeflow pipelines--使用UI界面</a></li>
+        
+        <li><a href="/post/2019-11-24-kubeflow-pipelines-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/">kubeflow pipelines--国内环境安装</a></li>
+        
+        <li><a href="/post/2019-11-24-kubeflow-pipelines-%E6%9C%AC%E5%9C%B0%E8%BF%90%E8%A1%8C%E5%AE%98%E6%96%B9ml-%E5%AE%9E%E4%BE%8B/">kubeflow pipelines--本地运行官方ML-实例</a></li>
+        
+        <li><a href="/post/2019-11-24-kubeflow-%E4%BD%BF%E7%94%A8%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/">kubeflow使用图像界面</a></li>
+        
+        <li><a href="/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-nfs%E5%81%9A%E5%90%8E%E7%AB%AF%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/">kubeflow准备--NFS环境搭建</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="https://zoux86.github.io/tags/kubeflow">kubeflow</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zoux86/blog"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-11-24-%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F%E9%97%AE%E9%A2%98/" title="下载镜像问题">下载镜像问题</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/first/" title="开启新的博客历程">开启新的博客历程</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E8%85%BE%E8%AE%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019腾讯校招">2019腾讯校招</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E9%98%BF%E9%87%8C%E4%BA%91%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019阿里云面经">2019阿里云面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019文远知行面经">2019文远知行面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%95%86%E6%B1%A4%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019商汤面经">2019商汤面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%BE%AE%E8%BD%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019微软面经">2019微软面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E6%B7%B1%E4%BF%A1%E6%9C%8D%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019深信服面经">2019深信服面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E7%BD%91%E6%98%93%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019网易面经">2019网易面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%8D%8E%E4%B8%BA%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019华为面经">2019华为面经</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/java/">Java (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (3)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kubeflow/">kubeflow (6)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/ubuntu/">ubuntu (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/uml/">UML (8)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/vmware/">VMware (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/volcano/">volcano (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/window%E5%B7%A5%E5%85%B7/">window工具 (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E4%B8%AA%E4%BA%BA%E6%84%9F%E6%82%9F/">个人感悟 (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建 (10)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题 (2)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="https://zoux86.github.io/tags/docker/">docker</a>
+    
+    <a href="https://zoux86.github.io/tags/go/">go</a>
+    
+    <a href="https://zoux86.github.io/tags/hadoop/">Hadoop</a>
+    
+    <a href="https://zoux86.github.io/tags/java/">Java</a>
+    
+    <a href="https://zoux86.github.io/tags/jupyter/">jupyter</a>
+    
+    <a href="https://zoux86.github.io/tags/k8s/">k8s</a>
+    
+    <a href="https://zoux86.github.io/tags/ks/">ks</a>
+    
+    <a href="https://zoux86.github.io/tags/kube-batch/">kube-batch</a>
+    
+    <a href="https://zoux86.github.io/tags/kubeflow/">kubeflow</a>
+    
+    <a href="https://zoux86.github.io/tags/nfs/">NFS</a>
+    
+    <a href="https://zoux86.github.io/tags/pipelines/">[pipelines]</a>
+    
+    <a href="https://zoux86.github.io/tags/tf-operator/">tf-operator</a>
+    
+    <a href="https://zoux86.github.io/tags/tfjob/">tfjob</a>
+    
+    <a href="https://zoux86.github.io/tags/ubuntu/">ubuntu</a>
+    
+    <a href="https://zoux86.github.io/tags/uml/">UML</a>
+    
+    <a href="https://zoux86.github.io/tags/vmware/">VMware</a>
+    
+    <a href="https://zoux86.github.io/tags/volcano/">volcano</a>
+    
+    <a href="https://zoux86.github.io/tags/window%E5%B7%A5%E5%85%B7/">window工具</a>
+    
+    <a href="https://zoux86.github.io/tags/%E5%8D%9A%E5%AE%A2/">博客</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%84%9F%E6%82%9F/">感悟</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%A0%A1%E6%8B%9B/">校招</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%BA%90%E7%A0%81/">源码</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/">私有仓库</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题</a>
+    
+    <a href="https://zoux86.github.io/tags/%E8%B0%83%E5%BA%A6/">调度</a>
+    
+    <a href="https://zoux86.github.io/tags/%E9%95%9C%E5%83%8F/">镜像</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://www.jianshu.com/u/305d8226ced4" title="个人简书主页">个人简书主页</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zoux86.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2019 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        
+        (function () {
+            $("pre code").parent().addClass("line-numbers")
+        }());
+
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+</body>
+</html>

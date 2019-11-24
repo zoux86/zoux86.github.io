@@ -71,24 +71,24 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/uml%E7%BB%84%E5%90%88%E7%BB%93%E6%9E%84%E5%9B%BE/" title="UML组合结构图介绍" >UML组合结构图介绍</a>
+                                    <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/" title="kube-batch--启动过程" >kube-batch--启动过程</a>
                                 </h1>
                             </header>
                             <date class="post-meta meta-date">
-                                2018年10月17日
+                                2019年3月25日
                             </date>
                             
                             <div class="post-meta">
                                 <span>|</span>
                                 
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/uml">UML</a></span>
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kube-batch">kube-batch</a></span>
                                 
                             </div>
                             
                             <div class="post-content">
-                                https://blog.csdn.net/litianxiang_kaola/article/details/53969322……
+                                追踪整个代码跳过过程 cmd/kube-batch/main.go:39 main -&gt; cmd/kube-batch/main.go:53 app.Run cmd/kube-batch/app/server.go:60 Run -&gt; cmd/kube-batch/app/server.go:86 sched.Run cmd/kube-batch/app/server.go:86 sched.Run-&gt; pkg/scheduler/scheduler.go:59 cmd/kube-batch/app/server.go:59 sched.Run-&gt; pkg/scheduler/scheduler.runOnce:84 cmd/kube-batch/app/server.go:59 行代码 func (pc *Scheduler) Run(stopCh &lt;-chan struct{}) { var err error // Start cache for policy. go pc.cache.Run(stopCh) pc.cache.WaitForCacheSync(stopCh) // Load configuration of scheduler schedConf := defaultSchedulerConf if len(pc.schedulerConf) != 0 { if schedConf, err = readSchedulerConf(pc.schedulerConf); err != nil { glog.Errorf(&quot;Failed to read scheduler configuration '%s', using default configuration: %v&quot;, pc.schedulerConf, err) schedConf = defaultSchedulerConf } } pc.actions, pc.plugins, err = loadSchedulerConf(schedConf) if err != nil { panic(err) } // 这里又开始周期性调用 runOnce了。开始调用 go wait.Until(pc.runOnce, pc.schedulePeriod, stopCh) } cmd/kube-batch/app/server.go:84 行代码 func (pc *Scheduler) runOnce() { glog.V(4).Infof(&quot;Start scheduling ...&quot;)……
                             </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/uml%E7%BB%84%E5%90%88%E7%BB%93%E6%9E%84%E5%9B%BE/">阅读全文</a></p>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/">阅读全文</a></p>
                         </article>
                     
                     
@@ -96,11 +96,36 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/%E7%AE%97%E6%B3%95-%E6%95%B0%E5%AD%97%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97/" title="算法 ： 数字转罗马数字" >算法 ： 数字转罗马数字</a>
+                                    <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E7%AE%80%E4%BB%8B/" title="kube-batch--简介" >kube-batch--简介</a>
                                 </h1>
                             </header>
                             <date class="post-meta meta-date">
-                                2018年10月14日
+                                2019年3月25日
+                            </date>
+                            
+                            <div class="post-meta">
+                                <span>|</span>
+                                
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kube-batch">kube-batch</a></span>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                1.背景介绍 K8s本身的调度器具有一些缺陷： （1） 默认的调度器是以 pod 为粒度的，对机器学习任务很不利。 （2）默认的调度器无法提供队列调度的功能 2.kube-batch介绍 Kube-batch 目前是 Kubernetes SIGs 旗下的一个孵化项目，是一个运行在 Kubernetes 上面向机器学习 / 大数据 /HPC 的批调度器（batch scheduler）……
+                            </div>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E7%AE%80%E4%BB%8B/">阅读全文</a></p>
+                        </article>
+                    
+                    
+		    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/%E9%93%BE%E8%A1%A8%E5%B8%B8%E8%80%83%E7%82%B9/" title="链表常考点" >链表常考点</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2019年3月8日
                             </date>
                             
                             <div class="post-meta">
@@ -111,9 +136,9 @@
                             </div>
                             
                             <div class="post-content">
-                                https://www.cnblogs.com/masterlibin/p/5531399.html……
+                                最近一口气刷完了Leetcode上链表专栏下的所有题。有好几题非常有意思，记录一下： 感觉链表的题，大部分都是考察细心的题。你定义好的遍历指针，一定要细心的检查当它遍历时，它的子节点正确赋值，同时要非常注意链表指针非空的情况。 寻找链表的倒数第K个，或者类似的题目。类似的比如：输出链……
                             </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/%E7%AE%97%E6%B3%95-%E6%95%B0%E5%AD%97%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97/">阅读全文</a></p>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/%E9%93%BE%E8%A1%A8%E5%B8%B8%E8%80%83%E7%82%B9/">阅读全文</a></p>
                         </article>
                     
                     
@@ -121,24 +146,24 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/java%E4%B9%8Bstringstringbufferstringbuilder/" title="Java之String、StringBuffer、StringBuilder" >Java之String、StringBuffer、StringBuilder</a>
+                                    <a href="https://zoux86.github.io/post/2019-11-24-%E6%90%AD%E5%BB%BAk8s%E9%9B%86%E7%BE%A4/" title="ubuntu搭建k8s机器" >ubuntu搭建k8s机器</a>
                                 </h1>
                             </header>
                             <date class="post-meta meta-date">
-                                2018年10月13日
+                                2019年3月5日
                             </date>
                             
                             <div class="post-meta">
                                 <span>|</span>
                                 
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/java">Java</a></span>
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a></span>
                                 
                             </div>
                             
                             <div class="post-content">
-                                String： String类是final修饰的，是不可变的。我们看到的例如: String a = &ldquo;hello&rdquo;; a = a + &ldquo;1&rdquo;; 实际上是先生成了一个对象然后得到结果&rdquo;hello1&rdquo;,最后在赋值给对象a; String 类型的任何改动都是先生成一个其他对象再重新赋值。 所以String类适合那种常量或者基本……
+                                本次在搭建k8s集群的过程中，遇到了很多问题，幸好最后终于成功。故将整个过程记录下来，希望对大家有所帮助。 环境说明 环境：4台ubuntu16.04 1个master 3个node k8s版本：V1.13.2 搭建说明 本教程采用kubeadm的方式安装，主要针对的是国内用户，因为安装k8s……
                             </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/java%E4%B9%8Bstringstringbufferstringbuilder/">阅读全文</a></p>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-%E6%90%AD%E5%BB%BAk8s%E9%9B%86%E7%BE%A4/">阅读全文</a></p>
                         </article>
                     
                     
@@ -146,24 +171,24 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/window%E4%B8%8B%E4%BD%BF%E7%94%A8nc/" title="window下使用nc" >window下使用nc</a>
+                                    <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%9E%E4%BE%8B/" title="kubeflow pipelines--实现自己的实例" >kubeflow pipelines--实现自己的实例</a>
                                 </h1>
                             </header>
                             <date class="post-meta meta-date">
-                                2018年9月21日
+                                2019年2月1日
                             </date>
                             
                             <div class="post-meta">
                                 <span>|</span>
                                 
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/window%E5%B7%A5%E5%85%B7">window工具</a></span>
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kubeflow">kubeflow</a></span>
                                 
                             </div>
                             
                             <div class="post-content">
-                                下载netcat 地址：https://eternallybored.org/misc/netcat/ 下载1.12，1.11都行。 安裝nc 将解压后的单个文件全部拷贝到C:\Windows\System32的文件夹下 Tips：注意不是拷贝整个文件夹，而是文件夹里面的全部文件。 使用nc……
+                                上篇文章实现了运行系统给出的pipelines实例。通过挂载自己的卷，以及使用自己的镜像总算可以运行官方给的ML实例了。但是我们的最终目的是运行自己的ML程序。 接下来是实现自己的pipelines实例。 根据官方文档的建议： https://www.kubeflow.org/docs/pipelines/sdk/build-component/](https://www.kubeflow.org/docs/pipelines/sdk/build-component/) 实现自己的ML实例，总共有两点： （1）Client code （在……
                             </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/window%E4%B8%8B%E4%BD%BF%E7%94%A8nc/">阅读全文</a></p>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%9E%E4%BE%8B/">阅读全文</a></p>
                         </article>
                     
                     
@@ -171,24 +196,24 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/uml%E5%AF%B9%E8%B1%A1%E5%9B%BE/" title="UML对象图" >UML对象图</a>
+                                    <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E4%BD%BF%E7%94%A8ui%E7%95%8C%E9%9D%A2/" title="kubeflow pipelines--使用UI界面" >kubeflow pipelines--使用UI界面</a>
                                 </h1>
                             </header>
                             <date class="post-meta meta-date">
-                                2018年9月8日
+                                2019年1月23日
                             </date>
                             
                             <div class="post-meta">
                                 <span>|</span>
                                 
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/uml">UML</a></span>
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kubeflow">kubeflow</a></span>
                                 
                             </div>
                             
                             <div class="post-content">
-                                话不多说，开门见山！先看目录 （1）什么是对象图 （2）对象图作用 （3）对象图的核心概念 （4）如果快速分辨出对象图 什么是对象图 对象图：描述的是 某个特定时刻 类的具体实例 以及 它们如何联系起来等相关信息。 对象图的作用 在分析和设计阶段创建；捕获实例和连接；捕获交互的静态部分；举例说明数据/对……
+                                前面的文章已经安装好了pipelines，接下来是体验如何使用pipelines了。 这是官网的图，进入Pipelines的图形界面就会出现这个。 但是官网给出的都是怎样在gcp上使用图形界面。所以怎么在自己本地集群使用Pipelines图形界面还得靠自己摸索。 既然我们都装好pipe……
                             </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/uml%E5%AF%B9%E8%B1%A1%E5%9B%BE/">阅读全文</a></p>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E4%BD%BF%E7%94%A8ui%E7%95%8C%E9%9D%A2/">阅读全文</a></p>
                         </article>
                     
                     
@@ -196,24 +221,24 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/uml-%E4%BA%A4%E4%BA%92%E6%A6%82%E8%BF%B0%E5%9B%BE/" title="UML交互概述图" >UML交互概述图</a>
+                                    <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/" title="kubeflow pipelines--国内环境安装" >kubeflow pipelines--国内环境安装</a>
                                 </h1>
                             </header>
                             <date class="post-meta meta-date">
-                                2018年8月22日
+                                2019年1月23日
                             </date>
                             
                             <div class="post-meta">
                                 <span>|</span>
                                 
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/uml">UML</a></span>
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kubeflow">kubeflow</a></span>
                                 
                             </div>
                             
                             <div class="post-content">
-                                参考文章： https://www.cnblogs.com/finehappy/archive/2009/11/28/1612774.html……
+                                在前面的教程中，我们已经搭建好了本地的kubeflow集群，接下来因为个人需要，本人需要再在此基础上搭建好kubeflow pipelines. 首先需要了解pipelines是什么，能做什么，具体可以参考官网描述： https://www.kubeflow.org/docs/pipelines/pipelines-overview/ 从V0.1.3开始，Kubeflow Pipelines成为Kubeflow核心组件之……
                             </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/uml-%E4%BA%A4%E4%BA%92%E6%A6%82%E8%BF%B0%E5%9B%BE/">阅读全文</a></p>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/">阅读全文</a></p>
                         </article>
                     
                     
@@ -221,24 +246,24 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/uml14%E7%A7%8D%E5%9B%BE%E6%A6%82%E8%BF%B0/" title="UML14种图概述" >UML14种图概述</a>
+                                    <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E6%9C%AC%E5%9C%B0%E8%BF%90%E8%A1%8C%E5%AE%98%E6%96%B9ml-%E5%AE%9E%E4%BE%8B/" title="kubeflow pipelines--本地运行官方ML-实例" >kubeflow pipelines--本地运行官方ML-实例</a>
                                 </h1>
                             </header>
                             <date class="post-meta meta-date">
-                                2018年8月21日
+                                2019年1月23日
                             </date>
                             
                             <div class="post-meta">
                                 <span>|</span>
                                 
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/uml">UML</a></span>
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kubeflow">kubeflow</a></span>
                                 
                             </div>
                             
                             <div class="post-content">
-                                话不多说，开门见山！ UML 的核心是图表，这些图归类为结构图和行为图。 网上还经常看见一种分法，分为静态图，动态图。这只是从建模方式角度给这14种图分类。 静态建模：侧重描述一个系统的静态特征 动态间模：侧重描述系统的行为 所以了解这俩种建模很容易就能区别哪些是静态图，哪些是动态图。……
+                                在上面的文章中，我成功运行了pipelines的简单实例。这个简单的例子没有文件的操作，但是这肯定不符合我们的要求，所以接下来介绍如何运行官网的ML 例子。 这次试用的例子是：KubeFlow pipeline using TFX OSS components 准备工作 由于这个例子使用的镜像，文件都是某歌的，所以我们要想办法把他弄到自己服务器……
                             </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/uml14%E7%A7%8D%E5%9B%BE%E6%A6%82%E8%BF%B0/">阅读全文</a></p>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E6%9C%AC%E5%9C%B0%E8%BF%90%E8%A1%8C%E5%AE%98%E6%96%B9ml-%E5%AE%9E%E4%BE%8B/">阅读全文</a></p>
                         </article>
                     
                     
@@ -246,24 +271,24 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/uml%E6%9E%84%E4%BB%B6%E5%9B%BE/" title="UML构件图介绍" >UML构件图介绍</a>
+                                    <a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E7%AE%80%E4%BB%8B/" title="kubeflow简介" >kubeflow简介</a>
                                 </h1>
                             </header>
                             <date class="post-meta meta-date">
-                                2018年8月21日
+                                2019年1月23日
                             </date>
                             
                             <div class="post-meta">
                                 <span>|</span>
                                 
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/uml">UML</a></span>
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kubeflow">kubeflow</a></span>
                                 
                             </div>
                             
                             <div class="post-content">
-                                话不多说，开门见山！看见一篇介绍非常好的UML构件图，直接引用。 https://www.cnblogs.com/finehappy/archive/2009/11/24/1609352.html……
+                                前面都是在介绍如何安装Kubeflow和pipelines，今天补一下Kubeflow的pipelines的知识，让大家知道他们是什么，能做什么。 背景 Kubernetes 本来是一个用来管理无状态应用的容器平台，但是在近两年，有越来越多的公司用它来运行各种各样的工作负载，尤其是机器学习炼丹。各种 AI 公……
                             </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/uml%E6%9E%84%E4%BB%B6%E5%9B%BE/">阅读全文</a></p>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E7%AE%80%E4%BB%8B/">阅读全文</a></p>
                         </article>
                     
                     
@@ -271,49 +296,24 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/uml%E7%B1%BB%E5%9B%BE%E4%BB%8B%E7%BB%8D/" title="UML类图介绍" >UML类图介绍</a>
+                                    <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-%E4%BD%BF%E7%94%A8%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/" title="kubeflow使用图像界面" >kubeflow使用图像界面</a>
                                 </h1>
                             </header>
                             <date class="post-meta meta-date">
-                                2018年8月21日
+                                2019年1月9日
                             </date>
                             
                             <div class="post-meta">
                                 <span>|</span>
                                 
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/uml">UML</a></span>
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kubeflow">kubeflow</a></span>
                                 
                             </div>
                             
                             <div class="post-content">
-                                话不多说，开门见山！ 写类图之前看见一篇写的很好的文章，所以直接引用推荐。 https://www.cnblogs.com/shindo/p/5579191.html 关键知识点： （1）类自身属性 （2）类自身方法 （3）类与类的关系 其中类与类之间有依赖、关联、聚合，组合，继承，接口实现六种方法。下面说一下个人对这几种方法的看法，可以方便大家理解。 六种方法可以分为三类，方便理……
+                                按照前几篇文章搭建好Kubeflow集群后，所有的pod都能运行了。但是在自己本地浏览器访问界面时却发现网页一直打不开。访问不了jupyter。这样因为默认的这些服务都是使用cluster ip。只能集群内部访问，外网访问不了。 解决方法： 查看当前的服务 kubectl -n kubeflow get svc 如图所示，这里注意，……
                             </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/uml%E7%B1%BB%E5%9B%BE%E4%BB%8B%E7%BB%8D/">阅读全文</a></p>
-                        </article>
-                    
-                    
-		    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/ubuntu%E4%BF%A9%E5%8F%B0%E6%9C%BA%E5%99%A8%E4%B9%8B%E9%97%B4%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/" title="ubuntu俩台机器之间免密登录" >ubuntu俩台机器之间免密登录</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2018年7月17日
-                            </date>
-                            
-                            <div class="post-meta">
-                                <span>|</span>
-                                
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/ubuntu">ubuntu</a></span>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                1.首先使用 ipconfig 命令查看俩台电脑的ip地址 图中的192.168.111.136 就是这个机器的ip地址。 2.安装ssh 使用 ps -e | grep ssh 命令查看是否安装了ssh。没有的话，使用 sudo apt-get install openssh-server命令安装即可。 3.生成A机器的公钥 输入ssh-keygen，然后一路回车下去。……
-                            </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/ubuntu%E4%BF%A9%E5%8F%B0%E6%9C%BA%E5%99%A8%E4%B9%8B%E9%97%B4%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">阅读全文</a></p>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-%E4%BD%BF%E7%94%A8%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/">阅读全文</a></p>
                         </article>
                     
                     
@@ -349,6 +349,14 @@
         <a href="https://zoux86.github.io/page/5/">5</a>
     </li>
     
+    <li >
+        <a href="https://zoux86.github.io/page/6/">6</a>
+    </li>
+    
+    <li >
+        <a href="https://zoux86.github.io/page/7/">7</a>
+    </li>
+    
 
     
     <li class="next">
@@ -375,6 +383,10 @@
     <section class="widget">
         <h3 class="widget-title">最近文章</h3>
 <ul class="widget-list">
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-11-24-%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F%E9%97%AE%E9%A2%98/" title="下载镜像问题">下载镜像问题</a>
+    </li>
     
     <li>
         <a href="https://zoux86.github.io/post/first/" title="开启新的博客历程">开启新的博客历程</a>
@@ -412,10 +424,6 @@
         <a href="https://zoux86.github.io/post/2019-%E5%8D%8E%E4%B8%BA%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019华为面经">2019华为面经</a>
     </li>
     
-    <li>
-        <a href="https://zoux86.github.io/post/2019-%E7%94%B5%E4%BF%A1%E4%BA%91%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019电信云面经">2019电信云面经</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -427,9 +435,15 @@
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/hadoop/">hadoop (7)</a></li>
+    <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/java/">Java (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (3)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kubeflow/">kubeflow (6)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/ubuntu/">ubuntu (1)</a></li>
     
@@ -437,9 +451,13 @@
     
     <li><a href="https://zoux86.github.io/categories/vmware/">VMware (2)</a></li>
     
+    <li><a href="https://zoux86.github.io/categories/volcano/">volcano (1)</a></li>
+    
     <li><a href="https://zoux86.github.io/categories/window%E5%B7%A5%E5%85%B7/">window工具 (1)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/%E4%B8%AA%E4%BA%BA%E6%84%9F%E6%82%9F/">个人感悟 (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建 (10)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题 (2)</a></li>
     
@@ -450,15 +468,39 @@
         <h3 class="widget-title">标签</h3>
 <div class="tagcloud">
     
-    <a href="https://zoux86.github.io/tags/hadoop/">hadoop</a>
+    <a href="https://zoux86.github.io/tags/docker/">docker</a>
+    
+    <a href="https://zoux86.github.io/tags/go/">go</a>
+    
+    <a href="https://zoux86.github.io/tags/hadoop/">Hadoop</a>
     
     <a href="https://zoux86.github.io/tags/java/">Java</a>
+    
+    <a href="https://zoux86.github.io/tags/jupyter/">jupyter</a>
+    
+    <a href="https://zoux86.github.io/tags/k8s/">k8s</a>
+    
+    <a href="https://zoux86.github.io/tags/ks/">ks</a>
+    
+    <a href="https://zoux86.github.io/tags/kube-batch/">kube-batch</a>
+    
+    <a href="https://zoux86.github.io/tags/kubeflow/">kubeflow</a>
+    
+    <a href="https://zoux86.github.io/tags/nfs/">NFS</a>
+    
+    <a href="https://zoux86.github.io/tags/pipelines/">[pipelines]</a>
+    
+    <a href="https://zoux86.github.io/tags/tf-operator/">tf-operator</a>
+    
+    <a href="https://zoux86.github.io/tags/tfjob/">tfjob</a>
     
     <a href="https://zoux86.github.io/tags/ubuntu/">ubuntu</a>
     
     <a href="https://zoux86.github.io/tags/uml/">UML</a>
     
     <a href="https://zoux86.github.io/tags/vmware/">VMware</a>
+    
+    <a href="https://zoux86.github.io/tags/volcano/">volcano</a>
     
     <a href="https://zoux86.github.io/tags/window%E5%B7%A5%E5%85%B7/">window工具</a>
     
@@ -468,7 +510,17 @@
     
     <a href="https://zoux86.github.io/tags/%E6%A0%A1%E6%8B%9B/">校招</a>
     
+    <a href="https://zoux86.github.io/tags/%E6%BA%90%E7%A0%81/">源码</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/">私有仓库</a>
+    
     <a href="https://zoux86.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题</a>
+    
+    <a href="https://zoux86.github.io/tags/%E8%B0%83%E5%BA%A6/">调度</a>
+    
+    <a href="https://zoux86.github.io/tags/%E9%95%9C%E5%83%8F/">镜像</a>
     
 </div>
     </section>

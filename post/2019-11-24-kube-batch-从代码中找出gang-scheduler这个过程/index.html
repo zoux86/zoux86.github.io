@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.59.1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>kube-batch 从代码中找出gang scheduler这个过程 | zoux的博客</title>
+    <meta property="og:title" content="kube-batch 从代码中找出gang scheduler这个过程 - zoux的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2019-04-14T20:31:20&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2019-04-14T20:31:20&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
+    <meta name="description" content="kube-batch 从代码中找出gang scheduler这个过程">
+        
+    <meta name="author" content="zoux">
+    <meta property="og:url" content="https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BB%8E%E4%BB%A3%E7%A0%81%E4%B8%AD%E6%89%BE%E5%87%BAgang-scheduler%E8%BF%99%E4%B8%AA%E8%BF%87%E7%A8%8B/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+
+
+    
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zoux86.github.io/">
+                        zoux的博客
+                    </a>
+                
+                <p class="description">对Go语言(golang)、k8s、kubeflow，容器云，云原生感兴趣</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zoux86.github.io/">首页</a>
+                    
+                    <a  href="https://zoux86.github.io/tools/" title="工具">工具</a>
+                    
+                    <a  href="https://zoux86.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://zoux86.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+        
+        
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">kube-batch 从代码中找出gang scheduler这个过程</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2019年4月14日
+                        </date>
+                        
+                        <div class="post-meta">
+                            <span>|</span>
+                            
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kube-batch">kube-batch</a></span>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        
+                        <div class="post-content">
+                            
+
+<p>从之前的分析中，已经知道了kube-batch的启动过程。kube-batch总共有4个过程。这里我们从Allocate开始。</p>
+
+<h3 id="目录">目录：</h3>
+
+<p>一： 流程解释</p>
+
+<p>二：代码说明</p>
+
+<h4 id="一-流程解释">一： 流程解释</h4>
+
+<p>在allocate.go中：找到Execute函数。首先用文字解释一下整个的过程：</p>
+
+<p>（1）将kube-batch的job放入对应的队列。这是一个具有优先级的队列。</p>
+
+<p>（2）依次遍历这些队列，如果为空就跳过</p>
+
+<p>（3）如果不为空，依次从队列中pop出一个job.即接下来要调度这个job</p>
+
+<p>（4）取出这个job对应的所有Tasks(即要绑定的pod),对每个task进行假绑定,这里的假绑定意思是 只是更新task的状态，先记录pod绑定在哪个节点上。当达到JobReady时，进行真正的绑定。这样就实现了一次性绑定了好几个Pod.</p>
+
+<p>（5）更新job的信息，将pod重新加入队列。跳出循环，再次进行调度。</p>
+
+<p>对上面流程有两个地方需要再解释一下:</p>
+
+<p>(1) jobReady 作用是什么，gang scheduler和这个有什么关系？</p>
+
+<p>allocate每次都是对task进行假绑定。jobReady是一个信号。表示现在可以进行真正的绑定了。</p>
+
+<p>在gang.go的75行，实现了这个接口：</p>
+
+<pre><code class="language-rust">func jobReady(obj interface{}) bool {
+	job := obj.(*api.JobInfo)
+
+	occupied := readyTaskNum(job)
+
+	return occupied &gt;= job.MinAvailable
+}
+</code></pre>
+
+<p>可以看出来，gang scheduler中 就是通过数量上的判断来进行限制的。job.MinAvailable这个是podgroup的minNumber数量。这样就使得每次调度的时候，只有当MinAvailable个task准备好了之后。才会进行调度，从而达到gang scheduler的效果。</p>
+
+<p>（2）为什么job还要重新加入队列。这个job不是已经调度了吗？</p>
+
+<p>因为有可能job的Tasks数量会多于 job.MinAvailable。例如，一个job有8个task，但是它指定的podgroup的 minNumber=4。这样调度时会首先调度4个task.当真正绑定之后。剩余没绑定的4个task是一个新的job.所有需要重新加入队列。</p>
+
+<h4 id="二-代码说明">二：代码说明</h4>
+
+<pre><code class="language-rust">func (alloc *allocateAction) Execute(ssn *framework.Session) {
+	glog.V(3).Infof(&quot;Enter Allocate ...&quot;)
+	defer glog.V(3).Infof(&quot;Leaving Allocate ...&quot;)
+
+	// 这是优先级队列，即队列里面的内容是有优先级的
+	queues := util.NewPriorityQueue(ssn.QueueOrderFn)
+	jobsMap := map[api.QueueID]*util.PriorityQueue{}
+
+	//首先将所有的kube-batch job放入
+	for _, job := range ssn.Jobs {
+		if queue, found := ssn.Queues[job.Queue]; found {
+			queues.Push(queue)
+		} else {
+			glog.Warningf(&quot;Skip adding Job &lt;%s/%s&gt; because its queue %s is not found&quot;,
+				job.Namespace, job.Name, job.Queue)
+			continue
+		}
+
+		if _, found := jobsMap[job.Queue]; !found {
+			jobsMap[job.Queue] = util.NewPriorityQueue(ssn.JobOrderFn)
+		}
+
+		glog.V(4).Infof(&quot;Added Job &lt;%s/%s&gt; into Queue &lt;%s&gt;&quot;, job.Namespace, job.Name, job.Queue)
+		jobsMap[job.Queue].Push(job)
+	}
+
+	glog.V(3).Infof(&quot;Try to allocate resource to %d Queues&quot;, len(jobsMap))
+
+	pendingTasks := map[api.JobID]*util.PriorityQueue{}
+
+	for {
+		if queues.Empty() {
+			break
+		}
+		// 从第一个队列开始寻找是否有job需要调度
+		queue := queues.Pop().(*api.QueueInfo)
+		if ssn.Overused(queue) {
+			glog.V(3).Infof(&quot;Queue &lt;%s&gt; is overused, ignore it.&quot;, queue.Name)
+			continue
+		}
+
+		jobs, found := jobsMap[queue.UID]
+
+		glog.V(3).Infof(&quot;Try to allocate resource to Jobs in Queue &lt;%v&gt;&quot;, queue.Name)
+
+		if !found || jobs.Empty() {
+			glog.V(4).Infof(&quot;Can not find jobs for queue %s.&quot;, queue.Name)
+			continue
+		}
+		
+		// 从队列中依次弹出job进行调度
+		job := jobs.Pop().(*api.JobInfo)
+		if _, found := pendingTasks[job.UID]; !found {
+			tasks := util.NewPriorityQueue(ssn.TaskOrderFn)
+			for _, task := range job.TaskStatusIndex[api.Pending] {
+				// Skip BestEffort task in 'allocate' action.
+				if task.Resreq.IsEmpty() {
+					glog.V(4).Infof(&quot;Task &lt;%v/%v&gt; is BestEffort task, skip it.&quot;,
+						task.Namespace, task.Name)
+					continue
+				}
+
+				tasks.Push(task)
+			}
+			pendingTasks[job.UID] = tasks
+		}
+		tasks := pendingTasks[job.UID]
+
+		glog.V(3).Infof(&quot;Try to allocate resource to %d tasks of Job &lt;%v/%v&gt;&quot;,
+			tasks.Len(), job.Namespace, job.Name)
+		
+		// 具体调度Task的循环，每次都假绑定一个Task，表示这个task已经完成
+		for !tasks.Empty() {
+			predicateNodes := []*api.NodeInfo{}
+			nodeScores := map[int][]*api.NodeInfo{}
+
+			task := tasks.Pop().(*api.TaskInfo)
+			assigned := false
+
+			glog.V(3).Infof(&quot;There are &lt;%d&gt; nodes for Job &lt;%v/%v&gt;&quot;,
+				len(ssn.Nodes), job.Namespace, job.Name)
+
+			//any task that doesn't fit will be the last processed
+			//within this loop context so any existing contents of
+			//NodesFitDelta are for tasks that eventually did fit on a
+			//node
+			
+			// 后面的很长一般分，就是为task选择一个合适的node。
+			//主要内容是先过滤，然后选择一个满足task的最优节点，然后更新job中该task的信息
+			if len(job.NodesFitDelta) &gt; 0 {
+				job.NodesFitDelta = make(api.NodeResourceMap)
+			}
+			for _, node := range ssn.Nodes {
+				glog.V(3).Infof(&quot;Considering Task &lt;%v/%v&gt; on node &lt;%v&gt;: &lt;%v&gt; vs. &lt;%v&gt;&quot;,
+					task.Namespace, task.Name, node.Name, task.Resreq, node.Idle)
+
+				// TODO (k82cn): Enable eCache for performance improvement.
+				if err := ssn.PredicateFn(task, node); err != nil {
+					glog.V(3).Infof(&quot;Predicates failed for task &lt;%s/%s&gt; on node &lt;%s&gt;: %v&quot;,
+						task.Namespace, task.Name, node.Name, err)
+					continue
+				} else {
+					predicateNodes = append(predicateNodes, node)
+				}
+			}
+			for _, node := range predicateNodes {
+				score, err := ssn.NodeOrderFn(task, node)
+				if err != nil {
+					glog.V(3).Infof(&quot;Error in Calculating Priority for the node:%v&quot;, err)
+				} else {
+					nodeScores[score] = append(nodeScores[score], node)
+				}
+			}
+			selectedNodes := util.SelectBestNode(nodeScores)
+			for _, node := range selectedNodes {
+				// Allocate idle resource to the task.
+				if task.InitResreq.LessEqual(node.Idle) {
+					glog.V(3).Infof(&quot;Binding Task &lt;%v/%v&gt; to node &lt;%v&gt;&quot;,
+						task.Namespace, task.Name, node.Name)
+					// ！！！这里需要重点注意，这里调用了session.go中Allocate函数。 下面会将这个的作用
+					if err := ssn.Allocate(task, node.Name); err != nil {         
+						glog.Errorf(&quot;Failed to bind Task %v on %v in Session %v, err: %v&quot;,
+							task.UID, node.Name, ssn.UID, err)
+						continue
+					}
+					assigned = true
+					break
+				} else {
+					//store information about missing resources
+					job.NodesFitDelta[node.Name] = node.Idle.Clone()
+					job.NodesFitDelta[node.Name].FitDelta(task.Resreq)
+					glog.V(3).Infof(&quot;Predicates failed for task &lt;%s/%s&gt; on node &lt;%s&gt; with limited resources&quot;,
+						task.Namespace, task.Name, node.Name)
+				}
+
+				// Allocate releasing resource to the task if any.
+				if task.InitResreq.LessEqual(node.Releasing) {
+					glog.V(3).Infof(&quot;Pipelining Task &lt;%v/%v&gt; to node &lt;%v&gt; for &lt;%v&gt; on &lt;%v&gt;&quot;,
+						task.Namespace, task.Name, node.Name, task.InitResreq, node.Releasing)
+					if err := ssn.Pipeline(task, node.Name); err != nil {
+						glog.Errorf(&quot;Failed to pipeline Task %v on %v in Session %v&quot;,
+							task.UID, node.Name, ssn.UID)
+						continue
+					}
+
+					assigned = true
+					break
+				}
+			}
+			
+			
+			//如果绑定某个task过程中失败，比如资源不足。那么就会跳出这个循环。
+			if !assigned {
+				break
+			}
+			// 将job重新加入队列，然后进行下一个job的调度。
+			if ssn.JobReady(job) {
+				jobs.Push(job)
+				break
+			}
+		}
+		// Added Queue back until no job in Queue.  
+		queues.Push(queue)
+	}
+</code></pre>
+
+<p>session.go中Allocate函数</p>
+
+<pre><code class="language-rust">func (ssn *Session) Allocate(task *api.TaskInfo, hostname string) error {
+	if err := ssn.cache.AllocateVolumes(task, hostname); err != nil {
+		return err
+	}
+
+	// 这里这是更新task的状态。
+	// Only update status in session
+	job, found := ssn.Jobs[task.Job]
+	if found {
+		if err := job.UpdateTaskStatus(task, api.Allocated); err != nil {
+			glog.Errorf(&quot;Failed to update task &lt;%v/%v&gt; status to %v in Session &lt;%v&gt;: %v&quot;,
+				task.Namespace, task.Name, api.Allocated, ssn.UID, err)
+			return err
+		}
+	} else {
+		glog.Errorf(&quot;Failed to found Job &lt;%s&gt; in Session &lt;%s&gt; index when binding.&quot;,
+			task.Job, ssn.UID)
+		return fmt.Errorf(&quot;failed to find job %s&quot;, task.Job)
+	}
+
+	task.NodeName = hostname
+
+	if node, found := ssn.Nodes[hostname]; found {
+		if err := node.AddTask(task); err != nil {
+			glog.Errorf(&quot;Failed to add task &lt;%v/%v&gt; to node &lt;%v&gt; in Session &lt;%v&gt;: %v&quot;,
+				task.Namespace, task.Name, hostname, ssn.UID, err)
+			return err
+		}
+		glog.V(3).Infof(&quot;After allocated Task &lt;%v/%v&gt; to Node &lt;%v&gt;: idle &lt;%v&gt;, used &lt;%v&gt;, releasing &lt;%v&gt;&quot;,
+			task.Namespace, task.Name, node.Name, node.Idle, node.Used, node.Releasing)
+	} else {
+		glog.Errorf(&quot;Failed to found Node &lt;%s&gt; in Session &lt;%s&gt; index when binding.&quot;,
+			hostname, ssn.UID)
+		return fmt.Errorf(&quot;failed to find node %s&quot;, hostname)
+	}
+
+    //gang.go中有，这里是真正的绑定了，当jobReady时，调用dispatch函数对所有的Allocated的task进行绑定。
+	// dispatch就在该函数的下面。内容也很直观，就是调用k8s的接口，真正的绑定pod
+	if ssn.JobReady(job) {
+		for _, task := range job.TaskStatusIndex[api.Allocated] {
+			if err := ssn.dispatch(task); err != nil {                    // 如果job准备好了，就直接真正绑定所有准备好的任务？？
+				glog.Errorf(&quot;Failed to dispatch task &lt;%v/%v&gt;: %v&quot;,
+					task.Namespace, task.Name, err)
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+</code></pre>
+
+<h4 id="总结">总结：</h4>
+
+<p>感觉自己的文字表达能力还是不行，还需要更多的锻炼。 结合代码的注释和上面的流程说明一起看会更容易理解。</p>
+
+<p>在session.go中可以看到，每次为task分配资源时，首先都是更新状态，只有达到jobReady时，才真正的绑定到具体的某个结点上。</p>
+
+<p>当然如果当前要调度的job1,它需要的资源不足，那么当前这个job1就会跳出循环，找下一个要进行调度的job。不用担心，job1中已经绑定的task所占的资源。backfill操作会将Job1清空。</p>
+
+                        </div>
+
+                        
+
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/2019-11-24-kube-batch-%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0gang-scheduler/">kube-batch如何实现gang-scheduler</a></li>
+        
+        <li><a href="/post/2019-11-24-kube-batch-%E7%AE%80%E4%BB%8B/">kube-batch--简介</a></li>
+        
+        <li><a href="/post/2019-11-24-k8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85helm/">k8s集群安装helm</a></li>
+        
+        <li><a href="/post/2019-11-24-ubuntu%E5%AE%89%E8%A3%85go/">ubuntua安装go语言环境</a></li>
+        
+        <li><a href="/post/2019-11-24-kube-batch-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/">kube-batch--启动过程</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="https://zoux86.github.io/tags/kube-batch">kube-batch</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zoux86/blog"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-11-24-%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F%E9%97%AE%E9%A2%98/" title="下载镜像问题">下载镜像问题</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/first/" title="开启新的博客历程">开启新的博客历程</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E8%85%BE%E8%AE%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019腾讯校招">2019腾讯校招</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E9%98%BF%E9%87%8C%E4%BA%91%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019阿里云面经">2019阿里云面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019文远知行面经">2019文远知行面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%95%86%E6%B1%A4%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019商汤面经">2019商汤面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%BE%AE%E8%BD%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019微软面经">2019微软面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E6%B7%B1%E4%BF%A1%E6%9C%8D%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019深信服面经">2019深信服面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E7%BD%91%E6%98%93%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019网易面经">2019网易面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%8D%8E%E4%B8%BA%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019华为面经">2019华为面经</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/java/">Java (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (3)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kubeflow/">kubeflow (6)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/ubuntu/">ubuntu (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/uml/">UML (8)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/vmware/">VMware (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/volcano/">volcano (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/window%E5%B7%A5%E5%85%B7/">window工具 (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E4%B8%AA%E4%BA%BA%E6%84%9F%E6%82%9F/">个人感悟 (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建 (10)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题 (2)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="https://zoux86.github.io/tags/docker/">docker</a>
+    
+    <a href="https://zoux86.github.io/tags/go/">go</a>
+    
+    <a href="https://zoux86.github.io/tags/hadoop/">Hadoop</a>
+    
+    <a href="https://zoux86.github.io/tags/java/">Java</a>
+    
+    <a href="https://zoux86.github.io/tags/jupyter/">jupyter</a>
+    
+    <a href="https://zoux86.github.io/tags/k8s/">k8s</a>
+    
+    <a href="https://zoux86.github.io/tags/ks/">ks</a>
+    
+    <a href="https://zoux86.github.io/tags/kube-batch/">kube-batch</a>
+    
+    <a href="https://zoux86.github.io/tags/kubeflow/">kubeflow</a>
+    
+    <a href="https://zoux86.github.io/tags/nfs/">NFS</a>
+    
+    <a href="https://zoux86.github.io/tags/pipelines/">[pipelines]</a>
+    
+    <a href="https://zoux86.github.io/tags/tf-operator/">tf-operator</a>
+    
+    <a href="https://zoux86.github.io/tags/tfjob/">tfjob</a>
+    
+    <a href="https://zoux86.github.io/tags/ubuntu/">ubuntu</a>
+    
+    <a href="https://zoux86.github.io/tags/uml/">UML</a>
+    
+    <a href="https://zoux86.github.io/tags/vmware/">VMware</a>
+    
+    <a href="https://zoux86.github.io/tags/volcano/">volcano</a>
+    
+    <a href="https://zoux86.github.io/tags/window%E5%B7%A5%E5%85%B7/">window工具</a>
+    
+    <a href="https://zoux86.github.io/tags/%E5%8D%9A%E5%AE%A2/">博客</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%84%9F%E6%82%9F/">感悟</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%A0%A1%E6%8B%9B/">校招</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%BA%90%E7%A0%81/">源码</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/">私有仓库</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题</a>
+    
+    <a href="https://zoux86.github.io/tags/%E8%B0%83%E5%BA%A6/">调度</a>
+    
+    <a href="https://zoux86.github.io/tags/%E9%95%9C%E5%83%8F/">镜像</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://www.jianshu.com/u/305d8226ced4" title="个人简书主页">个人简书主页</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zoux86.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2019 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        
+        (function () {
+            $("pre code").parent().addClass("line-numbers")
+        }());
+
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+</body>
+</html>

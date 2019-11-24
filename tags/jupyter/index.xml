@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>jupyter on zoux的博客</title>
+    <link>https://zoux86.github.io/tags/jupyter/</link>
+    <description>Recent content in jupyter on zoux的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 09 Jan 2019 20:31:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://zoux86.github.io/tags/jupyter/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>kubeflow使用图像界面</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kubeflow-%E4%BD%BF%E7%94%A8%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/</link>
+      <pubDate>Wed, 09 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kubeflow-%E4%BD%BF%E7%94%A8%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/</guid>
+      <description>按照前几篇文章搭建好Kubeflow集群后，所有的pod都能运行了。但是在自己本地浏览器访问界面时却发现网页一直打不开。访问不了jupyter。这样因为默认的这些服务都是使用cluster ip。只能集群内部访问，外网访问不了。 解决方法： 查看当前的服务 kubectl -n kubeflow get svc 如图所示，这里注意，</description>
+    </item>
+    
+  </channel>
+</rss>

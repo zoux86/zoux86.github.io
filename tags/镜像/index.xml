@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>镜像 on zoux的博客</title>
+    <link>https://zoux86.github.io/tags/%E9%95%9C%E5%83%8F/</link>
+    <description>Recent content in 镜像 on zoux的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 20 Nov 2019 20:31:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://zoux86.github.io/tags/%E9%95%9C%E5%83%8F/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>下载镜像问题</title>
+      <link>https://zoux86.github.io/post/2019-11-24-%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Wed, 20 Nov 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F%E9%97%AE%E9%A2%98/</guid>
+      <description>在本人安装k8s/kubeflow的时候，遇到一个很大的问题就是某些镜像下载不了。大家如果有什么镜像下载不了，可以留言，我会尝试帮忙下载。</description>
+    </item>
+    
+  </channel>
+</rss>

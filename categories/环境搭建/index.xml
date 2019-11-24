@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>环境搭建 on zoux的博客</title>
+    <link>https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</link>
+    <description>Recent content in 环境搭建 on zoux的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 20 Nov 2019 20:31:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>下载镜像问题</title>
+      <link>https://zoux86.github.io/post/2019-11-24-%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Wed, 20 Nov 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F%E9%97%AE%E9%A2%98/</guid>
+      <description>在本人安装k8s/kubeflow的时候，遇到一个很大的问题就是某些镜像下载不了。大家如果有什么镜像下载不了，可以留言，我会尝试帮忙下载。</description>
+    </item>
+    
+    <item>
+      <title>k8s集群安装helm</title>
+      <link>https://zoux86.github.io/post/2019-11-24-k8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85helm/</link>
+      <pubDate>Mon, 01 Apr 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-k8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85helm/</guid>
+      <description>helm介绍 helm的作用： Kubernetes一个包管理引擎 tiller的作用：功能和软件仓库一样，类似于/etc/yum.repos.d目录下的xxx.repo。 安装helm的目的是为了后面安装kube-batch 环境说明 环境：4台ubuntu16.04 1个master 3个n</description>
+    </item>
+    
+    <item>
+      <title>ubuntua安装go语言环境</title>
+      <link>https://zoux86.github.io/post/2019-11-24-ubuntu%E5%AE%89%E8%A3%85go/</link>
+      <pubDate>Mon, 01 Apr 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-ubuntu%E5%AE%89%E8%A3%85go/</guid>
+      <description>地址：https://studygolang.com/dl 注意下载Linux-amd64(64位)版本的 ，例如我下载的就是 go1.13.4.linux-amd64.tar.gz 安装 go语言有两个很重要的环境变量 gopath和goroot。 GOROOT：go的安装路径。一般是-C /usr/local/ GOPATH: GOPATH是作为编译后二进制的存放目的地和imp</description>
+    </item>
+    
+    <item>
+      <title>ubuntu搭建k8s机器</title>
+      <link>https://zoux86.github.io/post/2019-11-24-%E6%90%AD%E5%BB%BAk8s%E9%9B%86%E7%BE%A4/</link>
+      <pubDate>Tue, 05 Mar 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-%E6%90%AD%E5%BB%BAk8s%E9%9B%86%E7%BE%A4/</guid>
+      <description>本次在搭建k8s集群的过程中，遇到了很多问题，幸好最后终于成功。故将整个过程记录下来，希望对大家有所帮助。 环境说明 环境：4台ubuntu16.04 1个master 3个node k8s版本：V1.13.2 搭建说明 本教程采用kubeadm的方式安装，主要针对的是国内用户，因为安装k8s</description>
+    </item>
+    
+    <item>
+      <title>kubeflow准备--NFS环境搭建</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-nfs%E5%81%9A%E5%90%8E%E7%AB%AF%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/</link>
+      <pubDate>Mon, 07 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-nfs%E5%81%9A%E5%90%8E%E7%AB%AF%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/</guid>
+      <description>目的 在搭建kubeflow的时候，要需要搭建存储卷。为了以后能更好的共享文件，我这里使用了NFS作为文件存储系统。 操作如下： 针对master节点： master节点上安装NFS服务 sudo apt-get update &amp;amp;&amp;amp; sudo apt-get install -y nfs-server 建立一个共享的文件夹 sudo mkdir /nfs-data/kubeflow-pv1 修改/etc/exports文件 (末尾添加) /nfs-data/kubeflow-pv1 *(rw,sync,no_root_squash,no_subtree_check) 这一行的意</description>
+    </item>
+    
+    <item>
+      <title>kubeflow准备--下载ks</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87%E5%B7%A5%E5%85%B7-ksonnet-%E5%AE%89%E8%A3%85/</link>
+      <pubDate>Mon, 07 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87%E5%B7%A5%E5%85%B7-ksonnet-%E5%AE%89%E8%A3%85/</guid>
+      <description>最近需要了解Kubeflow方面的知识，故需要自己配置kubeflow。安装Kubeflow需要按照以下的依赖: ksonnet version 0.11.0 or later. Kubernetes 1.8 or later kubectl 由于，k8s,kubectl的安装网上已经有很多教程了，而本人安装ksonnet时绕了一些弯，所以在此记录一些本人的安装过程。 安装环境介绍： 本人的k</description>
+    </item>
+    
+    <item>
+      <title>kubeflow准备--拉取镜像</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F/</link>
+      <pubDate>Mon, 07 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F/</guid>
+      <description>目的 某些情况下，我们可能需要让服务器能够下载到gcr.io，比如安装k8s/kubeflow的时候。这里设置ubuntu服务器环境下能让docker pull gcr.io镜像。 说在前面的话 如果服务器直接能直接下载，这个安装教程不适合你。 如果有shadowsocks服务器，可以参考这个教程</description>
+    </item>
+    
+    <item>
+      <title>kubeflow国内环境安装</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kubeflow-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/</link>
+      <pubDate>Mon, 07 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kubeflow-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/</guid>
+      <description>最近一直在想在自己集群上搭建Kubeflow环境，兜兜转转最终终于装好了。这个过程中遇到了很多坑，而在整个过程中发现网上关于如何在国内环境下安装kubeflow的教程非常少。故在此记录我的搭建过程，希望能对想搭建kubeflow环境的小伙伴们一些帮助。这里特意感谢实验室董师兄的指</description>
+    </item>
+    
+    <item>
+      <title>kubeflow准备--搭建私有仓库</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/</link>
+      <pubDate>Sun, 06 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/</guid>
+      <description>在很多情况下，我们需要使用自己的docker仓库。接下来是在本地k8s集群上搭建本地仓库的过程。 假设我们将本地仓库搭建在k8s主节点上。 这里假设主节点是：192.168.14.84 运行registry镜像 docker run -d -p 5000:5000 --restart always --name registry registry:2 直接运行该命令即可，本地没有registry:2，会自动</description>
+    </item>
+    
+    <item>
+      <title>ubuntu机器之间免密登录</title>
+      <link>https://zoux86.github.io/post/2019-11-24-ubuntu%E6%9C%BA%E5%99%A8%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/</link>
+      <pubDate>Mon, 05 Nov 2018 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-ubuntu%E6%9C%BA%E5%99%A8%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/</guid>
+      <description>在自己动手搭建k8s集群环境之前，经常遇到的一个问题就是，集群机器之间能互相免密登录。故在此记录整个搭建过程。 假设有俩台机器： 192.168.115.70 zx-1 master 192.168.115.66 zx-2 现在要修改成密码登录，并且这俩台机器免密登录。步骤如下： 修改 etc/hosts zx-1机器上 127.0.0.1 localhost zx-1 192.168.14.70 zx-1 192.168.14.66 zx-2 zx-2机器上 127.0.0.1 localhost zx-2 192.168.14.70 zx-1 192.168.14.66 zx-2 修改登录密码 修改root密</description>
+    </item>
+    
+  </channel>
+</rss>

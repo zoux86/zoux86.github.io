@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>kubeflow on zoux的博客</title>
+    <link>https://zoux86.github.io/categories/kubeflow/</link>
+    <description>Recent content in kubeflow on zoux的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 01 Feb 2019 20:31:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://zoux86.github.io/categories/kubeflow/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>kubeflow pipelines--实现自己的实例</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%9E%E4%BE%8B/</link>
+      <pubDate>Fri, 01 Feb 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%9E%E4%BE%8B/</guid>
+      <description>上篇文章实现了运行系统给出的pipelines实例。通过挂载自己的卷，以及使用自己的镜像总算可以运行官方给的ML实例了。但是我们的最终目的是运行自己的ML程序。 接下来是实现自己的pipelines实例。 根据官方文档的建议： https://www.kubeflow.org/docs/pipelines/sdk/build-component/](https://www.kubeflow.org/docs/pipelines/sdk/build-component/) 实现自己的ML实例，总共有两点： （1）Client code （在</description>
+    </item>
+    
+    <item>
+      <title>kubeflow pipelines--使用UI界面</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E4%BD%BF%E7%94%A8ui%E7%95%8C%E9%9D%A2/</link>
+      <pubDate>Wed, 23 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E4%BD%BF%E7%94%A8ui%E7%95%8C%E9%9D%A2/</guid>
+      <description>前面的文章已经安装好了pipelines，接下来是体验如何使用pipelines了。 这是官网的图，进入Pipelines的图形界面就会出现这个。 但是官网给出的都是怎样在gcp上使用图形界面。所以怎么在自己本地集群使用Pipelines图形界面还得靠自己摸索。 既然我们都装好pipe</description>
+    </item>
+    
+    <item>
+      <title>kubeflow pipelines--国内环境安装</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/</link>
+      <pubDate>Wed, 23 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/</guid>
+      <description>在前面的教程中，我们已经搭建好了本地的kubeflow集群，接下来因为个人需要，本人需要再在此基础上搭建好kubeflow pipelines. 首先需要了解pipelines是什么，能做什么，具体可以参考官网描述： https://www.kubeflow.org/docs/pipelines/pipelines-overview/ 从V0.1.3开始，Kubeflow Pipelines成为Kubeflow核心组件之</description>
+    </item>
+    
+    <item>
+      <title>kubeflow pipelines--本地运行官方ML-实例</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E6%9C%AC%E5%9C%B0%E8%BF%90%E8%A1%8C%E5%AE%98%E6%96%B9ml-%E5%AE%9E%E4%BE%8B/</link>
+      <pubDate>Wed, 23 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E6%9C%AC%E5%9C%B0%E8%BF%90%E8%A1%8C%E5%AE%98%E6%96%B9ml-%E5%AE%9E%E4%BE%8B/</guid>
+      <description>在上面的文章中，我成功运行了pipelines的简单实例。这个简单的例子没有文件的操作，但是这肯定不符合我们的要求，所以接下来介绍如何运行官网的ML 例子。 这次试用的例子是：KubeFlow pipeline using TFX OSS components 准备工作 由于这个例子使用的镜像，文件都是某歌的，所以我们要想办法把他弄到自己服务器</description>
+    </item>
+    
+    <item>
+      <title>kubeflow简介</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kubeflow%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Wed, 23 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kubeflow%E7%AE%80%E4%BB%8B/</guid>
+      <description>前面都是在介绍如何安装Kubeflow和pipelines，今天补一下Kubeflow的pipelines的知识，让大家知道他们是什么，能做什么。 背景 Kubernetes 本来是一个用来管理无状态应用的容器平台，但是在近两年，有越来越多的公司用它来运行各种各样的工作负载，尤其是机器学习炼丹。各种 AI 公</description>
+    </item>
+    
+    <item>
+      <title>kubeflow使用图像界面</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kubeflow-%E4%BD%BF%E7%94%A8%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/</link>
+      <pubDate>Wed, 09 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kubeflow-%E4%BD%BF%E7%94%A8%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/</guid>
+      <description>按照前几篇文章搭建好Kubeflow集群后，所有的pod都能运行了。但是在自己本地浏览器访问界面时却发现网页一直打不开。访问不了jupyter。这样因为默认的这些服务都是使用cluster ip。只能集群内部访问，外网访问不了。 解决方法： 查看当前的服务 kubectl -n kubeflow get svc 如图所示，这里注意，</description>
+    </item>
+    
+  </channel>
+</rss>

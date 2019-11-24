@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>NFS on zoux的博客</title>
+    <link>https://zoux86.github.io/tags/nfs/</link>
+    <description>Recent content in NFS on zoux的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 07 Jan 2019 20:31:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://zoux86.github.io/tags/nfs/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>kubeflow准备--NFS环境搭建</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-nfs%E5%81%9A%E5%90%8E%E7%AB%AF%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/</link>
+      <pubDate>Mon, 07 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-nfs%E5%81%9A%E5%90%8E%E7%AB%AF%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/</guid>
+      <description>目的 在搭建kubeflow的时候，要需要搭建存储卷。为了以后能更好的共享文件，我这里使用了NFS作为文件存储系统。 操作如下： 针对master节点： master节点上安装NFS服务 sudo apt-get update &amp;amp;&amp;amp; sudo apt-get install -y nfs-server 建立一个共享的文件夹 sudo mkdir /nfs-data/kubeflow-pv1 修改/etc/exports文件 (末尾添加) /nfs-data/kubeflow-pv1 *(rw,sync,no_root_squash,no_subtree_check) 这一行的意</description>
+    </item>
+    
+  </channel>
+</rss>
