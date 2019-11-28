@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>C&#43;&#43; on zoux的博客</title>
+    <link>https://zoux86.github.io/categories/c&#43;&#43;/</link>
+    <description>Recent content in C&#43;&#43; on zoux的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 28 Nov 2019 00:31:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://zoux86.github.io/categories/c++/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>C&#43;&#43;代码的一生</title>
+      <link>https://zoux86.github.io/post/2019-11-27-c&#43;&#43;%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%80%E7%94%9F/</link>
+      <pubDate>Thu, 28 Nov 2019 00:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-27-c&#43;&#43;%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%80%E7%94%9F/</guid>
+      <description>目录 c++代码变成可执行文件 （1）预处理过程 （2）编译过程 （3）汇编过程 （4）链接过程 （5）目标文件 （6）静态链接和动态链接 可执行文件变成进程 一个c++程序，从.c文件，变成二进制可执行文件，会经历上述四个过程。 预处理阶段：对源代码文件中文件包含关系（头文件）、预编译语句（宏定义</description>
+    </item>
+    
+  </channel>
+</rss>

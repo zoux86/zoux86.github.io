@@ -6,10 +6,28 @@
     <description>Recent content in Categories on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 20 Nov 2019 20:31:20 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 28 Nov 2019 00:31:20 +0800</lastBuildDate>
     
 	<atom:link href="https://zoux86.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>C&#43;&#43;</title>
+      <link>https://zoux86.github.io/categories/c&#43;&#43;/</link>
+      <pubDate>Thu, 28 Nov 2019 00:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/categories/c&#43;&#43;/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>docker</title>
+      <link>https://zoux86.github.io/categories/docker/</link>
+      <pubDate>Tue, 26 Nov 2019 00:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/categories/docker/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>个人感悟</title>
@@ -62,6 +80,15 @@
       <pubDate>Sun, 21 Apr 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/categories/kube-batch/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>读书笔记</title>
+      <link>https://zoux86.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Sun, 21 Apr 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
       <description></description>
     </item>
     

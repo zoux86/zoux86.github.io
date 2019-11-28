@@ -6,10 +6,37 @@
     <description>Recent content in Posts on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 20 Nov 2019 20:31:20 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 28 Nov 2019 00:31:20 +0800</lastBuildDate>
     
 	<atom:link href="https://zoux86.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>C&#43;&#43;代码的一生</title>
+      <link>https://zoux86.github.io/post/2019-11-27-c&#43;&#43;%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%80%E7%94%9F/</link>
+      <pubDate>Thu, 28 Nov 2019 00:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-27-c&#43;&#43;%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%80%E7%94%9F/</guid>
+      <description>目录 c++代码变成可执行文件 （1）预处理过程 （2）编译过程 （3）汇编过程 （4）链接过程 （5）目标文件 （6）静态链接和动态链接 可执行文件变成进程 一个c++程序，从.c文件，变成二进制可执行文件，会经历上述四个过程。 预处理阶段：对源代码文件中文件包含关系（头文件）、预编译语句（宏定义</description>
+    </item>
+    
+    <item>
+      <title>docker实现原理</title>
+      <link>https://zoux86.github.io/post/2019-11-26-docker%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Tue, 26 Nov 2019 00:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-26-docker%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
+      <description>目录 docker是什么，有什么用 docker的架构 （1）镜像 （2）镜像仓库 （3）容器 总结 docker是什么，有什么用 打个比方： 云计算：是一艘大货轮，它有足够的空间（硬件资源） docker：是货轮的集装箱，装载着一个个的货物（应用） 开发者在云端部署自己应用的时候，一个必须要考虑的问</description>
+    </item>
+    
+    <item>
+      <title>docker的起源</title>
+      <link>https://zoux86.github.io/post/2019-11-26-docker%E7%9A%84%E8%B5%B7%E6%BA%90/</link>
+      <pubDate>Tue, 26 Nov 2019 00:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-26-docker%E7%9A%84%E8%B5%B7%E6%BA%90/</guid>
+      <description>背景 1959 《Time Sharing in Large Fast Computer》论文，出现了虚拟化的概念。 1965 IBM 推出System/360 Model 67 和 TSS 分时共享系统， 这是最原始的虚拟机技术。 1969~1997 年虚拟技术开始应用到除CPU之外的其他领域，如存储。 1999年，VMWare推出VMware Workstation。标准虚拟化方案开始在</description>
+    </item>
     
     <item>
       <title>下载镜像问题</title>
@@ -225,6 +252,15 @@
       
       <guid>https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E7%9A%84%E9%85%8D%E7%BD%AE/</guid>
       <description>在kube-batch V0.4及以上版本中，kube-batch默认的配置 只包含两个 Action(allocate, backfill)。 具体可以参考： https://github.com/kubernetes-sigs/kube-batch/blob/6e560929dcafec91b2b9a24f246a20b4569b39a8/pkg/scheduler/util.go 在自己的需求中，我们可能需要定义自己的配置。 思路： 查看util.go中的代码发现，Kube-batch在发现用户指定配置文件后，会自动地读取该文件的内容，而不</description>
+    </item>
+    
+    <item>
+      <title>代码整洁之道笔记</title>
+      <link>https://zoux86.github.io/post/2019-11-25-%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Sun, 21 Apr 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-25-%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93%E7%AC%94%E8%AE%B0/</guid>
+      <description>动机 最近在回顾自己之前写的代码时，发现之前的惨不忍睹。最大的问题是，几个月前自己写的居然都看不懂。 有些问题自己能避免，例如有意义的变量命名问题，但是由于当时英文卡住了，直接就随便命名了，当时以为自己看得懂，以后就能懂，最后发现是自己想多了。 刚好今天没事翻了一下之前买的书籍《代码整</description>
     </item>
     
     <item>

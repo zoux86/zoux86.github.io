@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>读书笔记 on zoux的博客</title>
+    <link>https://zoux86.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+    <description>Recent content in 读书笔记 on zoux的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 21 Apr 2019 20:31:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://zoux86.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>代码整洁之道笔记</title>
+      <link>https://zoux86.github.io/post/2019-11-25-%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Sun, 21 Apr 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-25-%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93%E7%AC%94%E8%AE%B0/</guid>
+      <description>动机 最近在回顾自己之前写的代码时，发现之前的惨不忍睹。最大的问题是，几个月前自己写的居然都看不懂。 有些问题自己能避免，例如有意义的变量命名问题，但是由于当时英文卡住了，直接就随便命名了，当时以为自己看得懂，以后就能懂，最后发现是自己想多了。 刚好今天没事翻了一下之前买的书籍《代码整</description>
+    </item>
+    
+  </channel>
+</rss>

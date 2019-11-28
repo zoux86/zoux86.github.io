@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>docker on zoux的博客</title>
+    <link>https://zoux86.github.io/categories/docker/</link>
+    <description>Recent content in docker on zoux的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 26 Nov 2019 00:31:20 +0800</lastBuildDate>
+    
+	<atom:link href="https://zoux86.github.io/categories/docker/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>docker实现原理</title>
+      <link>https://zoux86.github.io/post/2019-11-26-docker%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Tue, 26 Nov 2019 00:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-26-docker%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
+      <description>目录 docker是什么，有什么用 docker的架构 （1）镜像 （2）镜像仓库 （3）容器 总结 docker是什么，有什么用 打个比方： 云计算：是一艘大货轮，它有足够的空间（硬件资源） docker：是货轮的集装箱，装载着一个个的货物（应用） 开发者在云端部署自己应用的时候，一个必须要考虑的问</description>
+    </item>
+    
+    <item>
+      <title>docker的起源</title>
+      <link>https://zoux86.github.io/post/2019-11-26-docker%E7%9A%84%E8%B5%B7%E6%BA%90/</link>
+      <pubDate>Tue, 26 Nov 2019 00:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-26-docker%E7%9A%84%E8%B5%B7%E6%BA%90/</guid>
+      <description>背景 1959 《Time Sharing in Large Fast Computer》论文，出现了虚拟化的概念。 1965 IBM 推出System/360 Model 67 和 TSS 分时共享系统， 这是最原始的虚拟机技术。 1969~1997 年虚拟技术开始应用到除CPU之外的其他领域，如存储。 1999年，VMWare推出VMware Workstation。标准虚拟化方案开始在</description>
+    </item>
+    
+  </channel>
+</rss>

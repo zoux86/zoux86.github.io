@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.59.1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>docker的起源 | zoux的博客</title>
+    <meta property="og:title" content="docker的起源 - zoux的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2019-11-26T00:31:20&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2019-11-26T00:31:20&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
+    <meta name="description" content="docker的起源">
+        
+    <meta name="author" content="zoux">
+    <meta property="og:url" content="https://zoux86.github.io/post/2019-11-26-docker%E7%9A%84%E8%B5%B7%E6%BA%90/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+
+
+    
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zoux86.github.io/">
+                        zoux的博客
+                    </a>
+                
+                <p class="description">对Go语言(golang)、k8s、kubeflow，容器云，云原生感兴趣</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zoux86.github.io/">首页</a>
+                    
+                    <a  href="https://zoux86.github.io/tools/" title="工具">工具</a>
+                    
+                    <a  href="https://zoux86.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://zoux86.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+        
+        
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">docker的起源</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2019年11月26日
+                        </date>
+                        
+                        <div class="post-meta">
+                            <span>|</span>
+                            
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/docker">docker</a></span>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        
+                        <div class="post-content">
+                            
+
+<h3 id="背景">背景</h3>
+
+<p>1959  《Time Sharing in Large Fast Computer》论文，出现了虚拟化的概念。</p>
+
+<p>1965   IBM  推出System/360 Model 67 和 TSS 分时共享系统， 这是最原始的虚拟机技术。</p>
+
+<p>1969~1997 年虚拟技术开始应用到除CPU之外的其他领域，如存储。</p>
+
+<p>1999年，VMWare推出VMware Workstation。标准虚拟化方案开始在普通PC和工作站上大量使用。</p>
+
+<p>2000年，Citrix桌面虚拟化产品正式发布，软件虚拟化开始出现。</p>
+
+<p>2010年，NASA发起了OpenStack开源项目</p>
+
+<p>2013年，IBM收购SoftLayer，提供业界领先的私有云解决方案。 （ Softlayer是目前全球最大的互联网数据中心 公司 ）</p>
+
+<p>到2013年，云计算这个词语开始热起来了。同时许多PASS项目开始开源，例如Cloud  Foundry。百度、京东、华为、阿里，IBM 等公司，开启了以开源 PaaS 为核心构建平台层服务能力的变革。</p>
+
+<p>当时，PASS项目成为虚拟化+云计算的普遍用法是，大家租一批服务器，然后像管理物理机一样部署自己的业务但是当时的pass项目有一个很不好用的地方在于，开发者上传自己的代码和文件时，要保证服务器环境和本地环境的一致，这样环境的打包问题就是当时的一个痛点。</p>
+
+<p>这个时候Docker项目出现了，他的一个小创新成就了他的辉煌。那就是docker image（镜像）。镜像采用的UFS文件系统。极大的简化了环境打包的这个过程，开发者用起来非常的应手。</p>
+
+<p>Docker 项目开源之后，docker公司全面发力，从技术、社区、商业、市场全方位争取开发者群体。docker开启了它的扩展，收购了fig项目（提出了容器编排的概念），发布了Docker Swarm等。docker项目的地位彻底巩固了。</p>
+
+<h3 id="总结">总结</h3>
+
+<h4 id="docker崛起的因素">Docker崛起的因素：</h4>
+
+<p>（1）极好的环境，PASS项目如火如荼</p>
+
+<p>（2）Docker 镜像通解决了 PaaS 的痛点问题</p>
+
+<p>（3）Docker项目从开发者角度进行思考</p>
+
+<p>个人感想：</p>
+
+<p>一个项目的兴起，一定是它在一个 <strong>大的趋势</strong> 下，解决了 <strong>核心用户</strong>的<strong>痛点</strong>问题。</p>
+
+                        </div>
+
+                        
+
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/2019-11-26-docker%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/">docker实现原理</a></li>
+        
+        <li><a href="/post/2019-11-24-%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F%E9%97%AE%E9%A2%98/">下载镜像问题</a></li>
+        
+        <li><a href="/post/first/">开启新的博客历程</a></li>
+        
+        <li><a href="/about/">关于我</a></li>
+        
+        <li><a href="/tools/">实用工具</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="https://zoux86.github.io/tags/docker">docker</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zoux86/blog"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-11-27-c&#43;&#43;%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%80%E7%94%9F/" title="C&#43;&#43;代码的一生">C&#43;&#43;代码的一生</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-11-26-docker%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" title="docker实现原理">docker实现原理</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-11-26-docker%E7%9A%84%E8%B5%B7%E6%BA%90/" title="docker的起源">docker的起源</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-11-24-%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F%E9%97%AE%E9%A2%98/" title="下载镜像问题">下载镜像问题</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/first/" title="开启新的博客历程">开启新的博客历程</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E8%85%BE%E8%AE%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019腾讯校招">2019腾讯校招</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E9%98%BF%E9%87%8C%E4%BA%91%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019阿里云面经">2019阿里云面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019文远知行面经">2019文远知行面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%95%86%E6%B1%A4%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019商汤面经">2019商汤面经</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-%E5%BE%AE%E8%BD%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019微软面经">2019微软面经</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/c&#43;&#43;/">C&#43;&#43; (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/docker/">docker (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/java/">Java (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (3)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kubeflow/">kubeflow (6)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/ubuntu/">ubuntu (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/uml/">UML (8)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/vmware/">VMware (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/volcano/">volcano (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/window%E5%B7%A5%E5%85%B7/">window工具 (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E4%B8%AA%E4%BA%BA%E6%84%9F%E6%82%9F/">个人感悟 (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建 (10)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题 (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记 (1)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
+    
+    <a href="https://zoux86.github.io/tags/clean-code/">clean code</a>
+    
+    <a href="https://zoux86.github.io/tags/docker/">docker</a>
+    
+    <a href="https://zoux86.github.io/tags/go/">go</a>
+    
+    <a href="https://zoux86.github.io/tags/hadoop/">Hadoop</a>
+    
+    <a href="https://zoux86.github.io/tags/java/">Java</a>
+    
+    <a href="https://zoux86.github.io/tags/jupyter/">jupyter</a>
+    
+    <a href="https://zoux86.github.io/tags/k8s/">k8s</a>
+    
+    <a href="https://zoux86.github.io/tags/ks/">ks</a>
+    
+    <a href="https://zoux86.github.io/tags/kube-batch/">kube-batch</a>
+    
+    <a href="https://zoux86.github.io/tags/kubeflow/">kubeflow</a>
+    
+    <a href="https://zoux86.github.io/tags/nfs/">NFS</a>
+    
+    <a href="https://zoux86.github.io/tags/pipelines/">pipelines</a>
+    
+    <a href="https://zoux86.github.io/tags/tf-operator/">tf-operator</a>
+    
+    <a href="https://zoux86.github.io/tags/tfjob/">tfjob</a>
+    
+    <a href="https://zoux86.github.io/tags/ubuntu/">ubuntu</a>
+    
+    <a href="https://zoux86.github.io/tags/uml/">UML</a>
+    
+    <a href="https://zoux86.github.io/tags/vmware/">VMware</a>
+    
+    <a href="https://zoux86.github.io/tags/volcano/">volcano</a>
+    
+    <a href="https://zoux86.github.io/tags/window%E5%B7%A5%E5%85%B7/">window工具</a>
+    
+    <a href="https://zoux86.github.io/tags/%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93/">代码整洁之道</a>
+    
+    <a href="https://zoux86.github.io/tags/%E5%8D%9A%E5%AE%A2/">博客</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%84%9F%E6%82%9F/">感悟</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%A0%A1%E6%8B%9B/">校招</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%BA%90%E7%A0%81/">源码</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/">私有仓库</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%AC%94%E8%AE%B0/">笔记</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题</a>
+    
+    <a href="https://zoux86.github.io/tags/%E8%B0%83%E5%BA%A6/">调度</a>
+    
+    <a href="https://zoux86.github.io/tags/%E9%95%9C%E5%83%8F/">镜像</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://www.jianshu.com/u/305d8226ced4" title="个人简书主页">个人简书主页</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zoux86.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2019 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        
+        (function () {
+            $("pre code").parent().addClass("line-numbers")
+        }());
+
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+</body>
+</html>
