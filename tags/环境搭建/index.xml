@@ -6,10 +6,19 @@
     <description>Recent content in 环境搭建 on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 20 Nov 2019 20:31:20 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 02 Dec 2019 01:31:20 +0800</lastBuildDate>
     
 	<atom:link href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>部署自己的volcano</title>
+      <link>https://zoux86.github.io/post/2019-12-02-%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84volcano/</link>
+      <pubDate>Mon, 02 Dec 2019 01:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-12-02-%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84volcano/</guid>
+      <description>搭建说明 有时候，我们需要对volcano二次开发，所有需要部署自己的volcano 准备工作 (1) 安装好 k8s集群 部署过程 （1）在go的安装目录下，创建volcano目录，并下载 mkdir -p $GOPATH/src/volcano.sh/ cd $GOPATH/src/volcano.sh/ git clone https://github.com/volcano-sh/volcano.git PS: 这里是官网的volcano，你可以在这里修改，也可以git你自己的代码。 (2)在$GOPA</description>
+    </item>
     
     <item>
       <title>下载镜像问题</title>

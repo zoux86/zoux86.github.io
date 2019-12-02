@@ -71,6 +71,81 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/" title="kubeflow国内环境安装" >kubeflow国内环境安装</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2019年1月7日
+                            </date>
+                            
+                            <div class="post-meta">
+                                <span>|</span>
+                                
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a></span>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                最近一直在想在自己集群上搭建Kubeflow环境，兜兜转转最终终于装好了。这个过程中遇到了很多坑，而在整个过程中发现网上关于如何在国内环境下安装kubeflow的教程非常少。故在此记录我的搭建过程，希望能对想搭建kubeflow环境的小伙伴们一些帮助。这里特意感谢实验室董师兄的指……
+                            </div>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/">阅读全文</a></p>
+                        </article>
+                    
+                    
+		    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/" title="kubeflow准备--搭建私有仓库" >kubeflow准备--搭建私有仓库</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2019年1月6日
+                            </date>
+                            
+                            <div class="post-meta">
+                                <span>|</span>
+                                
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a></span>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                在很多情况下，我们需要使用自己的docker仓库。接下来是在本地k8s集群上搭建本地仓库的过程。 假设我们将本地仓库搭建在k8s主节点上。 这里假设主节点是：192.168.14.84 运行registry镜像 docker run -d -p 5000:5000 --restart always --name registry registry:2 直接运行该命令即可，本地没有registry:2，会自动……
+                            </div>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/">阅读全文</a></p>
+                        </article>
+                    
+                    
+		    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/hadoop-%E5%90%AF%E5%8A%A8%E9%9B%86%E7%BE%A4%E8%83%8C%E5%90%8E%E7%9A%84%E4%BA%8B/" title="Hadoop 启动集群背后的事" >Hadoop 启动集群背后的事</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2018年11月12日
+                            </date>
+                            
+                            <div class="post-meta">
+                                <span>|</span>
+                                
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/hadoop">Hadoop</a></span>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                在我们布置好Hadoop环境后我们做的第一件就是 执行 start-all.sh 命令。 那么这个命令都做了什么，今天来探讨一下这个。 start-all.sh内容 Start all hadoop daemons. Run this on master node. bin=`dirname &quot;$0&quot;` bin=`cd &quot;$bin&quot;; pwd` . &quot;$bin&quot;/hadoop-config.sh start dfs daemons &quot;$bin&quot;/start-dfs.sh --config $HADOOP_CONF_DIR start mapred daemons &quot;$bin&quot;/start-mapred.sh --config $HADOOP_CONF_DIR 从上面可以看出来这个脚本，执行了三个脚本，分别是： hadoop-config.sh start-dfs.sh start-mapred.sh hadoop-config.sh 内容 this=&quot;$0&quot; while [ -h &quot;$this&quot; ]; do ls=`ls -ld &quot;$this&quot;` link=`expr &quot;$ls&quot; : '.*-&gt; \(.*\)$'`……
+                            </div>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/hadoop-%E5%90%AF%E5%8A%A8%E9%9B%86%E7%BE%A4%E8%83%8C%E5%90%8E%E7%9A%84%E4%BA%8B/">阅读全文</a></p>
+                        </article>
+                    
+                    
+		    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
                                     <a href="https://zoux86.github.io/post/hadoop-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-configuration.java/" title="Hadoop 源码分析-Configuration.java" >Hadoop 源码分析-Configuration.java</a>
                                 </h1>
                             </header>
@@ -242,81 +317,6 @@
                         </article>
                     
                     
-		    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/uml%E5%85%B6%E4%BB%96%E7%B1%BB%E5%9B%BE%E6%B1%87%E6%80%BB/" title="UML汇总介绍" >UML汇总介绍</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2018年10月19日
-                            </date>
-                            
-                            <div class="post-meta">
-                                <span>|</span>
-                                
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/uml">UML</a></span>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                UML部署图 https://blog.csdn.net/xdd19910505/article/details/18925173 UML包图 https://blog.csdn.net/chktsang/article/details/79699810 UML制品图 http://blog.sina.com.cn/s/blog_5e98ca2b01019aql.html https://blog.csdn.net/chs007chs/article/details/80171945 UML用例图 https://www.cnblogs.com/13062225wmx/p/5432356.html UML活动图 https://www.cnblogs.com/xiaolongbao-lzh/p/4591953.html UML状态图 （活动图与状态图的区别） https://blog.csdn.net/li2534153206/article/details/55004031 区别： https://www.cnblogs.com/jingwhale/p/4230235.html UML时序图 https://www.cnblogs.com/wolf-sun/p/UML-Sequence-diagram.html UML通讯图 以及与时序图的区别 https://www.cnblogs.com/wolf-sun/p/UML-collaboration-diagram.html UML定时图 https://blog.csdn.net/litianxiang_kaola/article/details/53978656……
-                            </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/uml%E5%85%B6%E4%BB%96%E7%B1%BB%E5%9B%BE%E6%B1%87%E6%80%BB/">阅读全文</a></p>
-                        </article>
-                    
-                    
-		    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/uml%E5%AE%9E%E4%BE%8B%E7%90%86%E8%A7%A3/" title="UML实例理解" >UML实例理解</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2018年10月17日
-                            </date>
-                            
-                            <div class="post-meta">
-                                <span>|</span>
-                                
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/uml">UML</a></span>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                https://www.cnblogs.com/wangkangluo1/archive/2013/02/21/2920606.html……
-                            </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/uml%E5%AE%9E%E4%BE%8B%E7%90%86%E8%A7%A3/">阅读全文</a></p>
-                        </article>
-                    
-                    
-		    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/uml%E7%BB%84%E5%90%88%E7%BB%93%E6%9E%84%E5%9B%BE/" title="UML组合结构图介绍" >UML组合结构图介绍</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2018年10月17日
-                            </date>
-                            
-                            <div class="post-meta">
-                                <span>|</span>
-                                
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/uml">UML</a></span>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                https://blog.csdn.net/litianxiang_kaola/article/details/53969322……
-                            </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/uml%E7%BB%84%E5%90%88%E7%BB%93%E6%9E%84%E5%9B%BE/">阅读全文</a></p>
-                        </article>
-                    
-                    
                     
 
 
@@ -389,6 +389,18 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://zoux86.github.io/post/2019-12-02-volcano-scheduler%E4%BB%A3%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE/" title="volcano的代码流程图">volcano的代码流程图</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-02-%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84volcano/" title="部署自己的volcano">部署自己的volcano</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-02-volcano%E7%AE%80%E4%BB%8B/" title="volcano简介">volcano简介</a>
+    </li>
+    
+    <li>
         <a href="https://zoux86.github.io/post/2019-11-27-c&#43;&#43;%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%80%E7%94%9F/" title="C&#43;&#43;代码的一生">C&#43;&#43;代码的一生</a>
     </li>
     
@@ -414,18 +426,6 @@
     
     <li>
         <a href="https://zoux86.github.io/post/2019-%E9%98%BF%E9%87%8C%E4%BA%91%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019阿里云面经">2019阿里云面经</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019文远知行面经">2019文远知行面经</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-%E5%95%86%E6%B1%A4%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019商汤面经">2019商汤面经</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-%E5%BE%AE%E8%BD%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019微软面经">2019微软面经</a>
     </li>
     
 </ul>
@@ -459,7 +459,7 @@
     
     <li><a href="https://zoux86.github.io/categories/vmware/">VMware (2)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/volcano/">volcano (1)</a></li>
+    <li><a href="https://zoux86.github.io/categories/volcano/">volcano (4)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/window%E5%B7%A5%E5%85%B7/">window工具 (1)</a></li>
     

@@ -71,6 +71,81 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/2019-12-02-volcano-scheduler%E4%BB%A3%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE/" title="volcano的代码流程图" >volcano的代码流程图</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2019年12月2日
+                            </date>
+                            
+                            <div class="post-meta">
+                                <span>|</span>
+                                
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/volcano">volcano</a></span>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                代码入口 cmd/sheduler/main.go:46 main -&gt; cmd/sheduler/main.go:62 app.Run cmd/sheduler/main.go:62 app.Run -&gt; cmd/app/server.go:106 sched.Run cmd/app/server.go:106 sched.Run -&gt; pkg/scheduler/scheduler.go:64 Run pkg/scheduler/scheduler.go:64 Run -&gt; pkg/scheduler/scheduler.go:69 Run 代码 pkg/scheduler/scheduler.go:69 中的Run 才是开启调度程序的真正入口，它的实现如下： // Run runs the Scheduler func (pc *Scheduler) Run(stopCh &lt;-chan struct{}) { // 同步cache，缓存节点，pod，job等信息 go pc.cache.Run(stopCh) pc.cache.WaitForCacheSync(stopCh) //真正的调度核心，意思是没隔pc.schedulePeriod（1秒），就开启一次调度（pc.……
+                            </div>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-12-02-volcano-scheduler%E4%BB%A3%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE/">阅读全文</a></p>
+                        </article>
+                    
+                    
+		    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/2019-12-02-%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84volcano/" title="部署自己的volcano" >部署自己的volcano</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2019年12月2日
+                            </date>
+                            
+                            <div class="post-meta">
+                                <span>|</span>
+                                
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/volcano">volcano</a></span>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                搭建说明 有时候，我们需要对volcano二次开发，所有需要部署自己的volcano 准备工作 (1) 安装好 k8s集群 部署过程 （1）在go的安装目录下，创建volcano目录，并下载 mkdir -p $GOPATH/src/volcano.sh/ cd $GOPATH/src/volcano.sh/ git clone https://github.com/volcano-sh/volcano.git PS: 这里是官网的volcano，你可以在这里修改，也可以git你自己的代码。 (2)在$GOPA……
+                            </div>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-12-02-%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84volcano/">阅读全文</a></p>
+                        </article>
+                    
+                    
+		    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/2019-12-02-volcano%E7%AE%80%E4%BB%8B/" title="volcano简介" >volcano简介</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2019年12月2日
+                            </date>
+                            
+                            <div class="post-meta">
+                                <span>|</span>
+                                
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/volcano">volcano</a></span>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                背景 volcano的前身是kube-batch，Kube-batch的知识参考之前的博客。 volcano的结构 volcano主要分为两个部分： （1） Volcano-Scheduler: （2） Volcano-Controller 使用volcano的流程一般如下： 用户通过kubectl创建Volcano Job资源。 Volcano Controller监测到Job资……
+                            </div>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-12-02-volcano%E7%AE%80%E4%BB%8B/">阅读全文</a></p>
+                        </article>
+                    
+                    
+		    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
                                     <a href="https://zoux86.github.io/post/2019-11-27-c&#43;&#43;%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%80%E7%94%9F/" title="C&#43;&#43;代码的一生" >C&#43;&#43;代码的一生</a>
                                 </h1>
                             </header>
@@ -86,7 +161,7 @@
                             </div>
                             
                             <div class="post-content">
-                                目录 c++代码变成可执行文件 （1）预处理过程 （2）编译过程 （3）汇编过程 （4）链接过程 （5）目标文件 （6）静态链接和动态链接 可执行文件变成进程 一个c++程序，从.c文件，变成二进制可执行文件，会经历上述四个过程。 预处理阶段：对源代码文件中文件包含关系（头文件）、预编译语句（宏定义……
+                                目录 c++代码变成可执行文件 （1）预处理过程 （2）编译过程 （3）汇编过程 （4）链接过程 （5）目标文件 （6）静态链接和动态链接 可执行文件变成进程 正文 一个c++程序，从.c文件，变成二进制可执行文件，会经历上述四个过程。 预处理阶段：对源代码文件中文件包含关系（头文件）、预编译语句（宏……
                             </div>
                             <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-27-c&#43;&#43;%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%80%E7%94%9F/">阅读全文</a></p>
                         </article>
@@ -228,81 +303,6 @@
                         </article>
                     
                     
-		    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/2019-%E8%85%BE%E8%AE%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019腾讯校招" >2019腾讯校招</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2019年11月10日
-                            </date>
-                            
-                            <div class="post-meta">
-                                <span>|</span>
-                                
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B">2019校招</a></span>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                面试时间：2019年10月 岗位：云计算开发（只有大方向） 形式：电话面试 我可能跟腾讯无缘，在4月份投递春招实习的时候，身边的同学都收到了腾讯的笔试通知，就我一个人没收到。最后正式校招的时候，我投递简历一直没人联系，最终是10月中旬左右，腾讯大数据部门联系了我，但是他们不做容器方向，……
-                            </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-%E8%85%BE%E8%AE%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/">阅读全文</a></p>
-                        </article>
-                    
-                    
-		    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/2019-%E9%98%BF%E9%87%8C%E4%BA%91%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019阿里云面经" >2019阿里云面经</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2019年11月10日
-                            </date>
-                            
-                            <div class="post-meta">
-                                <span>|</span>
-                                
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B">2019校招</a></span>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                面试时间：2019年9月 岗位：阿里云-基础架构研发工程师 形式：视频面试 一面（现场面试） 1.自我介绍 2.介绍项目，这一面的重头戏在项目部门，项目问的很细，简历上的东西都会问到 3.算法题：求最长的连续回文子串 面试时间：2小时 二面（视频面试） 1.自我介绍 2.项目介绍 3.算法题，这一面的……
-                            </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-%E9%98%BF%E9%87%8C%E4%BA%91%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/">阅读全文</a></p>
-                        </article>
-                    
-                    
-		    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/2019-%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019文远知行面经" >2019文远知行面经</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2019年11月9日
-                            </date>
-                            
-                            <div class="post-meta">
-                                <span>|</span>
-                                
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B">2019校招</a></span>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                面试时间：2019年8-10月 岗位：基础架构研发工程师 形式：视频面试 一面（国内视频面试） 1.自我介绍 2.介绍k8s的组件 3.k8s服务是如何实现的 4.k8s deployment的实现 5.C++虚函数相关的知识 6.算法题： 给定一个循环数组，求最长的环。 例如（1,3，-1,2,1），正数表示……
-                            </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/">阅读全文</a></p>
-                        </article>
-                    
-                    
                     
 
 
@@ -371,6 +371,18 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://zoux86.github.io/post/2019-12-02-volcano-scheduler%E4%BB%A3%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE/" title="volcano的代码流程图">volcano的代码流程图</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-02-%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84volcano/" title="部署自己的volcano">部署自己的volcano</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-02-volcano%E7%AE%80%E4%BB%8B/" title="volcano简介">volcano简介</a>
+    </li>
+    
+    <li>
         <a href="https://zoux86.github.io/post/2019-11-27-c&#43;&#43;%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%80%E7%94%9F/" title="C&#43;&#43;代码的一生">C&#43;&#43;代码的一生</a>
     </li>
     
@@ -396,18 +408,6 @@
     
     <li>
         <a href="https://zoux86.github.io/post/2019-%E9%98%BF%E9%87%8C%E4%BA%91%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019阿里云面经">2019阿里云面经</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019文远知行面经">2019文远知行面经</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-%E5%95%86%E6%B1%A4%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019商汤面经">2019商汤面经</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-%E5%BE%AE%E8%BD%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019微软面经">2019微软面经</a>
     </li>
     
 </ul>
@@ -441,7 +441,7 @@
     
     <li><a href="https://zoux86.github.io/categories/vmware/">VMware (2)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/volcano/">volcano (1)</a></li>
+    <li><a href="https://zoux86.github.io/categories/volcano/">volcano (4)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/window%E5%B7%A5%E5%85%B7/">window工具 (1)</a></li>
     

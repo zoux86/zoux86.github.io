@@ -6,10 +6,37 @@
     <description>Recent content in volcano on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 10 Sep 2019 20:31:20 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 02 Dec 2019 10:31:20 +0800</lastBuildDate>
     
 	<atom:link href="https://zoux86.github.io/categories/volcano/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>volcano的代码流程图</title>
+      <link>https://zoux86.github.io/post/2019-12-02-volcano-scheduler%E4%BB%A3%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE/</link>
+      <pubDate>Mon, 02 Dec 2019 10:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-12-02-volcano-scheduler%E4%BB%A3%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE/</guid>
+      <description>代码入口 cmd/sheduler/main.go:46 main -&amp;gt; cmd/sheduler/main.go:62 app.Run cmd/sheduler/main.go:62 app.Run -&amp;gt; cmd/app/server.go:106 sched.Run cmd/app/server.go:106 sched.Run -&amp;gt; pkg/scheduler/scheduler.go:64 Run pkg/scheduler/scheduler.go:64 Run -&amp;gt; pkg/scheduler/scheduler.go:69 Run 代码 pkg/scheduler/scheduler.go:69 中的Run 才是开启调度程序的真正入口，它的实现如下： // Run runs the Scheduler func (pc *Scheduler) Run(stopCh &amp;lt;-chan struct{}) { // 同步cache，缓存节点，pod，job等信息 go pc.cache.Run(stopCh) pc.cache.WaitForCacheSync(stopCh) //真正的调度核心，意思是没隔pc.schedulePeriod（1秒），就开启一次调度（pc.</description>
+    </item>
+    
+    <item>
+      <title>部署自己的volcano</title>
+      <link>https://zoux86.github.io/post/2019-12-02-%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84volcano/</link>
+      <pubDate>Mon, 02 Dec 2019 01:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-12-02-%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84volcano/</guid>
+      <description>搭建说明 有时候，我们需要对volcano二次开发，所有需要部署自己的volcano 准备工作 (1) 安装好 k8s集群 部署过程 （1）在go的安装目录下，创建volcano目录，并下载 mkdir -p $GOPATH/src/volcano.sh/ cd $GOPATH/src/volcano.sh/ git clone https://github.com/volcano-sh/volcano.git PS: 这里是官网的volcano，你可以在这里修改，也可以git你自己的代码。 (2)在$GOPA</description>
+    </item>
+    
+    <item>
+      <title>volcano简介</title>
+      <link>https://zoux86.github.io/post/2019-12-02-volcano%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Mon, 02 Dec 2019 00:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-12-02-volcano%E7%AE%80%E4%BB%8B/</guid>
+      <description>背景 volcano的前身是kube-batch，Kube-batch的知识参考之前的博客。 volcano的结构 volcano主要分为两个部分： （1） Volcano-Scheduler: （2） Volcano-Controller 使用volcano的流程一般如下： 用户通过kubectl创建Volcano Job资源。 Volcano Controller监测到Job资</description>
+    </item>
     
     <item>
       <title>安装kubeflow tfjob并让 搭配 volcano 的教程</title>

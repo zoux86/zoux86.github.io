@@ -6,10 +6,19 @@
     <description>Recent content in Categories on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 28 Nov 2019 00:31:20 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 02 Dec 2019 10:31:20 +0800</lastBuildDate>
     
 	<atom:link href="https://zoux86.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>volcano</title>
+      <link>https://zoux86.github.io/categories/volcano/</link>
+      <pubDate>Mon, 02 Dec 2019 10:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/categories/volcano/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>C&#43;&#43;</title>
@@ -53,15 +62,6 @@
       <pubDate>Sun, 10 Nov 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>volcano</title>
-      <link>https://zoux86.github.io/categories/volcano/</link>
-      <pubDate>Tue, 10 Sep 2019 20:31:20 +0800</pubDate>
-      
-      <guid>https://zoux86.github.io/categories/volcano/</guid>
       <description></description>
     </item>
     

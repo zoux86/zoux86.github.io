@@ -71,6 +71,81 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84/" title="k8s源码学习--代码结构" >k8s源码学习--代码结构</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2019年4月21日
+                            </date>
+                            
+                            <div class="post-meta">
+                                <span>|</span>
+                                
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/k8s">k8s</a></span>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                k8s版本：v1.13 k8s代码的结构 api: 输出接口文档用，基本是json源码 build：构建脚本 cmd：所有的二进制可执行文件入口代码，也就是各种命令的接口代码。 pkg：项目diamante主目录，cmd只是接口，这里是具体实现。cmd类似业务代码，pkg类似核心 plugin：插件……
+                            </div>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84/">阅读全文</a></p>
+                        </article>
+                    
+                    
+		    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E7%9A%84%E9%85%8D%E7%BD%AE/" title="kube-batch 修改默认的配置" >kube-batch 修改默认的配置</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2019年4月21日
+                            </date>
+                            
+                            <div class="post-meta">
+                                <span>|</span>
+                                
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kube-batch">kube-batch</a></span>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                在kube-batch V0.4及以上版本中，kube-batch默认的配置 只包含两个 Action(allocate, backfill)。 具体可以参考： https://github.com/kubernetes-sigs/kube-batch/blob/6e560929dcafec91b2b9a24f246a20b4569b39a8/pkg/scheduler/util.go 在自己的需求中，我们可能需要定义自己的配置。 思路： 查看util.go中的代码发现，Kube-batch在发现用户指定配置文件后，会自动地读取该文件的内容，而不……
+                            </div>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E7%9A%84%E9%85%8D%E7%BD%AE/">阅读全文</a></p>
+                        </article>
+                    
+                    
+		    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/2019-11-25-%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93%E7%AC%94%E8%AE%B0/" title="代码整洁之道笔记" >代码整洁之道笔记</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2019年4月21日
+                            </date>
+                            
+                            <div class="post-meta">
+                                <span>|</span>
+                                
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0">读书笔记</a></span>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                动机 最近在回顾自己之前写的代码时，发现之前的惨不忍睹。最大的问题是，几个月前自己写的居然都看不懂。 有些问题自己能避免，例如有意义的变量命名问题，但是由于当时英文卡住了，直接就随便命名了，当时以为自己看得懂，以后就能懂，最后发现是自己想多了。 刚好今天没事翻了一下之前买的书籍《代码整……
+                            </div>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-25-%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93%E7%AC%94%E8%AE%B0/">阅读全文</a></p>
+                        </article>
+                    
+                    
+		    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
                                     <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BB%8E%E4%BB%A3%E7%A0%81%E4%B8%AD%E6%89%BE%E5%87%BAgang-scheduler%E8%BF%99%E4%B8%AA%E8%BF%87%E7%A8%8B/" title="kube-batch 从代码中找出gang scheduler这个过程" >kube-batch 从代码中找出gang scheduler这个过程</a>
                                 </h1>
                             </header>
@@ -242,81 +317,6 @@
                         </article>
                     
                     
-		    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/2019-11-24-%E6%90%AD%E5%BB%BAk8s%E9%9B%86%E7%BE%A4/" title="ubuntu搭建k8s机器" >ubuntu搭建k8s机器</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2019年3月5日
-                            </date>
-                            
-                            <div class="post-meta">
-                                <span>|</span>
-                                
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a></span>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                本次在搭建k8s集群的过程中，遇到了很多问题，幸好最后终于成功。故将整个过程记录下来，希望对大家有所帮助。 环境说明 环境：4台ubuntu16.04 1个master 3个node k8s版本：V1.13.2 搭建说明 本教程采用kubeadm的方式安装，主要针对的是国内用户，因为安装k8s……
-                            </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-%E6%90%AD%E5%BB%BAk8s%E9%9B%86%E7%BE%A4/">阅读全文</a></p>
-                        </article>
-                    
-                    
-		    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%9E%E4%BE%8B/" title="kubeflow pipelines--实现自己的实例" >kubeflow pipelines--实现自己的实例</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2019年2月1日
-                            </date>
-                            
-                            <div class="post-meta">
-                                <span>|</span>
-                                
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kubeflow">kubeflow</a></span>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                上篇文章实现了运行系统给出的pipelines实例。通过挂载自己的卷，以及使用自己的镜像总算可以运行官方给的ML实例了。但是我们的最终目的是运行自己的ML程序。 接下来是实现自己的pipelines实例。 根据官方文档的建议： https://www.kubeflow.org/docs/pipelines/sdk/build-component/](https://www.kubeflow.org/docs/pipelines/sdk/build-component/) 实现自己的ML实例，总共有两点： （1）Client code （在……
-                            </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%9E%E4%BE%8B/">阅读全文</a></p>
-                        </article>
-                    
-                    
-		    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E4%BD%BF%E7%94%A8ui%E7%95%8C%E9%9D%A2/" title="kubeflow pipelines--使用UI界面" >kubeflow pipelines--使用UI界面</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2019年1月23日
-                            </date>
-                            
-                            <div class="post-meta">
-                                <span>|</span>
-                                
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kubeflow">kubeflow</a></span>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                前面的文章已经安装好了pipelines，接下来是体验如何使用pipelines了。 这是官网的图，进入Pipelines的图形界面就会出现这个。 但是官网给出的都是怎样在gcp上使用图形界面。所以怎么在自己本地集群使用Pipelines图形界面还得靠自己摸索。 既然我们都装好pipe……
-                            </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E4%BD%BF%E7%94%A8ui%E7%95%8C%E9%9D%A2/">阅读全文</a></p>
-                        </article>
-                    
-                    
                     
 
 
@@ -389,6 +389,18 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://zoux86.github.io/post/2019-12-02-volcano-scheduler%E4%BB%A3%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE/" title="volcano的代码流程图">volcano的代码流程图</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-02-%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84volcano/" title="部署自己的volcano">部署自己的volcano</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-02-volcano%E7%AE%80%E4%BB%8B/" title="volcano简介">volcano简介</a>
+    </li>
+    
+    <li>
         <a href="https://zoux86.github.io/post/2019-11-27-c&#43;&#43;%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%80%E7%94%9F/" title="C&#43;&#43;代码的一生">C&#43;&#43;代码的一生</a>
     </li>
     
@@ -414,18 +426,6 @@
     
     <li>
         <a href="https://zoux86.github.io/post/2019-%E9%98%BF%E9%87%8C%E4%BA%91%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019阿里云面经">2019阿里云面经</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019文远知行面经">2019文远知行面经</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-%E5%95%86%E6%B1%A4%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019商汤面经">2019商汤面经</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-%E5%BE%AE%E8%BD%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019微软面经">2019微软面经</a>
     </li>
     
 </ul>
@@ -459,7 +459,7 @@
     
     <li><a href="https://zoux86.github.io/categories/vmware/">VMware (2)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/volcano/">volcano (1)</a></li>
+    <li><a href="https://zoux86.github.io/categories/volcano/">volcano (4)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/window%E5%B7%A5%E5%85%B7/">window工具 (1)</a></li>
     

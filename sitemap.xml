@@ -3,6 +3,56 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://zoux86.github.io/categories/</loc>
+    <lastmod>2019-12-02T10:31:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zoux86.github.io/post/</loc>
+    <lastmod>2019-12-02T10:31:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zoux86.github.io/tags/</loc>
+    <lastmod>2019-12-02T10:31:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zoux86.github.io/tags/volcano/</loc>
+    <lastmod>2019-12-02T10:31:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zoux86.github.io/categories/volcano/</loc>
+    <lastmod>2019-12-02T10:31:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zoux86.github.io/post/2019-12-02-volcano-scheduler%E4%BB%A3%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE/</loc>
+    <lastmod>2019-12-02T10:31:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zoux86.github.io/</loc>
+    <lastmod>2019-12-02T10:31:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</loc>
+    <lastmod>2019-12-02T01:31:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zoux86.github.io/post/2019-12-02-%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84volcano/</loc>
+    <lastmod>2019-12-02T01:31:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zoux86.github.io/post/2019-12-02-volcano%E7%AE%80%E4%BB%8B/</loc>
+    <lastmod>2019-12-02T00:31:20+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://zoux86.github.io/tags/c&#43;&#43;/</loc>
     <lastmod>2019-11-28T00:31:20+08:00</lastmod>
   </url>
@@ -14,26 +64,6 @@
   
   <url>
     <loc>https://zoux86.github.io/post/2019-11-27-c&#43;&#43;%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%80%E7%94%9F/</loc>
-    <lastmod>2019-11-28T00:31:20+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://zoux86.github.io/categories/</loc>
-    <lastmod>2019-11-28T00:31:20+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://zoux86.github.io/post/</loc>
-    <lastmod>2019-11-28T00:31:20+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://zoux86.github.io/tags/</loc>
-    <lastmod>2019-11-28T00:31:20+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://zoux86.github.io/</loc>
     <lastmod>2019-11-28T00:31:20+08:00</lastmod>
   </url>
   
@@ -84,11 +114,6 @@
   
   <url>
     <loc>https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</loc>
-    <lastmod>2019-11-20T20:31:20+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</loc>
     <lastmod>2019-11-20T20:31:20+08:00</lastmod>
   </url>
   
@@ -213,16 +238,6 @@
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/categories/volcano/</loc>
-    <lastmod>2019-09-10T20:31:20+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://zoux86.github.io/tags/volcano/</loc>
-    <lastmod>2019-09-10T20:31:20+08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://zoux86.github.io/post/2019-11-24-%E5%AE%89%E8%A3%85kubeflow-tfjob%E5%B9%B6%E8%AE%A9-%E6%90%AD%E9%85%8D-volcano-%E7%9A%84%E6%95%99%E7%A8%8B/</loc>
     <lastmod>2019-09-10T20:31:20+08:00</lastmod>
   </url>
@@ -233,12 +248,12 @@
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/tags/k8s/</loc>
+    <loc>https://zoux86.github.io/categories/k8s/</loc>
     <lastmod>2019-04-21T20:31:20+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/categories/k8s/</loc>
+    <loc>https://zoux86.github.io/tags/k8s/</loc>
     <lastmod>2019-04-21T20:31:20+08:00</lastmod>
   </url>
   
@@ -258,12 +273,12 @@
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/categories/kube-batch/</loc>
+    <loc>https://zoux86.github.io/tags/kube-batch/</loc>
     <lastmod>2019-04-21T20:31:20+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/tags/kube-batch/</loc>
+    <loc>https://zoux86.github.io/categories/kube-batch/</loc>
     <lastmod>2019-04-21T20:31:20+08:00</lastmod>
   </url>
   
@@ -343,12 +358,12 @@
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/categories/%E7%AE%97%E6%B3%95%E9%A2%98/</loc>
+    <loc>https://zoux86.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/</loc>
     <lastmod>2019-03-08T20:31:20+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/</loc>
+    <loc>https://zoux86.github.io/categories/%E7%AE%97%E6%B3%95%E9%A2%98/</loc>
     <lastmod>2019-03-08T20:31:20+08:00</lastmod>
   </url>
   
@@ -533,12 +548,12 @@
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/tags/java/</loc>
+    <loc>https://zoux86.github.io/categories/java/</loc>
     <lastmod>2018-10-13T20:31:20+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/categories/java/</loc>
+    <loc>https://zoux86.github.io/tags/java/</loc>
     <lastmod>2018-10-13T20:31:20+08:00</lastmod>
   </url>
   
@@ -553,12 +568,12 @@
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/categories/window%E5%B7%A5%E5%85%B7/</loc>
+    <loc>https://zoux86.github.io/tags/window%E5%B7%A5%E5%85%B7/</loc>
     <lastmod>2018-09-21T20:31:20+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/tags/window%E5%B7%A5%E5%85%B7/</loc>
+    <loc>https://zoux86.github.io/categories/window%E5%B7%A5%E5%85%B7/</loc>
     <lastmod>2018-09-21T20:31:20+08:00</lastmod>
   </url>
   
@@ -603,12 +618,12 @@
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/tags/vmware/</loc>
+    <loc>https://zoux86.github.io/categories/vmware/</loc>
     <lastmod>2018-07-10T20:31:20+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/categories/vmware/</loc>
+    <loc>https://zoux86.github.io/tags/vmware/</loc>
     <lastmod>2018-07-10T20:31:20+08:00</lastmod>
   </url>
   
