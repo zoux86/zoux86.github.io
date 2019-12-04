@@ -119,6 +119,16 @@
 
 <h3 id="设置gopath-和goroot">设置GOPATH，和GOROOT</h3>
 
+<p>PS:这里我的GOPATH路径是 /data/golang，先创建这个目录</p>
+
+<pre><code class="language-bash">sudo mkdir -p/data/golang/src
+</code></pre>
+
+<pre><code class="language-undefined">sudo vim /etc/profile
+</code></pre>
+
+<p>然后 将下列代码放到profile文件最后</p>
+
 <pre><code>export GOPATH=/data/golang
 export GOROOT=/usr/local/go
 export GOARCH=386
@@ -127,7 +137,15 @@ export GOTOOLS=$GOROOT/pkg/tool
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 </code></pre>
 
-<p>PS:这里我的GOPATH路径是 /data/golang</p>
+<p>执行下列命令使之生效</p>
+
+<pre><code class="language-bash">source /etc/profile
+</code></pre>
+
+<h4 id="验证是否安装成功">验证是否安装成功</h4>
+
+<pre><code class="language-rust">go version
+</code></pre>
 
                         </div>
 
@@ -200,6 +218,10 @@ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 <ul class="widget-list">
     
     <li>
+        <a href="https://zoux86.github.io/post/2019-12-04-c&#43;&#43;%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83/" title="C&#43;&#43;类对象的内存分布">C&#43;&#43;类对象的内存分布</a>
+    </li>
+    
+    <li>
         <a href="https://zoux86.github.io/post/2019-12-02-volcano-scheduler%E4%BB%A3%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE/" title="volcano的代码流程图">volcano的代码流程图</a>
     </li>
     
@@ -235,10 +257,6 @@ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
         <a href="https://zoux86.github.io/post/2019-%E8%85%BE%E8%AE%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019腾讯校招">2019腾讯校招</a>
     </li>
     
-    <li>
-        <a href="https://zoux86.github.io/post/2019-%E9%98%BF%E9%87%8C%E4%BA%91%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019阿里云面经">2019阿里云面经</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -250,7 +268,7 @@ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/c&#43;&#43;/">C&#43;&#43; (1)</a></li>
+    <li><a href="https://zoux86.github.io/categories/c&#43;&#43;/">C&#43;&#43; (2)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/docker/">docker (2)</a></li>
     
