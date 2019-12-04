@@ -71,6 +71,31 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B01/" title="k8s源码学习 - Scheduler笔记（1）" >k8s源码学习 - Scheduler笔记（1）</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2019年4月21日
+                            </date>
+                            
+                            <div class="post-meta">
+                                <span>|</span>
+                                
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/k8s">k8s</a></span>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                任务：找到scheduler的入口 k8s 代码目录结构 cmd：所有的二进制可执行文件入口代码，也就是各种命令的接口代码。 pkg：项目diamante主目录，cmd只是接口，这里是具体实现。cmd类似业务代码，pkg类似核心 寻找k8s入口函数 cmd/kube-scheduler/scheduler.go:34 main函数 -&gt; cmd/kube-scheduler/app/server.go:70 NewSchedulerCommand-&gt; cmd/kube-scheduler/app/server.go:117 runCommand -&gt; cmd/kube-scheduler/app/server.go:167 Run -&gt; pkg/scheduler/scheduler.go:276 run (cmd/kube-scheduler/scheduler.go:34 表示cm……
+                            </div>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B01/">阅读全文</a></p>
+                        </article>
+                    
+                    
+		    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
                                     <a href="https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B02/" title="k8s源码学习 - Scheduler笔记（2）" >k8s源码学习 - Scheduler笔记（2）</a>
                                 </h1>
                             </header>
@@ -292,31 +317,6 @@
                         </article>
                     
                     
-		    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E7%AE%80%E4%BB%8B/" title="kube-batch--简介" >kube-batch--简介</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2019年3月25日
-                            </date>
-                            
-                            <div class="post-meta">
-                                <span>|</span>
-                                
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kube-batch">kube-batch</a></span>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                1.背景介绍 K8s本身的调度器具有一些缺陷： （1） 默认的调度器是以 pod 为粒度的，对机器学习任务很不利。 （2）默认的调度器无法提供队列调度的功能 2.kube-batch介绍 Kube-batch 目前是 Kubernetes SIGs 旗下的一个孵化项目，是一个运行在 Kubernetes 上面向机器学习 / 大数据 /HPC 的批调度器（batch scheduler）……
-                            </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E7%AE%80%E4%BB%8B/">阅读全文</a></p>
-                        </article>
-                    
-                    
                     
 
 
@@ -389,6 +389,10 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://zoux86.github.io/post/2019-12-05-%E4%B8%80%E9%81%93%E9%9D%9E%E5%B8%B8%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84c&#43;&#43;%E9%9D%A2%E8%AF%95%E9%A2%98/" title="一道非常有意思的C&#43;&#43;面试题">一道非常有意思的C&#43;&#43;面试题</a>
+    </li>
+    
+    <li>
         <a href="https://zoux86.github.io/post/2019-12-04-c&#43;&#43;%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83/" title="C&#43;&#43;类对象的内存分布">C&#43;&#43;类对象的内存分布</a>
     </li>
     
@@ -424,10 +428,6 @@
         <a href="https://zoux86.github.io/post/first/" title="开启新的博客历程">开启新的博客历程</a>
     </li>
     
-    <li>
-        <a href="https://zoux86.github.io/post/2019-%E8%85%BE%E8%AE%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019腾讯校招">2019腾讯校招</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -439,7 +439,7 @@
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/c&#43;&#43;/">C&#43;&#43; (2)</a></li>
+    <li><a href="https://zoux86.github.io/categories/c&#43;&#43;/">C&#43;&#43; (3)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/docker/">docker (2)</a></li>
     

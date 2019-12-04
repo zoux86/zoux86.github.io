@@ -6,10 +6,19 @@
     <description>Recent content on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 04 Dec 2019 20:31:20 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 05 Dec 2019 00:31:20 +0800</lastBuildDate>
     
 	<atom:link href="https://zoux86.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>一道非常有意思的C&#43;&#43;面试题</title>
+      <link>https://zoux86.github.io/post/2019-12-05-%E4%B8%80%E9%81%93%E9%9D%9E%E5%B8%B8%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84c&#43;&#43;%E9%9D%A2%E8%AF%95%E9%A2%98/</link>
+      <pubDate>Thu, 05 Dec 2019 00:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-12-05-%E4%B8%80%E9%81%93%E9%9D%9E%E5%B8%B8%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84c&#43;&#43;%E9%9D%A2%E8%AF%95%E9%A2%98/</guid>
+      <description>一道非常有意思的C++题目，描述如下： 已知一个类的结构，但是它所有的成员变量是私有的，有get方法，但是没有set方法，请问如何给成员变量赋值。 答案 #include &amp;lt;iostream&amp;gt; using namespace std; class A{ private: int b; public: int getB(){ return b; } }; int main(){ A *a = new A; int *p = (int *)a; *p = 1; cout&amp;lt;&amp;lt;a-&amp;gt;getB()&amp;lt;&amp;lt;endl; } 这道题的关键在于，要了解C++实例的内存分布。实现主要是下面两步</description>
+    </item>
     
     <item>
       <title>C&#43;&#43;类对象的内存分布</title>

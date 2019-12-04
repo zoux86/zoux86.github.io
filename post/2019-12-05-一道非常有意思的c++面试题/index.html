@@ -7,20 +7,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>UML组合结构图介绍 | zoux的博客</title>
-    <meta property="og:title" content="UML组合结构图介绍 - zoux的博客">
+    <title>一道非常有意思的C&#43;&#43;面试题 | zoux的博客</title>
+    <meta property="og:title" content="一道非常有意思的C&#43;&#43;面试题 - zoux的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2018-10-17T20:31:20&#43;08:00">
+    <meta property="article:published_time" content="2019-12-05T00:31:20&#43;08:00">
         
         
-    <meta property="article:modified_time" content="2018-10-17T20:31:20&#43;08:00">
+    <meta property="article:modified_time" content="2019-12-05T00:31:20&#43;08:00">
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
-    <meta name="description" content="UML组合结构图介绍">
+    <meta name="description" content="一道非常有意思的C&#43;&#43;面试题">
         
     <meta name="author" content="zoux">
-    <meta property="og:url" content="https://zoux86.github.io/post/uml%E7%BB%84%E5%90%88%E7%BB%93%E6%9E%84%E5%9B%BE/">
+    <meta property="og:url" content="https://zoux86.github.io/post/2019-12-05-%E4%B8%80%E9%81%93%E9%9D%9E%E5%B8%B8%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84c&#43;&#43;%E9%9D%A2%E8%AF%95%E9%A2%98/">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -76,16 +76,16 @@
                 <div class="res-cons">
                     <article class="post">
                         <header>
-                            <h1 class="post-title">UML组合结构图介绍</h1>
+                            <h1 class="post-title">一道非常有意思的C&#43;&#43;面试题</h1>
                         </header>
                         <date class="post-meta meta-date">
-                            2018年10月17日
+                            2019年12月5日
                         </date>
                         
                         <div class="post-meta">
                             <span>|</span>
                             
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/uml">UML</a></span>
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/c&#43;&#43;">C&#43;&#43;</a></span>
                             
                         </div>
                         
@@ -96,9 +96,64 @@
                         
                         
                         <div class="post-content">
-                            <p><a href="https://blog.csdn.net/litianxiang_kaola/article/details/53969322">https://blog.csdn.net/litianxiang_kaola/article/details/53969322</a></p>
+                            
 
-<p><img src="../../resources/images/UML/image4.png" alt="image4" /></p>
+<h4 id="一道非常有意思的c-题目-描述如下">一道非常有意思的C++题目，描述如下：</h4>
+
+<p>已知一个类的结构，但是它所有的成员变量是私有的，有get方法，但是没有set方法，请问如何给成员变量赋值。</p>
+
+<h4 id="答案">答案</h4>
+
+<pre><code class="language-c++">#include &lt;iostream&gt;
+using namespace std;
+
+class A{
+	private:
+		int b;
+	public:
+		int getB(){
+			return b;
+		}
+};
+
+
+int main(){
+	A *a = new A;
+	
+	int *p = (int *)a;
+	*p = 1;
+	
+	cout&lt;&lt;a-&gt;getB()&lt;&lt;endl;
+} 
+</code></pre>
+
+<p>这道题的关键在于，要了解C++实例的内存分布。实现主要是下面两步：</p>
+
+<pre><code class="language-c++">int *p = (int *)a;  //将a对象强制转换为 int指针，这样p就是指向a的头部
+*p = 1;             //将p指向的内存赋值
+</code></pre>
+
+<p>a实例的内存，其实就存放b一个元素。所以找到b的内存地址，然后强行给地址赋值就可以了。</p>
+
+<h4 id="发散题">发散题：</h4>
+
+<pre><code class="language-c++">class A{
+	private:
+		char a;
+		int b;
+		double c;
+	public:
+		int getC(){
+			return b;
+		}
+};
+</code></pre>
+
+<p>如何给这个A类的c 赋值呢？</p>
+
+<p>如果有虚函数怎么办？</p>
+
+<p>其实了解了实质，这些都是在考C++类对象的内存分布，具体可以参考我上一篇文章&mdash;-C++类对象的内存分布。</p>
 
                         </div>
 
@@ -111,15 +166,15 @@
     <h2>See Also</h2>
     <ul class="listing">
         
-        <li><a href="/post/uml%E5%AE%9E%E4%BE%8B%E7%90%86%E8%A7%A3/">UML实例理解</a></li>
+        <li><a href="/post/2019-12-04-c&#43;&#43;%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83/">C&#43;&#43;类对象的内存分布</a></li>
         
-        <li><a href="/post/uml%E5%AF%B9%E8%B1%A1%E5%9B%BE/">UML对象图</a></li>
+        <li><a href="/post/2019-11-27-c&#43;&#43;%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%80%E7%94%9F/">C&#43;&#43;代码的一生</a></li>
         
-        <li><a href="/post/uml-%E4%BA%A4%E4%BA%92%E6%A6%82%E8%BF%B0%E5%9B%BE/">UML交互概述图</a></li>
+        <li><a href="/post/2019-12-02-volcano-scheduler%E4%BB%A3%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE/">volcano的代码流程图</a></li>
         
-        <li><a href="/post/uml14%E7%A7%8D%E5%9B%BE%E6%A6%82%E8%BF%B0/">UML14种图概述</a></li>
+        <li><a href="/post/2019-12-02-%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84volcano/">部署自己的volcano</a></li>
         
-        <li><a href="/post/uml%E6%9E%84%E4%BB%B6%E5%9B%BE/">UML构件图介绍</a></li>
+        <li><a href="/post/2019-12-02-volcano%E7%AE%80%E4%BB%8B/">volcano简介</a></li>
         
     </ul>
 </div>
@@ -129,7 +184,7 @@
                             
                             <ul class="clearfix">
                                 
-                                <li><a href="https://zoux86.github.io/tags/uml">UML</a></li>
+                                <li><a href="https://zoux86.github.io/tags/c&#43;&#43;">C&#43;&#43;</a></li>
                                 
                             </ul>
                             
