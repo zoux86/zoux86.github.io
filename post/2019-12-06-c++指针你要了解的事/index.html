@@ -7,20 +7,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>ubuntu机器之间免密登录 | zoux的博客</title>
-    <meta property="og:title" content="ubuntu机器之间免密登录 - zoux的博客">
+    <title>C&#43;&#43;指针你要了解的事 | zoux的博客</title>
+    <meta property="og:title" content="C&#43;&#43;指针你要了解的事 - zoux的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2018-11-05T20:31:20&#43;08:00">
+    <meta property="article:published_time" content="2019-12-06T01:31:20&#43;08:00">
         
         
-    <meta property="article:modified_time" content="2018-11-05T20:31:20&#43;08:00">
+    <meta property="article:modified_time" content="2019-12-06T01:31:20&#43;08:00">
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
-    <meta name="description" content="ubuntu机器之间免密登录">
+    <meta name="description" content="C&#43;&#43;指针你要了解的事">
         
     <meta name="author" content="zoux">
-    <meta property="og:url" content="https://zoux86.github.io/post/2019-11-24-ubuntu%E6%9C%BA%E5%99%A8%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">
+    <meta property="og:url" content="https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E6%8C%87%E9%92%88%E4%BD%A0%E8%A6%81%E4%BA%86%E8%A7%A3%E7%9A%84%E4%BA%8B/">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -76,16 +76,16 @@
                 <div class="res-cons">
                     <article class="post">
                         <header>
-                            <h1 class="post-title">ubuntu机器之间免密登录</h1>
+                            <h1 class="post-title">C&#43;&#43;指针你要了解的事</h1>
                         </header>
                         <date class="post-meta meta-date">
-                            2018年11月5日
+                            2019年12月6日
                         </date>
                         
                         <div class="post-meta">
                             <span>|</span>
                             
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a></span>
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/c&#43;&#43;">C&#43;&#43;</a></span>
                             
                         </div>
                         
@@ -98,69 +98,207 @@
                         <div class="post-content">
                             
 
-<p>在自己动手搭建k8s集群环境之前，经常遇到的一个问题就是，集群机器之间能互相免密登录。故在此记录整个搭建过程。</p>
+<h4 id="指针和引用的区别">指针和引用的区别</h4>
 
-<p>假设有俩台机器：</p>
-
-<p>192.168.115.70 zx-1  master</p>
-
-<p>192.168.115.66 zx-2</p>
-
-<p>现在要修改成密码登录，并且这俩台机器免密登录。步骤如下：</p>
-
-<h3 id="修改-etc-hosts">修改 etc/hosts</h3>
-
-<p>zx-1机器上</p>
-
-<pre><code>127.0.0.1 localhost zx-1
-192.168.14.70 zx-1
-192.168.14.66 zx-2
+<pre><code class="language-rust">指针是一个变量，只不过这个变量存储的是一个地址，指向内存的一个存储单元；而引用仅是个别名；
+引用使用时无需解引用(*)，指针需要解引用；
+引用只能在定义时被初始化一次，之后不可变；指针可变；
+引用没有 const，指针有 const；
+引用不能为空，指针可以为空；
+“sizeof 引用”得到的是所指向的变量(对象)的大小，而“sizeof 指针”得到的是指针本身的大小；
+指针和引用的自增(++)运算意义不一样；
+指针可以有多级，但是引用只能是一级（int **p；合法 而 int &amp;&amp;a是不合法的） 
+从内存分配上看：程序为指针变量分配内存区域，而引用不需要分配内存区域。
 </code></pre>
 
-<p>zx-2机器上</p>
+<p><br></p>
 
-<pre><code>127.0.0.1 localhost zx-2
-192.168.14.70 zx-1
-192.168.14.66 zx-2
+<h4 id="数组作为函数参数">数组作为函数参数</h4>
+
+<pre><code class="language-rust">传数组给一个函数，数组类型自动转换为指针类型，因而传的实际是地址。
 </code></pre>
 
-<h3 id="修改登录密码">修改登录密码</h3>
+<p><br></p>
 
-<p>修改root密码   sudo passwd    密码为：123456</p>
+<h4 id="野指针">野指针</h4>
 
-<p>修改ubuntu密码   sudo passwd ubuntu    密码为：123456</p>
+<pre><code class="language-rust">野指针就是指向一个已删除的对象或者未申请访问受限内存区域的指针
 
-<p>zx-1 zx-2都是这样操作</p>
-
-<h3 id="运行密码登录">运行密码登录</h3>
-
-<p>将服务器中 /etc/ssh/sshd_config 中的一个参数改一下：</p>
-
-<p>PasswordAuthentication no中的“no”改为yes   （密码认证）</p>
-
-<p>PermitRootLogin no  改为 yes               （允许root登录)</p>
-
-<p>zx-1 zx-2都是这样操作</p>
-
-<h3 id="重启ssh服务">重启ssh服务</h3>
-
-<p>sudo /etc/init.d/ssh restart</p>
-
-<h3 id="在主机生成密钥-并将公钥复制给自己和zx-2">在主机生成密钥,并将公钥复制给自己和zx-2</h3>
-
-<pre><code>ssh-keygen	-t	rsa 
-ssh-copy-id	root@zx-1                
-ssh-copy-id	ubuntu@zx-1
-ssh-copy-id	root@zx-2
-ssh-copy-id	ubuntu@zx-2
+危害：
+野指针会随机执行内存，万一指向了内核或者其他地方，可能会导致严重错误。
 </code></pre>
 
-<p>这样zx-1就可以以ubuntu,root方式免密访问zx-1
-如果想zx-2也做到这样，在zx-2上重复（5）即可</p>
+<p><br></p>
 
-<h3 id="验证是否成功">验证是否成功</h3>
+<h4 id="栈溢出">栈溢出</h4>
 
-<p>在zx-1机器上，之间ssh zx-2，看能否不要密码就能登录。</p>
+<pre><code class="language-rust">栈溢出概念：
+栈溢出指的是程序向栈中某个变量中写入的字节数超过了这个变量本身所申请的字节数，因而导致栈中与其相邻的变量的值被改变。
+
+栈溢出的原因：
+1. 局部数组过大。当函数内部的数组过大时，有可能导致堆栈溢出。局部变量是存储在栈中的，因此这个很好理解。
+解决这类问题的办法有两个，一是增大栈空间,二是改用动态分配，使用堆（heap）而不是栈（stack）。
+2. 递归调用层次太多。递归函数在运行时会执行压栈操作，当压栈次数太多时，也会导致堆栈溢出。
+3. 指针或数组越界。这种情况最常见，例如进行字符串拷贝，或处理用户输入等等。
+</code></pre>
+
+<p><br></p>
+
+<h4 id="c-null-和nullptr-的区别">C++ NUll 和NullPtr 的区别</h4>
+
+<pre><code class="language-rust">nullPtr是C++中有的概率，c是没有的。c和c++中NUll都是用 0 表示的。 可以认为 NULL = 0
+因为c++有重载，c没有重载，所以C++直接使用NULL会出现二义性。
+更多详细内容参考：https://blog.csdn.net/qq_18108083/article/details/84346655
+</code></pre>
+
+<p><br></p>
+
+<h4 id="空指针可以调用类的方法吗">空指针可以调用类的方法吗</h4>
+
+<pre><code class="language-c++">class A{
+	public:
+	    void show(){
+	    	cout&lt;&lt;&quot;I'm A&quot;&lt;&lt;endl;
+	    }
+}
+
+A *a = new A();
+a-&gt;show();  //这样能正常输出
+
+A *a = NULL;
+a-&gt;show();     //这样会怎么样？
+</code></pre>
+
+<p>答案是能正常输出。</p>
+
+<p>其实，c++类的成员函数与传统c的函数并没有什么不同，只是成员函数的第1个参数必须是this指针，只是这个参数是由编译器自动加上去的，调用时也不需要显示传递。所以，上面的class A的成员函数fun的本质其实是这样子的：</p>
+
+<p>//show 接受一个A类型的指针参数，是空的可以无所谓</p>
+
+<p>void show(A* this){</p>
+
+<p>​    cout &lt;&lt; &ldquo;I&rsquo;m A&rdquo;&lt;&lt;endl;</p>
+
+<p>}</p>
+
+<p>而调用是其实这样子的：</p>
+
+<p>A* pa = NULL;</p>
+
+<p>fun(pa);</p>
+
+<p><br></p>
+
+<h4 id="智能指针">智能指针</h4>
+
+<h5 id="作用">作用</h5>
+
+<pre><code class="language-rust">智能指针的作用是管理一个指针，因为存在以下这种情况：申请的空间在函数结束时忘记释放，造成内存泄漏。
+使用智能指针可以很大程度上的避免这个问题，因为智能指针就是一个类，当超出了类的作用域是，类会自动调用析构函
+数，析构函数会自动释放资源。所以智能指针的作用原理就是在函数结束时自动释放内存空间，不需要手动释放内存空间。
+</code></pre>
+
+<h5 id="四种智能指针">四种智能指针</h5>
+
+<pre><code>(1) auto_ptr 
+
+auto_ptr&lt;string&gt; p1 (new string(&quot;hello&quot;));
+auto_ptr&lt;string&gt; p2;
+p2 = p1;  //不会报错
+cout&lt;&lt;*p1;   //会报错
+
+auto_ptr目的也是想同一时间，只能有一个指针对象。但是auto_ptr存在的问题是，赋值不会报错，
+但是p2剥脱了p1的所有权，再次访问p1会报错。这样会存在潜在的内存崩溃问题。所以这个指针现在被抛弃了。
+
+
+(2)unique-ptr
+ unique_ptr实现独占式拥有或严格拥有概念，保证同一时间内只有一个智能指针可以指向该对象。
+它对于避免资源泄露(例如“以new创建对象后因为发生异常而忘记调用delete”)特别有用。
+ 
+unique_ptr&lt;string&gt; p1 (new string(&quot;hello&quot;));
+unique_ptr&lt;string&gt; p2;
+p2 = p1;  //会报错
+ 
+(3) share-ptr
+shared_ptr实现共享式拥有概念。多个智能指针可以指向相同对象，该对象和其相关资源会在“最后一个引用被销毁”时候释放。
+从名字share就可以看出了资源可以被多个指针共享，它使用计数机制来表明资源被几个指针共享。可以通过成员函数
+use_count()来查看资源的所有者个数。除了可以通过new来构造，还可以通过传入auto_ptr, unique_ptr, weak_ptr 来构造。
+当我们调用release()时，当前指针会释放资源所有权，计数减一。当计数等于0时，资源会被释放。
+
+shared_ptr 是为了解决 auto_ptr 在对象所有权上的局限性(auto_ptr 是独占的), 
+在使用引用计数的机制上提供了可以共享所有权的智能指针。
+它的成员函数：use_count 返回引用计数的个数
+
+shared_ptr 存在的问题：互相引用，A中引用了B，B又引用了A。
+
+ 
+ (4)weak_ptr
+ weak_ptr 是一种不控制对象生命周期的智能指针, 它指向一个 shared_ptr 管理的对象.
+进行该对象的内存管理的是那个强引用的 shared_ptr. weak_ptr只是提供了对管理对象的一个访问手段。
+weak_ptr 设计的目的是为配合 shared_ptr 而引入的一种智能指针来协助 shared_ptr 工作, 
+它只可以从一个 shared_ptr 或另一个 weak_ptr 对象构造, 它的构造和析构不会引起引用记数的增加或减少。
+weak_ptr是用来解决shared_ptr相互引用时的死锁问题,如果说两个shared_ptr相互引用,
+那么这两个指针的引用计数永远不可能下降为0,资源永远不会释放。它是对对象的一种弱引用，不会增加对象的引用计数，
+和shared_ptr之间可以相互转化，shared_ptr可以直接赋值给它，它可以通过调用lock函数来获得shared_ptr。
+</code></pre>
+
+<p><br></p>
+
+<h4 id="new和malloc的区别">new和malloc的区别</h4>
+
+<pre><code class="language-rust">相同点：
+Malloc, new都是在堆上申请内存的。
+
+不同点：
+（1）new分配内存按照数据类型进行分配，malloc分配内存按照指定的大小分配；
+（2）new返回的是指定对象的指针，而malloc返回的是void*，因此malloc的返回值一般都需要进行类型转化。
+（3）new不仅分配一段内存，而且会调用构造函数，malloc不会。
+（4）new分配的内存要用delete销毁，malloc要用free来销毁；delete销毁的时候会调用对象的析构函数，而free则不会。
+（5）new是一个操作符可以重载，malloc是一个库函数。
+（6）malloc分配的内存不够的时候，可以用realloc扩容。扩容的原理？new没用这样操作。
+（7）new如果分配失败了会抛出bad_malloc的异常，而malloc失败了会返回NULL。
+（8）申请数组时： new[]一次分配所有内存，多次调用构造函数，搭配使用delete[]，
+delete[]多次调用析构函数，销毁数组中的每个对象。而malloc则只能sizeof(int) * n。
+</code></pre>
+
+<p><br></p>
+
+<h4 id="malloc详解">malloc详解</h4>
+
+<pre><code>Malloc函数用于动态分配内存。为了减少内存碎片和系统调用的开销，malloc其采用内存池的方式，先申请大块内存作为堆区，
+然后将堆区分为多个内存块，以块作为内存管理的基本单位。当用户申请内存时，直接从堆区分配一块合适的空闲块。
+Malloc采用隐式链表结构将堆区分成连续的、大小不一的块，包含已分配块和未分配块；同时malloc采用显示链表结构
+来管理所有的空闲块，即使用一个双向链表将空闲块连接起来，每一个空闲块记录了一个连续的、未分配的地址。
+当进行内存分配时，Malloc会通过隐式链表遍历所有的空闲块，选择满足要求的块进行分配；当进行内存合并时，
+malloc采用边界标记法，根据每个块的前后块是否已经分配来决定是否进行块合并。
+Malloc在申请内存时，一般会通过brk或者mmap系统调用进行申请。其中当申请内存小于128K时，会使用系统函数brk在堆区中分配；
+而当申请内存大于128K时，会使用系统函数mmap在映射区分配。
+</code></pre>
+
+<p><br></p>
+
+<h4 id="函数指针">函数指针</h4>
+
+<pre><code>(1)定义
+函数指针是指向函数的指针变量。
+函数指针本身首先是一个指针变量，该指针变量指向一个具体的函数。
+这正如用指针变量可指向整型变量、字符型、数组一样，这里是指向函数。
+C++在编译时，每一个函数都有一个入口地址，该入口地址就是函数指针所指向的地址。
+有了指向函数的指针变量后，可用该指针变量调用函数，就如同用指针变量可引用其他类型变量一样，
+在这些概念上是大体一致的。
+
+（2）如何使用
+使用步骤：
+char * fun(char * p)  {…}         // 定义函数fun
+char * (*pf)(char * p);           // 定义函数指针pf
+pf = fun;                         // 函数指针pf指向函数fun
+pf(p);                            // 通过函数指针pf调用函数fun
+
+（3）函数指针的作用：
+调用函数和做函数的参数，比如回调函数（创建线程时就需要）。
+引用不在代码段中的函数。此功能在嵌入式系统中经常使用。（嵌入式，不同代码在不同板子上）
+
+</code></pre>
 
                         </div>
 
@@ -173,15 +311,15 @@ ssh-copy-id	ubuntu@zx-2
     <h2>See Also</h2>
     <ul class="listing">
         
-        <li><a href="/post/ubuntu%E4%BF%A9%E5%8F%B0%E6%9C%BA%E5%99%A8%E4%B9%8B%E9%97%B4%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">ubuntu俩台机器之间免密登录</a></li>
+        <li><a href="/post/2019-12-05-%E4%B8%80%E9%81%93%E9%9D%9E%E5%B8%B8%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84c&#43;&#43;%E9%9D%A2%E8%AF%95%E9%A2%98/">一道非常有意思的C&#43;&#43;面试题</a></li>
         
-        <li><a href="/post/hadoop%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/">Hadoop 每次打开虚拟机重启hadoop都要重新格式化才能启动Namenode</a></li>
+        <li><a href="/post/2019-12-04-c&#43;&#43;%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83/">C&#43;&#43;类对象的内存分布</a></li>
         
-        <li><a href="/post/hadoop-%E9%85%8D%E7%BD%AEeclipse/">Hadoop 配置eclipse</a></li>
+        <li><a href="/post/2019-11-27-c&#43;&#43;%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%80%E7%94%9F/">C&#43;&#43;代码的一生</a></li>
         
-        <li><a href="/post/hadoop-%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%9D%8F%E5%A2%83%E6%90%AD%E5%BB%BA/">Hadoop伪分布式环境搭建</a></li>
+        <li><a href="/post/2019-12-02-volcano-scheduler%E4%BB%A3%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE/">volcano的代码流程图</a></li>
         
-        <li><a href="/post/hadoop-%E5%90%84%E4%B8%AA%E7%89%88%E6%9C%AC%E4%B8%8B%E8%BD%BD/">Hadoop各个版本下载</a></li>
+        <li><a href="/post/2019-12-02-%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84volcano/">部署自己的volcano</a></li>
         
     </ul>
 </div>
@@ -191,11 +329,7 @@ ssh-copy-id	ubuntu@zx-2
                             
                             <ul class="clearfix">
                                 
-                                <li><a href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a></li>
-                                
-                                <li><a href="https://zoux86.github.io/tags/ubuntu">ubuntu</a></li>
-                                
-                                <li><a href="https://zoux86.github.io/tags/k8s">k8s</a></li>
+                                <li><a href="https://zoux86.github.io/tags/c&#43;&#43;">C&#43;&#43;</a></li>
                                 
                             </ul>
                             

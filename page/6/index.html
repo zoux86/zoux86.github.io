@@ -71,6 +71,31 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-nfs%E5%81%9A%E5%90%8E%E7%AB%AF%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/" title="kubeflow准备--NFS环境搭建" >kubeflow准备--NFS环境搭建</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2019年1月7日
+                            </date>
+                            
+                            <div class="post-meta">
+                                <span>|</span>
+                                
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a></span>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                目的 在搭建kubeflow的时候，要需要搭建存储卷。为了以后能更好的共享文件，我这里使用了NFS作为文件存储系统。 操作如下： 针对master节点： master节点上安装NFS服务 sudo apt-get update &amp;&amp; sudo apt-get install -y nfs-server 建立一个共享的文件夹 sudo mkdir /nfs-data/kubeflow-pv1 修改/etc/exports文件 (末尾添加) /nfs-data/kubeflow-pv1 *(rw,sync,no_root_squash,no_subtree_check) 这一行的意……
+                            </div>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-nfs%E5%81%9A%E5%90%8E%E7%AB%AF%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/">阅读全文</a></p>
+                        </article>
+                    
+                    
+		    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
                                     <a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87%E5%B7%A5%E5%85%B7-ksonnet-%E5%AE%89%E8%A3%85/" title="kubeflow准备--下载ks" >kubeflow准备--下载ks</a>
                                 </h1>
                             </header>
@@ -292,31 +317,6 @@
                         </article>
                     
                     
-		    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/hadoop-%E5%90%84%E4%B8%AA%E7%89%88%E6%9C%AC%E4%B8%8B%E8%BD%BD/" title="Hadoop各个版本下载" >Hadoop各个版本下载</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2018年11月5日
-                            </date>
-                            
-                            <div class="post-meta">
-                                <span>|</span>
-                                
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/hadoop">hadoop</a></span>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                工欲善其事必先利其器。 在官网中 https://hadoop.apache.org/releases.html能下载到最新的Hadoop. 但是有时为了学习，我们需要下载很久之前的版本，比如haodoop.0.20.2版本 这时需要到下面的网址进行下载： https://hadoop.apache.org/releases.html 这里能看到所有的Hadoop版……
-                            </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/hadoop-%E5%90%84%E4%B8%AA%E7%89%88%E6%9C%AC%E4%B8%8B%E8%BD%BD/">阅读全文</a></p>
-                        </article>
-                    
-                    
                     
 
 
@@ -389,6 +389,10 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E6%8C%87%E9%92%88%E4%BD%A0%E8%A6%81%E4%BA%86%E8%A7%A3%E7%9A%84%E4%BA%8B/" title="C&#43;&#43;指针你要了解的事">C&#43;&#43;指针你要了解的事</a>
+    </li>
+    
+    <li>
         <a href="https://zoux86.github.io/post/2019-12-05-%E4%B8%80%E9%81%93%E9%9D%9E%E5%B8%B8%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84c&#43;&#43;%E9%9D%A2%E8%AF%95%E9%A2%98/" title="一道非常有意思的C&#43;&#43;面试题">一道非常有意思的C&#43;&#43;面试题</a>
     </li>
     
@@ -424,10 +428,6 @@
         <a href="https://zoux86.github.io/post/2019-11-24-%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F%E9%97%AE%E9%A2%98/" title="下载镜像问题">下载镜像问题</a>
     </li>
     
-    <li>
-        <a href="https://zoux86.github.io/post/first/" title="开启新的博客历程">开启新的博客历程</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -439,7 +439,7 @@
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/c&#43;&#43;/">C&#43;&#43; (3)</a></li>
+    <li><a href="https://zoux86.github.io/categories/c&#43;&#43;/">C&#43;&#43; (4)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/docker/">docker (2)</a></li>
     

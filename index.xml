@@ -6,10 +6,19 @@
     <description>Recent content on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 05 Dec 2019 00:31:20 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 06 Dec 2019 01:31:20 +0800</lastBuildDate>
     
 	<atom:link href="https://zoux86.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>C&#43;&#43;指针你要了解的事</title>
+      <link>https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E6%8C%87%E9%92%88%E4%BD%A0%E8%A6%81%E4%BA%86%E8%A7%A3%E7%9A%84%E4%BA%8B/</link>
+      <pubDate>Fri, 06 Dec 2019 01:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E6%8C%87%E9%92%88%E4%BD%A0%E8%A6%81%E4%BA%86%E8%A7%A3%E7%9A%84%E4%BA%8B/</guid>
+      <description>指针和引用的区别 指针是一个变量，只不过这个变量存储的是一个地址，指向内存的一个存储单元；而引用仅是个别名； 引用使用时无需解引用(*)，指针需要解引用； 引用只能在定义时被初始化一次，之后不可变；指针可变； 引用没有 const，指针有 const； 引用不能为空，指针可以为空； “sizeo</description>
+    </item>
     
     <item>
       <title>一道非常有意思的C&#43;&#43;面试题</title>

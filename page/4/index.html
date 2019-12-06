@@ -71,6 +71,31 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/2019-11-24-%E5%AE%89%E8%A3%85kubeflow-tfjob%E5%B9%B6%E8%AE%A9-%E6%90%AD%E9%85%8D-volcano-%E7%9A%84%E6%95%99%E7%A8%8B/" title="安装kubeflow tfjob并让 搭配 volcano 的教程" >安装kubeflow tfjob并让 搭配 volcano 的教程</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2019年9月10日
+                            </date>
+                            
+                            <div class="post-meta">
+                                <span>|</span>
+                                
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/volcano">volcano</a></span>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                搭建说明 最终目的：修改深度学习作业的调度算法 当前要搭建的环境： （1）能运行kubeflow的tfjob的集群 （2）kubeflow进行gang-scheduler的调度算法 volcano 准备工作 (1) 安装好 k8s集群，安装好kfctl (2) 确认你是否有一个默认StorageClass且也配置好了动态……
+                            </div>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-%E5%AE%89%E8%A3%85kubeflow-tfjob%E5%B9%B6%E8%AE%A9-%E6%90%AD%E9%85%8D-volcano-%E7%9A%84%E6%95%99%E7%A8%8B/">阅读全文</a></p>
+                        </article>
+                    
+                    
+		    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
                                     <a href="https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B01/" title="k8s源码学习 - Scheduler笔记（1）" >k8s源码学习 - Scheduler笔记（1）</a>
                                 </h1>
                             </header>
@@ -292,31 +317,6 @@
                         </article>
                     
                     
-		    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/" title="kube-batch--启动过程" >kube-batch--启动过程</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2019年3月25日
-                            </date>
-                            
-                            <div class="post-meta">
-                                <span>|</span>
-                                
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kube-batch">kube-batch</a></span>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                追踪整个代码跳过过程 cmd/kube-batch/main.go:39 main -&gt; cmd/kube-batch/main.go:53 app.Run cmd/kube-batch/app/server.go:60 Run -&gt; cmd/kube-batch/app/server.go:86 sched.Run cmd/kube-batch/app/server.go:86 sched.Run-&gt; pkg/scheduler/scheduler.go:59 cmd/kube-batch/app/server.go:59 sched.Run-&gt; pkg/scheduler/scheduler.runOnce:84 cmd/kube-batch/app/server.go:59 行代码 func (pc *Scheduler) Run(stopCh &lt;-chan struct{}) { var err error // Start cache for policy. go pc.cache.Run(stopCh) pc.cache.WaitForCacheSync(stopCh) // Load configuration of scheduler schedConf := defaultSchedulerConf if len(pc.schedulerConf) != 0 { if schedConf, err = readSchedulerConf(pc.schedulerConf); err != nil { glog.Errorf(&quot;Failed to read scheduler configuration '%s', using default configuration: %v&quot;, pc.schedulerConf, err) schedConf = defaultSchedulerConf } } pc.actions, pc.plugins, err = loadSchedulerConf(schedConf) if err != nil { panic(err) } // 这里又开始周期性调用 runOnce了。开始调用 go wait.Until(pc.runOnce, pc.schedulePeriod, stopCh) } cmd/kube-batch/app/server.go:84 行代码 func (pc *Scheduler) runOnce() { glog.V(4).Infof(&quot;Start scheduling ...&quot;)……
-                            </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/">阅读全文</a></p>
-                        </article>
-                    
-                    
                     
 
 
@@ -389,6 +389,10 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E6%8C%87%E9%92%88%E4%BD%A0%E8%A6%81%E4%BA%86%E8%A7%A3%E7%9A%84%E4%BA%8B/" title="C&#43;&#43;指针你要了解的事">C&#43;&#43;指针你要了解的事</a>
+    </li>
+    
+    <li>
         <a href="https://zoux86.github.io/post/2019-12-05-%E4%B8%80%E9%81%93%E9%9D%9E%E5%B8%B8%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84c&#43;&#43;%E9%9D%A2%E8%AF%95%E9%A2%98/" title="一道非常有意思的C&#43;&#43;面试题">一道非常有意思的C&#43;&#43;面试题</a>
     </li>
     
@@ -424,10 +428,6 @@
         <a href="https://zoux86.github.io/post/2019-11-24-%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F%E9%97%AE%E9%A2%98/" title="下载镜像问题">下载镜像问题</a>
     </li>
     
-    <li>
-        <a href="https://zoux86.github.io/post/first/" title="开启新的博客历程">开启新的博客历程</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -439,7 +439,7 @@
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/c&#43;&#43;/">C&#43;&#43; (3)</a></li>
+    <li><a href="https://zoux86.github.io/categories/c&#43;&#43;/">C&#43;&#43; (4)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/docker/">docker (2)</a></li>
     
