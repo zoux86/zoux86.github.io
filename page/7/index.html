@@ -71,6 +71,81 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/hadoop%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/" title="Hadoop 每次打开虚拟机重启hadoop都要重新格式化才能启动Namenode" >Hadoop 每次打开虚拟机重启hadoop都要重新格式化才能启动Namenode</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2018年11月5日
+                            </date>
+                            
+                            <div class="post-meta">
+                                <span>|</span>
+                                
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/hadoop">Hadoop</a></span>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                前面配置好hadoop后，每次开启虚拟机，启动集群后，总是有一些节点起不来。要不就是namenode，要不就是datanode。后面百度找到了原因所在： 在配置hdfs时，我们只配置了datanode的目录，而没有配置namdenode的相关信息。默认的tmp文件每次重新开机会被清……
+                            </div>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/hadoop%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/">阅读全文</a></p>
+                        </article>
+                    
+                    
+		    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/hadoop-%E9%85%8D%E7%BD%AEeclipse/" title="Hadoop 配置eclipse" >Hadoop 配置eclipse</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2018年11月5日
+                            </date>
+                            
+                            <div class="post-meta">
+                                <span>|</span>
+                                
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/hadoop">Hadoop</a></span>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                通过前面几篇，我们已经布置好Hadoop集群环境了。接下来配置eclipse，使用eclipse编写Hadoop代码。 （1）安装好eclipse 省略，参加网上其他博客 （2）找到安装hadoop安装目录下的 contrib/eclipse-plugin的jar文件。这是hadoop给……
+                            </div>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/hadoop-%E9%85%8D%E7%BD%AEeclipse/">阅读全文</a></p>
+                        </article>
+                    
+                    
+		    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/hadoop-%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%9D%8F%E5%A2%83%E6%90%AD%E5%BB%BA/" title="Hadoop伪分布式环境搭建" >Hadoop伪分布式环境搭建</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2018年11月5日
+                            </date>
+                            
+                            <div class="post-meta">
+                                <span>|</span>
+                                
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/hadoop">Hadoop</a></span>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                环境说明：VM上ubuntu 16.04版本 安装hadoop前的准备 （1）ssh 免密登录 （2）配置好Java环境 第一二步骤的安装见网上博客 安装Hadoop 下载hadoop 到上一篇博客给出的网下载hadoop-0.20.2.tar.gz,到随便一个目录解压，我这里是解压到了/zoux……
+                            </div>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/hadoop-%E4%BC%AA%E5%88%86%E5%B8%83%E5%BC%8F%E5%9D%8F%E5%A2%83%E6%90%AD%E5%BB%BA/">阅读全文</a></p>
+                        </article>
+                    
+                    
+		    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
                                     <a href="https://zoux86.github.io/post/hadoop-%E5%90%84%E4%B8%AA%E7%89%88%E6%9C%AC%E4%B8%8B%E8%BD%BD/" title="Hadoop各个版本下载" >Hadoop各个版本下载</a>
                                 </h1>
                             </header>
@@ -242,81 +317,6 @@
                         </article>
                     
                     
-		    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/java%E4%B9%8Bstringstringbufferstringbuilder/" title="Java之String、StringBuffer、StringBuilder" >Java之String、StringBuffer、StringBuilder</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2018年10月13日
-                            </date>
-                            
-                            <div class="post-meta">
-                                <span>|</span>
-                                
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/java">Java</a></span>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                String： String类是final修饰的，是不可变的。我们看到的例如: String a = &ldquo;hello&rdquo;; a = a + &ldquo;1&rdquo;; 实际上是先生成了一个对象然后得到结果&rdquo;hello1&rdquo;,最后在赋值给对象a; String 类型的任何改动都是先生成一个其他对象再重新赋值。 所以String类适合那种常量或者基本……
-                            </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/java%E4%B9%8Bstringstringbufferstringbuilder/">阅读全文</a></p>
-                        </article>
-                    
-                    
-		    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/window%E4%B8%8B%E4%BD%BF%E7%94%A8nc/" title="window下使用nc" >window下使用nc</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2018年9月21日
-                            </date>
-                            
-                            <div class="post-meta">
-                                <span>|</span>
-                                
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/window%E5%B7%A5%E5%85%B7">window工具</a></span>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                下载netcat 地址：https://eternallybored.org/misc/netcat/ 下载1.12，1.11都行。 安裝nc 将解压后的单个文件全部拷贝到C:\Windows\System32的文件夹下 Tips：注意不是拷贝整个文件夹，而是文件夹里面的全部文件。 使用nc……
-                            </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/window%E4%B8%8B%E4%BD%BF%E7%94%A8nc/">阅读全文</a></p>
-                        </article>
-                    
-                    
-		    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/uml%E5%AF%B9%E8%B1%A1%E5%9B%BE/" title="UML对象图" >UML对象图</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2018年9月8日
-                            </date>
-                            
-                            <div class="post-meta">
-                                <span>|</span>
-                                
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/uml">UML</a></span>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                话不多说，开门见山！先看目录 （1）什么是对象图 （2）对象图作用 （3）对象图的核心概念 （4）如果快速分辨出对象图 什么是对象图 对象图：描述的是 某个特定时刻 类的具体实例 以及 它们如何联系起来等相关信息。 对象图的作用 在分析和设计阶段创建；捕获实例和连接；捕获交互的静态部分；举例说明数据/对……
-                            </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/uml%E5%AF%B9%E8%B1%A1%E5%9B%BE/">阅读全文</a></p>
-                        </article>
-                    
-                    
                     
 
 
@@ -361,6 +361,10 @@
         <a href="https://zoux86.github.io/page/8/">8</a>
     </li>
     
+    <li >
+        <a href="https://zoux86.github.io/page/9/">9</a>
+    </li>
+    
 
     
     <li class="next">
@@ -387,6 +391,18 @@
     <section class="widget">
         <h3 class="widget-title">最近文章</h3>
 <ul class="widget-list">
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-07-c&#43;&#43;-stl/" title="C&#43;&#43; STL">C&#43;&#43; STL</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-07-b%E6%A0%91b&#43;%E5%92%8Cb-/" title="B树,B&#43;和B-">B树,B&#43;和B-</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1/" title="C&#43;&#43;类和对象">C&#43;&#43;类和对象</a>
+    </li>
     
     <li>
         <a href="https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E6%8C%87%E9%92%88%E4%BD%A0%E8%A6%81%E4%BA%86%E8%A7%A3%E7%9A%84%E4%BA%8B/" title="C&#43;&#43;指针你要了解的事">C&#43;&#43;指针你要了解的事</a>
@@ -416,18 +432,6 @@
         <a href="https://zoux86.github.io/post/2019-11-27-c&#43;&#43;%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%80%E7%94%9F/" title="C&#43;&#43;代码的一生">C&#43;&#43;代码的一生</a>
     </li>
     
-    <li>
-        <a href="https://zoux86.github.io/post/2019-11-26-docker%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" title="docker实现原理">docker实现原理</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-11-26-docker%E7%9A%84%E8%B5%B7%E6%BA%90/" title="docker的起源">docker的起源</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-11-24-%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F%E9%97%AE%E9%A2%98/" title="下载镜像问题">下载镜像问题</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -439,7 +443,7 @@
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/c&#43;&#43;/">C&#43;&#43; (4)</a></li>
+    <li><a href="https://zoux86.github.io/categories/c&#43;&#43;/">C&#43;&#43; (7)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/docker/">docker (2)</a></li>
     

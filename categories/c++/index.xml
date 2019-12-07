@@ -6,10 +6,37 @@
     <description>Recent content in C&#43;&#43; on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 06 Dec 2019 01:31:20 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 07 Dec 2019 14:31:20 +0800</lastBuildDate>
     
 	<atom:link href="https://zoux86.github.io/categories/c++/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>C&#43;&#43; STL</title>
+      <link>https://zoux86.github.io/post/2019-12-07-c&#43;&#43;-stl/</link>
+      <pubDate>Sat, 07 Dec 2019 14:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-12-07-c&#43;&#43;-stl/</guid>
+      <description>1.vector Vector是顺序容器，是一个动态数组，支持随机存取、插入、删除、查找等操作，在内存中是一块连续的空间。 注意：vector动态增加大小时，并不是在原空间之后持续新空间（因为无法保证原空间之后尚有可供配置的空间），而是以原大小的两倍另外配置一块较大的空间，然后将原内容拷贝过来，然</description>
+    </item>
+    
+    <item>
+      <title>B树,B&#43;和B-</title>
+      <link>https://zoux86.github.io/post/2019-12-07-b%E6%A0%91b&#43;%E5%92%8Cb-/</link>
+      <pubDate>Sat, 07 Dec 2019 13:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-12-07-b%E6%A0%91b&#43;%E5%92%8Cb-/</guid>
+      <description>二叉搜索树 二叉搜索树，BST（Binary Search Tree），即为特殊的二叉树。 对于二叉树的任意一个节点，其左子树中所有的值均小于该节点；右子树中所有的值均大于该节点。 二叉搜索树按照中序遍历的方式（左 - 中 - 右）得到的序列为从小到大的有序序列。 B数 二叉搜索树，树如其名，它在搜索一个值的时</description>
+    </item>
+    
+    <item>
+      <title>C&#43;&#43;类和对象</title>
+      <link>https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1/</link>
+      <pubDate>Fri, 06 Dec 2019 13:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1/</guid>
+      <description>C++中的类，对象，虚函数都是面试过程中经常会考的问题。 在这里记录一下面试过程中类这一块经常遇到的题目 1.虚函数的作用 虚函数的作用主要是实现了多态的机制。 这样就可以把不同的子类对象都当作父类来看，可以屏蔽不同子类对象之间的差异，写出通用的代码，做出通用的编程，以适应需求的不断变化</description>
+    </item>
     
     <item>
       <title>C&#43;&#43;指针你要了解的事</title>

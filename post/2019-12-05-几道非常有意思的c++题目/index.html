@@ -229,6 +229,42 @@ int main(){
 <p>（2）运行时的多态性
  &ensp;  &ensp; 运行时的多态性就是指直到系统运行时，才根据实际情况决定实现何种操作。C++中，运行时的多态性通过虚函数实现的。</p>
 
+<p><br></p>
+
+<h4 id="8-static的作用-这个面试经常问">8.static的作用（这个面试经常问）</h4>
+
+<p>（1）最重要的一条作用：隐藏</p>
+
+<p>当同时编译多个文件时，所有未加static前缀的全局变量和函数都具有全局可见性。</p>
+
+<p>举例来说明。同时编译两个源文件，一个是a.c，另一个是main.c。</p>
+
+<p>main.c 引用a.c的话，a.c中的static值，static函数。Main.c是看不见的。也不能使用。</p>
+
+<p>（2）static的第二个作用是保持变量内容的持久</p>
+
+<p>未初始化的static数据放置.bss</p>
+
+<p>初始化的放在数据段</p>
+
+<p>static默认初始化为0，如果你定义了一个数据，假设 static int a = 0;  //a还是放在.bss段</p>
+
+<p>（3）在类中使用static的性质</p>
+
+<p>在类中声明static变量或者函数时，初始化时使用作用域运算符来标明它所属类，因此，静态数据成员是类的成员，而不是对象的成员，这样就出现以下作用：</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;a.类的静态成员函数是属于整个类而非类的对象，所以它没有this指针，这就导致 了它仅能访问类的静态数据和静态成员函数。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;b.不能将静态成员函数定义为虚函数。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;c.由于静态成员声明于类中，操作于其外，所以对其取地址操作，就多少有些特殊 ，变量地址是指向其数据类型的指针 ，函数地址类型是一个“nonmember函数指针”。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;d.static并没有增加程序的时空开销，相反她还缩短了子类对父类静态成员的访问 时间，节省了子类的内存空间。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;e.静态数据成员是静态存储的，所以必须对它进行初始化。 （程序员手动初始化，否则编译时一般不会报错，但</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;f.为了防止父类的影响，可以在子类定义一个与父类相同的静态变量，以屏蔽父类的影响。</p>
+
                         </div>
 
                         
@@ -296,6 +332,18 @@ int main(){
 <ul class="widget-list">
     
     <li>
+        <a href="https://zoux86.github.io/post/2019-12-07-c&#43;&#43;-stl/" title="C&#43;&#43; STL">C&#43;&#43; STL</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-07-b%E6%A0%91b&#43;%E5%92%8Cb-/" title="B树,B&#43;和B-">B树,B&#43;和B-</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1/" title="C&#43;&#43;类和对象">C&#43;&#43;类和对象</a>
+    </li>
+    
+    <li>
         <a href="https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E6%8C%87%E9%92%88%E4%BD%A0%E8%A6%81%E4%BA%86%E8%A7%A3%E7%9A%84%E4%BA%8B/" title="C&#43;&#43;指针你要了解的事">C&#43;&#43;指针你要了解的事</a>
     </li>
     
@@ -323,18 +371,6 @@ int main(){
         <a href="https://zoux86.github.io/post/2019-11-27-c&#43;&#43;%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%80%E7%94%9F/" title="C&#43;&#43;代码的一生">C&#43;&#43;代码的一生</a>
     </li>
     
-    <li>
-        <a href="https://zoux86.github.io/post/2019-11-26-docker%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" title="docker实现原理">docker实现原理</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-11-26-docker%E7%9A%84%E8%B5%B7%E6%BA%90/" title="docker的起源">docker的起源</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-11-24-%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F%E9%97%AE%E9%A2%98/" title="下载镜像问题">下载镜像问题</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -346,7 +382,7 @@ int main(){
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/c&#43;&#43;/">C&#43;&#43; (4)</a></li>
+    <li><a href="https://zoux86.github.io/categories/c&#43;&#43;/">C&#43;&#43; (7)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/docker/">docker (2)</a></li>
     
