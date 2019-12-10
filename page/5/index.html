@@ -71,6 +71,31 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
+                                    <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BB%8E%E4%BB%A3%E7%A0%81%E4%B8%AD%E6%89%BE%E5%87%BAgang-scheduler%E8%BF%99%E4%B8%AA%E8%BF%87%E7%A8%8B/" title="kube-batch 从代码中找出gang scheduler这个过程" >kube-batch 从代码中找出gang scheduler这个过程</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2019年4月14日
+                            </date>
+                            
+                            <div class="post-meta">
+                                <span>|</span>
+                                
+                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kube-batch">kube-batch</a></span>
+                                
+                            </div>
+                            
+                            <div class="post-content">
+                                从之前的分析中，已经知道了kube-batch的启动过程。kube-batch总共有4个过程。这里我们从Allocate开始。 目录： 一： 流程解释 二：代码说明 一： 流程解释 在allocate.go中：找到Execute函数。首先用文字解释一下整个的过程： （1）将kube-batch的……
+                            </div>
+                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BB%8E%E4%BB%A3%E7%A0%81%E4%B8%AD%E6%89%BE%E5%87%BAgang-scheduler%E8%BF%99%E4%B8%AA%E8%BF%87%E7%A8%8B/">阅读全文</a></p>
+                        </article>
+                    
+                    
+		    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
                                     <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0gang-scheduler/" title="kube-batch如何实现gang-scheduler" >kube-batch如何实现gang-scheduler</a>
                                 </h1>
                             </header>
@@ -292,31 +317,6 @@
                         </article>
                     
                     
-		    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/" title="kubeflow pipelines--国内环境安装" >kubeflow pipelines--国内环境安装</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2019年1月23日
-                            </date>
-                            
-                            <div class="post-meta">
-                                <span>|</span>
-                                
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kubeflow">kubeflow</a></span>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                在前面的教程中，我们已经搭建好了本地的kubeflow集群，接下来因为个人需要，本人需要再在此基础上搭建好kubeflow pipelines. 首先需要了解pipelines是什么，能做什么，具体可以参考官网描述： https://www.kubeflow.org/docs/pipelines/pipelines-overview/ 从V0.1.3开始，Kubeflow Pipelines成为Kubeflow核心组件之……
-                            </div>
-                            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/">阅读全文</a></p>
-                        </article>
-                    
-                    
                     
 
 
@@ -393,6 +393,10 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://zoux86.github.io/post/2019-12-10-go%E7%9A%84%E5%90%84%E7%A7%8D%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" title="go的各种类型转换">go的各种类型转换</a>
+    </li>
+    
+    <li>
         <a href="https://zoux86.github.io/post/2019-12-07-c&#43;&#43;-stl/" title="C&#43;&#43; STL">C&#43;&#43; STL</a>
     </li>
     
@@ -428,10 +432,6 @@
         <a href="https://zoux86.github.io/post/2019-12-02-volcano%E7%AE%80%E4%BB%8B/" title="volcano简介">volcano简介</a>
     </li>
     
-    <li>
-        <a href="https://zoux86.github.io/post/2019-11-27-c&#43;&#43;%E4%BB%A3%E7%A0%81%E7%9A%84%E4%B8%80%E7%94%9F/" title="C&#43;&#43;代码的一生">C&#43;&#43;代码的一生</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -447,7 +447,9 @@
     
     <li><a href="https://zoux86.github.io/categories/docker/">docker (2)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
+    <li><a href="https://zoux86.github.io/categories/go/">go (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/hadoop/">hadoop (7)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/java/">Java (1)</a></li>
     
@@ -490,7 +492,9 @@
     
     <a href="https://zoux86.github.io/tags/go/">go</a>
     
-    <a href="https://zoux86.github.io/tags/hadoop/">Hadoop</a>
+    <a href="https://zoux86.github.io/tags/golang/">golang</a>
+    
+    <a href="https://zoux86.github.io/tags/hadoop/">hadoop</a>
     
     <a href="https://zoux86.github.io/tags/java/">Java</a>
     

@@ -6,10 +6,28 @@
     <description>Recent content in Tags on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 07 Dec 2019 14:31:20 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 10 Dec 2019 01:31:20 +0800</lastBuildDate>
     
 	<atom:link href="https://zoux86.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>go</title>
+      <link>https://zoux86.github.io/tags/go/</link>
+      <pubDate>Tue, 10 Dec 2019 01:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/go/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>golang</title>
+      <link>https://zoux86.github.io/tags/golang/</link>
+      <pubDate>Tue, 10 Dec 2019 01:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/golang/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>C&#43;&#43;</title>
@@ -165,15 +183,6 @@
     </item>
     
     <item>
-      <title>go</title>
-      <link>https://zoux86.github.io/tags/go/</link>
-      <pubDate>Mon, 01 Apr 2019 20:31:20 +0800</pubDate>
-      
-      <guid>https://zoux86.github.io/tags/go/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>ubuntu</title>
       <link>https://zoux86.github.io/tags/ubuntu/</link>
       <pubDate>Mon, 01 Apr 2019 20:31:20 +0800</pubDate>
@@ -246,7 +255,7 @@
     </item>
     
     <item>
-      <title>Hadoop</title>
+      <title>hadoop</title>
       <link>https://zoux86.github.io/tags/hadoop/</link>
       <pubDate>Mon, 12 Nov 2018 20:31:20 +0800</pubDate>
       
