@@ -4,16 +4,46 @@
   
   <url>
     <loc>https://zoux86.github.io/categories/</loc>
-    <lastmod>2019-12-10T01:31:20+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://zoux86.github.io/categories/go/</loc>
-    <lastmod>2019-12-10T01:31:20+08:00</lastmod>
+    <lastmod>2019-12-15T01:31:20+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://zoux86.github.io/tags/go/</loc>
+    <lastmod>2019-12-15T01:31:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zoux86.github.io/tags/k8s/</loc>
+    <lastmod>2019-12-15T01:31:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zoux86.github.io/categories/k8s/</loc>
+    <lastmod>2019-12-15T01:31:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zoux86.github.io/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/</loc>
+    <lastmod>2019-12-15T01:31:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zoux86.github.io/post/</loc>
+    <lastmod>2019-12-15T01:31:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zoux86.github.io/tags/</loc>
+    <lastmod>2019-12-15T01:31:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zoux86.github.io/</loc>
+    <lastmod>2019-12-15T01:31:20+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://zoux86.github.io/categories/go/</loc>
     <lastmod>2019-12-10T01:31:20+08:00</lastmod>
   </url>
   
@@ -24,21 +54,6 @@
   
   <url>
     <loc>https://zoux86.github.io/post/2019-12-10-go%E7%9A%84%E5%90%84%E7%A7%8D%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</loc>
-    <lastmod>2019-12-10T01:31:20+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://zoux86.github.io/post/</loc>
-    <lastmod>2019-12-10T01:31:20+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://zoux86.github.io/tags/</loc>
-    <lastmod>2019-12-10T01:31:20+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://zoux86.github.io/</loc>
     <lastmod>2019-12-10T01:31:20+08:00</lastmod>
   </url>
   
@@ -118,12 +133,12 @@
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/tags/docker/</loc>
+    <loc>https://zoux86.github.io/categories/docker/</loc>
     <lastmod>2019-11-26T00:31:20+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/categories/docker/</loc>
+    <loc>https://zoux86.github.io/tags/docker/</loc>
     <lastmod>2019-11-26T00:31:20+08:00</lastmod>
   </url>
   
@@ -298,16 +313,6 @@
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/tags/k8s/</loc>
-    <lastmod>2019-04-21T20:31:20+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://zoux86.github.io/categories/k8s/</loc>
-    <lastmod>2019-04-21T20:31:20+08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B01/</loc>
     <lastmod>2019-04-21T20:31:20+08:00</lastmod>
   </url>
@@ -423,7 +428,7 @@
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/categories/kubeflow/</loc>
+    <loc>https://zoux86.github.io/tags/pipelines/</loc>
     <lastmod>2019-02-01T20:31:20+08:00</lastmod>
   </url>
   
@@ -433,12 +438,12 @@
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%9E%E4%BE%8B/</loc>
+    <loc>https://zoux86.github.io/categories/kubeflow/</loc>
     <lastmod>2019-02-01T20:31:20+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/tags/pipelines/</loc>
+    <loc>https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%9E%E4%BE%8B/</loc>
     <lastmod>2019-02-01T20:31:20+08:00</lastmod>
   </url>
   
@@ -513,12 +518,12 @@
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/categories/hadoop/</loc>
+    <loc>https://zoux86.github.io/tags/hadoop/</loc>
     <lastmod>2018-11-12T20:31:20+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/tags/hadoop/</loc>
+    <loc>https://zoux86.github.io/categories/hadoop/</loc>
     <lastmod>2018-11-12T20:31:20+08:00</lastmod>
   </url>
   
@@ -563,12 +568,12 @@
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/tags/uml/</loc>
+    <loc>https://zoux86.github.io/categories/uml/</loc>
     <lastmod>2018-10-19T20:31:20+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://zoux86.github.io/categories/uml/</loc>
+    <loc>https://zoux86.github.io/tags/uml/</loc>
     <lastmod>2018-10-19T20:31:20+08:00</lastmod>
   </url>
   

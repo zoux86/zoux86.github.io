@@ -6,10 +6,19 @@
     <description>Recent content in k8s on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 21 Apr 2019 20:31:20 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 15 Dec 2019 01:31:20 +0800</lastBuildDate>
     
 	<atom:link href="https://zoux86.github.io/tags/k8s/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>k8s的基本组件</title>
+      <link>https://zoux86.github.io/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/</link>
+      <pubDate>Sun, 15 Dec 2019 01:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/</guid>
+      <description>目录 （1）k8s简介 （2）k8s组件介绍 背景简介 Docker 项目和容器技术目前还是非常火热，但是Docker 技术栈，有自己的局限性，这是它的出发点决定的。那么在docker层之上，例如 容器编排？调度？容器云？集群管理？这些事情就需要另外一个项目来解决了。 在我最开始接触k8s的时候，我看到的</description>
+    </item>
     
     <item>
       <title>k8s源码学习 - Scheduler笔记（1）</title>
