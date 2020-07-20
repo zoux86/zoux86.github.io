@@ -6,10 +6,19 @@
     <description>Recent content in Tags on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 15 Dec 2019 01:31:20 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 20 Jul 2020 00:31:20 +0800</lastBuildDate>
     
 	<atom:link href="https://zoux86.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>实习</title>
+      <link>https://zoux86.github.io/tags/%E5%AE%9E%E4%B9%A0/</link>
+      <pubDate>Mon, 20 Jul 2020 00:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/tags/%E5%AE%9E%E4%B9%A0/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>go</title>
