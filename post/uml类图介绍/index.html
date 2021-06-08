@@ -3,42 +3,43 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.59.1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
 
     <title>UML类图介绍 | zoux的博客</title>
     <meta property="og:title" content="UML类图介绍 - zoux的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2018-08-21T20:31:20&#43;08:00">
+    <meta property="article:published_time" content='2018-08-21T20:31:20&#43;08:00'>
         
         
-    <meta property="article:modified_time" content="2018-08-21T20:31:20&#43;08:00">
+    <meta property="article:modified_time" content='2018-08-21T20:31:20&#43;08:00'>
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
     <meta name="description" content="UML类图介绍">
         
     <meta name="author" content="zoux">
     <meta property="og:url" content="https://zoux86.github.io/post/uml%E7%B1%BB%E5%9B%BE%E4%BB%8B%E7%BB%8D/">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
-    <link rel="stylesheet" href="/css/normalize.css">
-    
-        <link rel="stylesheet" href="/css/prism.css">
-    
-    <link rel="stylesheet" href="/css/style.css">
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     
-
-
+    
+    
+    
     
     
 </head>
 
+
 <body>
-<header id="header" class="clearfix">
+    <header id="header" class="clearfix">
     <div class="container">
         <div class="col-group">
             <div class="site-name ">
@@ -65,93 +66,70 @@
     </div>
 </header>
 
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
 
-<div id="body">
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">UML类图介绍</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2018年8月21日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/uml'>UML</a></span>
+            
+        </div>
         
         
-    <div class="container">
-        <div class="col-group">
-
-            <div class="col-8" id="main">
-                <div class="res-cons">
-                    <article class="post">
-                        <header>
-                            <h1 class="post-title">UML类图介绍</h1>
-                        </header>
-                        <date class="post-meta meta-date">
-                            2018年8月21日
-                        </date>
-                        
-                        <div class="post-meta">
-                            <span>|</span>
-                            
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/uml">UML</a></span>
-                            
-                        </div>
-                        
-                        
-                        <div class="post-meta">
-                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
-                        </div>
-                        
-                        
-                        <div class="post-content">
-                            
-
-<p>话不多说，开门见山！
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <p>话不多说，开门见山！
 写类图之前看见一篇写的很好的文章，所以直接引用推荐。
 <a href="https://www.cnblogs.com/shindo/p/5579191.html">https://www.cnblogs.com/shindo/p/5579191.html</a></p>
-
 <p>关键知识点：</p>
-
 <p>（1）类自身属性</p>
-
 <p>（2）类自身方法</p>
-
 <p>（3）类与类的关系</p>
-
 <p>其中类与类之间有依赖、关联、聚合，组合，继承，接口实现六种方法。下面说一下个人对这几种方法的看法，可以方便大家理解。</p>
-
 <p>六种方法可以分为三类，方便理解</p>
-
 <p>1.接口实现，继承</p>
-
 <p>2.关联，聚合，组合</p>
-
 <p>3.依赖</p>
-
-<h3 id="接口实现-vs-继承-a-b俩个类为例">接口实现 VS 继承（A，B俩个类为例）</h3>
-
+<h3 id="接口实现-vs-继承ab俩个类为例">接口实现 VS 继承（A，B俩个类为例）</h3>
 <p>理论上：继承关系只能单继承，接口实现可以多继承；</p>
-
 <p>实践上：如果B继承的是A的属性，如：姓名，年龄，性别 等，那就是继承关系，如果B继承的是A的方法，如：行走，飞翔，游泳（这比较抽象，在一般项目中大部分是指对某事物的增删改查等操作），那就叫做接口实现。</p>
-
 <p>总之，继承描述了“is a”的关系，即“子is a父”；</p>
-
 <p>接口实现描述了“can do”的关系，即“子can do父”。</p>
-
-<h3 id="关联-聚合-组合">关联，聚合，组合</h3>
-
+<h3 id="关联聚合组合">关联，聚合，组合</h3>
 <p>关联(Association）关系是类与类之间的联接，它使一个类知道另一个类的属性和方法。关联可以是双向的，也可以是单向的。在Java语言中，关联关系一般使用成员变量来实现。</p>
-
 <p>聚合(Aggregation) 关系是关联关系的一种，是强的关联关系。聚合是整体和个体之间的关系。例如，汽车类与引擎类、轮胎类，以及其它的零件类之间的关系便整体和个体的关系。与关联关系一样，聚合关系也是通过实例变量实现的。但是关联关系所涉及的两个类是处在同一层次上的，而在聚合关系中，两个类是处在不平等层次上的，一个代表整体，另一个代表部分。</p>
-
 <p>组合(Composition) 关系是关联关系的一种，是比聚合关系强的关系。聚合是一个整体，一个部分，部分脱离了整体还能存在。而组合关系中，部分脱离了整体就不能存在。</p>
-
 <h3 id="依赖">依赖</h3>
-
 <p>依赖关系表示一个类依赖于另一个类的定义。例如，一个人(Person)可以买车(car)和房子(House)，Person类依赖于Car类和House类的定义，因为Person类引用了Car和House。与关联不同的是，Person类里并没有Car和House类型的属性，Car和House的实例是以参量的方式传入到buy()方法中去的。一般而言，依赖关系在Java语言中体现为局域变量、方法的形参，或者对静态方法的调用。</p>
-
 <p>参考网站：
 <a href="https://www.cnblogs.com/wanghuaijun/p/5421419.html">https://www.cnblogs.com/wanghuaijun/p/5421419.html</a>
 <a href="https://www.cnblogs.com/shindo/p/5579191.html">https://www.cnblogs.com/shindo/p/5579191.html</a></p>
 
-                        </div>
+        </div>
 
-                        
+        
 
 
-                        
+        
 
 <div class="post-archive">
     <h2>See Also</h2>
@@ -171,17 +149,17 @@
 </div>
 
 
-                        <div class="post-meta meta-tags">
-                            
-                            <ul class="clearfix">
-                                
-                                <li><a href="https://zoux86.github.io/tags/uml">UML</a></li>
-                                
-                            </ul>
-                            
-                        </div>
-                    </article>
-                    
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/uml'>UML</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
     
 
     
@@ -196,11 +174,54 @@
       </script>
     </div>
     
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
                 </div>
-            </div>
-            <div id="secondary">
+
+                <div id="secondary">
     <section class="widget">
-        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
@@ -258,7 +279,7 @@
     
 
     <section class="widget">
-        <h3 class="widget-title">分类</h3>
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
 <ul class="widget-list">
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
@@ -301,7 +322,7 @@
     </section>
 
     <section class="widget">
-        <h3 class="widget-title">标签</h3>
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
 <div class="tagcloud">
     
     <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
@@ -393,46 +414,9 @@
         </ul>
     </section>
 </div>
+            </div>
         </div>
     </div>
-</div>
-<footer id="footer">
-    <div class="container">
-        &copy; 2020 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
-        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
-        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
-        
-    </div>
-</footer>
-
-
-    
-    <script type="text/javascript">
-        
-        (function () {
-            $("pre code").parent().addClass("line-numbers")
-        }());
-
-        window.MathJax = {
-            tex2jax: {
-                inlineMath: [['$', '$']],
-                processEscapes: true
-                }
-            };
-    </script>
-    <script type="text/javascript" src="/js/prism.js" async="true"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
-
-
-<a id="rocket" href="#top"></a>
-<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
-
-
-
-    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
-
-
-
-
 </body>
+
 </html>

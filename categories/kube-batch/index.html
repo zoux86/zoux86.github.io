@@ -3,9 +3,11 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.59.1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
 
     <title>kube-batch | zoux的博客</title>
     <meta property="og:title" content="kube-batch - zoux的博客">
@@ -17,24 +19,24 @@
         
     <meta name="author" content="zoux">
     <meta property="og:url" content="https://zoux86.github.io/categories/kube-batch/">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
-    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <link rel="alternate" type="application/rss+xml" href="https://zoux86.github.io/categories/kube-batch/index.xml" title="zoux的博客" />
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
     
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="alternate" type="application/rss+xml+xml" href="https://zoux86.github.io/categories/kube-batch/index.xml" title="zoux的博客" />
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
     
-
-
+    
+    
     
     
 </head>
 
 
 <body>
-<header id="header" class="clearfix">
+    <header id="header" class="clearfix">
     <div class="container">
         <div class="col-group">
             <div class="site-name ">
@@ -61,150 +63,182 @@
     </div>
 </header>
 
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
 
-<div id="body">
-    <div class="container">
-        <div class="col-group">
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <h3 class="archive-title">
+        分类
+        <span class="keyword">kube-batch</span>
+        中的文章
+    </h3>
+    
 
-            <div class="col-8" id="main">
-                <div class="res-cons">
-                    
-                    <h3 class="archive-title">
-                        分类
-                        <span class="keyword">kube-batch</span>
-                        中的文章
-                    </h3>
-                    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E7%9A%84%E9%85%8D%E7%BD%AE/">kube-batch 修改默认的配置</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年4月21日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/kube-batch'>kube-batch</a>
+            
+        </div>
+        
+        <div class="post-content">
+            在kube-batch V0.4及以上版本中，kube-batch默认的配置 只包含两个 Action(allocate, backfill)。 具体可以参考： https://github.com/kubernetes-sigs/kube-batch/blob/6e560929dcafec91b2b9a24f246a20b4569b39a8/pkg/scheduler/util.go 在自己的需求中，我们可能需要定义自己的配置。 思路： 查看util.go中的代码发现，Kube-batch在发现用户指定配置文件后，会自动地读取该文件的内容，而不……
+            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E7%9A%84%E9%85%8D%E7%BD%AE/">阅读全文</a></p>
+        </div>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BB%8E%E4%BB%A3%E7%A0%81%E4%B8%AD%E6%89%BE%E5%87%BAgang-scheduler%E8%BF%99%E4%B8%AA%E8%BF%87%E7%A8%8B/">kube-batch 从代码中找出gang scheduler这个过程</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年4月14日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/kube-batch'>kube-batch</a>
+            
+        </div>
+        
+        <div class="post-content">
+            从之前的分析中，已经知道了kube-batch的启动过程。kube-batch总共有4个过程。这里我们从Allocate开始。 目录： 一： 流程解释 二：代码说明 一： 流程解释 在allocate.go中：找到Execute函数。首先用文字解释一下整个的过程： （1）将kube-batch的……
+            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BB%8E%E4%BB%A3%E7%A0%81%E4%B8%AD%E6%89%BE%E5%87%BAgang-scheduler%E8%BF%99%E4%B8%AA%E8%BF%87%E7%A8%8B/">阅读全文</a></p>
+        </div>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0gang-scheduler/">kube-batch如何实现gang-scheduler</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年4月7日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/kube-batch'>kube-batch</a>
+            
+        </div>
+        
+        <div class="post-content">
+            gang scheduler介绍：一个job，可能有多个tasks,这些tasks要不全部执行，要不一个都不执行。 上面说到 kube-batch自定义了一个podGroup，调度时以podGroup为单位的。现在说一下调度podGroup的整个过程。 本文分为四个部分： 一：介绍kube-ba……
+            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0gang-scheduler/">阅读全文</a></p>
+        </div>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/">kube-batch--启动过程</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年3月25日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/kube-batch'>kube-batch</a>
+            
+        </div>
+        
+        <div class="post-content">
+            追踪整个代码跳过过程 cmd/kube-batch/main.go:39 main -&gt; cmd/kube-batch/main.go:53 app.Run cmd/kube-batch/app/server.go:60 Run -&gt; cmd/kube-batch/app/server.go:86 sched.Run cmd/kube-batch/app/server.go:86 sched.Run-&gt; pkg/scheduler/scheduler.go:59 cmd/kube-batch/app/server.go:59 sched.Run-&gt; pkg/scheduler/scheduler.runOnce:84 cmd/kube-batch/app/server.go:59 行代码 func (pc *Scheduler) Run(stopCh &lt;-chan struct{}) { var err error // Start cache for policy. go pc.cache.Run(stopCh) pc.cache.WaitForCacheSync(stopCh) // Load configuration of scheduler schedConf := defaultSchedulerConf if len(pc.schedulerConf) != 0 { if schedConf, err = readSchedulerConf(pc.schedulerConf); err != nil { glog.Errorf(&#34;Failed to read scheduler configuration &#39;%s&#39;, using default configuration: %v&#34;, pc.schedulerConf, err) schedConf = defaultSchedulerConf } } pc.actions, pc.plugins, err = loadSchedulerConf(schedConf) if err != nil { panic(err) } // 这里又开始周期性调用 runOnce了。开始调用 go wait.Until(pc.runOnce, pc.schedulePeriod, stopCh) } cmd/kube-batch/app/server.go:84 行代码 func (pc *Scheduler) runOnce() { glog.V(4).Infof(&#34;Start scheduling ...&#34;)……
+            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/">阅读全文</a></p>
+        </div>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E7%AE%80%E4%BB%8B/">kube-batch--简介</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年3月25日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/kube-batch'>kube-batch</a>
+            
+        </div>
+        
+        <div class="post-content">
+            1.背景介绍 K8s本身的调度器具有一些缺陷： （1） 默认的调度器是以 pod 为粒度的，对机器学习任务很不利。 （2）默认的调度器无法提供队列调度的功能 2.kube-batch介绍 Kube-batch 目前是 Kubernetes SIGs 旗下的一个孵化项目，是一个运行在 Kubernetes 上面向机器学习 / 大数据 /HPC 的批调度器（batch scheduler）……
+            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E7%AE%80%E4%BB%8B/">阅读全文</a></p>
+        </div>
+    </article>
+    
 
-                    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E7%9A%84%E9%85%8D%E7%BD%AE/">kube-batch 修改默认的配置</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2019年4月21日
-                            </date>
-                            
-                            <div class="post-meta meta-category">
-                                |
-                                
-                                    <a href="https://zoux86.github.io/categories/kube-batch">kube-batch</a>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                在kube-batch V0.4及以上版本中，kube-batch默认的配置 只包含两个 Action(allocate, backfill)。 具体可以参考： https://github.com/kubernetes-sigs/kube-batch/blob/6e560929dcafec91b2b9a24f246a20b4569b39a8/pkg/scheduler/util.go 在自己的需求中，我们可能需要定义自己的配置。 思路： 查看util.go中的代码发现，Kube-batch在发现用户指定配置文件后，会自动地读取该文件的内容，而不……
-                                <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E7%9A%84%E9%85%8D%E7%BD%AE/">阅读全文</a></p>
-                            </div>
-                        </article>
-                    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BB%8E%E4%BB%A3%E7%A0%81%E4%B8%AD%E6%89%BE%E5%87%BAgang-scheduler%E8%BF%99%E4%B8%AA%E8%BF%87%E7%A8%8B/">kube-batch 从代码中找出gang scheduler这个过程</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2019年4月14日
-                            </date>
-                            
-                            <div class="post-meta meta-category">
-                                |
-                                
-                                    <a href="https://zoux86.github.io/categories/kube-batch">kube-batch</a>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                从之前的分析中，已经知道了kube-batch的启动过程。kube-batch总共有4个过程。这里我们从Allocate开始。 目录： 一： 流程解释 二：代码说明 一： 流程解释 在allocate.go中：找到Execute函数。首先用文字解释一下整个的过程： （1）将kube-batch的……
-                                <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BB%8E%E4%BB%A3%E7%A0%81%E4%B8%AD%E6%89%BE%E5%87%BAgang-scheduler%E8%BF%99%E4%B8%AA%E8%BF%87%E7%A8%8B/">阅读全文</a></p>
-                            </div>
-                        </article>
-                    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0gang-scheduler/">kube-batch如何实现gang-scheduler</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2019年4月7日
-                            </date>
-                            
-                            <div class="post-meta meta-category">
-                                |
-                                
-                                    <a href="https://zoux86.github.io/categories/kube-batch">kube-batch</a>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                gang scheduler介绍：一个job，可能有多个tasks,这些tasks要不全部执行，要不一个都不执行。 上面说到 kube-batch自定义了一个podGroup，调度时以podGroup为单位的。现在说一下调度podGroup的整个过程。 本文分为四个部分： 一：介绍kube-ba……
-                                <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0gang-scheduler/">阅读全文</a></p>
-                            </div>
-                        </article>
-                    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/">kube-batch--启动过程</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2019年3月25日
-                            </date>
-                            
-                            <div class="post-meta meta-category">
-                                |
-                                
-                                    <a href="https://zoux86.github.io/categories/kube-batch">kube-batch</a>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                追踪整个代码跳过过程 cmd/kube-batch/main.go:39 main -&gt; cmd/kube-batch/main.go:53 app.Run cmd/kube-batch/app/server.go:60 Run -&gt; cmd/kube-batch/app/server.go:86 sched.Run cmd/kube-batch/app/server.go:86 sched.Run-&gt; pkg/scheduler/scheduler.go:59 cmd/kube-batch/app/server.go:59 sched.Run-&gt; pkg/scheduler/scheduler.runOnce:84 cmd/kube-batch/app/server.go:59 行代码 func (pc *Scheduler) Run(stopCh &lt;-chan struct{}) { var err error // Start cache for policy. go pc.cache.Run(stopCh) pc.cache.WaitForCacheSync(stopCh) // Load configuration of scheduler schedConf := defaultSchedulerConf if len(pc.schedulerConf) != 0 { if schedConf, err = readSchedulerConf(pc.schedulerConf); err != nil { glog.Errorf(&quot;Failed to read scheduler configuration '%s', using default configuration: %v&quot;, pc.schedulerConf, err) schedConf = defaultSchedulerConf } } pc.actions, pc.plugins, err = loadSchedulerConf(schedConf) if err != nil { panic(err) } // 这里又开始周期性调用 runOnce了。开始调用 go wait.Until(pc.runOnce, pc.schedulePeriod, stopCh) } cmd/kube-batch/app/server.go:84 行代码 func (pc *Scheduler) runOnce() { glog.V(4).Infof(&quot;Start scheduling ...&quot;)……
-                                <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/">阅读全文</a></p>
-                            </div>
-                        </article>
-                    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E7%AE%80%E4%BB%8B/">kube-batch--简介</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2019年3月25日
-                            </date>
-                            
-                            <div class="post-meta meta-category">
-                                |
-                                
-                                    <a href="https://zoux86.github.io/categories/kube-batch">kube-batch</a>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                1.背景介绍 K8s本身的调度器具有一些缺陷： （1） 默认的调度器是以 pod 为粒度的，对机器学习任务很不利。 （2）默认的调度器无法提供队列调度的功能 2.kube-batch介绍 Kube-batch 目前是 Kubernetes SIGs 旗下的一个孵化项目，是一个运行在 Kubernetes 上面向机器学习 / 大数据 /HPC 的批调度器（batch scheduler）……
-                                <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E7%AE%80%E4%BB%8B/">阅读全文</a></p>
-                            </div>
-                        </article>
-                    
+    
 
-                    
 
+
+
+
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
 
 
 
 
                 </div>
-            </div>
 
-            <div id="secondary">
+                <div id="secondary">
     <section class="widget">
-        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
@@ -262,7 +296,7 @@
     
 
     <section class="widget">
-        <h3 class="widget-title">分类</h3>
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
 <ul class="widget-list">
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
@@ -305,7 +339,7 @@
     </section>
 
     <section class="widget">
-        <h3 class="widget-title">标签</h3>
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
 <div class="tagcloud">
     
     <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
@@ -397,30 +431,9 @@
         </ul>
     </section>
 </div>
+            </div>
         </div>
     </div>
-</div>
-<footer id="footer">
-    <div class="container">
-        &copy; 2020 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
-        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
-        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
-        
-    </div>
-</footer>
-
-
-
-<a id="rocket" href="#top"></a>
-<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
-
-
-
-    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
-
-
-
-
-
 </body>
+
 </html>

@@ -6,11 +6,7 @@
     <description>Recent content in kube-batch on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 21 Apr 2019 20:31:20 +0800</lastBuildDate>
-    
-	<atom:link href="https://zoux86.github.io/tags/kube-batch/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Sun, 21 Apr 2019 20:31:20 +0800</lastBuildDate><atom:link href="https://zoux86.github.io/tags/kube-batch/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>kube-batch 修改默认的配置</title>
       <link>https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E7%9A%84%E9%85%8D%E7%BD%AE/</link>
@@ -44,7 +40,7 @@
       <pubDate>Mon, 25 Mar 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/</guid>
-      <description>追踪整个代码跳过过程 cmd/kube-batch/main.go:39 main -&amp;gt; cmd/kube-batch/main.go:53 app.Run cmd/kube-batch/app/server.go:60 Run -&amp;gt; cmd/kube-batch/app/server.go:86 sched.Run cmd/kube-batch/app/server.go:86 sched.Run-&amp;gt; pkg/scheduler/scheduler.go:59 cmd/kube-batch/app/server.go:59 sched.Run-&amp;gt; pkg/scheduler/scheduler.runOnce:84 cmd/kube-batch/app/server.go:59 行代码 func (pc *Scheduler) Run(stopCh &amp;lt;-chan struct{}) { var err error // Start cache for policy. go pc.cache.Run(stopCh) pc.cache.WaitForCacheSync(stopCh) // Load configuration of scheduler schedConf := defaultSchedulerConf if len(pc.schedulerConf) != 0 { if schedConf, err = readSchedulerConf(pc.schedulerConf); err != nil { glog.Errorf(&amp;quot;Failed to read scheduler configuration &#39;%s&#39;, using default configuration: %v&amp;quot;, pc.schedulerConf, err) schedConf = defaultSchedulerConf } } pc.actions, pc.plugins, err = loadSchedulerConf(schedConf) if err != nil { panic(err) } // 这里又开始周期性调用 runOnce了。开始调用 go wait.Until(pc.runOnce, pc.schedulePeriod, stopCh) } cmd/kube-batch/app/server.go:84 行代码 func (pc *Scheduler) runOnce() { glog.V(4).Infof(&amp;quot;Start scheduling ...&amp;quot;)</description>
+      <description>追踪整个代码跳过过程 cmd/kube-batch/main.go:39 main -&amp;gt; cmd/kube-batch/main.go:53 app.Run cmd/kube-batch/app/server.go:60 Run -&amp;gt; cmd/kube-batch/app/server.go:86 sched.Run cmd/kube-batch/app/server.go:86 sched.Run-&amp;gt; pkg/scheduler/scheduler.go:59 cmd/kube-batch/app/server.go:59 sched.Run-&amp;gt; pkg/scheduler/scheduler.runOnce:84 cmd/kube-batch/app/server.go:59 行代码 func (pc *Scheduler) Run(stopCh &amp;lt;-chan struct{}) { var err error // Start cache for policy. go pc.cache.Run(stopCh) pc.cache.WaitForCacheSync(stopCh) // Load configuration of scheduler schedConf := defaultSchedulerConf if len(pc.schedulerConf) != 0 { if schedConf, err = readSchedulerConf(pc.schedulerConf); err != nil { glog.Errorf(&amp;#34;Failed to read scheduler configuration &amp;#39;%s&amp;#39;, using default configuration: %v&amp;#34;, pc.schedulerConf, err) schedConf = defaultSchedulerConf } } pc.actions, pc.plugins, err = loadSchedulerConf(schedConf) if err != nil { panic(err) } // 这里又开始周期性调用 runOnce了。开始调用 go wait.Until(pc.runOnce, pc.schedulePeriod, stopCh) } cmd/kube-batch/app/server.go:84 行代码 func (pc *Scheduler) runOnce() { glog.V(4).Infof(&amp;#34;Start scheduling ...&amp;#34;)</description>
     </item>
     
     <item>

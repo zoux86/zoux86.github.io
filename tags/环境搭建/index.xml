@@ -6,11 +6,7 @@
     <description>Recent content in 环境搭建 on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 02 Dec 2019 01:31:20 +0800</lastBuildDate>
-    
-	<atom:link href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Mon, 02 Dec 2019 01:31:20 +0800</lastBuildDate><atom:link href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>部署自己的volcano</title>
       <link>https://zoux86.github.io/post/2019-12-02-%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84volcano/</link>
@@ -125,7 +121,7 @@
       <pubDate>Mon, 07 Jan 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87%E5%B7%A5%E5%85%B7-ksonnet-%E5%AE%89%E8%A3%85/</guid>
-      <description>最近需要了解Kubeflow方面的知识，故需要自己配置kubeflow。安装Kubeflow需要按照以下的依赖: ksonnet version 0.11.0 or later. Kubernetes 1.8 or later kubectl 由于，k8s,kubectl的安装网上已经有很多教程了，而本人安装ksonnet时绕了一些弯，所以在此记录一些本人的安装过程。 安装环境介绍： 本人的k</description>
+      <description>最近需要了解Kubeflow方面的知识，故需要自己配置kubeflow。安装Kubeflow需要按照以下的依赖: ksonnet version [0.11.0] (https://ksonnet.io/#get-started) or later. Kubernetes 1.8 or later kubectl 由于，k8s,kubectl的安装网上已经有很多教程了，而本人安装ksonnet时绕了一些弯，所以在此记录一些本人的安装过程。 安装环境介绍： 本人的</description>
     </item>
     
     <item>

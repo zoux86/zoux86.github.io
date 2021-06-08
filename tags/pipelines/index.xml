@@ -6,11 +6,7 @@
     <description>Recent content in pipelines on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 01 Feb 2019 20:31:20 +0800</lastBuildDate>
-    
-	<atom:link href="https://zoux86.github.io/tags/pipelines/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Fri, 01 Feb 2019 20:31:20 +0800</lastBuildDate><atom:link href="https://zoux86.github.io/tags/pipelines/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>kubeflow pipelines--实现自己的实例</title>
       <link>https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%9E%E4%BE%8B/</link>

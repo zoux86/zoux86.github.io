@@ -3,42 +3,43 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.59.1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
 
     <title>kube-batch 修改默认的配置 | zoux的博客</title>
     <meta property="og:title" content="kube-batch 修改默认的配置 - zoux的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2019-04-21T20:31:20&#43;08:00">
+    <meta property="article:published_time" content='2019-04-21T20:31:20&#43;08:00'>
         
         
-    <meta property="article:modified_time" content="2019-04-21T20:31:20&#43;08:00">
+    <meta property="article:modified_time" content='2019-04-21T20:31:20&#43;08:00'>
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
     <meta name="description" content="kube-batch 修改默认的配置">
         
     <meta name="author" content="zoux">
     <meta property="og:url" content="https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E7%9A%84%E9%85%8D%E7%BD%AE/">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
-    <link rel="stylesheet" href="/css/normalize.css">
-    
-        <link rel="stylesheet" href="/css/prism.css">
-    
-    <link rel="stylesheet" href="/css/style.css">
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     
-
-
+    
+    
+    
     
     
 </head>
 
+
 <body>
-<header id="header" class="clearfix">
+    <header id="header" class="clearfix">
     <div class="container">
         <div class="col-group">
             <div class="site-name ">
@@ -65,140 +66,114 @@
     </div>
 </header>
 
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
 
-<div id="body">
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">kube-batch 修改默认的配置</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年4月21日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/kube-batch'>kube-batch</a></span>
+            
+        </div>
         
         
-    <div class="container">
-        <div class="col-group">
-
-            <div class="col-8" id="main">
-                <div class="res-cons">
-                    <article class="post">
-                        <header>
-                            <h1 class="post-title">kube-batch 修改默认的配置</h1>
-                        </header>
-                        <date class="post-meta meta-date">
-                            2019年4月21日
-                        </date>
-                        
-                        <div class="post-meta">
-                            <span>|</span>
-                            
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kube-batch">kube-batch</a></span>
-                            
-                        </div>
-                        
-                        
-                        <div class="post-meta">
-                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
-                        </div>
-                        
-                        
-                        <div class="post-content">
-                            
-
-<p>在kube-batch V0.4及以上版本中，kube-batch默认的配置 只包含两个 Action(allocate, backfill)。</p>
-
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <p>在kube-batch V0.4及以上版本中，kube-batch默认的配置 只包含两个 Action(allocate, backfill)。</p>
 <p>具体可以参考：
 <a href="https://github.com/kubernetes-sigs/kube-batch/blob/6e560929dcafec91b2b9a24f246a20b4569b39a8/pkg/scheduler/util.go">https://github.com/kubernetes-sigs/kube-batch/blob/6e560929dcafec91b2b9a24f246a20b4569b39a8/pkg/scheduler/util.go</a></p>
-
 <p>在自己的需求中，我们可能需要定义自己的配置。</p>
-
 <p>思路： 查看util.go中的代码发现，Kube-batch在发现用户指定配置文件后，会自动地读取该文件的内容，而不是使用自定义的config。所以，一个想法就是，使用NFS挂载卷，先生成自己的config file。然后修改kube-batch的deployment，让他读取这个config file。</p>
-
 <p>修改方式如下：</p>
-
-<h5 id="创建pv-pvc-然后将自己的conf文件放到本地挂载的地方">创建pv,pvc,然后将自己的conf文件放到本地挂载的地方</h5>
-
+<h5 id="创建pvpvc然后将自己的conf文件放到本地挂载的地方">创建pv,pvc,然后将自己的conf文件放到本地挂载的地方</h5>
 <p>pvc.yaml</p>
-
-<pre><code class="language-rust">apiVersion: v1
-kind: PersistentVolumeClaim
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">apiVersion: <span style="color:#a6e22e">v1</span>
+kind: <span style="color:#a6e22e">PersistentVolumeClaim</span>
 metadata:
-  name: kubebatch-pvc
-  namespace: kube-system   # 一定要加namespace,否则找不到
+  <span style="color:#a6e22e">name</span>: <span style="color:#a6e22e">kubebatch</span><span style="color:#f92672">-</span>pvc
+  namespace: <span style="color:#a6e22e">kube</span><span style="color:#f92672">-</span>system   <span style="color:#960050;background-color:#1e0010">#</span> <span style="color:#960050;background-color:#1e0010">一定要加</span>namespace,<span style="color:#960050;background-color:#1e0010">否则找不到</span>
 spec:
-  accessModes:
-    - ReadWriteOnce
+  <span style="color:#a6e22e">accessModes</span>:
+    <span style="color:#f92672">-</span> ReadWriteOnce
   resources:
-    requests:
-      storage: 5Gi
-</code></pre>
-
-<p>pv.yaml</p>
-
-<pre><code class="language-rust">apiVersion: v1
-kind: PersistentVolume
+    <span style="color:#a6e22e">requests</span>:
+      <span style="color:#a6e22e">storage</span>: <span style="color:#ae81ff">5</span>Gi
+</code></pre></div><p>pv.yaml</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">apiVersion: <span style="color:#a6e22e">v1</span>
+kind: <span style="color:#a6e22e">PersistentVolume</span>
 metadata:
-  name: kubebatch-pv
-  namespace: kube-system
+  <span style="color:#a6e22e">name</span>: <span style="color:#a6e22e">kubebatch</span><span style="color:#f92672">-</span>pv
+  namespace: <span style="color:#a6e22e">kube</span><span style="color:#f92672">-</span>system
 spec:
-  capacity:
-    storage: 5Gi
+  <span style="color:#a6e22e">capacity</span>:
+    <span style="color:#a6e22e">storage</span>: <span style="color:#ae81ff">5</span>Gi
   accessModes:
-    - ReadWriteOnce
+    <span style="color:#f92672">-</span> ReadWriteOnce
   nfs:
-    server: 192.168.14.69
-    path: /nfs-data/kube-batch
-</code></pre>
-
-<p>自定义的配置文件 kube-batch-conf.yaml</p>
-
-<pre><code class="language-rust">actions: &quot;reclaim, allocate, backfill, preempt&quot;
+    <span style="color:#a6e22e">server</span>: <span style="color:#ae81ff">192.168.14.69</span>
+    path: <span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>data<span style="color:#f92672">/</span>kube<span style="color:#f92672">-</span>batch
+</code></pre></div><p>自定义的配置文件 kube-batch-conf.yaml</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">actions: <span style="color:#e6db74">&#34;reclaim, allocate, backfill, preempt&#34;</span>
 tiers:
-- plugins:
-  - name: priority
-  - name: gang
-  - name: conformance
-- plugins:
-  - name: drf
-  - name: predicates
-  - name: proportion
-  - name: nodeorder
-</code></pre>
-
-<h5 id="修改kube-batch-deployment-设置volumes和-mountpath-同时args加上对应的参数">修改kube-batch deployment，设置Volumes和 mountPath，同时args加上对应的参数</h5>
-
+<span style="color:#f92672">-</span> plugins:
+  <span style="color:#f92672">-</span> name: <span style="color:#a6e22e">priority</span>
+  <span style="color:#f92672">-</span> name: <span style="color:#a6e22e">gang</span>
+  <span style="color:#f92672">-</span> name: <span style="color:#a6e22e">conformance</span>
+<span style="color:#f92672">-</span> plugins:
+  <span style="color:#f92672">-</span> name: <span style="color:#a6e22e">drf</span>
+  <span style="color:#f92672">-</span> name: <span style="color:#a6e22e">predicates</span>
+  <span style="color:#f92672">-</span> name: <span style="color:#a6e22e">proportion</span>
+  <span style="color:#f92672">-</span> name: <span style="color:#a6e22e">nodeorder</span>
+</code></pre></div><h5 id="修改kube-batch-deployment设置volumes和-mountpath同时args加上对应的参数">修改kube-batch deployment，设置Volumes和 mountPath，同时args加上对应的参数</h5>
 <p>使用kubectl edit deployment kube-batch -n kube-system 然后做以下的修改：</p>
-
 <h6 id="修改args参数">修改args参数</h6>
-
-<pre><code class="language-rust"> containers:
-      - args:
-        - --logtostderr
-        - --v
-        - &quot;3&quot;
-        - --scheduler-conf
-        - /etc/zoux/kube-batch-conf.yaml  (与下面对应)
-</code></pre>
-
-<h6 id="设置volumes和-mountpath">设置Volumes和 mountPath</h6>
-
-<pre><code class="language-rust">volumeMounts:
-        - mountPath: /etc/zoux   (换成你自己的)
-          name: kube-batch
-      dnsPolicy: ClusterFirst
-      restartPolicy: Always
-      schedulerName: default-scheduler
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"> containers:
+      <span style="color:#f92672">-</span> args:
+        <span style="color:#f92672">-</span> <span style="color:#f92672">--</span>logtostderr
+        <span style="color:#f92672">-</span> <span style="color:#f92672">--</span>v
+        <span style="color:#f92672">-</span> <span style="color:#e6db74">&#34;3&#34;</span>
+        <span style="color:#f92672">-</span> <span style="color:#f92672">--</span>scheduler<span style="color:#f92672">-</span>conf
+        <span style="color:#f92672">-</span> <span style="color:#f92672">/</span>etc<span style="color:#f92672">/</span>zoux<span style="color:#f92672">/</span>kube<span style="color:#f92672">-</span>batch<span style="color:#f92672">-</span>conf.yaml  (<span style="color:#960050;background-color:#1e0010">与下面对应</span>)
+</code></pre></div><h6 id="设置volumes和-mountpath">设置Volumes和 mountPath</h6>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">volumeMounts:
+        <span style="color:#f92672">-</span> mountPath: <span style="color:#f92672">/</span>etc<span style="color:#f92672">/</span>zoux   (<span style="color:#960050;background-color:#1e0010">换成你自己的</span>)
+          name: <span style="color:#a6e22e">kube</span><span style="color:#f92672">-</span>batch
+      dnsPolicy: <span style="color:#a6e22e">ClusterFirst</span>
+      restartPolicy: <span style="color:#a6e22e">Always</span>
+      schedulerName: <span style="color:#a6e22e">default</span><span style="color:#f92672">-</span>scheduler
       securityContext: {}
-      terminationGracePeriodSeconds: 30
+      terminationGracePeriodSeconds: <span style="color:#ae81ff">30</span>
       volumes:
-      - name: kube-batch
+      <span style="color:#f92672">-</span> name: <span style="color:#a6e22e">kube</span><span style="color:#f92672">-</span>batch
         persistentVolumeClaim:
-          claimName: kubebatch-pvc  （换成你自己的pvc)
-</code></pre>
-
-<h6 id="成功保存退出即可-修改后kube-batch会自动重启">成功保存退出即可。（修改后kube-batch会自动重启）</h6>
-
+          <span style="color:#a6e22e">claimName</span>: <span style="color:#a6e22e">kubebatch</span><span style="color:#f92672">-</span>pvc  <span style="color:#960050;background-color:#1e0010">（换成你自己的</span>pvc)
+</code></pre></div><h6 id="成功保存退出即可修改后kube-batch会自动重启">成功保存退出即可。（修改后kube-batch会自动重启）</h6>
 <p>最后感谢義洋同学 一起讨论提供思路。</p>
 
-                        </div>
+        </div>
 
-                        
+        
 
 
-                        
+        
 
 <div class="post-archive">
     <h2>See Also</h2>
@@ -218,17 +193,17 @@ tiers:
 </div>
 
 
-                        <div class="post-meta meta-tags">
-                            
-                            <ul class="clearfix">
-                                
-                                <li><a href="https://zoux86.github.io/tags/kube-batch">kube-batch</a></li>
-                                
-                            </ul>
-                            
-                        </div>
-                    </article>
-                    
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/kube-batch'>kube-batch</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
     
 
     
@@ -243,11 +218,54 @@ tiers:
       </script>
     </div>
     
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
                 </div>
-            </div>
-            <div id="secondary">
+
+                <div id="secondary">
     <section class="widget">
-        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
@@ -305,7 +323,7 @@ tiers:
     
 
     <section class="widget">
-        <h3 class="widget-title">分类</h3>
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
 <ul class="widget-list">
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
@@ -348,7 +366,7 @@ tiers:
     </section>
 
     <section class="widget">
-        <h3 class="widget-title">标签</h3>
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
 <div class="tagcloud">
     
     <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
@@ -440,46 +458,9 @@ tiers:
         </ul>
     </section>
 </div>
+            </div>
         </div>
     </div>
-</div>
-<footer id="footer">
-    <div class="container">
-        &copy; 2020 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
-        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
-        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
-        
-    </div>
-</footer>
-
-
-    
-    <script type="text/javascript">
-        
-        (function () {
-            $("pre code").parent().addClass("line-numbers")
-        }());
-
-        window.MathJax = {
-            tex2jax: {
-                inlineMath: [['$', '$']],
-                processEscapes: true
-                }
-            };
-    </script>
-    <script type="text/javascript" src="/js/prism.js" async="true"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
-
-
-<a id="rocket" href="#top"></a>
-<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
-
-
-
-    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
-
-
-
-
 </body>
+
 </html>

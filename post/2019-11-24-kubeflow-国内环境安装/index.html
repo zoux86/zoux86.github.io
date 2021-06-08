@@ -3,42 +3,43 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.59.1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
 
     <title>kubeflow国内环境安装 | zoux的博客</title>
     <meta property="og:title" content="kubeflow国内环境安装 - zoux的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2019-01-07T20:31:20&#43;08:00">
+    <meta property="article:published_time" content='2019-01-07T20:31:20&#43;08:00'>
         
         
-    <meta property="article:modified_time" content="2019-01-07T20:31:20&#43;08:00">
+    <meta property="article:modified_time" content='2019-01-07T20:31:20&#43;08:00'>
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
     <meta name="description" content="kubeflow国内环境安装">
         
     <meta name="author" content="zoux">
     <meta property="og:url" content="https://zoux86.github.io/post/2019-11-24-kubeflow-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
-    <link rel="stylesheet" href="/css/normalize.css">
-    
-        <link rel="stylesheet" href="/css/prism.css">
-    
-    <link rel="stylesheet" href="/css/style.css">
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     
-
-
+    
+    
+    
     
     
 </head>
 
+
 <body>
-<header id="header" class="clearfix">
+    <header id="header" class="clearfix">
     <div class="container">
         <div class="col-group">
             <div class="site-name ">
@@ -65,116 +66,83 @@
     </div>
 </header>
 
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
 
-<div id="body">
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">kubeflow国内环境安装</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年1月7日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a></span>
+            
+        </div>
         
         
-    <div class="container">
-        <div class="col-group">
-
-            <div class="col-8" id="main">
-                <div class="res-cons">
-                    <article class="post">
-                        <header>
-                            <h1 class="post-title">kubeflow国内环境安装</h1>
-                        </header>
-                        <date class="post-meta meta-date">
-                            2019年1月7日
-                        </date>
-                        
-                        <div class="post-meta">
-                            <span>|</span>
-                            
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a></span>
-                            
-                        </div>
-                        
-                        
-                        <div class="post-meta">
-                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
-                        </div>
-                        
-                        
-                        <div class="post-content">
-                            
-
-<p>最近一直在想在自己集群上搭建Kubeflow环境，兜兜转转最终终于装好了。这个过程中遇到了很多坑，而在整个过程中发现网上关于如何在国内环境下安装kubeflow的教程非常少。故在此记录我的搭建过程，希望能对想搭建kubeflow环境的小伙伴们一些帮助。这里特意感谢实验室董师兄的指定，告诉我如何修改指定的镜像。</p>
-
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <p>最近一直在想在自己集群上搭建Kubeflow环境，兜兜转转最终终于装好了。这个过程中遇到了很多坑，而在整个过程中发现网上关于如何在国内环境下安装kubeflow的教程非常少。故在此记录我的搭建过程，希望能对想搭建kubeflow环境的小伙伴们一些帮助。这里特意感谢实验室董师兄的指定，告诉我如何修改指定的镜像。</p>
 <h3 id="环境介绍">环境介绍：</h3>
-
 <p>ubuntu 16.04的机器4台：</p>
-
 <p>1台master</p>
-
 <p>3台node</p>
-
 <p>k8s版本：v1.8.7</p>
-
 <p>ksonnet:0.1.3</p>
-
 <p>kubeflow版本：v0.3.2</p>
-
 <h4 id="安装前准备">安装前准备</h4>
-
 <p>参考之前的四篇文章</p>
-
 <p>kubeflow准备&ndash;NFS环境搭建</p>
-
 <p>kubeflow准备&ndash;下载ks</p>
-
 <p>kubeflow准备&ndash;下载ks</p>
-
 <p>kubeflow准备&ndash;拉取镜像</p>
-
 <h4 id="开始安装kubeflow">开始安装kubeflow</h4>
-
 <h5 id="安装思想">安装思想</h5>
-
 <p>由于Kubeflow安装过程中使用的都是gcr.io的镜像，这是google服务器的镜像，国内由于被墙的原因访问不了。所以这里采取的思想是修改kubeflow的后端配置，让安装过程中不使用gcr的镜像，而是使用我们自己指定的镜像。接下来是具体安装过程。</p>
-
 <h5 id="安装准备">安装准备</h5>
-
 <p>提前建立自己的本地仓库 ，这里我的本地仓库是192.168.14.99:5000</p>
-
 <p>将需要的镜像pull下来, 然后tag成本地仓库的镜像，然后上传到本地仓库。</p>
-
 <p>可能存在的问题：
 Q:怎样知道该版本的kubeflow需要哪些镜像呢？</p>
-
 <p>A:我是先在一个k8s集群上使用官网的教程，安装kubeflow。很明显这样不会成功，但在kubectl get pod -n kubeflow时，发现很多pod都是没启动成功。使用describe命令一个一个查看后，就能找到所需要的镜像。记录下来，然后在dockerhub上搜，是否有人上传了这些镜像。</p>
-
 <p>如果有人使用的是kubeflow v0.3.2版本的话，可以直接使用该脚本下载我上传的镜像。</p>
-
-<pre><code class="language-rust">#!/bin/bash
-images=(katib-frontend:v0.1.2-alpha-45-g3dce496 \
-spartakus-amd64:v1.0.0  \
-jupyterhub-k8s:v20180531-3bb991b1  \
-tf_operator:v0.3.0  \
-vizier-core:v0.1.2-alpha-45-g3dce496 \
-suggestion-bayesianoptimization:v0.1.2-alpha-45-g3dce496 \
-suggestion-grid:v0.1.2-alpha-45-g3dce496 \
-suggestion-hyperband:v0.1.2-alpha-45-g3dce496 \
-suggestion-random:v0.1.2-alpha-45-g3dce496   \
-modeldb-backend:v0.2.0        \
-centraldashboard:v0.3.0
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">#!/bin/bash</span>
+images<span style="color:#f92672">=</span>(katib<span style="color:#f92672">-</span>frontend:<span style="color:#a6e22e">v0</span>.<span style="color:#ae81ff">1.2</span><span style="color:#f92672">-</span>alpha<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span><span style="color:#f92672">-</span>g3dce496 <span style="color:#960050;background-color:#1e0010">\</span>
+spartakus<span style="color:#f92672">-</span>amd64:<span style="color:#a6e22e">v1</span>.<span style="color:#ae81ff">0.0</span>  <span style="color:#960050;background-color:#1e0010">\</span>
+jupyterhub<span style="color:#f92672">-</span>k8s:<span style="color:#a6e22e">v20180531</span><span style="color:#f92672">-</span><span style="color:#ae81ff">3</span>bb991b1  <span style="color:#960050;background-color:#1e0010">\</span>
+tf_operator:<span style="color:#a6e22e">v0</span>.<span style="color:#ae81ff">3.0</span>  <span style="color:#960050;background-color:#1e0010">\</span>
+vizier<span style="color:#f92672">-</span>core:<span style="color:#a6e22e">v0</span>.<span style="color:#ae81ff">1.2</span><span style="color:#f92672">-</span>alpha<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span><span style="color:#f92672">-</span>g3dce496 <span style="color:#960050;background-color:#1e0010">\</span>
+suggestion<span style="color:#f92672">-</span>bayesianoptimization:<span style="color:#a6e22e">v0</span>.<span style="color:#ae81ff">1.2</span><span style="color:#f92672">-</span>alpha<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span><span style="color:#f92672">-</span>g3dce496 <span style="color:#960050;background-color:#1e0010">\</span>
+suggestion<span style="color:#f92672">-</span>grid:<span style="color:#a6e22e">v0</span>.<span style="color:#ae81ff">1.2</span><span style="color:#f92672">-</span>alpha<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span><span style="color:#f92672">-</span>g3dce496 <span style="color:#960050;background-color:#1e0010">\</span>
+suggestion<span style="color:#f92672">-</span>hyperband:<span style="color:#a6e22e">v0</span>.<span style="color:#ae81ff">1.2</span><span style="color:#f92672">-</span>alpha<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span><span style="color:#f92672">-</span>g3dce496 <span style="color:#960050;background-color:#1e0010">\</span>
+suggestion<span style="color:#f92672">-</span>random:<span style="color:#a6e22e">v0</span>.<span style="color:#ae81ff">1.2</span><span style="color:#f92672">-</span>alpha<span style="color:#f92672">-</span><span style="color:#ae81ff">45</span><span style="color:#f92672">-</span>g3dce496   <span style="color:#960050;background-color:#1e0010">\</span>
+modeldb<span style="color:#f92672">-</span>backend:<span style="color:#a6e22e">v0</span>.<span style="color:#ae81ff">2.0</span>        <span style="color:#960050;background-color:#1e0010">\</span>
+centraldashboard:<span style="color:#a6e22e">v0</span>.<span style="color:#ae81ff">3.0</span>
 )
-for imageName in ${images[@]} ; do
-  docker pull zoux/$imageName
+<span style="color:#66d9ef">for</span> imageName <span style="color:#66d9ef">in</span> <span style="color:#75715e">$</span>{images[<span style="color:#f92672">@</span>]} ; <span style="color:#66d9ef">do</span>
+  docker pull zoux<span style="color:#f92672">/</span><span style="color:#75715e">$imageName</span>
 done
-</code></pre>
-
-<h5 id="查看仓库中镜像是否都下载完毕">查看仓库中镜像是否都下载完毕</h5>
-
-<p>curl -X GET <a href="http://192.168.14.99:5000/v2/_catalog">http://192.168.14.99:5000/v2/_catalog</a></p>
-
+</code></pre></div><h5 id="查看仓库中镜像是否都下载完毕">查看仓库中镜像是否都下载完毕</h5>
+<p>curl -X GET http://192.168.14.99:5000/v2/_catalog</p>
 <h5 id="开始安装kubeflow-1">开始安装kubeflow</h5>
-
 <p><a href="https://v0-3.kubeflow.org/docs/started/getting-started/">https://v0-3.kubeflow.org/docs/started/getting-started/</a></p>
-
 <p>参考kubeflow的官网安装开始安装：</p>
-
 <p>下面是我的安装命令，这里大家根据自己情况定义好路径名即可：</p>
-
 <pre><code>export KUBEFLOW_SRC=~/zoux/kubeflow
 mkdir ${KUBEFLOW_SRC}
 cd ${KUBEFLOW_SRC}
@@ -184,79 +152,56 @@ export KFAPP=~/zoux/kubeflow/kubeflow_ks_ap
 ${KUBEFLOW_SRC}/scripts/kfctl.sh init ${KFAPP} --platform none
 cd ${KFAPP}
 ${KUBEFLOW_SRC}/scripts/kfctl.sh generate k8s
-</code></pre>
-
-<p>到这里大家是不是发现我们最后一条apply命令还没执行，这里先打住。大家记不记得我们还没有替换kubeflow使用的镜像，现在就是时候了。在KFAPP路径下有俩个文件env.sh和ks_app文件夹。进入ks_app文件夹，我们可以看到有下面的文件：</p>
-
-<p><img src="../../resources/images/kubeflow/image1.png" alt="image1" /></p>
-
+</code></pre><p>到这里大家是不是发现我们最后一条apply命令还没执行，这里先打住。大家记不记得我们还没有替换kubeflow使用的镜像，现在就是时候了。在KFAPP路径下有俩个文件env.sh和ks_app文件夹。进入ks_app文件夹，我们可以看到有下面的文件：</p>
+<p>
+        <img class="mx-auto" alt="image1" src="../../resources/images/kubeflow/image1.png" />   
+    </p>
 <p>将这些文件中，出现的gcr.io镜像都换成自己本地的镜像。这里文件很多，我实验发现只需要修改</p>
-
 <p>components/params.libsonnet</p>
-
 <p>vendor/kubeflow/core/spartakus.libsonnet</p>
-
 <p>俩个文件即可。只有这俩个文件中使用了定义了这些镜像。</p>
-
 <p>PS：可以使用grep -r 查找出现该镜像的文件（师兄告知）</p>
-
 <p>本人修改的params.libsonnet文件（供参考）：
 <a href="https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2Fzoux86%2Fkubeflow%2Fblob%2Fmaster%2Fparams.libsonnet">https://github.com/zoux86/kubeflow/blob/master/params.libsonnet</a></p>
-
 <p>修改完之后，执行最后一条命令：</p>
-
-<pre><code class="language-rust">${KUBEFLOW_SRC}/scripts/kfctl.sh apply k8s
-</code></pre>
-
-<p>这里kubeflow已经安装完成了。</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">$</span>{KUBEFLOW_SRC}<span style="color:#f92672">/</span>scripts<span style="color:#f92672">/</span>kfctl.sh apply k8s
+</code></pre></div><p>这里kubeflow已经安装完成了。</p>
 <h4 id="验证是否安装成功">验证是否安装成功</h4>
-
-<pre><code class="language-rust">kubectl get deployment -n kubeflow
-</code></pre>
-
-<p><img src="../../resources/images/kubeflow/image4.png" alt="image2" /></p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">kubectl get deployment <span style="color:#f92672">-</span>n kubeflow
+</code></pre></div><p>
+        <img class="mx-auto" alt="image2" src="../../resources/images/kubeflow/image4.png" />   
+    </p>
 <h4 id="ps">PS</h4>
-
 <p>如果显示是这样：</p>
-
-<p><img src="../../resources/images/kubeflow/image3.png" alt="image3" /></p>
-
+<p>
+        <img class="mx-auto" alt="image3" src="../../resources/images/kubeflow/image3.png" />   
+    </p>
 <p>原因是kubeflow的数据库vizier-db（其实就是mysql）需要使用持久化存储。它在安装的时候，声明的PVC，所以我们还需要创建对应的PV。这里我们就可以使用：存储系统-基于NFS的PV服务。</p>
-
 <h4 id="nfs的搭建">NFS的搭建</h4>
-
 <p>见之前的文章</p>
-
 <h4 id="pv的创建">pv的创建</h4>
-
 <p>创建一个vizier-pv.yaml的文件，编辑下面的内容：</p>
-
-<pre><code class="language-rust">apiVersion: v1
-kind: PersistentVolume
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">apiVersion: <span style="color:#a6e22e">v1</span>
+kind: <span style="color:#a6e22e">PersistentVolume</span>
 metadata:
-  name: vizier-pv
+  <span style="color:#a6e22e">name</span>: <span style="color:#a6e22e">vizier</span><span style="color:#f92672">-</span>pv
 spec:
-  capacity:
-    storage: 20Gi
+  <span style="color:#a6e22e">capacity</span>:
+    <span style="color:#a6e22e">storage</span>: <span style="color:#ae81ff">20</span>Gi
   accessModes:
-    - ReadWriteOnce
+    <span style="color:#f92672">-</span> ReadWriteOnce
   nfs:
-    server: 192.168.14.99
-    path: /nfs-data/kubeflow-pv1
-</code></pre>
-
-<p>然后创建。 kubectl create -f nfs-pv.yaml</p>
-
+    <span style="color:#a6e22e">server</span>: <span style="color:#ae81ff">192.168.14.99</span>
+    path: <span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>data<span style="color:#f92672">/</span>kubeflow<span style="color:#f92672">-</span>pv1
+</code></pre></div><p>然后创建。 kubectl create -f nfs-pv.yaml</p>
 <p>注意：/nfs-data/kubeflow-pv1 是共享的路径，一定要实现创建好，并且在 /etc/exports文件 中有记录。</p>
 
-                        </div>
+        </div>
 
-                        
+        
 
 
-                        
+        
 
 <div class="post-archive">
     <h2>See Also</h2>
@@ -276,19 +221,19 @@ spec:
 </div>
 
 
-                        <div class="post-meta meta-tags">
-                            
-                            <ul class="clearfix">
-                                
-                                <li><a href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a></li>
-                                
-                                <li><a href="https://zoux86.github.io/tags/kubeflow">kubeflow</a></li>
-                                
-                            </ul>
-                            
-                        </div>
-                    </article>
-                    
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a></li>
+                
+                <li><a href='/tags/kubeflow'>kubeflow</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
     
 
     
@@ -303,11 +248,54 @@ spec:
       </script>
     </div>
     
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
                 </div>
-            </div>
-            <div id="secondary">
+
+                <div id="secondary">
     <section class="widget">
-        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
@@ -365,7 +353,7 @@ spec:
     
 
     <section class="widget">
-        <h3 class="widget-title">分类</h3>
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
 <ul class="widget-list">
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
@@ -408,7 +396,7 @@ spec:
     </section>
 
     <section class="widget">
-        <h3 class="widget-title">标签</h3>
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
 <div class="tagcloud">
     
     <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
@@ -500,46 +488,9 @@ spec:
         </ul>
     </section>
 </div>
+            </div>
         </div>
     </div>
-</div>
-<footer id="footer">
-    <div class="container">
-        &copy; 2020 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
-        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
-        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
-        
-    </div>
-</footer>
-
-
-    
-    <script type="text/javascript">
-        
-        (function () {
-            $("pre code").parent().addClass("line-numbers")
-        }());
-
-        window.MathJax = {
-            tex2jax: {
-                inlineMath: [['$', '$']],
-                processEscapes: true
-                }
-            };
-    </script>
-    <script type="text/javascript" src="/js/prism.js" async="true"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
-
-
-<a id="rocket" href="#top"></a>
-<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
-
-
-
-    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
-
-
-
-
 </body>
+
 </html>

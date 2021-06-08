@@ -3,42 +3,43 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.59.1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
 
     <title>部署自己的volcano | zoux的博客</title>
     <meta property="og:title" content="部署自己的volcano - zoux的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2019-12-02T01:31:20&#43;08:00">
+    <meta property="article:published_time" content='2019-12-02T01:31:20&#43;08:00'>
         
         
-    <meta property="article:modified_time" content="2019-12-02T01:31:20&#43;08:00">
+    <meta property="article:modified_time" content='2019-12-02T01:31:20&#43;08:00'>
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
     <meta name="description" content="部署自己的volcano">
         
     <meta name="author" content="zoux">
     <meta property="og:url" content="https://zoux86.github.io/post/2019-12-02-%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84volcano/">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
-    <link rel="stylesheet" href="/css/normalize.css">
-    
-        <link rel="stylesheet" href="/css/prism.css">
-    
-    <link rel="stylesheet" href="/css/style.css">
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     
-
-
+    
+    
+    
     
     
 </head>
 
+
 <body>
-<header id="header" class="clearfix">
+    <header id="header" class="clearfix">
     <div class="container">
         <div class="col-group">
             <div class="site-name ">
@@ -65,118 +66,84 @@
     </div>
 </header>
 
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
 
-<div id="body">
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">部署自己的volcano</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年12月2日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/volcano'>volcano</a></span>
+            
+        </div>
         
         
-    <div class="container">
-        <div class="col-group">
-
-            <div class="col-8" id="main">
-                <div class="res-cons">
-                    <article class="post">
-                        <header>
-                            <h1 class="post-title">部署自己的volcano</h1>
-                        </header>
-                        <date class="post-meta meta-date">
-                            2019年12月2日
-                        </date>
-                        
-                        <div class="post-meta">
-                            <span>|</span>
-                            
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/volcano">volcano</a></span>
-                            
-                        </div>
-                        
-                        
-                        <div class="post-meta">
-                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
-                        </div>
-                        
-                        
-                        <div class="post-content">
-                            
-
-<h4 id="搭建说明">搭建说明</h4>
-
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h4 id="搭建说明">搭建说明</h4>
 <p>有时候，我们需要对volcano二次开发，所有需要部署自己的volcano</p>
-
 <h4 id="准备工作">准备工作</h4>
-
 <p>(1) 安装好 k8s集群</p>
-
 <h4 id="部署过程">部署过程</h4>
-
 <p>（1）在go的安装目录下，创建volcano目录，并下载</p>
-
 <p>mkdir -p $GOPATH/src/volcano.sh/</p>
-
 <p>cd $GOPATH/src/volcano.sh/</p>
-
 <p>git clone <a href="https://github.com/volcano-sh/volcano.git">https://github.com/volcano-sh/volcano.git</a></p>
-
 <p>PS: 这里是官网的volcano，你可以在这里修改，也可以git你自己的代码。</p>
-
 <p>(2)在$GOPATH/src/volcano.sh/volcano目录执行    make images命令。这个是编译，并且生成新镜像</p>
-
 <p>(3)docker images查看新生成的镜像</p>
-
-<p><img src="../../resources/images/volcano/image3.png" alt="image3" /></p>
-
+<p>
+        <img class="mx-auto" alt="image3" src="../../resources/images/volcano/image3.png" />   
+    </p>
 <p>（4）将镜像改名，并上传到自己的dockerhub上去，这样是能自己能用到最新的</p>
-
 <p>假设我使用的是  zoux/vk-admission:latest</p>
-
 <p>（5）进入 $GOPATH/src/volcano.sh/volcano/installer/helm/chart/volcano目录</p>
-
 <p>该目录有  Chart.yaml  config  templates  values.yaml 这四个文件（有俩个是文件夹）</p>
-
 <p>然后修改 values.yaml文件的镜像，换成自己的(zoux/vk-admission:latest)。</p>
-
 <p>然后执行：</p>
-
 <pre><code>helm install . --namespace volcano-trial --name volcano-trial
-</code></pre>
-
-<p>进行安装</p>
-
+</code></pre><p>进行安装</p>
 <p>(6) 测试安装是否成功</p>
-
 <pre><code>kubectl get pod -n volcano-trial
-</code></pre>
-
-<p><img src="../../resources/images/volcano/image4.png" alt="image4" /></p>
-
+</code></pre><p>
+        <img class="mx-auto" alt="image4" src="../../resources/images/volcano/image4.png" />   
+    </p>
 <p>出现这个就是成功了</p>
-
 <p>PS：</p>
-
 <p>如果要删除volcano的话. 先使用</p>
-
 <pre><code>helm list  
-</code></pre>
-
-<p>找到对应安装volcano的helm应用名字，然后使用下面命名删除</p>
-
+</code></pre><p>找到对应安装volcano的helm应用名字，然后使用下面命名删除</p>
 <pre><code>helm delete --purge XXX
 helm delete --purge volcano-trial
-</code></pre>
-
-<p>每次删除后，volcano安装的CRD不会删除，并且下次安装也会出现重复问题，使用下面的脚步删除</p>
-
+</code></pre><p>每次删除后，volcano安装的CRD不会删除，并且下次安装也会出现重复问题，使用下面的脚步删除</p>
 <pre><code>kubectl delete crd commands.bus.volcano.sh
 kubectl delete crd jobs.batch.volcano.sh
 kubectl delete crd queues.scheduling.incubator.k8s.io
 kubectl delete crd podgroups.scheduling.incubator.k8s.io
 </code></pre>
+        </div>
 
-                        </div>
-
-                        
+        
 
 
-                        
+        
 
 <div class="post-archive">
     <h2>See Also</h2>
@@ -196,19 +163,19 @@ kubectl delete crd podgroups.scheduling.incubator.k8s.io
 </div>
 
 
-                        <div class="post-meta meta-tags">
-                            
-                            <ul class="clearfix">
-                                
-                                <li><a href="https://zoux86.github.io/tags/volcano">volcano</a></li>
-                                
-                                <li><a href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a></li>
-                                
-                            </ul>
-                            
-                        </div>
-                    </article>
-                    
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/volcano'>volcano</a></li>
+                
+                <li><a href='/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
     
 
     
@@ -223,11 +190,54 @@ kubectl delete crd podgroups.scheduling.incubator.k8s.io
       </script>
     </div>
     
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
                 </div>
-            </div>
-            <div id="secondary">
+
+                <div id="secondary">
     <section class="widget">
-        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
@@ -285,7 +295,7 @@ kubectl delete crd podgroups.scheduling.incubator.k8s.io
     
 
     <section class="widget">
-        <h3 class="widget-title">分类</h3>
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
 <ul class="widget-list">
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
@@ -328,7 +338,7 @@ kubectl delete crd podgroups.scheduling.incubator.k8s.io
     </section>
 
     <section class="widget">
-        <h3 class="widget-title">标签</h3>
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
 <div class="tagcloud">
     
     <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
@@ -420,46 +430,9 @@ kubectl delete crd podgroups.scheduling.incubator.k8s.io
         </ul>
     </section>
 </div>
+            </div>
         </div>
     </div>
-</div>
-<footer id="footer">
-    <div class="container">
-        &copy; 2020 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
-        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
-        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
-        
-    </div>
-</footer>
-
-
-    
-    <script type="text/javascript">
-        
-        (function () {
-            $("pre code").parent().addClass("line-numbers")
-        }());
-
-        window.MathJax = {
-            tex2jax: {
-                inlineMath: [['$', '$']],
-                processEscapes: true
-                }
-            };
-    </script>
-    <script type="text/javascript" src="/js/prism.js" async="true"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
-
-
-<a id="rocket" href="#top"></a>
-<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
-
-
-
-    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
-
-
-
-
 </body>
+
 </html>

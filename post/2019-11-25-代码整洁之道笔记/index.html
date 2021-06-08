@@ -3,42 +3,43 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.59.1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
 
     <title>代码整洁之道笔记 | zoux的博客</title>
     <meta property="og:title" content="代码整洁之道笔记 - zoux的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2019-04-21T20:31:20&#43;08:00">
+    <meta property="article:published_time" content='2019-04-21T20:31:20&#43;08:00'>
         
         
-    <meta property="article:modified_time" content="2019-04-21T20:31:20&#43;08:00">
+    <meta property="article:modified_time" content='2019-04-21T20:31:20&#43;08:00'>
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
     <meta name="description" content="代码整洁之道笔记">
         
     <meta name="author" content="zoux">
     <meta property="og:url" content="https://zoux86.github.io/post/2019-11-25-%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93%E7%AC%94%E8%AE%B0/">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
-    <link rel="stylesheet" href="/css/normalize.css">
-    
-        <link rel="stylesheet" href="/css/prism.css">
-    
-    <link rel="stylesheet" href="/css/style.css">
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     
-
-
+    
+    
+    
     
     
 </head>
 
+
 <body>
-<header id="header" class="clearfix">
+    <header id="header" class="clearfix">
     <div class="container">
         <div class="col-group">
             <div class="site-name ">
@@ -65,153 +66,99 @@
     </div>
 </header>
 
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
 
-<div id="body">
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">代码整洁之道笔记</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年4月21日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0'>读书笔记</a></span>
+            
+        </div>
         
         
-    <div class="container">
-        <div class="col-group">
-
-            <div class="col-8" id="main">
-                <div class="res-cons">
-                    <article class="post">
-                        <header>
-                            <h1 class="post-title">代码整洁之道笔记</h1>
-                        </header>
-                        <date class="post-meta meta-date">
-                            2019年4月21日
-                        </date>
-                        
-                        <div class="post-meta">
-                            <span>|</span>
-                            
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0">读书笔记</a></span>
-                            
-                        </div>
-                        
-                        
-                        <div class="post-meta">
-                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
-                        </div>
-                        
-                        
-                        <div class="post-content">
-                            
-
-<h3 id="动机">动机</h3>
-
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h3 id="动机">动机</h3>
 <p>最近在回顾自己之前写的代码时，发现之前的惨不忍睹。最大的问题是，几个月前自己写的居然都看不懂。 有些问题自己能避免，例如有意义的变量命名问题，但是由于当时英文卡住了，直接就随便命名了，当时以为自己看得懂，以后就能懂，最后发现是自己想多了。</p>
-
 <p>刚好今天没事翻了一下之前买的书籍《代码整洁之道》，看到下面一段话，引起了我的共鸣，所以我决定，记录一下自己的心得，以形成一套自己整洁的代码风格。</p>
-
 <pre><code>是的，我们就是一群代码猴子，上蹿下跳，自以为领略了编程的真谛。可惜，当我们抓着几个酸桃子，得意洋洋坐到树枝
 上，却对自己造成的胡乱熟视无睹。那堆“可以运行”的乱麻程序，就在我们的眼皮底下慢慢腐坏。
-</code></pre>
-
-<p><br></p>
-
+</code></pre><!-- raw HTML omitted -->
 <h3 id="什么才是整洁的代码">什么才是整洁的代码</h3>
-
 <pre><code>能通过所有的测试
 没有重复代码
 体现系统中的全部设计理念
 包括尽量少的实体，比如类，方法，函数等
-</code></pre>
-
-<p>我追求的代码是这样的，它像一篇满分作文一样，不啰嗦但是又极具表现力。所以如何提高代码的表现力，是我接下来学习的事情，我目前离这条路还有很远，加油努力！</p>
-
-<p><br></p>
-
+</code></pre><p>我追求的代码是这样的，它像一篇满分作文一样，不啰嗦但是又极具表现力。所以如何提高代码的表现力，是我接下来学习的事情，我目前离这条路还有很远，加油努力！</p>
+<!-- raw HTML omitted -->
 <h3 id="变量">变量</h3>
-
 <h4 id="变量命名">变量命名</h4>
-
 <p>（1）采用驼峰式命名,第一个字母小写;</p>
-
 <p>（2）变量都是单词的组合，很明显的可以用缩写，例如：addr （地址）</p>
-
 <p>（3）单词都是名词形式</p>
-
 <p>（4）单词不能有歧义，例如  addedNumber (add可以是添加，也可以是插入)</p>
-
-<p><br></p>
-
+<!-- raw HTML omitted -->
 <h3 id="函数">函数</h3>
-
 <h4 id="函数命名">函数命名</h4>
-
 <p>（1）同上，但是函数名第一个单词是动词，例如deletePage</p>
-
 <p>（2）能用函数名说清楚的事情，尽量不要用注释，函数名字长一点为所谓，eg.</p>
-
 <pre><code>deletePagaAndAllReferences()
-</code></pre>
-
-<p>个人感觉，最关键的是取一个好的名字，但是这需要很强的描述技巧和英文表达能力。这个还是要多看源代码，多联系。</p>
-
+</code></pre><p>个人感觉，最关键的是取一个好的名字，但是这需要很强的描述技巧和英文表达能力。这个还是要多看源代码，多联系。</p>
 <h4 id="函数组织方式">函数组织方式</h4>
-
 <p>（1）函数要短小，一个函数只负责一件事件</p>
-
 <p>（2）if,else,switch语句后面应该只能是一句话,例如</p>
-
-<pre><code class="language-c++">switch(choice){
-    case 1: addStudent();
-    case 2: deleteStudent();
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">switch</span>(choice){
+    <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span> addStudent();
+    <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">:</span> deleteStudent();
 }
-</code></pre>
-
-<p>（3）函数参数尽可能少，最理想是没有参数，一个，二个，三个都还可以。超过三个就考虑是否弄一个类了。</p>
-
+</code></pre></div><p>（3）函数参数尽可能少，最理想是没有参数，一个，二个，三个都还可以。超过三个就考虑是否弄一个类了。</p>
 <p>函数参数尽量不要使用bool型的变量，如果是这种情况，可以考虑写两个函数，一个是True情况下的，一个是false情况下的。</p>
-
 <p>（4）try/catch错误处理的情况应该单独弄一个函数，而不是要放在主函数里面，这样会弄乱主函数的代码结构。</p>
-
 <p>（5）对于大函数，遵循只有一个return的原则</p>
-
 <p>​          小函数，可以出现多个return  (if里面)</p>
-
 <p>语录： 大师级程序员将系统当做故事来讲，而不是当程序来写。</p>
-
-<p><br></p>
-
+<!-- raw HTML omitted -->
 <h3 id="注释">注释</h3>
-
 <p>注释出现的目的：注释是因为代码不能很好的表达我们的意图的时候，采用的一种弥补方式。所以要尽可能的避免注释（不是不用），因为代码而且会变，但是注释不能跟着变，而且不同人表达的可能不同。</p>
-
 <p>（1）注释应该是对意图的解释</p>
-
 <p>（2）注释可以是一些警告</p>
-
 <p>（3）TODO注释</p>
-
 <p>（4）不要出现无意义，多余的注释</p>
-
 <p>（5）不要注释代码，如果不要直接删除，但是要做好版本控制</p>
-
-<p><br></p>
-
+<!-- raw HTML omitted -->
 <h3 id="代码格式">代码格式</h3>
-
 <p>代码格式就像文章的排版，同样非常重要。</p>
-
 <p>（1）用空行分割出不同逻辑的代码</p>
-
 <p>（2）相关函数尽可能放到一块，并且按照调用顺序从上至下，以方便可读性</p>
-
 <p>（3）赋值=左右两边有空格隔开；函数参数之间用空格隔开；同时出现乘法和加法，乘法不用空格隔开，例如：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">return</span> b<span style="color:#f92672">*</span>b <span style="color:#f92672">-</span> <span style="color:#ae81ff">4</span><span style="color:#f92672">*</span>a<span style="color:#f92672">*</span>c;
+</code></pre></div><p>（4）一行if代码尽量避免，也使用缩进形式</p>
 
-<pre><code class="language-rust">return b*b - 4*a*c;
-</code></pre>
+        </div>
 
-<p>（4）一行if代码尽量避免，也使用缩进形式</p>
-
-                        </div>
-
-                        
+        
 
 
-                        
+        
 
 <div class="post-archive">
     <h2>See Also</h2>
@@ -231,21 +178,21 @@
 </div>
 
 
-                        <div class="post-meta meta-tags">
-                            
-                            <ul class="clearfix">
-                                
-                                <li><a href="https://zoux86.github.io/tags/%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93">代码整洁之道</a></li>
-                                
-                                <li><a href="https://zoux86.github.io/tags/clean-code">clean code</a></li>
-                                
-                                <li><a href="https://zoux86.github.io/tags/%E7%AC%94%E8%AE%B0">笔记</a></li>
-                                
-                            </ul>
-                            
-                        </div>
-                    </article>
-                    
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93'>代码整洁之道</a></li>
+                
+                <li><a href='/tags/clean-code'>clean code</a></li>
+                
+                <li><a href='/tags/%E7%AC%94%E8%AE%B0'>笔记</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
     
 
     
@@ -260,11 +207,54 @@
       </script>
     </div>
     
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
                 </div>
-            </div>
-            <div id="secondary">
+
+                <div id="secondary">
     <section class="widget">
-        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
@@ -322,7 +312,7 @@
     
 
     <section class="widget">
-        <h3 class="widget-title">分类</h3>
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
 <ul class="widget-list">
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
@@ -365,7 +355,7 @@
     </section>
 
     <section class="widget">
-        <h3 class="widget-title">标签</h3>
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
 <div class="tagcloud">
     
     <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
@@ -457,46 +447,9 @@
         </ul>
     </section>
 </div>
+            </div>
         </div>
     </div>
-</div>
-<footer id="footer">
-    <div class="container">
-        &copy; 2020 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
-        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
-        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
-        
-    </div>
-</footer>
-
-
-    
-    <script type="text/javascript">
-        
-        (function () {
-            $("pre code").parent().addClass("line-numbers")
-        }());
-
-        window.MathJax = {
-            tex2jax: {
-                inlineMath: [['$', '$']],
-                processEscapes: true
-                }
-            };
-    </script>
-    <script type="text/javascript" src="/js/prism.js" async="true"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
-
-
-<a id="rocket" href="#top"></a>
-<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
-
-
-
-    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
-
-
-
-
 </body>
+
 </html>

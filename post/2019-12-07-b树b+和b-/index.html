@@ -3,42 +3,43 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.59.1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
 
     <title>B树,B&#43;和B- | zoux的博客</title>
     <meta property="og:title" content="B树,B&#43;和B- - zoux的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2019-12-07T13:31:20&#43;08:00">
+    <meta property="article:published_time" content='2019-12-07T13:31:20&#43;08:00'>
         
         
-    <meta property="article:modified_time" content="2019-12-07T13:31:20&#43;08:00">
+    <meta property="article:modified_time" content='2019-12-07T13:31:20&#43;08:00'>
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
     <meta name="description" content="B树,B&#43;和B-">
         
     <meta name="author" content="zoux">
     <meta property="og:url" content="https://zoux86.github.io/post/2019-12-07-b%E6%A0%91b&#43;%E5%92%8Cb-/">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
-    <link rel="stylesheet" href="/css/normalize.css">
-    
-        <link rel="stylesheet" href="/css/prism.css">
-    
-    <link rel="stylesheet" href="/css/style.css">
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     
-
-
+    
+    
+    
     
     
 </head>
 
+
 <body>
-<header id="header" class="clearfix">
+    <header id="header" class="clearfix">
     <div class="container">
         <div class="col-group">
             <div class="site-name ">
@@ -65,136 +66,102 @@
     </div>
 </header>
 
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
 
-<div id="body">
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">B树,B&#43;和B-</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年12月7日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/c&#43;&#43;'>C&#43;&#43;</a></span>
+            
+        </div>
         
         
-    <div class="container">
-        <div class="col-group">
-
-            <div class="col-8" id="main">
-                <div class="res-cons">
-                    <article class="post">
-                        <header>
-                            <h1 class="post-title">B树,B&#43;和B-</h1>
-                        </header>
-                        <date class="post-meta meta-date">
-                            2019年12月7日
-                        </date>
-                        
-                        <div class="post-meta">
-                            <span>|</span>
-                            
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/c&#43;&#43;">C&#43;&#43;</a></span>
-                            
-                        </div>
-                        
-                        
-                        <div class="post-meta">
-                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
-                        </div>
-                        
-                        
-                        <div class="post-content">
-                            
-
-<h4 id="二叉搜索树">二叉搜索树</h4>
-
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h4 id="二叉搜索树">二叉搜索树</h4>
 <p>二叉搜索树，BST（Binary Search Tree），即为特殊的二叉树。
 <strong>对于二叉树的任意一个节点，其左子树中所有的值均小于该节点；右子树中所有的值均大于该节点</strong>。</p>
-
 <p>二叉搜索树按照中序遍历的方式（左 - 中 - 右）得到的序列为从小到大的有序序列。</p>
-
-<p><br></p>
-
+<!-- raw HTML omitted -->
 <h4 id="b数">B数</h4>
-
 <p>二叉搜索树，树如其名，它在搜索一个值的时候表现很好，但是二叉搜索树有一个很大的缺陷就是它不稳定，它的时间复杂度是O(h) 树的高度。所以可能会出现这种情况：</p>
-
-<p><img src="../../resources/images/C++/image7.png" alt="image-20191207194141516" /></p>
-
+<p>
+        <img class="mx-auto" alt="image-20191207194141516" src="../../resources/images/C&#43;&#43;/image7.png" />   
+    </p>
 <p>这个时候，B树（二叉平衡树）出现了，如下所示：</p>
-
-<p><img src="../../resources/images/C++/image8.png" alt="image-20191207194640864" /></p>
-
+<p>
+        <img class="mx-auto" alt="image-20191207194640864" src="../../resources/images/C&#43;&#43;/image8.png" />   
+    </p>
 <p>二叉平衡树的特点：</p>
-
 <p>（1）是二叉搜索树</p>
-
 <p>（2）树所有的叶子节点的高度差 不为 1</p>
-
-<p><br></p>
-
+<!-- raw HTML omitted -->
 <h4 id="红黑树">红黑树</h4>
-
 <p>B树虽然能保持稳定的实际复杂度。但是它如果遇到增删操作比较多的场景。每次增删都要维护树的形状。这样也会造成额外的开销。</p>
-
 <p>一方面我们是希望二叉搜索树有一个非常好的结构（最好平衡二叉树），另一方面我们不希望要经常维护这个树的结构。这个是互相矛盾的，这个时候折中就出现了（计算机中出现了很多折中的思想），红黑树出现了。</p>
-
-<p><img src="../../resources/images/C++/image9.png" alt="image-20191207202457345" /></p>
-
+<p>
+        <img class="mx-auto" alt="image-20191207202457345" src="../../resources/images/C&#43;&#43;/image9.png" />   
+    </p>
 <p>红黑树 是一个不严格的平衡二叉树。它有以下几个特征：</p>
-
-<pre><code class="language-rust">节点是红色或者黑色
-根节点是黑色
-每个叶子的节点都是黑色的空节点（NULL）
-每个红色节点的两个子节点都是黑色的。
-从任意节点到其每个叶子的所有路径都包含相同的黑色节点。
-是一颗二叉搜索树
-</code></pre>
-
-<p>严格的平衡二叉树 要求节点之间高度不能超过1。这样会带来一些局限性。例如，插入操作很频繁。</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#960050;background-color:#1e0010">节点是红色或者黑色</span>
+<span style="color:#960050;background-color:#1e0010">根节点是黑色</span>
+<span style="color:#960050;background-color:#1e0010">每个叶子的节点都是黑色的空节点（</span>NULL<span style="color:#960050;background-color:#1e0010">）</span>
+<span style="color:#960050;background-color:#1e0010">每个红色节点的两个子节点都是黑色的。</span>
+<span style="color:#960050;background-color:#1e0010">从任意节点到其每个叶子的所有路径都包含相同的黑色节点。</span>
+<span style="color:#960050;background-color:#1e0010">是一颗二叉搜索树</span>
+</code></pre></div><p>严格的平衡二叉树 要求节点之间高度不能超过1。这样会带来一些局限性。例如，插入操作很频繁。</p>
 <p>如果应用场景中对插入删除不频繁，只是对查找要求较高，那么AVL还是较优于红黑树。</p>
-
 <p>红黑树：是复杂的，但它的操作有着良好的最坏情况运行时间，并且在实践中是高效的。红黑树在插入删除的时候，左旋右旋的操作平均为3次（印象中的看到的数据，可能不准确）。</p>
-
-<p><br></p>
-
+<!-- raw HTML omitted -->
 <h4 id="b-树">B-树</h4>
-
 <p>B-树是一种多路搜索树（并不是二叉的） ，它的目的是更快的查找。举例3路-B-树：</p>
-
-<p><img src="../../resources/images/C++/image10.png" alt="image-20191207203256437" /></p>
-
+<p>
+        <img class="mx-auto" alt="image-20191207203256437" src="../../resources/images/C&#43;&#43;/image10.png" />   
+    </p>
 <p>了解B-树是什么，需要了解两件事：</p>
-
 <p>（1）   确定M 是什么（M是阶数，代表每次有几条路可选）</p>
-
 <p>（2）   注意每一路是什么意思</p>
-
 <p>例如：第一层，P1代表少于17的数。P2表示17~35之间的，p3表示大于35的</p>
-
-<p><br></p>
-
-<h4 id="b-树-1">B+树</h4>
-
+<!-- raw HTML omitted -->
+<h4 id="b树">B+树</h4>
 <p>B+树是在B-树的基础上提出来的，B-树多用于文件系统，但是用于数据库的时候，经常会遇到区间查找的问题。这个时候B+树出现了。</p>
-
-<p><img src="../../resources/images/C++/image11.png" alt="image-20191207203706869" /></p>
-
+<p>
+        <img class="mx-auto" alt="image-20191207203706869" src="../../resources/images/C&#43;&#43;/image11.png" />   
+    </p>
 <p>B+树核心特点：</p>
-
 <p>（1）   每一次只存子孩子中最大或最小的数  （最后一层才是真正的数）</p>
-
 <p>（2）   最后一层用链表连接起来   （方便区间查询）</p>
-
 <p>总结：</p>
-
 <p>B-树：非关系型数据库的索引实现，如MongoDB</p>
-
 <p>B+树：关系型数据库的索引实现，如Mysql</p>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
 
-<p><br></p>
+        </div>
 
-<p><br></p>
-
-                        </div>
-
-                        
+        
 
 
-                        
+        
 
 <div class="post-archive">
     <h2>See Also</h2>
@@ -214,17 +181,17 @@
 </div>
 
 
-                        <div class="post-meta meta-tags">
-                            
-                            <ul class="clearfix">
-                                
-                                <li><a href="https://zoux86.github.io/tags/c&#43;&#43;">C&#43;&#43;</a></li>
-                                
-                            </ul>
-                            
-                        </div>
-                    </article>
-                    
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/c&#43;&#43;'>C&#43;&#43;</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
     
 
     
@@ -239,11 +206,54 @@
       </script>
     </div>
     
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
                 </div>
-            </div>
-            <div id="secondary">
+
+                <div id="secondary">
     <section class="widget">
-        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
@@ -301,7 +311,7 @@
     
 
     <section class="widget">
-        <h3 class="widget-title">分类</h3>
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
 <ul class="widget-list">
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
@@ -344,7 +354,7 @@
     </section>
 
     <section class="widget">
-        <h3 class="widget-title">标签</h3>
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
 <div class="tagcloud">
     
     <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
@@ -436,46 +446,9 @@
         </ul>
     </section>
 </div>
+            </div>
         </div>
     </div>
-</div>
-<footer id="footer">
-    <div class="container">
-        &copy; 2020 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
-        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
-        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
-        
-    </div>
-</footer>
-
-
-    
-    <script type="text/javascript">
-        
-        (function () {
-            $("pre code").parent().addClass("line-numbers")
-        }());
-
-        window.MathJax = {
-            tex2jax: {
-                inlineMath: [['$', '$']],
-                processEscapes: true
-                }
-            };
-    </script>
-    <script type="text/javascript" src="/js/prism.js" async="true"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
-
-
-<a id="rocket" href="#top"></a>
-<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
-
-
-
-    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
-
-
-
-
 </body>
+
 </html>

@@ -3,42 +3,43 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.59.1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
 
     <title>ubuntu搭建k8s机器 | zoux的博客</title>
     <meta property="og:title" content="ubuntu搭建k8s机器 - zoux的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2019-03-05T20:31:20&#43;08:00">
+    <meta property="article:published_time" content='2019-03-05T20:31:20&#43;08:00'>
         
         
-    <meta property="article:modified_time" content="2019-03-05T20:31:20&#43;08:00">
+    <meta property="article:modified_time" content='2019-03-05T20:31:20&#43;08:00'>
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
     <meta name="description" content="ubuntu搭建k8s机器">
         
     <meta name="author" content="zoux">
     <meta property="og:url" content="https://zoux86.github.io/post/2019-11-24-%E6%90%AD%E5%BB%BAk8s%E9%9B%86%E7%BE%A4/">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
-    <link rel="stylesheet" href="/css/normalize.css">
-    
-        <link rel="stylesheet" href="/css/prism.css">
-    
-    <link rel="stylesheet" href="/css/style.css">
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     
-
-
+    
+    
+    
     
     
 </head>
 
+
 <body>
-<header id="header" class="clearfix">
+    <header id="header" class="clearfix">
     <div class="container">
         <div class="col-group">
             <div class="site-name ">
@@ -65,57 +66,47 @@
     </div>
 </header>
 
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
 
-<div id="body">
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">ubuntu搭建k8s机器</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年3月5日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a></span>
+            
+        </div>
         
         
-    <div class="container">
-        <div class="col-group">
-
-            <div class="col-8" id="main">
-                <div class="res-cons">
-                    <article class="post">
-                        <header>
-                            <h1 class="post-title">ubuntu搭建k8s机器</h1>
-                        </header>
-                        <date class="post-meta meta-date">
-                            2019年3月5日
-                        </date>
-                        
-                        <div class="post-meta">
-                            <span>|</span>
-                            
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a></span>
-                            
-                        </div>
-                        
-                        
-                        <div class="post-meta">
-                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
-                        </div>
-                        
-                        
-                        <div class="post-content">
-                            
-
-<p>本次在搭建k8s集群的过程中，遇到了很多问题，幸好最后终于成功。故将整个过程记录下来，希望对大家有所帮助。</p>
-
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <p>本次在搭建k8s集群的过程中，遇到了很多问题，幸好最后终于成功。故将整个过程记录下来，希望对大家有所帮助。</p>
 <h3 id="环境说明">环境说明</h3>
-
 <p>环境：4台ubuntu16.04
 1个master
 3个node</p>
-
 <p>k8s版本：V1.13.2</p>
-
 <h3 id="搭建说明">搭建说明</h3>
-
 <p>本教程采用kubeadm的方式安装，主要针对的是国内用户，因为安装k8s会遇到墙的问题。所以本文安装前，先将k8s需要的组件以二进制的方式先下载下来。并且k8s需要的镜像，我们先从dockerhub上拉取相关镜像，然后再tag成k8s需要的镜像。</p>
-
-<h4 id="安装docker-针对所有节点">安装docker，针对所有节点</h4>
-
+<h4 id="安装docker针对所有节点">安装docker，针对所有节点</h4>
 <p>运行以下的脚本（假设名为a.sh）</p>
-
 <pre><code>#!/bin/bash
 #SET UP THE REPOSITORY
 apt-get remove docker docker-engine docker.io
@@ -132,20 +123,12 @@ add-apt-repository \
    stable&quot;
 #install docker
 apt-get update &amp;&amp; apt-get install docker-ce=18.06.0~ce~3-0~ubuntu
-</code></pre>
-
-<p>然后执行 sudo chmod 700 a.sh 将a.sh变成可执行文件</p>
-
+</code></pre><p>然后执行 sudo chmod 700 a.sh 将a.sh变成可执行文件</p>
 <p>然后执行 ./a.sh</p>
-
-<h4 id="安装kubernetes-在master节点执行">安装kubernetes，在master节点执行</h4>
-
+<h4 id="安装kubernetes在master节点执行">安装kubernetes，在master节点执行</h4>
 <p>将下载的zip包解压：unzip k8s_ubuntu_deb.zip</p>
-
 <p>（压缩包地址： <a href="https://github.com/zoux86/k8s/blob/master/k8s_ubuntu_deb.zip">https://github.com/zoux86/k8s/blob/master/k8s_ubuntu_deb.zip</a> ）</p>
-
 <p>然后在解压后的目录执行下面的脚本，安装Kubeadm,kubelet。</p>
-
 <pre><code>#!/bin/bash
 apt-get install -y -q socat ebtables ethtool
 dpkg -i kubernetes-cni_0.5.1-00_amd64.deb
@@ -154,10 +137,7 @@ dpkg -i kubectl_1.8.7-00_amd64.deb
 dpkg -i kubeadm_1.8.7-00_amd64.deb
 systemctl enable kubelet
 systemctl start kubelet
-</code></pre>
-
-<h4 id="提前拉取相关镜像-在master节点">提前拉取相关镜像，在master节点</h4>
-
+</code></pre><h4 id="提前拉取相关镜像在master节点">提前拉取相关镜像，在master节点</h4>
 <pre><code>#!/bin/bash
 ufw disable
 # 关闭swap,重启后会失效，可加入到启动脚本rc.local里
@@ -183,44 +163,24 @@ for imageName in ${images[@]} ; do
   docker tag andylo25/$imageName gcr.io/google_containers/$imageName
   docker rmi andylo25/$imageName
 done
-</code></pre>
-
-<h4 id="启动集群-master节点">启动集群，master节点</h4>
-
+</code></pre><h4 id="启动集群master节点">启动集群，master节点</h4>
 <pre><code>kubeadm init --kubernetes-version=v1.13.2 --pod-network-cidr 10.244.0.0/16
-</code></pre>
-
-<p>初始化正常后会在最后的地方x显示一个加入集群的提示命令，这个一定要注意，后面要用到。命令如下：</p>
-
+</code></pre><p>初始化正常后会在最后的地方x显示一个加入集群的提示命令，这个一定要注意，后面要用到。命令如下：</p>
 <pre><code>kubeadm join --token 34fb5a.87ec418b32857c65 192.168.129.133:6443 --discovery-token-ca-cert-hash sha256:da4765f5721db7ed2130c265a71e849005f0334aeb821cd05ec9c9020e036919
-</code></pre>
-
-<h4 id="如果非root用户下想使用kubelet-进行下面的操作">如果非root用户下想使用kubelet，进行下面的操作</h4>
-
+</code></pre><h4 id="如果非root用户下想使用kubelet进行下面的操作">如果非root用户下想使用kubelet，进行下面的操作</h4>
 <p>切换到非root用户下，然后执行下面的命令：</p>
-
 <pre><code>su ubuntu
 sudo mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 su
 export KUBECONFIG=/etc/kubernetes/admin.conf
-</code></pre>
-
-<h4 id="安装网络插件">安装网络插件</h4>
-
+</code></pre><h4 id="安装网络插件">安装网络插件</h4>
 <pre><code>kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml  
-</code></pre>
-
-<h4 id="worker节点加入集群-在所有worker节点执行">worker节点加入集群，在所有worker节点执行</h4>
-
+</code></pre><h4 id="worker节点加入集群在所有worker节点执行">worker节点加入集群，在所有worker节点执行</h4>
 <h5 id="解压前面下载的k8s二进制文件">解压前面下载的k8s二进制文件</h5>
-
 <pre><code>unzip k8s_ubuntu_deb.zip
-</code></pre>
-
-<h5 id="进入解压后的文件-然后执行下面脚本-安装k8s组件">进入解压后的文件，然后执行下面脚本，安装k8s组件</h5>
-
+</code></pre><h5 id="进入解压后的文件然后执行下面脚本安装k8s组件">进入解压后的文件，然后执行下面脚本，安装k8s组件</h5>
 <pre><code>#!/bin/bash
 ufw disable
 
@@ -254,15 +214,9 @@ for imageName in ${images[@]} ; do
   docker tag andylo25/$imageName gcr.io/google_containers/$imageName
   docker rmi andylo25/$imageName
 done
-</code></pre>
-
-<h4 id="加入集群-在所有的worker上执行">加入集群，在所有的worker上执行</h4>
-
+</code></pre><h4 id="加入集群在所有的worker上执行">加入集群，在所有的worker上执行</h4>
 <pre><code>kubeadm join --token 34fb5a.87ec418b32857c65 192.168.129.133:6443 --discovery-token-ca-cert-hash sha256:da4765f5721db7ed2130c265a71e849005f0334aeb821cd05ec9c9020e036919
-</code></pre>
-
-<p>ps:这是k8S安装时需要的镜像</p>
-
+</code></pre><p>ps:这是k8S安装时需要的镜像</p>
 <pre><code>gcr.io/google_containers/kubernetes-dashboard-amd64      
 gcr.io/google_containers/kube-proxy-amd64                
 gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64     
@@ -275,13 +229,12 @@ gcr.io/google_containers/kube-controller-manager-amd64
 gcr.io/google_containers/kube-apiserver-amd64           
 quay.io/coreos/flannel
 </code></pre>
+        </div>
 
-                        </div>
-
-                        
+        
 
 
-                        
+        
 
 <div class="post-archive">
     <h2>See Also</h2>
@@ -301,21 +254,21 @@ quay.io/coreos/flannel
 </div>
 
 
-                        <div class="post-meta meta-tags">
-                            
-                            <ul class="clearfix">
-                                
-                                <li><a href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a></li>
-                                
-                                <li><a href="https://zoux86.github.io/tags/ubuntu">ubuntu</a></li>
-                                
-                                <li><a href="https://zoux86.github.io/tags/k8s">k8s</a></li>
-                                
-                            </ul>
-                            
-                        </div>
-                    </article>
-                    
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a></li>
+                
+                <li><a href='/tags/ubuntu'>ubuntu</a></li>
+                
+                <li><a href='/tags/k8s'>k8s</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
     
 
     
@@ -330,11 +283,54 @@ quay.io/coreos/flannel
       </script>
     </div>
     
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
                 </div>
-            </div>
-            <div id="secondary">
+
+                <div id="secondary">
     <section class="widget">
-        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
@@ -392,7 +388,7 @@ quay.io/coreos/flannel
     
 
     <section class="widget">
-        <h3 class="widget-title">分类</h3>
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
 <ul class="widget-list">
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
@@ -435,7 +431,7 @@ quay.io/coreos/flannel
     </section>
 
     <section class="widget">
-        <h3 class="widget-title">标签</h3>
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
 <div class="tagcloud">
     
     <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
@@ -527,46 +523,9 @@ quay.io/coreos/flannel
         </ul>
     </section>
 </div>
+            </div>
         </div>
     </div>
-</div>
-<footer id="footer">
-    <div class="container">
-        &copy; 2020 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
-        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
-        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
-        
-    </div>
-</footer>
-
-
-    
-    <script type="text/javascript">
-        
-        (function () {
-            $("pre code").parent().addClass("line-numbers")
-        }());
-
-        window.MathJax = {
-            tex2jax: {
-                inlineMath: [['$', '$']],
-                processEscapes: true
-                }
-            };
-    </script>
-    <script type="text/javascript" src="/js/prism.js" async="true"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
-
-
-<a id="rocket" href="#top"></a>
-<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
-
-
-
-    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
-
-
-
-
 </body>
+
 </html>

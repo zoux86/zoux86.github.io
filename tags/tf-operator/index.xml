@@ -6,11 +6,7 @@
     <description>Recent content in tf-operator on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 10 Sep 2019 20:31:20 +0800</lastBuildDate>
-    
-	<atom:link href="https://zoux86.github.io/tags/tf-operator/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Tue, 10 Sep 2019 20:31:20 +0800</lastBuildDate><atom:link href="https://zoux86.github.io/tags/tf-operator/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>安装kubeflow tfjob并让 搭配 volcano 的教程</title>
       <link>https://zoux86.github.io/post/2019-11-24-%E5%AE%89%E8%A3%85kubeflow-tfjob%E5%B9%B6%E8%AE%A9-%E6%90%AD%E9%85%8D-volcano-%E7%9A%84%E6%95%99%E7%A8%8B/</link>

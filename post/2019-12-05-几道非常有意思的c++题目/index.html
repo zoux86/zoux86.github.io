@@ -3,42 +3,43 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.59.1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
 
     <title>几道非常有意思的C&#43;&#43;题目 | zoux的博客</title>
     <meta property="og:title" content="几道非常有意思的C&#43;&#43;题目 - zoux的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2019-12-05T00:31:20&#43;08:00">
+    <meta property="article:published_time" content='2019-12-05T00:31:20&#43;08:00'>
         
         
-    <meta property="article:modified_time" content="2019-12-05T00:31:20&#43;08:00">
+    <meta property="article:modified_time" content='2019-12-05T00:31:20&#43;08:00'>
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
     <meta name="description" content="几道非常有意思的C&#43;&#43;题目">
         
     <meta name="author" content="zoux">
     <meta property="og:url" content="https://zoux86.github.io/post/2019-12-05-%E5%87%A0%E9%81%93%E9%9D%9E%E5%B8%B8%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84c&#43;&#43;%E9%A2%98%E7%9B%AE/">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
-    <link rel="stylesheet" href="/css/normalize.css">
-    
-        <link rel="stylesheet" href="/css/prism.css">
-    
-    <link rel="stylesheet" href="/css/style.css">
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     
-
-
+    
+    
+    
     
     
 </head>
 
+
 <body>
-<header id="header" class="clearfix">
+    <header id="header" class="clearfix">
     <div class="container">
         <div class="col-group">
             <div class="site-name ">
@@ -65,212 +66,143 @@
     </div>
 </header>
 
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
 
-<div id="body">
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">几道非常有意思的C&#43;&#43;题目</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年12月5日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/c&#43;&#43;'>C&#43;&#43;</a></span>
+            
+        </div>
         
         
-    <div class="container">
-        <div class="col-group">
-
-            <div class="col-8" id="main">
-                <div class="res-cons">
-                    <article class="post">
-                        <header>
-                            <h1 class="post-title">几道非常有意思的C&#43;&#43;题目</h1>
-                        </header>
-                        <date class="post-meta meta-date">
-                            2019年12月5日
-                        </date>
-                        
-                        <div class="post-meta">
-                            <span>|</span>
-                            
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/c&#43;&#43;">C&#43;&#43;</a></span>
-                            
-                        </div>
-                        
-                        
-                        <div class="post-meta">
-                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
-                        </div>
-                        
-                        
-                        <div class="post-content">
-                            
-
-<h4 id="1-给私有成员变量赋值">1.给私有成员变量赋值</h4>
-
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h4 id="1给私有成员变量赋值">1.给私有成员变量赋值</h4>
 <p>已知一个类的结构，但是它所有的成员变量是私有的，有get方法，但是没有set方法，请问如何给成员变量赋值。</p>
-
 <h4 id="答案">答案</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;iostream&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">using</span> <span style="color:#66d9ef">namespace</span> std;
 
-<pre><code class="language-c++">#include &lt;iostream&gt;
-using namespace std;
-
-class A{
-	private:
-		int b;
-	public:
-		int getB(){
-			return b;
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">A</span>{
+	<span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+		<span style="color:#66d9ef">int</span> b;
+	<span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+		<span style="color:#66d9ef">int</span> getB(){
+			<span style="color:#66d9ef">return</span> b;
 		}
 };
 
 
-int main(){
-	A *a = new A;
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(){
+	A <span style="color:#f92672">*</span>a <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> A;
 	
-	int *p = (int *)a;
-	*p = 1;
+	<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>p <span style="color:#f92672">=</span> (<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>)a;
+	<span style="color:#f92672">*</span>p <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
 	
-	cout&lt;&lt;a-&gt;getB()&lt;&lt;endl;
+	cout<span style="color:#f92672">&lt;&lt;</span>a<span style="color:#f92672">-&gt;</span>getB()<span style="color:#f92672">&lt;&lt;</span>endl;
 } 
-</code></pre>
-
-<p>这道题的关键在于，要了解C++实例的内存分布。实现主要是下面两步：</p>
-
-<pre><code class="language-c++">int *p = (int *)a;  //将a对象强制转换为 int指针，这样p就是指向a的头部
-*p = 1;             //将p指向的内存赋值
-</code></pre>
-
-<p>a实例的内存，其实就存放b一个元素。所以找到b的内存地址，然后强行给地址赋值就可以了。</p>
-
+</code></pre></div><p>这道题的关键在于，要了解C++实例的内存分布。实现主要是下面两步：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>p <span style="color:#f92672">=</span> (<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>)a;  <span style="color:#75715e">//将a对象强制转换为 int指针，这样p就是指向a的头部
+</span><span style="color:#75715e"></span><span style="color:#f92672">*</span>p <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;             <span style="color:#75715e">//将p指向的内存赋值
+</span></code></pre></div><p>a实例的内存，其实就存放b一个元素。所以找到b的内存地址，然后强行给地址赋值就可以了。</p>
 <h4 id="发散题">发散题：</h4>
-
-<pre><code class="language-c++">class A{
-	private:
-		char a;
-		int b;
-		double c;
-	public:
-		int getC(){
-			return c;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">A</span>{
+	<span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+		<span style="color:#66d9ef">char</span> a;
+		<span style="color:#66d9ef">int</span> b;
+		<span style="color:#66d9ef">double</span> c;
+	<span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+		<span style="color:#66d9ef">int</span> getC(){
+			<span style="color:#66d9ef">return</span> c;
 		}
 };
-</code></pre>
-
-<p>如何给这个A类的c 赋值呢？</p>
-
+</code></pre></div><p>如何给这个A类的c 赋值呢？</p>
 <p>如果有虚函数怎么办？</p>
-
 <p>其实了解了实质，这些都是在考C++类对象的内存分布，具体可以参考我上一篇文章&mdash;-C++类对象的内存分布。</p>
-
-<p><br></p>
-
-<h4 id="2-c-中为什么函数参数可以传多个-函数返回值只能是一个">2.C++中为什么函数参数可以传多个，函数返回值只能是一个</h4>
-
+<!-- raw HTML omitted -->
+<h4 id="2c中为什么函数参数可以传多个函数返回值只能是一个">2.C++中为什么函数参数可以传多个，函数返回值只能是一个</h4>
 <p>C++中函数参数如果少于6个是通过寄存器保存的。超过6个是用栈保存。而且压栈顺序是从右到左。</p>
-
 <p>而C++中函数的返回值是通过 eax 寄存器进行传递的，所以C++函数不支持多个返回值。</p>
-
 <p>PS：go/python中函数可以返回多个参数，是因为他们的返回值时用栈保存的。</p>
-
-<p><br></p>
-
-<h4 id="3-为什么c-中结构体-struct-可以有构造函数">3.为什么C++中结构体（struct）可以有构造函数</h4>
-
+<!-- raw HTML omitted -->
+<h4 id="3为什么c中结构体struct可以有构造函数">3.为什么C++中结构体（struct）可以有构造函数</h4>
 <p>C里面的结构只是变量的聚合体，结构体不能有函数</p>
-
 <p>C++的struct和class是一回事，不过用struct声明的结构，所有的成员和函数默认都是public的,class里面所有的成员和函数默认都是private；C++的结构可以继承；可有构造和析构函数 以及其他成员函数；</p>
-
 <p>C++中还保留结构体的作用就是为了和C保留。</p>
-
-<p><br></p>
-
-<h4 id="4-为什么c-中使用c的函数-要有extern">4.为什么C++中使用C的函数 要有extern</h4>
-
+<!-- raw HTML omitted -->
+<h4 id="4为什么c中使用c的函数-要有extern">4.为什么C++中使用C的函数 要有extern</h4>
 <p>因为C，C++中对函数的命名不一样。</p>
-
 <p>在C语言中，你写了一个函数，假设函数为  void show();</p>
-
 <p>但编译器在存储的时候，会加上自己的规则，所以最后这个函数很可能在编译器存的是  _01_show()  （只是举例，真实情况不是这样）</p>
-
 <p>同样C++也会有这样的规则，但是他们规则不一样，所以C++使用C函数的时候，要加上extern，这样才能真正找到这个函数。</p>
-
-<p><br></p>
-
-<h4 id="5-为什么c不能用c-的动态链接库">5.为什么C不能用C++的动态链接库</h4>
-
+<!-- raw HTML omitted -->
+<h4 id="5为什么c不能用c的动态链接库">5.为什么C不能用C++的动态链接库</h4>
 <p>因为C++支持重载，C不支持</p>
-
-<p><br></p>
-
-<h4 id="6-如何判断系统是大端对齐还是小端对齐">6.如何判断系统是大端对齐还是小端对齐</h4>
-
+<!-- raw HTML omitted -->
+<h4 id="6如何判断系统是大端对齐还是小端对齐">6.如何判断系统是大端对齐还是小端对齐</h4>
 <p>借用union这个数据结构判断。</p>
-
 <p>union共同体所有数据成员是共享一段内存，后写入的成员数据将覆盖之前的成员数据，成员数据都有相同的首地址，这是nuion最大的存储特征。union对内存的利用达到不可思议的地步，但只在很特殊的条件下才会使用。union的大小为最大数据成员的大小。</p>
-
-<pre><code class="language-C++">union Myunion      //定义共用体Myunion
-{
-    int i;         //int数据成员   
-    char ch        //char数据成员
-};
-</code></pre>
-
-<p>上面示例Myunion占4个字节。我们给Myunion i 赋值为1。利用这个就能判断是大端还是小端。</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C++" data-lang="C++"><span style="color:#66d9ef">union</span> <span style="color:#a6e22e">Myunion</span>      <span style="color:#75715e">//定义共用体Myunion
+</span><span style="color:#75715e"></span>{
+    <span style="color:#66d9ef">int</span> i;         <span style="color:#75715e">//int数据成员   
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">char</span> ch        <span style="color:#75715e">//char数据成员
+</span><span style="color:#75715e"></span>};
+</code></pre></div><p>上面示例Myunion占4个字节。我们给Myunion i 赋值为1。利用这个就能判断是大端还是小端。</p>
 <p>union的成员数据共用内存，并且首地址都是低地址首字节。int i=1时：</p>
-
 <p>​      大端存储：1存放在最高地址。</p>
-
 <p>​      小端存储：1存放在最低地址。</p>
-
 <p>所以，我们再次读取char ch时，这个是最低地址首字节，大小端存储会显示不同的值，然后判断系统大小端。</p>
-
-<p><br></p>
-
-<h4 id="7-编译时多态和运行时多态">7.编译时多态和运行时多态</h4>
-
+<!-- raw HTML omitted -->
+<h4 id="7编译时多态和运行时多态">7.编译时多态和运行时多态</h4>
 <p>（1）编译时的多态性</p>
-
-<p>&ensp;  &ensp; 编译时的多态性是通过重载来实现的。对于非虚的成员来说，系统在编译时，根据传递的参数、返回的类型等信息决定实现何种操作。</p>
-
+<p>     编译时的多态性是通过重载来实现的。对于非虚的成员来说，系统在编译时，根据传递的参数、返回的类型等信息决定实现何种操作。</p>
 <p>（2）运行时的多态性
- &ensp;  &ensp; 运行时的多态性就是指直到系统运行时，才根据实际情况决定实现何种操作。C++中，运行时的多态性通过虚函数实现的。</p>
-
-<p><br></p>
-
-<h4 id="8-static的作用-这个面试经常问">8.static的作用（这个面试经常问）</h4>
-
+     运行时的多态性就是指直到系统运行时，才根据实际情况决定实现何种操作。C++中，运行时的多态性通过虚函数实现的。</p>
+<!-- raw HTML omitted -->
+<h4 id="8static的作用这个面试经常问">8.static的作用（这个面试经常问）</h4>
 <p>（1）最重要的一条作用：隐藏</p>
-
 <p>当同时编译多个文件时，所有未加static前缀的全局变量和函数都具有全局可见性。</p>
-
 <p>举例来说明。同时编译两个源文件，一个是a.c，另一个是main.c。</p>
-
 <p>main.c 引用a.c的话，a.c中的static值，static函数。Main.c是看不见的。也不能使用。</p>
-
 <p>（2）static的第二个作用是保持变量内容的持久</p>
-
 <p>未初始化的static数据放置.bss</p>
-
 <p>初始化的放在数据段</p>
-
 <p>static默认初始化为0，如果你定义了一个数据，假设 static int a = 0;  //a还是放在.bss段</p>
-
 <p>（3）在类中使用static的性质</p>
-
 <p>在类中声明static变量或者函数时，初始化时使用作用域运算符来标明它所属类，因此，静态数据成员是类的成员，而不是对象的成员，这样就出现以下作用：</p>
+<p>    a.类的静态成员函数是属于整个类而非类的对象，所以它没有this指针，这就导致 了它仅能访问类的静态数据和静态成员函数。</p>
+<p>    b.不能将静态成员函数定义为虚函数。</p>
+<p>    c.由于静态成员声明于类中，操作于其外，所以对其取地址操作，就多少有些特殊 ，变量地址是指向其数据类型的指针 ，函数地址类型是一个“nonmember函数指针”。</p>
+<p>    d.static并没有增加程序的时空开销，相反她还缩短了子类对父类静态成员的访问 时间，节省了子类的内存空间。</p>
+<p>    e.静态数据成员是静态存储的，所以必须对它进行初始化。 （程序员手动初始化，否则编译时一般不会报错，但</p>
+<p>    f.为了防止父类的影响，可以在子类定义一个与父类相同的静态变量，以屏蔽父类的影响。</p>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;a.类的静态成员函数是属于整个类而非类的对象，所以它没有this指针，这就导致 了它仅能访问类的静态数据和静态成员函数。</p>
+        </div>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;b.不能将静态成员函数定义为虚函数。</p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;c.由于静态成员声明于类中，操作于其外，所以对其取地址操作，就多少有些特殊 ，变量地址是指向其数据类型的指针 ，函数地址类型是一个“nonmember函数指针”。</p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;d.static并没有增加程序的时空开销，相反她还缩短了子类对父类静态成员的访问 时间，节省了子类的内存空间。</p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;e.静态数据成员是静态存储的，所以必须对它进行初始化。 （程序员手动初始化，否则编译时一般不会报错，但</p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;f.为了防止父类的影响，可以在子类定义一个与父类相同的静态变量，以屏蔽父类的影响。</p>
-
-                        </div>
-
-                        
+        
 
 
-                        
+        
 
 <div class="post-archive">
     <h2>See Also</h2>
@@ -290,17 +222,17 @@ int main(){
 </div>
 
 
-                        <div class="post-meta meta-tags">
-                            
-                            <ul class="clearfix">
-                                
-                                <li><a href="https://zoux86.github.io/tags/c&#43;&#43;">C&#43;&#43;</a></li>
-                                
-                            </ul>
-                            
-                        </div>
-                    </article>
-                    
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/c&#43;&#43;'>C&#43;&#43;</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
     
 
     
@@ -315,11 +247,54 @@ int main(){
       </script>
     </div>
     
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
                 </div>
-            </div>
-            <div id="secondary">
+
+                <div id="secondary">
     <section class="widget">
-        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
@@ -377,7 +352,7 @@ int main(){
     
 
     <section class="widget">
-        <h3 class="widget-title">分类</h3>
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
 <ul class="widget-list">
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
@@ -420,7 +395,7 @@ int main(){
     </section>
 
     <section class="widget">
-        <h3 class="widget-title">标签</h3>
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
 <div class="tagcloud">
     
     <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
@@ -512,46 +487,9 @@ int main(){
         </ul>
     </section>
 </div>
+            </div>
         </div>
     </div>
-</div>
-<footer id="footer">
-    <div class="container">
-        &copy; 2020 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
-        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
-        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
-        
-    </div>
-</footer>
-
-
-    
-    <script type="text/javascript">
-        
-        (function () {
-            $("pre code").parent().addClass("line-numbers")
-        }());
-
-        window.MathJax = {
-            tex2jax: {
-                inlineMath: [['$', '$']],
-                processEscapes: true
-                }
-            };
-    </script>
-    <script type="text/javascript" src="/js/prism.js" async="true"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
-
-
-<a id="rocket" href="#top"></a>
-<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
-
-
-
-    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
-
-
-
-
 </body>
+
 </html>

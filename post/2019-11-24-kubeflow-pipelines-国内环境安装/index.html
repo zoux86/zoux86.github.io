@@ -3,42 +3,43 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.59.1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
 
     <title>kubeflow pipelines--国内环境安装 | zoux的博客</title>
     <meta property="og:title" content="kubeflow pipelines--国内环境安装 - zoux的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2019-01-23T20:31:20&#43;08:00">
+    <meta property="article:published_time" content='2019-01-23T20:31:20&#43;08:00'>
         
         
-    <meta property="article:modified_time" content="2019-01-23T20:31:20&#43;08:00">
+    <meta property="article:modified_time" content='2019-01-23T20:31:20&#43;08:00'>
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
     <meta name="description" content="kubeflow pipelines--国内环境安装">
         
     <meta name="author" content="zoux">
     <meta property="og:url" content="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
-    <link rel="stylesheet" href="/css/normalize.css">
-    
-        <link rel="stylesheet" href="/css/prism.css">
-    
-    <link rel="stylesheet" href="/css/style.css">
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     
-
-
+    
+    
+    
     
     
 </head>
 
+
 <body>
-<header id="header" class="clearfix">
+    <header id="header" class="clearfix">
     <div class="container">
         <div class="col-group">
             <div class="site-name ">
@@ -65,145 +66,102 @@
     </div>
 </header>
 
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
 
-<div id="body">
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">kubeflow pipelines--国内环境安装</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年1月23日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/kubeflow'>kubeflow</a></span>
+            
+        </div>
         
         
-    <div class="container">
-        <div class="col-group">
-
-            <div class="col-8" id="main">
-                <div class="res-cons">
-                    <article class="post">
-                        <header>
-                            <h1 class="post-title">kubeflow pipelines--国内环境安装</h1>
-                        </header>
-                        <date class="post-meta meta-date">
-                            2019年1月23日
-                        </date>
-                        
-                        <div class="post-meta">
-                            <span>|</span>
-                            
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kubeflow">kubeflow</a></span>
-                            
-                        </div>
-                        
-                        
-                        <div class="post-meta">
-                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
-                        </div>
-                        
-                        
-                        <div class="post-content">
-                            
-
-<p>在前面的教程中，我们已经搭建好了本地的kubeflow集群，接下来因为个人需要，本人需要再在此基础上搭建好kubeflow pipelines.</p>
-
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <p>在前面的教程中，我们已经搭建好了本地的kubeflow集群，接下来因为个人需要，本人需要再在此基础上搭建好kubeflow pipelines.</p>
 <p>首先需要了解pipelines是什么，能做什么，具体可以参考官网描述：</p>
-
 <p><a href="https://www.kubeflow.org/docs/pipelines/pipelines-overview/">https://www.kubeflow.org/docs/pipelines/pipelines-overview/</a></p>
-
 <p>从V0.1.3开始，Kubeflow Pipelines成为Kubeflow核心组件之一。 它在Kubeflow部署期间自动部署。 您可以在GKE上使用Kubeflow部署进行尝试。 请参阅GKE设置指南。注意：由于kubeflow / pipelines＃345和kubeflow / pipelines＃337，Kubeflow Pipelines依赖于GCP服务，非GKE集群不支持某些功能。</p>
-
 <p>上面这一段是官网的描述，点击V0.1.3的链接，进入这个页面：
 <a href="https://github.com/kubeflow/pipelines/releases/tag/0.1.3">https://github.com/kubeflow/pipelines/releases/tag/0.1.3</a></p>
-
-<p><img src="../../resources/images/kubeflow/image13.png" alt="image13" /></p>
-
+<p>
+        <img class="mx-auto" alt="image13" src="../../resources/images/kubeflow/image13.png" />   
+    </p>
 <p>这里显示安装kubeflow pipelines只需要俩步。</p>
-
 <p>（1）按照pipeline</p>
-
 <p>（2）按照SDK</p>
-
 <p>但是你直接运行时会报错的。除非你的服务器可以自由的上网。</p>
-
 <h4 id="第一步的解决办法">第一步的解决办法：</h4>
-
 <p>先使用某些办法，下载</p>
-
 <p><a href="https://storage.googleapis.com/ml-pipeline/release/0.1.3/bootstrapper.yaml">https://storage.googleapis.com/ml-pipeline/release/0.1.3/bootstrapper.yaml</a></p>
-
 <p>该yaml文件。然后将yaml文件中使用的国外镜像替换成你自己的镜像。如果大家不能访问，可以使用我已经修改好的yaml文件。该文件使用的镜像时我tag好的dockerhub镜像。文件地址如下：</p>
-
 <p><a href="https://github.com/zoux86/kubeflow/blob/master/bootstrapper.yaml">https://github.com/zoux86/kubeflow/blob/master/bootstrapper.yaml</a></p>
-
 <p>下载好bootstrapper.yaml文件后，在同级目录下，使用kubectl命令</p>
-
-<pre><code class="language-rust">kubectl create -f bootstrapper.yaml
-</code></pre>
-
-<p>执行完这个命令之后，耐心等一段时间。因为这里要启动pipelines的组件，下篇文章会介绍kubeflow和pipelines的组件信息。一段时间后，使用kubectl get pod -n kubeflow可以查看到，多了下面的这些pod,这就是pipelines的服务。</p>
-
-<p><img src="../../resources/images/kubeflow/image14.ng.png" alt="image14.ng" /></p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">kubectl create <span style="color:#f92672">-</span>f bootstrapper.yaml
+</code></pre></div><p>执行完这个命令之后，耐心等一段时间。因为这里要启动pipelines的组件，下篇文章会介绍kubeflow和pipelines的组件信息。一段时间后，使用kubectl get pod -n kubeflow可以查看到，多了下面的这些pod,这就是pipelines的服务。</p>
+<p>
+        <img class="mx-auto" alt="image14.ng" src="../../resources/images/kubeflow/image14.ng.png" />   
+    </p>
 <p>注意这是我成功后的截图。如果你是国内环境，你这些pod启动还是会有问题。主要是俩个问题，第一个是镜像拉取失败，第二个是挂载卷失败。原因是启动bootstrapper.yaml,  该文件会启动其他的好几个服务，比如前端，后端等。而这些默认的镜像都是我们正常情况下拉取不到的。</p>
-
 <h5 id="镜像拉取失败的解决方法如下">镜像拉取失败的解决方法如下：</h5>
-
-<pre><code class="language-rust">kubectl edit pod PODNAME -n kubeflow  (PODNAME替换成你自己的)
-</code></pre>
-
-<p>使用上面的命令修改PODNAME对应的yaml文件。修改yaml文件中使用的镜像，然后保存退出。等一会该POD就会自动拉取你修改后的镜像。</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">kubectl edit pod PODNAME <span style="color:#f92672">-</span>n kubeflow  (PODNAME替换成你自己的)
+</code></pre></div><p>使用上面的命令修改PODNAME对应的yaml文件。修改yaml文件中使用的镜像，然后保存退出。等一会该POD就会自动拉取你修改后的镜像。</p>
 <p>这里需要你提前将镜像拉取下来，然后tag成你自己的镜像。</p>
-
 <p>PS：我在dockerhub上上传了一部分自己拉取的grc.io镜像，大家可以在上面搜索 “zoux”,看是否有大家想要的镜像。</p>
-
 <h5 id="解决挂载卷失败的问题">解决挂载卷失败的问题</h5>
-
 <p>这里需要我们提前建立自己的PV（持久卷），只用建立PV就行了。建立完之后会自动匹配。
 具体步骤可以参考我前面文章，为kubeflow配置NFS做后端存储系统。</p>
-
 <p>解决这里俩步之后，使用kubeflow get pod -n kubeflow查看pod, 你就会发现所有的Pod都启动起来了。
-<img src="../../resources/images/kubeflow/image15.png" alt="image15" /></p>
 
+        <img class="mx-auto" alt="image15" src="../../resources/images/kubeflow/image15.png" />   
+    </p>
 <h4 id="第二步的解决方法">第二步的解决方法</h4>
-
 <p>到这里其实我们只是完成了第一步，安装好了ML Pipeline services。接下来我们需要安装python SDK了。官网中说使用的是这个命令：</p>
-
-<pre><code class="language-rust">pip3 install https://storage.googleapis.com/ml-pipeline/release/0.1.3/kfp.tar.gz --upgrade
-</code></pre>
-
-<p>但是这里我们首先观察一下这个命令，有俩点需要注意：</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">pip3 install https:<span style="color:#75715e">//storage.googleapis.com/ml-pipeline/release/0.1.3/kfp.tar.gz --upgrade
+</span></code></pre></div><p>但是这里我们首先观察一下这个命令，有俩点需要注意：</p>
 <p>第一是pip3，这里需要我们在服务器中安装好python3.5以上的环境。</p>
-
 <p>第二是访问的网址是googleapis,如果大家不能访问可以使用我下载好的。</p>
-
-<p>地址：<a href="https://github.com/zoux86/kubeflow/blob/master/kfp.tar.gz">https://github.com/zoux86/kubeflow/blob/master/kfp.tar.gz</a></p>
-
-<h5 id="ps-安装sdk可能遇到的问题">PS：安装SDK可能遇到的问题</h5>
-
+<p>地址：https://github.com/zoux86/kubeflow/blob/master/kfp.tar.gz</p>
+<h5 id="ps安装sdk可能遇到的问题">PS：安装SDK可能遇到的问题</h5>
 <p>问题1：</p>
-
-<p><img src="../../resources/images/kubeflow/image16.png" alt="image16" /></p>
-
+<p>
+        <img class="mx-auto" alt="image16" src="../../resources/images/kubeflow/image16.png" />   
+    </p>
 <p>解决办法：直接手动使用pip命令安装这些包。</p>
-
 <p>问题2：如果安装pyyaml时，报错说不能安装或者不能删除已有的pyyaml</p>
-
 <pre><code>Cannot uninstall 'PyYAML'. It is a distutils installed project and thus we cannot accurately determine which files belong to it which would lead to only a partial uninstall.
-</code></pre>
-
-<p>解决方法：
+</code></pre><p>解决方法：
 降低pip3版本，然后安装</p>
-
 <pre><code>sudo -H pip3 install pip==8.1.1
 sudo -H pip3 install --upgrade PyYAML
-</code></pre>
-
-<h5 id="最后验证python-sdk是否成功">最后验证python sdk是否成功。</h5>
-
+</code></pre><h5 id="最后验证python-sdk是否成功">最后验证python sdk是否成功。</h5>
 <p>如果在python命令行中能 “import kfp”的话，恭喜你成功了。</p>
 
-                        </div>
+        </div>
 
-                        
+        
 
 
-                        
+        
 
 <div class="post-archive">
     <h2>See Also</h2>
@@ -223,21 +181,21 @@ sudo -H pip3 install --upgrade PyYAML
 </div>
 
 
-                        <div class="post-meta meta-tags">
-                            
-                            <ul class="clearfix">
-                                
-                                <li><a href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a></li>
-                                
-                                <li><a href="https://zoux86.github.io/tags/kubeflow">kubeflow</a></li>
-                                
-                                <li><a href="https://zoux86.github.io/tags/pipelines">[pipelines]</a></li>
-                                
-                            </ul>
-                            
-                        </div>
-                    </article>
-                    
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a></li>
+                
+                <li><a href='/tags/kubeflow'>kubeflow</a></li>
+                
+                <li><a href='/tags/pipelines'>[pipelines]</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
     
 
     
@@ -252,11 +210,54 @@ sudo -H pip3 install --upgrade PyYAML
       </script>
     </div>
     
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
                 </div>
-            </div>
-            <div id="secondary">
+
+                <div id="secondary">
     <section class="widget">
-        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
@@ -314,7 +315,7 @@ sudo -H pip3 install --upgrade PyYAML
     
 
     <section class="widget">
-        <h3 class="widget-title">分类</h3>
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
 <ul class="widget-list">
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
@@ -357,7 +358,7 @@ sudo -H pip3 install --upgrade PyYAML
     </section>
 
     <section class="widget">
-        <h3 class="widget-title">标签</h3>
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
 <div class="tagcloud">
     
     <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
@@ -449,46 +450,9 @@ sudo -H pip3 install --upgrade PyYAML
         </ul>
     </section>
 </div>
+            </div>
         </div>
     </div>
-</div>
-<footer id="footer">
-    <div class="container">
-        &copy; 2020 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
-        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
-        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
-        
-    </div>
-</footer>
-
-
-    
-    <script type="text/javascript">
-        
-        (function () {
-            $("pre code").parent().addClass("line-numbers")
-        }());
-
-        window.MathJax = {
-            tex2jax: {
-                inlineMath: [['$', '$']],
-                processEscapes: true
-                }
-            };
-    </script>
-    <script type="text/javascript" src="/js/prism.js" async="true"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
-
-
-<a id="rocket" href="#top"></a>
-<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
-
-
-
-    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
-
-
-
-
 </body>
+
 </html>

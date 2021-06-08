@@ -3,42 +3,43 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.59.1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
 
     <title>C&#43;&#43;类对象的内存分布 | zoux的博客</title>
     <meta property="og:title" content="C&#43;&#43;类对象的内存分布 - zoux的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2019-12-04T20:31:20&#43;08:00">
+    <meta property="article:published_time" content='2019-12-04T20:31:20&#43;08:00'>
         
         
-    <meta property="article:modified_time" content="2019-12-04T20:31:20&#43;08:00">
+    <meta property="article:modified_time" content='2019-12-04T20:31:20&#43;08:00'>
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
     <meta name="description" content="C&#43;&#43;类对象的内存分布">
         
     <meta name="author" content="zoux">
     <meta property="og:url" content="https://zoux86.github.io/post/2019-12-04-c&#43;&#43;%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83/">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
-    <link rel="stylesheet" href="/css/normalize.css">
-    
-        <link rel="stylesheet" href="/css/prism.css">
-    
-    <link rel="stylesheet" href="/css/style.css">
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     
-
-
+    
+    
+    
     
     
 </head>
 
+
 <body>
-<header id="header" class="clearfix">
+    <header id="header" class="clearfix">
     <div class="container">
         <div class="col-group">
             <div class="site-name ">
@@ -65,214 +66,160 @@
     </div>
 </header>
 
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
 
-<div id="body">
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">C&#43;&#43;类对象的内存分布</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年12月4日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/c&#43;&#43;'>C&#43;&#43;</a></span>
+            
+        </div>
         
         
-    <div class="container">
-        <div class="col-group">
-
-            <div class="col-8" id="main">
-                <div class="res-cons">
-                    <article class="post">
-                        <header>
-                            <h1 class="post-title">C&#43;&#43;类对象的内存分布</h1>
-                        </header>
-                        <date class="post-meta meta-date">
-                            2019年12月4日
-                        </date>
-                        
-                        <div class="post-meta">
-                            <span>|</span>
-                            
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/c&#43;&#43;">C&#43;&#43;</a></span>
-                            
-                        </div>
-                        
-                        
-                        <div class="post-meta">
-                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
-                        </div>
-                        
-                        
-                        <div class="post-content">
-                            
-
-<p>C++中类初始化成一个对象之后，该对象实例在内存中是如何分布的呢？</p>
-
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <p>C++中类初始化成一个对象之后，该对象实例在内存中是如何分布的呢？</p>
 <h4 id="空类情况">空类情况</h4>
-
 <p>如果实例化一个空类，这个对象会在内存中占用1个字节。目的只是标识一下，这是一个类实例（因为不占的话，就和空数据没什么区别）。</p>
+<!-- raw HTML omitted -->
+<h4 id="含基本数据不含函数的情况">含基本数据，不含函数的情况</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;iostream&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">using</span> <span style="color:#66d9ef">namespace</span> std;
 
-<p><br></p>
-
-<h4 id="含基本数据-不含函数的情况">含基本数据，不含函数的情况</h4>
-
-<pre><code class="language-c++">#include &lt;iostream&gt;
-using namespace std;
-
-class A{
-	char a;
-	int b;
-	char c;
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">A</span>{
+	<span style="color:#66d9ef">char</span> a;
+	<span style="color:#66d9ef">int</span> b;
+	<span style="color:#66d9ef">char</span> c;
 };
 
 
-class B{
-	char a;
-	char c;
-	int b;
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">B</span>{
+	<span style="color:#66d9ef">char</span> a;
+	<span style="color:#66d9ef">char</span> c;
+	<span style="color:#66d9ef">int</span> b;
 };
 
 
-int main(){
-	cout&lt;&lt;sizeof(A)&lt;&lt;endl;
-	cout&lt;&lt;sizeof(B)&lt;&lt;endl;	
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(){
+	cout<span style="color:#f92672">&lt;&lt;</span><span style="color:#66d9ef">sizeof</span>(A)<span style="color:#f92672">&lt;&lt;</span>endl;
+	cout<span style="color:#f92672">&lt;&lt;</span><span style="color:#66d9ef">sizeof</span>(B)<span style="color:#f92672">&lt;&lt;</span>endl;	
 } 
-</code></pre>
-
-<p>假设在32位系统下，char 占1字节，int 占4字节。上面代码的结果是不同的。</p>
-
+</code></pre></div><p>假设在32位系统下，char 占1字节，int 占4字节。上面代码的结果是不同的。</p>
 <p>答案分别是：</p>
-
 <p>12</p>
-
 <p>8</p>
-
 <p>原因在于：</p>
-
 <p>c++类成员变量的内存分布是  <strong>从上到下</strong> ，按照<strong>内存对齐</strong>的原则进行分布的。</p>
-
 <p>内存对齐的原则如下：</p>
-
-<pre><code class="language-rust">1、 分配内存的顺序是按照声明的顺序。
-2、 每个变量相对于起始位置的偏移量必须是该变量类型大小的整数倍，不是整数倍空出内存，直到偏移量是整数倍为止。
-3、 最后整个类的大小必须是里面变量类型最大值的整数倍。
-</code></pre>
-
-<p>根据上面的原则推断A类的大小：</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#ae81ff">1</span><span style="color:#960050;background-color:#1e0010">、</span> <span style="color:#960050;background-color:#1e0010">分配内存的顺序是按照声明的顺序。</span>
+<span style="color:#ae81ff">2</span><span style="color:#960050;background-color:#1e0010">、</span> <span style="color:#960050;background-color:#1e0010">每个变量相对于起始位置的偏移量必须是该变量类型大小的整数倍，不是整数倍空出内存，直到偏移量是整数倍为止。</span>
+<span style="color:#ae81ff">3</span><span style="color:#960050;background-color:#1e0010">、</span> <span style="color:#960050;background-color:#1e0010">最后整个类的大小必须是里面变量类型最大值的整数倍。</span>
+</code></pre></div><p>根据上面的原则推断A类的大小：</p>
 <p>（1）char a 占1字节，目前为止A类 占1字节。</p>
-
 <p>（2）int b占4字节，但是如果b直接放在a后面，那么起始位置就不是4的整数倍，所有b要在a后面空3个字节，然后放。 所以目前为止A类 占8字节（3个空）。</p>
-
 <p>（3）char c能直接放到最后。但是第3条规定，整个类的大小必须是 4（int最大）的倍数。所有c后面还要空3字节。 所以目前为止A类 占12字节（6个空）。</p>
-
-<p><br></p>
-
+<!-- raw HTML omitted -->
 <p>同理推断B类大小：</p>
-
 <p>（1）char a 占1字节。目前为止B类 占1字节。</p>
-
 <p>（2）char c占1字节。能直接放a后面。目前为止B类 占2字节。</p>
-
 <p>（3）int b占4字节，但是如果b直接放在c后面，那么起始位置就不是4的整数倍，所有b要在c后面空2个字节，然后放。 所以目前为止A类 占8字节（2个空）。</p>
-
-<p><br></p>
-
+<!-- raw HTML omitted -->
 <h5 id="补充">补充</h5>
-
 <p>（1）除了类，联合和结构体也是这样的对齐规则。</p>
-
 <p>（2）为什么要对齐</p>
-
-<p>&emsp;&emsp;a.平台原因(移植原因)：某些硬件平台只能在某些地址处取某些特定类型的数据，不能访问任意地址。</p>
-
-<p>&emsp;&emsp;b.性能原因：访问未对齐的内存，处理器需要作两次内存访问；而对齐的内存访问仅需要一次访问</p>
-
-<p><br></p>
-
+<p>  a.平台原因(移植原因)：某些硬件平台只能在某些地址处取某些特定类型的数据，不能访问任意地址。</p>
+<p>  b.性能原因：访问未对齐的内存，处理器需要作两次内存访问；而对齐的内存访问仅需要一次访问</p>
+<!-- raw HTML omitted -->
 <h4 id="带成员函数的类">带成员函数的类</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;iostream&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">using</span> <span style="color:#66d9ef">namespace</span> std;
 
-<pre><code class="language-c++">#include &lt;iostream&gt;
-using namespace std;
-
-class A{
-	char a;
-	int b;
-	char c;
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">A</span>{
+	<span style="color:#66d9ef">char</span> a;
+	<span style="color:#66d9ef">int</span> b;
+	<span style="color:#66d9ef">char</span> c;
 	
-	int func(){
-		cout&lt;&lt;&quot;成员函数&quot;&lt;&lt;endl;
+	<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">func</span>(){
+		cout<span style="color:#f92672">&lt;&lt;</span><span style="color:#e6db74">&#34;成员函数&#34;</span><span style="color:#f92672">&lt;&lt;</span>endl;
 	}
 };
 
-int main(){
-	cout&lt;&lt;sizeof(A)&lt;&lt;endl;
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(){
+	cout<span style="color:#f92672">&lt;&lt;</span><span style="color:#66d9ef">sizeof</span>(A)<span style="color:#f92672">&lt;&lt;</span>endl;
 } 
-</code></pre>
-
-<p>上面代码的结果还是：12   （ 一个对象所占的空间大小只取决于该对象中数据成员所占的空间，而与成员函数无关。 ）</p>
-
+</code></pre></div><p>上面代码的结果还是：12   （ 一个对象所占的空间大小只取决于该对象中数据成员所占的空间，而与成员函数无关。 ）</p>
 <p>用类去定义对象时，系统会为每一个对象分配存储空间。如果一个类包括了数据和函数。数据的内存分布如上所示。而函数是不占实例内存的，因为一个类的函数是公共的，一个类的函数只有一份。</p>
-
 <p>那么函数存放在哪呢。这个不同的编译器，有不同的方式。有的存放在只读区，有的存放在代码区。</p>
-
-<p><br></p>
-
+<!-- raw HTML omitted -->
 <h4 id="带虚函数的类">带虚函数的类</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;iostream&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">using</span> <span style="color:#66d9ef">namespace</span> std;
 
-<pre><code class="language-c++">#include &lt;iostream&gt;
-using namespace std;
-
-class A{
-	virtual int func1(){
-		cout&lt;&lt;&quot;虚函数&quot;&lt;&lt;endl;
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">A</span>{
+	<span style="color:#66d9ef">virtual</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">func1</span>(){
+		cout<span style="color:#f92672">&lt;&lt;</span><span style="color:#e6db74">&#34;虚函数&#34;</span><span style="color:#f92672">&lt;&lt;</span>endl;
 	}
 	
-	char a;
-	int b;
-	char c;
+	<span style="color:#66d9ef">char</span> a;
+	<span style="color:#66d9ef">int</span> b;
+	<span style="color:#66d9ef">char</span> c;
 	
 	
-	int func(){
-		cout&lt;&lt;&quot;成员函数&quot;&lt;&lt;endl;
+	<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">func</span>(){
+		cout<span style="color:#f92672">&lt;&lt;</span><span style="color:#e6db74">&#34;成员函数&#34;</span><span style="color:#f92672">&lt;&lt;</span>endl;
 	}
 };
 
 
 
-int main(){
-	cout&lt;&lt;sizeof(A)&lt;&lt;endl;
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(){
+	cout<span style="color:#f92672">&lt;&lt;</span><span style="color:#66d9ef">sizeof</span>(A)<span style="color:#f92672">&lt;&lt;</span>endl;
 } 
-</code></pre>
-
-<p>上面代码的结果还是：16   （ 虚函数表指针占用了4个字节，32系统 ）</p>
-
+</code></pre></div><p>上面代码的结果还是：16   （ 虚函数表指针占用了4个字节，32系统 ）</p>
 <p>这里需要注意的是，虚函数表是每个类一份。但是因为虚函数在运行的时候才能确定，所以每个实例都需要一个虚函数表指针，如下图所示：</p>
-
-<p><img src="../../resources/images/C++/image5.png" alt="image-20191205001949404" /></p>
-
-<p><br></p>
-
+<p>
+        <img class="mx-auto" alt="image-20191205001949404" src="../../resources/images/C&#43;&#43;/image5.png" />   
+    </p>
+<!-- raw HTML omitted -->
 <h5 id="虚函数表的生成过程">虚函数表的生成过程</h5>
-
-<p><img src="../../resources/images/C++/image6.png" alt="image-20191205002221214" /></p>
-
+<p>
+        <img class="mx-auto" alt="image-20191205002221214" src="../../resources/images/C&#43;&#43;/image6.png" />   
+    </p>
 <p>父类的虚函数表会根据本身虚函数自动生成</p>
-
 <p>子类的虚函数表会先拷贝父类的表，然后替换和父类中一样函数的，最后补上子类自身的函数</p>
-
 <p>PS：虚函数表会继承，但是不同的父类还是会有多个虚函数表。</p>
-
 <p>例如：</p>
-
 <p>A-&gt;B-&gt;-C  ：表示A被B继承，B被C继承。  这个时候C只有一个虚函数表。</p>
-
 <p>但是：</p>
-
 <p>A-&gt;C</p>
-
 <p>B-&gt;C    （A,B没有继承关系）</p>
-
 <p>如果是这种情况，C会有两个虚函数表。C的实例会有俩个虚函数表指针（会占8字节）</p>
 
-                        </div>
+        </div>
 
-                        
+        
 
 
-                        
+        
 
 <div class="post-archive">
     <h2>See Also</h2>
@@ -292,17 +239,17 @@ int main(){
 </div>
 
 
-                        <div class="post-meta meta-tags">
-                            
-                            <ul class="clearfix">
-                                
-                                <li><a href="https://zoux86.github.io/tags/c&#43;&#43;">C&#43;&#43;</a></li>
-                                
-                            </ul>
-                            
-                        </div>
-                    </article>
-                    
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/c&#43;&#43;'>C&#43;&#43;</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
     
 
     
@@ -317,11 +264,54 @@ int main(){
       </script>
     </div>
     
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
                 </div>
-            </div>
-            <div id="secondary">
+
+                <div id="secondary">
     <section class="widget">
-        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
@@ -379,7 +369,7 @@ int main(){
     
 
     <section class="widget">
-        <h3 class="widget-title">分类</h3>
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
 <ul class="widget-list">
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
@@ -422,7 +412,7 @@ int main(){
     </section>
 
     <section class="widget">
-        <h3 class="widget-title">标签</h3>
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
 <div class="tagcloud">
     
     <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
@@ -514,46 +504,9 @@ int main(){
         </ul>
     </section>
 </div>
+            </div>
         </div>
     </div>
-</div>
-<footer id="footer">
-    <div class="container">
-        &copy; 2020 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
-        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
-        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
-        
-    </div>
-</footer>
-
-
-    
-    <script type="text/javascript">
-        
-        (function () {
-            $("pre code").parent().addClass("line-numbers")
-        }());
-
-        window.MathJax = {
-            tex2jax: {
-                inlineMath: [['$', '$']],
-                processEscapes: true
-                }
-            };
-    </script>
-    <script type="text/javascript" src="/js/prism.js" async="true"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
-
-
-<a id="rocket" href="#top"></a>
-<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
-
-
-
-    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
-
-
-
-
 </body>
+
 </html>

@@ -6,11 +6,7 @@
     <description>Recent content in k8s on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 15 Dec 2019 01:31:20 +0800</lastBuildDate>
-    
-	<atom:link href="https://zoux86.github.io/tags/k8s/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Sun, 15 Dec 2019 01:31:20 +0800</lastBuildDate><atom:link href="https://zoux86.github.io/tags/k8s/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>k8s的基本组件</title>
       <link>https://zoux86.github.io/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/</link>

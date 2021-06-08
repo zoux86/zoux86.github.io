@@ -6,11 +6,7 @@
     <description>Recent content in Posts on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 20 Jul 2020 00:31:20 +0800</lastBuildDate>
-    
-	<atom:link href="https://zoux86.github.io/post/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Mon, 20 Jul 2020 00:31:20 +0800</lastBuildDate><atom:link href="https://zoux86.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>实习总结</title>
       <link>https://zoux86.github.io/post/%E5%AE%9E%E4%B9%A0%E6%80%BB%E7%BB%93/</link>
@@ -35,7 +31,7 @@
       <pubDate>Tue, 10 Dec 2019 01:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-12-10-go%E7%9A%84%E5%90%84%E7%A7%8D%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</guid>
-      <description>golang 中int, float, string 以及interface{}直接的互相转换 int 转float var a int var b float64 a = 10 b = float64(a) //ps: 如果是float32，就使用float32(a) int 转string //第一种方式通过 fmt.sPrintf() 转换string var str string a := 10 str = fmt.Sprintf(&amp;quot;%d&amp;quot;, a) //第二种方式通过 strconv包 转换 string var str1 string a1 := 10 str1 = strconv.FormatInt(int64(a1), 10) float 转</description>
+      <description>golang 中int, float, string 以及interface{}直接的互相转换 int 转float var a int var b float64 a = 10 b = float64(a) //ps: 如果是float32，就使用float32(a) int 转string //第一种方式通过 fmt.sPrintf() 转换string var str string a := 10 str = fmt.Sprintf(&amp;#34;%d&amp;#34;, a) //第二种方式通过 strconv包 转换 string var str1 string a1 := 10 str1 = strconv.FormatInt(int64(a1), 10) float 转</description>
     </item>
     
     <item>
@@ -80,7 +76,7 @@
       <pubDate>Thu, 05 Dec 2019 00:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-12-05-%E5%87%A0%E9%81%93%E9%9D%9E%E5%B8%B8%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84c&#43;&#43;%E9%A2%98%E7%9B%AE/</guid>
-      <description>1.给私有成员变量赋值 已知一个类的结构，但是它所有的成员变量是私有的，有get方法，但是没有set方法，请问如何给成员变量赋值。 答案 #include &amp;lt;iostream&amp;gt; using namespace std; class A{ private: int b; public: int getB(){ return b; } }; int main(){ A *a = new A; int *p = (int *)a; *p = 1; cout&amp;lt;&amp;lt;a-&amp;gt;getB()&amp;lt;&amp;lt;endl; } 这道题的关键在于，要了解C++实例的内存分布。实现主要是下面两步： int *p = (int *)a; //</description>
+      <description>1.给私有成员变量赋值 已知一个类的结构，但是它所有的成员变量是私有的，有get方法，但是没有set方法，请问如何给成员变量赋值。 答案 #include &amp;lt;iostream&amp;gt;using namespace std; class A{ private: int b; public: int getB(){ return b; } }; int main(){ A *a = new A; int *p = (int *)a; *p = 1; cout&amp;lt;&amp;lt;a-&amp;gt;getB()&amp;lt;&amp;lt;endl; } 这道题的关键在于，要了解C++实例的内存分布。实现主要是下面两步： int *p = (int *)a; //将</description>
     </item>
     
     <item>
@@ -89,7 +85,7 @@
       <pubDate>Wed, 04 Dec 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-12-04-c&#43;&#43;%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83/</guid>
-      <description>C++中类初始化成一个对象之后，该对象实例在内存中是如何分布的呢？ 空类情况 如果实例化一个空类，这个对象会在内存中占用1个字节。目的只是标识一下，这是一个类实例（因为不占的话，就和空数据没什么区别）。 含基本数据，不含函数的情况 #include &amp;lt;iostream&amp;gt; using namespace std; class A{ char a; int b; char c; }; class B{ char a; char c; int b; }; int main(){ cout&amp;lt;&amp;lt;sizeof(A)&amp;lt;&amp;lt;endl; cout&amp;lt;&amp;lt;sizeof(B)&amp;lt;&amp;lt;endl; }</description>
+      <description>C++中类初始化成一个对象之后，该对象实例在内存中是如何分布的呢？ 空类情况 如果实例化一个空类，这个对象会在内存中占用1个字节。目的只是标识一下，这是一个类实例（因为不占的话，就和空数据没什么区别）。 含基本数据，不含函数的情况 #include &amp;lt;iostream&amp;gt;using namespace std; class A{ char a; int b; char c; }; class B{ char a; char c; int b; }; int main(){ cout&amp;lt;&amp;lt;sizeof(A)&amp;lt;&amp;lt;endl; cout&amp;lt;&amp;lt;sizeof(B)&amp;lt;&amp;lt;endl; } 假</description>
     </item>
     
     <item>
@@ -161,7 +157,7 @@
       <pubDate>Wed, 20 Nov 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/first/</guid>
-      <description>初始 萌芽期 &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; 从大学开始，我一直想弄一个自己的Blog。大学期间还自学了CSS和html。后来因为两个原因放弃了。一是大学刚接触计算机，有时想记下学下的内容，但都是笔记本上记录，也没写什么技术博客的想法。二是当时感觉自建博客实在太麻烦，还要自己租服务器。所以搭建博客的计划一直</description>
+      <description>初始 萌芽期 从大学开始，我一直想弄一个自己的Blog。大学期间还自学了CSS和html。后来因为两个原因放弃了。一是大学刚接触计算机，有时想记下学下的内容，但都是笔记本上记录，也没写什么技术博客的想法。二是当时感觉自建博客实在太麻烦，还要自己租服务器。所以搭建博客的计划一直搁浅。 2</description>
     </item>
     
     <item>
@@ -413,7 +409,7 @@
       <pubDate>Mon, 25 Mar 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/</guid>
-      <description>追踪整个代码跳过过程 cmd/kube-batch/main.go:39 main -&amp;gt; cmd/kube-batch/main.go:53 app.Run cmd/kube-batch/app/server.go:60 Run -&amp;gt; cmd/kube-batch/app/server.go:86 sched.Run cmd/kube-batch/app/server.go:86 sched.Run-&amp;gt; pkg/scheduler/scheduler.go:59 cmd/kube-batch/app/server.go:59 sched.Run-&amp;gt; pkg/scheduler/scheduler.runOnce:84 cmd/kube-batch/app/server.go:59 行代码 func (pc *Scheduler) Run(stopCh &amp;lt;-chan struct{}) { var err error // Start cache for policy. go pc.cache.Run(stopCh) pc.cache.WaitForCacheSync(stopCh) // Load configuration of scheduler schedConf := defaultSchedulerConf if len(pc.schedulerConf) != 0 { if schedConf, err = readSchedulerConf(pc.schedulerConf); err != nil { glog.Errorf(&amp;quot;Failed to read scheduler configuration &#39;%s&#39;, using default configuration: %v&amp;quot;, pc.schedulerConf, err) schedConf = defaultSchedulerConf } } pc.actions, pc.plugins, err = loadSchedulerConf(schedConf) if err != nil { panic(err) } // 这里又开始周期性调用 runOnce了。开始调用 go wait.Until(pc.runOnce, pc.schedulePeriod, stopCh) } cmd/kube-batch/app/server.go:84 行代码 func (pc *Scheduler) runOnce() { glog.V(4).Infof(&amp;quot;Start scheduling ...&amp;quot;)</description>
+      <description>追踪整个代码跳过过程 cmd/kube-batch/main.go:39 main -&amp;gt; cmd/kube-batch/main.go:53 app.Run cmd/kube-batch/app/server.go:60 Run -&amp;gt; cmd/kube-batch/app/server.go:86 sched.Run cmd/kube-batch/app/server.go:86 sched.Run-&amp;gt; pkg/scheduler/scheduler.go:59 cmd/kube-batch/app/server.go:59 sched.Run-&amp;gt; pkg/scheduler/scheduler.runOnce:84 cmd/kube-batch/app/server.go:59 行代码 func (pc *Scheduler) Run(stopCh &amp;lt;-chan struct{}) { var err error // Start cache for policy. go pc.cache.Run(stopCh) pc.cache.WaitForCacheSync(stopCh) // Load configuration of scheduler schedConf := defaultSchedulerConf if len(pc.schedulerConf) != 0 { if schedConf, err = readSchedulerConf(pc.schedulerConf); err != nil { glog.Errorf(&amp;#34;Failed to read scheduler configuration &amp;#39;%s&amp;#39;, using default configuration: %v&amp;#34;, pc.schedulerConf, err) schedConf = defaultSchedulerConf } } pc.actions, pc.plugins, err = loadSchedulerConf(schedConf) if err != nil { panic(err) } // 这里又开始周期性调用 runOnce了。开始调用 go wait.Until(pc.runOnce, pc.schedulePeriod, stopCh) } cmd/kube-batch/app/server.go:84 行代码 func (pc *Scheduler) runOnce() { glog.V(4).Infof(&amp;#34;Start scheduling ...&amp;#34;)</description>
     </item>
     
     <item>
@@ -512,7 +508,7 @@
       <pubDate>Mon, 07 Jan 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87%E5%B7%A5%E5%85%B7-ksonnet-%E5%AE%89%E8%A3%85/</guid>
-      <description>最近需要了解Kubeflow方面的知识，故需要自己配置kubeflow。安装Kubeflow需要按照以下的依赖: ksonnet version 0.11.0 or later. Kubernetes 1.8 or later kubectl 由于，k8s,kubectl的安装网上已经有很多教程了，而本人安装ksonnet时绕了一些弯，所以在此记录一些本人的安装过程。 安装环境介绍： 本人的k</description>
+      <description>最近需要了解Kubeflow方面的知识，故需要自己配置kubeflow。安装Kubeflow需要按照以下的依赖: ksonnet version [0.11.0] (https://ksonnet.io/#get-started) or later. Kubernetes 1.8 or later kubectl 由于，k8s,kubectl的安装网上已经有很多教程了，而本人安装ksonnet时绕了一些弯，所以在此记录一些本人的安装过程。 安装环境介绍： 本人的</description>
     </item>
     
     <item>
@@ -656,7 +652,7 @@
       <pubDate>Sat, 13 Oct 2018 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/java%E4%B9%8Bstringstringbufferstringbuilder/</guid>
-      <description>String： String类是final修饰的，是不可变的。我们看到的例如: String a = &amp;ldquo;hello&amp;rdquo;; a = a + &amp;ldquo;1&amp;rdquo;; 实际上是先生成了一个对象然后得到结果&amp;rdquo;hello1&amp;rdquo;,最后在赋值给对象a; String 类型的任何改动都是先生成一个其他对象再重新赋值。 所以String类适合那种常量或者基本</description>
+      <description>String： String类是final修饰的，是不可变的。我们看到的例如: String a = &amp;ldquo;hello&amp;rdquo;; a = a + &amp;ldquo;1&amp;rdquo;; 实际上是先生成了一个对象然后得到结果&amp;quot;hello1&amp;quot;,最后在赋值给对象a; String 类型的任何改动都是先生成一个其他对象再重新赋值。 所以String类适合那种常量或者基本没变</description>
     </item>
     
     <item>

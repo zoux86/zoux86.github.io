@@ -3,42 +3,43 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.59.1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
 
     <title>Hadoop 每次打开虚拟机重启hadoop都要重新格式化才能启动Namenode | zoux的博客</title>
     <meta property="og:title" content="Hadoop 每次打开虚拟机重启hadoop都要重新格式化才能启动Namenode - zoux的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2018-11-05T20:31:20&#43;08:00">
+    <meta property="article:published_time" content='2018-11-05T20:31:20&#43;08:00'>
         
         
-    <meta property="article:modified_time" content="2018-11-05T20:31:20&#43;08:00">
+    <meta property="article:modified_time" content='2018-11-05T20:31:20&#43;08:00'>
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
     <meta name="description" content="Hadoop 每次打开虚拟机重启hadoop都要重新格式化才能启动Namenode">
         
     <meta name="author" content="zoux">
     <meta property="og:url" content="https://zoux86.github.io/post/hadoop%E5%9C%A8%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98/">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
-    <link rel="stylesheet" href="/css/normalize.css">
-    
-        <link rel="stylesheet" href="/css/prism.css">
-    
-    <link rel="stylesheet" href="/css/style.css">
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     
-
-
+    
+    
+    
     
     
 </head>
 
+
 <body>
-<header id="header" class="clearfix">
+    <header id="header" class="clearfix">
     <div class="container">
         <div class="col-group">
             <div class="site-name ">
@@ -65,62 +66,57 @@
     </div>
 </header>
 
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
 
-<div id="body">
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">Hadoop 每次打开虚拟机重启hadoop都要重新格式化才能启动Namenode</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2018年11月5日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/hadoop'>Hadoop</a></span>
+            
+        </div>
         
         
-    <div class="container">
-        <div class="col-group">
-
-            <div class="col-8" id="main">
-                <div class="res-cons">
-                    <article class="post">
-                        <header>
-                            <h1 class="post-title">Hadoop 每次打开虚拟机重启hadoop都要重新格式化才能启动Namenode</h1>
-                        </header>
-                        <date class="post-meta meta-date">
-                            2018年11月5日
-                        </date>
-                        
-                        <div class="post-meta">
-                            <span>|</span>
-                            
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/hadoop">Hadoop</a></span>
-                            
-                        </div>
-                        
-                        
-                        <div class="post-meta">
-                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
-                        </div>
-                        
-                        
-                        <div class="post-content">
-                            <p>前面配置好hadoop后，每次开启虚拟机，启动集群后，总是有一些节点起不来。要不就是namenode，要不就是datanode。后面百度找到了原因所在：
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <p>前面配置好hadoop后，每次开启虚拟机，启动集群后，总是有一些节点起不来。要不就是namenode，要不就是datanode。后面百度找到了原因所在：
 在配置hdfs时，我们只配置了datanode的目录，而没有配置namdenode的相关信息。默认的tmp文件每次重新开机会被清空，与此同时namenode的格式化信息就会丢失。所以，每次一开机，集群找不到namenode的信息，故每次都要重新格式化集群。</p>
-
 <p>解决办法：
 修改hadoop/conf目录里面的core-site.xml文件，加入下面的配置</p>
-
-<pre><code class="language-yaml">&lt;property&gt;
-        &lt;name&gt;hadoop.tmp.dir&lt;/name&gt;
-        &lt;value&gt;/zoux/hadoop/Hadoop_tmp&lt;/value&gt;
-        &lt;description&gt;A base for other temporary directories.&lt;/description&gt;
- &lt;/property&gt;
-</code></pre>
-
-<p>我将从hadoop官网下载的Hadoop-0.20.2的安装包解压在/zoux目录下，
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#ae81ff">&lt;property&gt;</span>
+        <span style="color:#ae81ff">&lt;name&gt;hadoop.tmp.dir&lt;/name&gt;</span>
+        <span style="color:#ae81ff">&lt;value&gt;/zoux/hadoop/Hadoop_tmp&lt;/value&gt;</span>
+        <span style="color:#ae81ff">&lt;description&gt;A base for other temporary directories.&lt;/description&gt;</span>
+ <span style="color:#ae81ff">&lt;/property&gt;</span>
+</code></pre></div><p>我将从hadoop官网下载的Hadoop-0.20.2的安装包解压在/zoux目录下，
 然后将Hadoop-0.20.2重命名了hadoop，然后再在hadoop目录下建立Hadoop_tmp目录，用于存放namenode的信息。</p>
-
 <p>然后在重新格式化，重启就行！
 关于如何初始化，详见我上一篇文章！</p>
 
-                        </div>
+        </div>
 
-                        
+        
 
 
-                        
+        
 
 <div class="post-archive">
     <h2>See Also</h2>
@@ -140,17 +136,17 @@
 </div>
 
 
-                        <div class="post-meta meta-tags">
-                            
-                            <ul class="clearfix">
-                                
-                                <li><a href="https://zoux86.github.io/tags/hadoop">Hadoop</a></li>
-                                
-                            </ul>
-                            
-                        </div>
-                    </article>
-                    
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/hadoop'>Hadoop</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
     
 
     
@@ -165,11 +161,54 @@
       </script>
     </div>
     
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
                 </div>
-            </div>
-            <div id="secondary">
+
+                <div id="secondary">
     <section class="widget">
-        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
@@ -227,7 +266,7 @@
     
 
     <section class="widget">
-        <h3 class="widget-title">分类</h3>
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
 <ul class="widget-list">
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
@@ -270,7 +309,7 @@
     </section>
 
     <section class="widget">
-        <h3 class="widget-title">标签</h3>
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
 <div class="tagcloud">
     
     <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
@@ -362,46 +401,9 @@
         </ul>
     </section>
 </div>
+            </div>
         </div>
     </div>
-</div>
-<footer id="footer">
-    <div class="container">
-        &copy; 2020 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
-        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
-        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
-        
-    </div>
-</footer>
-
-
-    
-    <script type="text/javascript">
-        
-        (function () {
-            $("pre code").parent().addClass("line-numbers")
-        }());
-
-        window.MathJax = {
-            tex2jax: {
-                inlineMath: [['$', '$']],
-                processEscapes: true
-                }
-            };
-    </script>
-    <script type="text/javascript" src="/js/prism.js" async="true"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
-
-
-<a id="rocket" href="#top"></a>
-<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
-
-
-
-    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
-
-
-
-
 </body>
+
 </html>

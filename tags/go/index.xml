@@ -6,11 +6,7 @@
     <description>Recent content in go on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 15 Dec 2019 01:31:20 +0800</lastBuildDate>
-    
-	<atom:link href="https://zoux86.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Sun, 15 Dec 2019 01:31:20 +0800</lastBuildDate><atom:link href="https://zoux86.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>k8s的基本组件</title>
       <link>https://zoux86.github.io/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/</link>
@@ -26,7 +22,7 @@
       <pubDate>Tue, 10 Dec 2019 01:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-12-10-go%E7%9A%84%E5%90%84%E7%A7%8D%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</guid>
-      <description>golang 中int, float, string 以及interface{}直接的互相转换 int 转float var a int var b float64 a = 10 b = float64(a) //ps: 如果是float32，就使用float32(a) int 转string //第一种方式通过 fmt.sPrintf() 转换string var str string a := 10 str = fmt.Sprintf(&amp;quot;%d&amp;quot;, a) //第二种方式通过 strconv包 转换 string var str1 string a1 := 10 str1 = strconv.FormatInt(int64(a1), 10) float 转</description>
+      <description>golang 中int, float, string 以及interface{}直接的互相转换 int 转float var a int var b float64 a = 10 b = float64(a) //ps: 如果是float32，就使用float32(a) int 转string //第一种方式通过 fmt.sPrintf() 转换string var str string a := 10 str = fmt.Sprintf(&amp;#34;%d&amp;#34;, a) //第二种方式通过 strconv包 转换 string var str1 string a1 := 10 str1 = strconv.FormatInt(int64(a1), 10) float 转</description>
     </item>
     
     <item>

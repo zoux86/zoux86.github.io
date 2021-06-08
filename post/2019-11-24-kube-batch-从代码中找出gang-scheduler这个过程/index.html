@@ -3,42 +3,43 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.59.1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
 
     <title>kube-batch 从代码中找出gang scheduler这个过程 | zoux的博客</title>
     <meta property="og:title" content="kube-batch 从代码中找出gang scheduler这个过程 - zoux的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2019-04-14T20:31:20&#43;08:00">
+    <meta property="article:published_time" content='2019-04-14T20:31:20&#43;08:00'>
         
         
-    <meta property="article:modified_time" content="2019-04-14T20:31:20&#43;08:00">
+    <meta property="article:modified_time" content='2019-04-14T20:31:20&#43;08:00'>
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
     <meta name="description" content="kube-batch 从代码中找出gang scheduler这个过程">
         
     <meta name="author" content="zoux">
     <meta property="og:url" content="https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BB%8E%E4%BB%A3%E7%A0%81%E4%B8%AD%E6%89%BE%E5%87%BAgang-scheduler%E8%BF%99%E4%B8%AA%E8%BF%87%E7%A8%8B/">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
-    <link rel="stylesheet" href="/css/normalize.css">
-    
-        <link rel="stylesheet" href="/css/prism.css">
-    
-    <link rel="stylesheet" href="/css/style.css">
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     
-
-
+    
+    
+    
     
     
 </head>
 
+
 <body>
-<header id="header" class="clearfix">
+    <header id="header" class="clearfix">
     <div class="container">
         <div class="col-group">
             <div class="site-name ">
@@ -65,320 +66,289 @@
     </div>
 </header>
 
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
 
-<div id="body">
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">kube-batch 从代码中找出gang scheduler这个过程</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年4月14日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/kube-batch'>kube-batch</a></span>
+            
+        </div>
         
         
-    <div class="container">
-        <div class="col-group">
-
-            <div class="col-8" id="main">
-                <div class="res-cons">
-                    <article class="post">
-                        <header>
-                            <h1 class="post-title">kube-batch 从代码中找出gang scheduler这个过程</h1>
-                        </header>
-                        <date class="post-meta meta-date">
-                            2019年4月14日
-                        </date>
-                        
-                        <div class="post-meta">
-                            <span>|</span>
-                            
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/kube-batch">kube-batch</a></span>
-                            
-                        </div>
-                        
-                        
-                        <div class="post-meta">
-                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
-                        </div>
-                        
-                        
-                        <div class="post-content">
-                            
-
-<p>从之前的分析中，已经知道了kube-batch的启动过程。kube-batch总共有4个过程。这里我们从Allocate开始。</p>
-
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <p>从之前的分析中，已经知道了kube-batch的启动过程。kube-batch总共有4个过程。这里我们从Allocate开始。</p>
 <h3 id="目录">目录：</h3>
-
 <p>一： 流程解释</p>
-
 <p>二：代码说明</p>
-
 <h4 id="一-流程解释">一： 流程解释</h4>
-
 <p>在allocate.go中：找到Execute函数。首先用文字解释一下整个的过程：</p>
-
 <p>（1）将kube-batch的job放入对应的队列。这是一个具有优先级的队列。</p>
-
 <p>（2）依次遍历这些队列，如果为空就跳过</p>
-
 <p>（3）如果不为空，依次从队列中pop出一个job.即接下来要调度这个job</p>
-
 <p>（4）取出这个job对应的所有Tasks(即要绑定的pod),对每个task进行假绑定,这里的假绑定意思是 只是更新task的状态，先记录pod绑定在哪个节点上。当达到JobReady时，进行真正的绑定。这样就实现了一次性绑定了好几个Pod.</p>
-
 <p>（5）更新job的信息，将pod重新加入队列。跳出循环，再次进行调度。</p>
-
 <p>对上面流程有两个地方需要再解释一下:</p>
-
 <p>(1) jobReady 作用是什么，gang scheduler和这个有什么关系？</p>
-
 <p>allocate每次都是对task进行假绑定。jobReady是一个信号。表示现在可以进行真正的绑定了。</p>
-
 <p>在gang.go的75行，实现了这个接口：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">func jobReady(obj interface{}) <span style="color:#66d9ef">bool</span> {
+	job :<span style="color:#f92672">=</span> obj.(<span style="color:#f92672">*</span>api.JobInfo)
 
-<pre><code class="language-rust">func jobReady(obj interface{}) bool {
-	job := obj.(*api.JobInfo)
+	occupied :<span style="color:#f92672">=</span> readyTaskNum(job)
 
-	occupied := readyTaskNum(job)
-
-	return occupied &gt;= job.MinAvailable
+	<span style="color:#66d9ef">return</span> occupied <span style="color:#f92672">&gt;=</span> job.MinAvailable
 }
-</code></pre>
-
-<p>可以看出来，gang scheduler中 就是通过数量上的判断来进行限制的。job.MinAvailable这个是podgroup的minNumber数量。这样就使得每次调度的时候，只有当MinAvailable个task准备好了之后。才会进行调度，从而达到gang scheduler的效果。</p>
-
+</code></pre></div><p>可以看出来，gang scheduler中 就是通过数量上的判断来进行限制的。job.MinAvailable这个是podgroup的minNumber数量。这样就使得每次调度的时候，只有当MinAvailable个task准备好了之后。才会进行调度，从而达到gang scheduler的效果。</p>
 <p>（2）为什么job还要重新加入队列。这个job不是已经调度了吗？</p>
-
 <p>因为有可能job的Tasks数量会多于 job.MinAvailable。例如，一个job有8个task，但是它指定的podgroup的 minNumber=4。这样调度时会首先调度4个task.当真正绑定之后。剩余没绑定的4个task是一个新的job.所有需要重新加入队列。</p>
+<h4 id="二代码说明">二：代码说明</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">func (alloc <span style="color:#f92672">*</span>allocateAction) Execute(ssn <span style="color:#f92672">*</span>framework.Session) {
+	glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Enter Allocate ...&#34;</span>)
+	defer glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Leaving Allocate ...&#34;</span>)
 
-<h4 id="二-代码说明">二：代码说明</h4>
+	<span style="color:#75715e">// 这是优先级队列，即队列里面的内容是有优先级的
+</span><span style="color:#75715e"></span>	queues :<span style="color:#f92672">=</span> util.NewPriorityQueue(ssn.QueueOrderFn)
+	jobsMap :<span style="color:#f92672">=</span> map[api.QueueID]<span style="color:#f92672">*</span>util.PriorityQueue{}
 
-<pre><code class="language-rust">func (alloc *allocateAction) Execute(ssn *framework.Session) {
-	glog.V(3).Infof(&quot;Enter Allocate ...&quot;)
-	defer glog.V(3).Infof(&quot;Leaving Allocate ...&quot;)
-
-	// 这是优先级队列，即队列里面的内容是有优先级的
-	queues := util.NewPriorityQueue(ssn.QueueOrderFn)
-	jobsMap := map[api.QueueID]*util.PriorityQueue{}
-
-	//首先将所有的kube-batch job放入
-	for _, job := range ssn.Jobs {
-		if queue, found := ssn.Queues[job.Queue]; found {
+	<span style="color:#75715e">//首先将所有的kube-batch job放入
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">for</span> _, job :<span style="color:#f92672">=</span> range ssn.Jobs {
+		<span style="color:#66d9ef">if</span> queue, found :<span style="color:#f92672">=</span> ssn.Queues[job.Queue]; found {
 			queues.Push(queue)
-		} else {
-			glog.Warningf(&quot;Skip adding Job &lt;%s/%s&gt; because its queue %s is not found&quot;,
+		} <span style="color:#66d9ef">else</span> {
+			glog.Warningf(<span style="color:#e6db74">&#34;Skip adding Job &lt;%s/%s&gt; because its queue %s is not found&#34;</span>,
 				job.Namespace, job.Name, job.Queue)
-			continue
+			<span style="color:#66d9ef">continue</span>
 		}
 
-		if _, found := jobsMap[job.Queue]; !found {
-			jobsMap[job.Queue] = util.NewPriorityQueue(ssn.JobOrderFn)
+		<span style="color:#66d9ef">if</span> _, found :<span style="color:#f92672">=</span> jobsMap[job.Queue]; <span style="color:#f92672">!</span>found {
+			jobsMap[job.Queue] <span style="color:#f92672">=</span> util.NewPriorityQueue(ssn.JobOrderFn)
 		}
 
-		glog.V(4).Infof(&quot;Added Job &lt;%s/%s&gt; into Queue &lt;%s&gt;&quot;, job.Namespace, job.Name, job.Queue)
+		glog.V(<span style="color:#ae81ff">4</span>).Infof(<span style="color:#e6db74">&#34;Added Job &lt;%s/%s&gt; into Queue &lt;%s&gt;&#34;</span>, job.Namespace, job.Name, job.Queue)
 		jobsMap[job.Queue].Push(job)
 	}
 
-	glog.V(3).Infof(&quot;Try to allocate resource to %d Queues&quot;, len(jobsMap))
+	glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Try to allocate resource to %d Queues&#34;</span>, len(jobsMap))
 
-	pendingTasks := map[api.JobID]*util.PriorityQueue{}
+	pendingTasks :<span style="color:#f92672">=</span> map[api.JobID]<span style="color:#f92672">*</span>util.PriorityQueue{}
 
-	for {
-		if queues.Empty() {
-			break
+	<span style="color:#66d9ef">for</span> {
+		<span style="color:#66d9ef">if</span> queues.Empty() {
+			<span style="color:#66d9ef">break</span>
 		}
-		// 从第一个队列开始寻找是否有job需要调度
-		queue := queues.Pop().(*api.QueueInfo)
-		if ssn.Overused(queue) {
-			glog.V(3).Infof(&quot;Queue &lt;%s&gt; is overused, ignore it.&quot;, queue.Name)
-			continue
+		<span style="color:#75715e">// 从第一个队列开始寻找是否有job需要调度
+</span><span style="color:#75715e"></span>		queue :<span style="color:#f92672">=</span> queues.Pop().(<span style="color:#f92672">*</span>api.QueueInfo)
+		<span style="color:#66d9ef">if</span> ssn.Overused(queue) {
+			glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Queue &lt;%s&gt; is overused, ignore it.&#34;</span>, queue.Name)
+			<span style="color:#66d9ef">continue</span>
 		}
 
-		jobs, found := jobsMap[queue.UID]
+		jobs, found :<span style="color:#f92672">=</span> jobsMap[queue.UID]
 
-		glog.V(3).Infof(&quot;Try to allocate resource to Jobs in Queue &lt;%v&gt;&quot;, queue.Name)
+		glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Try to allocate resource to Jobs in Queue &lt;%v&gt;&#34;</span>, queue.Name)
 
-		if !found || jobs.Empty() {
-			glog.V(4).Infof(&quot;Can not find jobs for queue %s.&quot;, queue.Name)
-			continue
+		<span style="color:#66d9ef">if</span> <span style="color:#f92672">!</span>found <span style="color:#f92672">||</span> jobs.Empty() {
+			glog.V(<span style="color:#ae81ff">4</span>).Infof(<span style="color:#e6db74">&#34;Can not find jobs for queue %s.&#34;</span>, queue.Name)
+			<span style="color:#66d9ef">continue</span>
 		}
 		
-		// 从队列中依次弹出job进行调度
-		job := jobs.Pop().(*api.JobInfo)
-		if _, found := pendingTasks[job.UID]; !found {
-			tasks := util.NewPriorityQueue(ssn.TaskOrderFn)
-			for _, task := range job.TaskStatusIndex[api.Pending] {
-				// Skip BestEffort task in 'allocate' action.
-				if task.Resreq.IsEmpty() {
-					glog.V(4).Infof(&quot;Task &lt;%v/%v&gt; is BestEffort task, skip it.&quot;,
+		<span style="color:#75715e">// 从队列中依次弹出job进行调度
+</span><span style="color:#75715e"></span>		job :<span style="color:#f92672">=</span> jobs.Pop().(<span style="color:#f92672">*</span>api.JobInfo)
+		<span style="color:#66d9ef">if</span> _, found :<span style="color:#f92672">=</span> pendingTasks[job.UID]; <span style="color:#f92672">!</span>found {
+			tasks :<span style="color:#f92672">=</span> util.NewPriorityQueue(ssn.TaskOrderFn)
+			<span style="color:#66d9ef">for</span> _, task :<span style="color:#f92672">=</span> range job.TaskStatusIndex[api.Pending] {
+				<span style="color:#75715e">// Skip BestEffort task in &#39;allocate&#39; action.
+</span><span style="color:#75715e"></span>				<span style="color:#66d9ef">if</span> task.Resreq.IsEmpty() {
+					glog.V(<span style="color:#ae81ff">4</span>).Infof(<span style="color:#e6db74">&#34;Task &lt;%v/%v&gt; is BestEffort task, skip it.&#34;</span>,
 						task.Namespace, task.Name)
-					continue
+					<span style="color:#66d9ef">continue</span>
 				}
 
 				tasks.Push(task)
 			}
-			pendingTasks[job.UID] = tasks
+			pendingTasks[job.UID] <span style="color:#f92672">=</span> tasks
 		}
-		tasks := pendingTasks[job.UID]
+		tasks :<span style="color:#f92672">=</span> pendingTasks[job.UID]
 
-		glog.V(3).Infof(&quot;Try to allocate resource to %d tasks of Job &lt;%v/%v&gt;&quot;,
+		glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Try to allocate resource to %d tasks of Job &lt;%v/%v&gt;&#34;</span>,
 			tasks.Len(), job.Namespace, job.Name)
 		
-		// 具体调度Task的循环，每次都假绑定一个Task，表示这个task已经完成
-		for !tasks.Empty() {
-			predicateNodes := []*api.NodeInfo{}
-			nodeScores := map[int][]*api.NodeInfo{}
+		<span style="color:#75715e">// 具体调度Task的循环，每次都假绑定一个Task，表示这个task已经完成
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">for</span> <span style="color:#f92672">!</span>tasks.Empty() {
+			predicateNodes :<span style="color:#f92672">=</span> []<span style="color:#f92672">*</span>api.NodeInfo{}
+			nodeScores :<span style="color:#f92672">=</span> map[int][]<span style="color:#f92672">*</span>api.NodeInfo{}
 
-			task := tasks.Pop().(*api.TaskInfo)
-			assigned := false
+			task :<span style="color:#f92672">=</span> tasks.Pop().(<span style="color:#f92672">*</span>api.TaskInfo)
+			assigned :<span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span>
 
-			glog.V(3).Infof(&quot;There are &lt;%d&gt; nodes for Job &lt;%v/%v&gt;&quot;,
+			glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;There are &lt;%d&gt; nodes for Job &lt;%v/%v&gt;&#34;</span>,
 				len(ssn.Nodes), job.Namespace, job.Name)
 
-			//any task that doesn't fit will be the last processed
-			//within this loop context so any existing contents of
-			//NodesFitDelta are for tasks that eventually did fit on a
-			//node
-			
-			// 后面的很长一般分，就是为task选择一个合适的node。
-			//主要内容是先过滤，然后选择一个满足task的最优节点，然后更新job中该task的信息
-			if len(job.NodesFitDelta) &gt; 0 {
-				job.NodesFitDelta = make(api.NodeResourceMap)
+			<span style="color:#75715e">//any task that doesn&#39;t fit will be the last processed
+</span><span style="color:#75715e"></span>			<span style="color:#75715e">//within this loop context so any existing contents of
+</span><span style="color:#75715e"></span>			<span style="color:#75715e">//NodesFitDelta are for tasks that eventually did fit on a
+</span><span style="color:#75715e"></span>			<span style="color:#75715e">//node
+</span><span style="color:#75715e"></span>			
+			<span style="color:#75715e">// 后面的很长一般分，就是为task选择一个合适的node。
+</span><span style="color:#75715e"></span>			<span style="color:#75715e">//主要内容是先过滤，然后选择一个满足task的最优节点，然后更新job中该task的信息
+</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">if</span> len(job.NodesFitDelta) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span> {
+				job.NodesFitDelta <span style="color:#f92672">=</span> make(api.NodeResourceMap)
 			}
-			for _, node := range ssn.Nodes {
-				glog.V(3).Infof(&quot;Considering Task &lt;%v/%v&gt; on node &lt;%v&gt;: &lt;%v&gt; vs. &lt;%v&gt;&quot;,
+			<span style="color:#66d9ef">for</span> _, node :<span style="color:#f92672">=</span> range ssn.Nodes {
+				glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Considering Task &lt;%v/%v&gt; on node &lt;%v&gt;: &lt;%v&gt; vs. &lt;%v&gt;&#34;</span>,
 					task.Namespace, task.Name, node.Name, task.Resreq, node.Idle)
 
-				// TODO (k82cn): Enable eCache for performance improvement.
-				if err := ssn.PredicateFn(task, node); err != nil {
-					glog.V(3).Infof(&quot;Predicates failed for task &lt;%s/%s&gt; on node &lt;%s&gt;: %v&quot;,
+				<span style="color:#75715e">// TODO (k82cn): Enable eCache for performance improvement.
+</span><span style="color:#75715e"></span>				<span style="color:#66d9ef">if</span> err :<span style="color:#f92672">=</span> ssn.PredicateFn(task, node); err <span style="color:#f92672">!=</span> nil {
+					glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Predicates failed for task &lt;%s/%s&gt; on node &lt;%s&gt;: %v&#34;</span>,
 						task.Namespace, task.Name, node.Name, err)
-					continue
-				} else {
-					predicateNodes = append(predicateNodes, node)
+					<span style="color:#66d9ef">continue</span>
+				} <span style="color:#66d9ef">else</span> {
+					predicateNodes <span style="color:#f92672">=</span> append(predicateNodes, node)
 				}
 			}
-			for _, node := range predicateNodes {
-				score, err := ssn.NodeOrderFn(task, node)
-				if err != nil {
-					glog.V(3).Infof(&quot;Error in Calculating Priority for the node:%v&quot;, err)
-				} else {
-					nodeScores[score] = append(nodeScores[score], node)
+			<span style="color:#66d9ef">for</span> _, node :<span style="color:#f92672">=</span> range predicateNodes {
+				score, err :<span style="color:#f92672">=</span> ssn.NodeOrderFn(task, node)
+				<span style="color:#66d9ef">if</span> err <span style="color:#f92672">!=</span> nil {
+					glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Error in Calculating Priority for the node:%v&#34;</span>, err)
+				} <span style="color:#66d9ef">else</span> {
+					nodeScores[score] <span style="color:#f92672">=</span> append(nodeScores[score], node)
 				}
 			}
-			selectedNodes := util.SelectBestNode(nodeScores)
-			for _, node := range selectedNodes {
-				// Allocate idle resource to the task.
-				if task.InitResreq.LessEqual(node.Idle) {
-					glog.V(3).Infof(&quot;Binding Task &lt;%v/%v&gt; to node &lt;%v&gt;&quot;,
+			selectedNodes :<span style="color:#f92672">=</span> util.SelectBestNode(nodeScores)
+			<span style="color:#66d9ef">for</span> _, node :<span style="color:#f92672">=</span> range selectedNodes {
+				<span style="color:#75715e">// Allocate idle resource to the task.
+</span><span style="color:#75715e"></span>				<span style="color:#66d9ef">if</span> task.InitResreq.LessEqual(node.Idle) {
+					glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Binding Task &lt;%v/%v&gt; to node &lt;%v&gt;&#34;</span>,
 						task.Namespace, task.Name, node.Name)
-					// ！！！这里需要重点注意，这里调用了session.go中Allocate函数。 下面会将这个的作用
-					if err := ssn.Allocate(task, node.Name); err != nil {         
-						glog.Errorf(&quot;Failed to bind Task %v on %v in Session %v, err: %v&quot;,
+					<span style="color:#75715e">// ！！！这里需要重点注意，这里调用了session.go中Allocate函数。 下面会将这个的作用
+</span><span style="color:#75715e"></span>					<span style="color:#66d9ef">if</span> err :<span style="color:#f92672">=</span> ssn.Allocate(task, node.Name); err <span style="color:#f92672">!=</span> nil {         
+						glog.Errorf(<span style="color:#e6db74">&#34;Failed to bind Task %v on %v in Session %v, err: %v&#34;</span>,
 							task.UID, node.Name, ssn.UID, err)
-						continue
+						<span style="color:#66d9ef">continue</span>
 					}
-					assigned = true
-					break
-				} else {
-					//store information about missing resources
-					job.NodesFitDelta[node.Name] = node.Idle.Clone()
+					assigned <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
+					<span style="color:#66d9ef">break</span>
+				} <span style="color:#66d9ef">else</span> {
+					<span style="color:#75715e">//store information about missing resources
+</span><span style="color:#75715e"></span>					job.NodesFitDelta[node.Name] <span style="color:#f92672">=</span> node.Idle.Clone()
 					job.NodesFitDelta[node.Name].FitDelta(task.Resreq)
-					glog.V(3).Infof(&quot;Predicates failed for task &lt;%s/%s&gt; on node &lt;%s&gt; with limited resources&quot;,
+					glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Predicates failed for task &lt;%s/%s&gt; on node &lt;%s&gt; with limited resources&#34;</span>,
 						task.Namespace, task.Name, node.Name)
 				}
 
-				// Allocate releasing resource to the task if any.
-				if task.InitResreq.LessEqual(node.Releasing) {
-					glog.V(3).Infof(&quot;Pipelining Task &lt;%v/%v&gt; to node &lt;%v&gt; for &lt;%v&gt; on &lt;%v&gt;&quot;,
+				<span style="color:#75715e">// Allocate releasing resource to the task if any.
+</span><span style="color:#75715e"></span>				<span style="color:#66d9ef">if</span> task.InitResreq.LessEqual(node.Releasing) {
+					glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Pipelining Task &lt;%v/%v&gt; to node &lt;%v&gt; for &lt;%v&gt; on &lt;%v&gt;&#34;</span>,
 						task.Namespace, task.Name, node.Name, task.InitResreq, node.Releasing)
-					if err := ssn.Pipeline(task, node.Name); err != nil {
-						glog.Errorf(&quot;Failed to pipeline Task %v on %v in Session %v&quot;,
+					<span style="color:#66d9ef">if</span> err :<span style="color:#f92672">=</span> ssn.Pipeline(task, node.Name); err <span style="color:#f92672">!=</span> nil {
+						glog.Errorf(<span style="color:#e6db74">&#34;Failed to pipeline Task %v on %v in Session %v&#34;</span>,
 							task.UID, node.Name, ssn.UID)
-						continue
+						<span style="color:#66d9ef">continue</span>
 					}
 
-					assigned = true
-					break
+					assigned <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
+					<span style="color:#66d9ef">break</span>
 				}
 			}
 			
 			
-			//如果绑定某个task过程中失败，比如资源不足。那么就会跳出这个循环。
-			if !assigned {
-				break
+			<span style="color:#75715e">//如果绑定某个task过程中失败，比如资源不足。那么就会跳出这个循环。
+</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">if</span> <span style="color:#f92672">!</span>assigned {
+				<span style="color:#66d9ef">break</span>
 			}
-			// 将job重新加入队列，然后进行下一个job的调度。
-			if ssn.JobReady(job) {
+			<span style="color:#75715e">// 将job重新加入队列，然后进行下一个job的调度。
+</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">if</span> ssn.JobReady(job) {
 				jobs.Push(job)
-				break
+				<span style="color:#66d9ef">break</span>
 			}
 		}
-		// Added Queue back until no job in Queue.  
-		queues.Push(queue)
+		<span style="color:#75715e">// Added Queue back until no job in Queue.  
+</span><span style="color:#75715e"></span>		queues.Push(queue)
 	}
-</code></pre>
-
-<p>session.go中Allocate函数</p>
-
-<pre><code class="language-rust">func (ssn *Session) Allocate(task *api.TaskInfo, hostname string) error {
-	if err := ssn.cache.AllocateVolumes(task, hostname); err != nil {
-		return err
+</code></pre></div><p>session.go中Allocate函数</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">func (ssn <span style="color:#f92672">*</span>Session) Allocate(task <span style="color:#f92672">*</span>api.TaskInfo, hostname string) error {
+	<span style="color:#66d9ef">if</span> err :<span style="color:#f92672">=</span> ssn.cache.AllocateVolumes(task, hostname); err <span style="color:#f92672">!=</span> nil {
+		<span style="color:#66d9ef">return</span> err
 	}
 
-	// 这里这是更新task的状态。
-	// Only update status in session
-	job, found := ssn.Jobs[task.Job]
-	if found {
-		if err := job.UpdateTaskStatus(task, api.Allocated); err != nil {
-			glog.Errorf(&quot;Failed to update task &lt;%v/%v&gt; status to %v in Session &lt;%v&gt;: %v&quot;,
+	<span style="color:#75715e">// 这里这是更新task的状态。
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// Only update status in session
+</span><span style="color:#75715e"></span>	job, found :<span style="color:#f92672">=</span> ssn.Jobs[task.Job]
+	<span style="color:#66d9ef">if</span> found {
+		<span style="color:#66d9ef">if</span> err :<span style="color:#f92672">=</span> job.UpdateTaskStatus(task, api.Allocated); err <span style="color:#f92672">!=</span> nil {
+			glog.Errorf(<span style="color:#e6db74">&#34;Failed to update task &lt;%v/%v&gt; status to %v in Session &lt;%v&gt;: %v&#34;</span>,
 				task.Namespace, task.Name, api.Allocated, ssn.UID, err)
-			return err
+			<span style="color:#66d9ef">return</span> err
 		}
-	} else {
-		glog.Errorf(&quot;Failed to found Job &lt;%s&gt; in Session &lt;%s&gt; index when binding.&quot;,
+	} <span style="color:#66d9ef">else</span> {
+		glog.Errorf(<span style="color:#e6db74">&#34;Failed to found Job &lt;%s&gt; in Session &lt;%s&gt; index when binding.&#34;</span>,
 			task.Job, ssn.UID)
-		return fmt.Errorf(&quot;failed to find job %s&quot;, task.Job)
+		<span style="color:#66d9ef">return</span> fmt.Errorf(<span style="color:#e6db74">&#34;failed to find job %s&#34;</span>, task.Job)
 	}
 
-	task.NodeName = hostname
+	task.NodeName <span style="color:#f92672">=</span> hostname
 
-	if node, found := ssn.Nodes[hostname]; found {
-		if err := node.AddTask(task); err != nil {
-			glog.Errorf(&quot;Failed to add task &lt;%v/%v&gt; to node &lt;%v&gt; in Session &lt;%v&gt;: %v&quot;,
+	<span style="color:#66d9ef">if</span> node, found :<span style="color:#f92672">=</span> ssn.Nodes[hostname]; found {
+		<span style="color:#66d9ef">if</span> err :<span style="color:#f92672">=</span> node.AddTask(task); err <span style="color:#f92672">!=</span> nil {
+			glog.Errorf(<span style="color:#e6db74">&#34;Failed to add task &lt;%v/%v&gt; to node &lt;%v&gt; in Session &lt;%v&gt;: %v&#34;</span>,
 				task.Namespace, task.Name, hostname, ssn.UID, err)
-			return err
+			<span style="color:#66d9ef">return</span> err
 		}
-		glog.V(3).Infof(&quot;After allocated Task &lt;%v/%v&gt; to Node &lt;%v&gt;: idle &lt;%v&gt;, used &lt;%v&gt;, releasing &lt;%v&gt;&quot;,
+		glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;After allocated Task &lt;%v/%v&gt; to Node &lt;%v&gt;: idle &lt;%v&gt;, used &lt;%v&gt;, releasing &lt;%v&gt;&#34;</span>,
 			task.Namespace, task.Name, node.Name, node.Idle, node.Used, node.Releasing)
-	} else {
-		glog.Errorf(&quot;Failed to found Node &lt;%s&gt; in Session &lt;%s&gt; index when binding.&quot;,
+	} <span style="color:#66d9ef">else</span> {
+		glog.Errorf(<span style="color:#e6db74">&#34;Failed to found Node &lt;%s&gt; in Session &lt;%s&gt; index when binding.&#34;</span>,
 			hostname, ssn.UID)
-		return fmt.Errorf(&quot;failed to find node %s&quot;, hostname)
+		<span style="color:#66d9ef">return</span> fmt.Errorf(<span style="color:#e6db74">&#34;failed to find node %s&#34;</span>, hostname)
 	}
 
-    //gang.go中有，这里是真正的绑定了，当jobReady时，调用dispatch函数对所有的Allocated的task进行绑定。
-	// dispatch就在该函数的下面。内容也很直观，就是调用k8s的接口，真正的绑定pod
-	if ssn.JobReady(job) {
-		for _, task := range job.TaskStatusIndex[api.Allocated] {
-			if err := ssn.dispatch(task); err != nil {                    // 如果job准备好了，就直接真正绑定所有准备好的任务？？
-				glog.Errorf(&quot;Failed to dispatch task &lt;%v/%v&gt;: %v&quot;,
+    <span style="color:#75715e">//gang.go中有，这里是真正的绑定了，当jobReady时，调用dispatch函数对所有的Allocated的task进行绑定。
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// dispatch就在该函数的下面。内容也很直观，就是调用k8s的接口，真正的绑定pod
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">if</span> ssn.JobReady(job) {
+		<span style="color:#66d9ef">for</span> _, task :<span style="color:#f92672">=</span> range job.TaskStatusIndex[api.Allocated] {
+			<span style="color:#66d9ef">if</span> err :<span style="color:#f92672">=</span> ssn.dispatch(task); err <span style="color:#f92672">!=</span> nil {                    <span style="color:#75715e">// 如果job准备好了，就直接真正绑定所有准备好的任务？？
+</span><span style="color:#75715e"></span>				glog.Errorf(<span style="color:#e6db74">&#34;Failed to dispatch task &lt;%v/%v&gt;: %v&#34;</span>,
 					task.Namespace, task.Name, err)
-				return err
+				<span style="color:#66d9ef">return</span> err
 			}
 		}
 	}
 
-	return nil
+	<span style="color:#66d9ef">return</span> nil
 }
-</code></pre>
-
-<h4 id="总结">总结：</h4>
-
+</code></pre></div><h4 id="总结">总结：</h4>
 <p>感觉自己的文字表达能力还是不行，还需要更多的锻炼。 结合代码的注释和上面的流程说明一起看会更容易理解。</p>
-
 <p>在session.go中可以看到，每次为task分配资源时，首先都是更新状态，只有达到jobReady时，才真正的绑定到具体的某个结点上。</p>
-
 <p>当然如果当前要调度的job1,它需要的资源不足，那么当前这个job1就会跳出循环，找下一个要进行调度的job。不用担心，job1中已经绑定的task所占的资源。backfill操作会将Job1清空。</p>
 
-                        </div>
+        </div>
 
-                        
+        
 
 
-                        
+        
 
 <div class="post-archive">
     <h2>See Also</h2>
@@ -398,17 +368,17 @@
 </div>
 
 
-                        <div class="post-meta meta-tags">
-                            
-                            <ul class="clearfix">
-                                
-                                <li><a href="https://zoux86.github.io/tags/kube-batch">kube-batch</a></li>
-                                
-                            </ul>
-                            
-                        </div>
-                    </article>
-                    
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/kube-batch'>kube-batch</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
     
 
     
@@ -423,11 +393,54 @@
       </script>
     </div>
     
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
                 </div>
-            </div>
-            <div id="secondary">
+
+                <div id="secondary">
     <section class="widget">
-        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
@@ -485,7 +498,7 @@
     
 
     <section class="widget">
-        <h3 class="widget-title">分类</h3>
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
 <ul class="widget-list">
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
@@ -528,7 +541,7 @@
     </section>
 
     <section class="widget">
-        <h3 class="widget-title">标签</h3>
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
 <div class="tagcloud">
     
     <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
@@ -620,46 +633,9 @@
         </ul>
     </section>
 </div>
+            </div>
         </div>
     </div>
-</div>
-<footer id="footer">
-    <div class="container">
-        &copy; 2020 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
-        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
-        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
-        
-    </div>
-</footer>
-
-
-    
-    <script type="text/javascript">
-        
-        (function () {
-            $("pre code").parent().addClass("line-numbers")
-        }());
-
-        window.MathJax = {
-            tex2jax: {
-                inlineMath: [['$', '$']],
-                processEscapes: true
-                }
-            };
-    </script>
-    <script type="text/javascript" src="/js/prism.js" async="true"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
-
-
-<a id="rocket" href="#top"></a>
-<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
-
-
-
-    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
-
-
-
-
 </body>
+
 </html>

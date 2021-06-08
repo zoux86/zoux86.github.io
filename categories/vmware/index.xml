@@ -6,11 +6,7 @@
     <description>Recent content in VMware on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 10 Jul 2018 20:31:20 +0800</lastBuildDate>
-    
-	<atom:link href="https://zoux86.github.io/categories/vmware/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Tue, 10 Jul 2018 20:31:20 +0800</lastBuildDate><atom:link href="https://zoux86.github.io/categories/vmware/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>VM 安装VMware tools</title>
       <link>https://zoux86.github.io/post/vmware%E5%AE%89%E8%A3%85/</link>

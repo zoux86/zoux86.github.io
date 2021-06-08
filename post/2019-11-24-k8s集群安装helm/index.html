@@ -3,42 +3,43 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.59.1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
 
     <title>k8s集群安装helm | zoux的博客</title>
     <meta property="og:title" content="k8s集群安装helm - zoux的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2019-04-01T20:31:20&#43;08:00">
+    <meta property="article:published_time" content='2019-04-01T20:31:20&#43;08:00'>
         
         
-    <meta property="article:modified_time" content="2019-04-01T20:31:20&#43;08:00">
+    <meta property="article:modified_time" content='2019-04-01T20:31:20&#43;08:00'>
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
     <meta name="description" content="k8s集群安装helm">
         
     <meta name="author" content="zoux">
     <meta property="og:url" content="https://zoux86.github.io/post/2019-11-24-k8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85helm/">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
-    <link rel="stylesheet" href="/css/normalize.css">
-    
-        <link rel="stylesheet" href="/css/prism.css">
-    
-    <link rel="stylesheet" href="/css/style.css">
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     
-
-
+    
+    
+    
     
     
 </head>
 
+
 <body>
-<header id="header" class="clearfix">
+    <header id="header" class="clearfix">
     <div class="container">
         <div class="col-group">
             <div class="site-name ">
@@ -65,108 +66,74 @@
     </div>
 </header>
 
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
 
-<div id="body">
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">k8s集群安装helm</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年4月1日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a></span>
+            
+        </div>
         
         
-    <div class="container">
-        <div class="col-group">
-
-            <div class="col-8" id="main">
-                <div class="res-cons">
-                    <article class="post">
-                        <header>
-                            <h1 class="post-title">k8s集群安装helm</h1>
-                        </header>
-                        <date class="post-meta meta-date">
-                            2019年4月1日
-                        </date>
-                        
-                        <div class="post-meta">
-                            <span>|</span>
-                            
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a></span>
-                            
-                        </div>
-                        
-                        
-                        <div class="post-meta">
-                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
-                        </div>
-                        
-                        
-                        <div class="post-content">
-                            
-
-<h3 id="helm介绍">helm介绍</h3>
-
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h3 id="helm介绍">helm介绍</h3>
 <p>helm的作用： Kubernetes一个包管理引擎</p>
-
 <p>tiller的作用：功能和软件仓库一样，类似于/etc/yum.repos.d目录下的xxx.repo。</p>
-
 <p>安装helm的目的是为了后面安装kube-batch</p>
-
 <h3 id="环境说明">环境说明</h3>
-
 <p>环境：4台ubuntu16.04
 1个master
 3个node</p>
-
 <p>k8s版本：V1.13.2</p>
-
 <p>helm版本：v2.13.0</p>
-
 <h3 id="安装过程">安装过程</h3>
-
 <h4 id="官网下载二进制文件">官网下载二进制文件</h4>
-
 <p>官网地址： <a href="https://github.com/helm/helm/releases">https://github.com/helm/helm/releases</a></p>
-
 <p>我下载的是helm-v2.13.0-linux-amd64.tar.gz</p>
-
-<h4 id="解压helm-然后移动helm文件到-usr-local-bin目录下">解压helm,然后移动helm文件到/usr/local/bin目录下</h4>
-
-<pre><code class="language-bash">mv linux-amd64/helm /usr/local/bin/  
-</code></pre>
-
-<h4 id="添加执行权限">添加执行权限</h4>
-
-<pre><code class="language-bash">chmod +x /usr/local/bin/helm
-</code></pre>
-
-<h4 id="验证版本">验证版本</h4>
-
-<pre><code class="language-undefined">helm version
-</code></pre>
-
-<h2 id="安装helm的服务端tiller">安装Helm的服务端tiller</h2>
-
+<h4 id="解压helm然后移动helm文件到usrlocalbin目录下">解压helm,然后移动helm文件到/usr/local/bin目录下</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">mv linux-amd64/helm /usr/local/bin/  
+</code></pre></div><h4 id="添加执行权限">添加执行权限</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">chmod +x /usr/local/bin/helm
+</code></pre></div><h4 id="验证版本">验证版本</h4>
+<pre><code class="language-undefined" data-lang="undefined">helm version
+</code></pre><h2 id="安装helm的服务端tiller">安装Helm的服务端tiller</h2>
 <h4 id="给tiller创建权限">给tiller创建权限</h4>
-
-<pre><code class="language-cpp">kubectl create serviceaccount --namespace kube-system tiller  
-kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller  
-</code></pre>
-
-<h4 id="安装tiller">安装tiller</h4>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">kubectl create serviceaccount <span style="color:#f92672">--</span><span style="color:#66d9ef">namespace</span> kube<span style="color:#f92672">-</span>system tiller  
+kubectl create clusterrolebinding tiller<span style="color:#f92672">-</span>cluster<span style="color:#f92672">-</span>rule <span style="color:#f92672">--</span>clusterrole<span style="color:#f92672">=</span>cluster<span style="color:#f92672">-</span>admin <span style="color:#f92672">--</span>serviceaccount<span style="color:#f92672">=</span>kube<span style="color:#f92672">-</span>system:tiller  
+</code></pre></div><h4 id="安装tiller">安装tiller</h4>
 <p>helm init -i  jessestuart/tiller:v2.13.0</p>
-
 <h4 id="为应用程序设置serviceaccount">为应用程序设置serviceaccount:</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">kubectl patch deploy <span style="color:#f92672">--</span>namespace kube<span style="color:#f92672">-</span>system tiller<span style="color:#f92672">-</span>deploy <span style="color:#f92672">-</span>p <span style="color:#960050;background-color:#1e0010">&#39;</span>{<span style="color:#e6db74">&#34;spec&#34;</span>:{<span style="color:#e6db74">&#34;template&#34;</span>:{<span style="color:#e6db74">&#34;spec&#34;</span>:{<span style="color:#e6db74">&#34;serviceAccount&#34;</span>:<span style="color:#e6db74">&#34;tiller&#34;</span>}}}}<span style="color:#960050;background-color:#1e0010">&#39;</span> 
+</code></pre></div><h4 id="验证是否安装成功">验证是否安装成功</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">helm repo list
+</code></pre></div>
+        </div>
 
-<pre><code class="language-rust">kubectl patch deploy --namespace kube-system tiller-deploy -p '{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;serviceAccount&quot;:&quot;tiller&quot;}}}}' 
-</code></pre>
-
-<h4 id="验证是否安装成功">验证是否安装成功</h4>
-
-<pre><code class="language-rust">helm repo list
-</code></pre>
-
-                        </div>
-
-                        
+        
 
 
-                        
+        
 
 <div class="post-archive">
     <h2>See Also</h2>
@@ -186,21 +153,21 @@ kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admi
 </div>
 
 
-                        <div class="post-meta meta-tags">
-                            
-                            <ul class="clearfix">
-                                
-                                <li><a href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a></li>
-                                
-                                <li><a href="https://zoux86.github.io/tags/ubuntu">ubuntu</a></li>
-                                
-                                <li><a href="https://zoux86.github.io/tags/k8s">k8s</a></li>
-                                
-                            </ul>
-                            
-                        </div>
-                    </article>
-                    
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a></li>
+                
+                <li><a href='/tags/ubuntu'>ubuntu</a></li>
+                
+                <li><a href='/tags/k8s'>k8s</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
     
 
     
@@ -215,11 +182,54 @@ kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admi
       </script>
     </div>
     
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
                 </div>
-            </div>
-            <div id="secondary">
+
+                <div id="secondary">
     <section class="widget">
-        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
@@ -277,7 +287,7 @@ kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admi
     
 
     <section class="widget">
-        <h3 class="widget-title">分类</h3>
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
 <ul class="widget-list">
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
@@ -320,7 +330,7 @@ kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admi
     </section>
 
     <section class="widget">
-        <h3 class="widget-title">标签</h3>
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
 <div class="tagcloud">
     
     <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
@@ -412,46 +422,9 @@ kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admi
         </ul>
     </section>
 </div>
+            </div>
         </div>
     </div>
-</div>
-<footer id="footer">
-    <div class="container">
-        &copy; 2020 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
-        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
-        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
-        
-    </div>
-</footer>
-
-
-    
-    <script type="text/javascript">
-        
-        (function () {
-            $("pre code").parent().addClass("line-numbers")
-        }());
-
-        window.MathJax = {
-            tex2jax: {
-                inlineMath: [['$', '$']],
-                processEscapes: true
-                }
-            };
-    </script>
-    <script type="text/javascript" src="/js/prism.js" async="true"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
-
-
-<a id="rocket" href="#top"></a>
-<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
-
-
-
-    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
-
-
-
-
 </body>
+
 </html>

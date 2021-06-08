@@ -3,42 +3,43 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.59.1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
 
     <title>C&#43;&#43;类和对象 | zoux的博客</title>
     <meta property="og:title" content="C&#43;&#43;类和对象 - zoux的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2019-12-06T13:31:20&#43;08:00">
+    <meta property="article:published_time" content='2019-12-06T13:31:20&#43;08:00'>
         
         
-    <meta property="article:modified_time" content="2019-12-06T13:31:20&#43;08:00">
+    <meta property="article:modified_time" content='2019-12-06T13:31:20&#43;08:00'>
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
     <meta name="description" content="C&#43;&#43;类和对象">
         
     <meta name="author" content="zoux">
     <meta property="og:url" content="https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1/">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
-    <link rel="stylesheet" href="/css/normalize.css">
-    
-        <link rel="stylesheet" href="/css/prism.css">
-    
-    <link rel="stylesheet" href="/css/style.css">
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     
-
-
+    
+    
+    
     
     
 </head>
 
+
 <body>
-<header id="header" class="clearfix">
+    <header id="header" class="clearfix">
     <div class="container">
         <div class="col-group">
             <div class="site-name ">
@@ -65,151 +66,98 @@
     </div>
 </header>
 
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
 
-<div id="body">
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">C&#43;&#43;类和对象</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年12月6日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/c&#43;&#43;'>C&#43;&#43;</a></span>
+            
+        </div>
         
         
-    <div class="container">
-        <div class="col-group">
-
-            <div class="col-8" id="main">
-                <div class="res-cons">
-                    <article class="post">
-                        <header>
-                            <h1 class="post-title">C&#43;&#43;类和对象</h1>
-                        </header>
-                        <date class="post-meta meta-date">
-                            2019年12月6日
-                        </date>
-                        
-                        <div class="post-meta">
-                            <span>|</span>
-                            
-                                <span class="meta-category"><a href="https://zoux86.github.io/categories/c&#43;&#43;">C&#43;&#43;</a></span>
-                            
-                        </div>
-                        
-                        
-                        <div class="post-meta">
-                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
-                        </div>
-                        
-                        
-                        <div class="post-content">
-                            
-
-<p>C++中的类，对象，虚函数都是面试过程中经常会考的问题。</p>
-
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <p>C++中的类，对象，虚函数都是面试过程中经常会考的问题。</p>
 <p>在这里记录一下面试过程中类这一块经常遇到的题目</p>
-
-<h4 id="1-虚函数的作用">1.虚函数的作用</h4>
-
+<h4 id="1虚函数的作用">1.虚函数的作用</h4>
 <p>虚函数的作用主要是实现了多态的机制。 这样就可以把不同的子类对象都当作父类来看，可以屏蔽不同子类对象之间的差异，写出通用的代码，做出通用的编程，以适应需求的不断变化。</p>
-
-<p><br></p>
-
-<h4 id="2-虚函数和重载有什么区别">2.虚函数和重载有什么区别</h4>
-
+<!-- raw HTML omitted -->
+<h4 id="2虚函数和重载有什么区别">2.虚函数和重载有什么区别</h4>
 <p>虚函数必须是在类里面实现。</p>
-
 <p>函数重载调用根据参数个数、参数类型等进行区分，而虚函数则是根据动态联编来确定调用什么</p>
-
 <p>函数重载可以在类里面，也可以在类外面。（重载和类没什么关系）</p>
-
 <p>函数重载注意：</p>
-
 <p>两个名字相同的函数要实现重载，至少要在参数个数或者参数类型上有所不同。例如：</p>
-
 <p>Int f(int a,int b);  float f(int a,int b) 就不能重载；</p>
-
-<p><br></p>
-
-<h4 id="3-c-是如何实现接口的">3.C++是如何实现接口的</h4>
-
+<!-- raw HTML omitted -->
+<h4 id="3c是如何实现接口的">3.C++是如何实现接口的</h4>
 <p>纯虚函数</p>
-
-<p><br></p>
-
-<h4 id="4-为什么c-默认的析构函数不是虚函数-什么时候析构函数必须是虚函数">4.为什么C++默认的析构函数不是虚函数, 什么时候析构函数必须是虚函数？</h4>
-
+<!-- raw HTML omitted -->
+<h4 id="4为什么c默认的析构函数不是虚函数-什么时候析构函数必须是虚函数">4.为什么C++默认的析构函数不是虚函数, 什么时候析构函数必须是虚函数？</h4>
 <p>C++默认的析构函数不是虚函数是因为虚函数需要额外的虚函数表和虚表指针，占用额外的内存。而对于不会被继承的类来说，其析构函数如果是虚函数，就会浪费内存。因此C++默认的析构函数不是虚函数。</p>
-
 <p>而是只有当需要当作父类时，设置为虚函数。这样可以保证当我们new一个子类，然后使用基类指针指向该子类对象，释放基类指针时可以释放掉子类的空间，防止内存泄漏。</p>
-
-<p><br></p>
-
-<h4 id="6-构造函数可以是虚函数吗">6.构造函数可以是虚函数吗</h4>
-
+<!-- raw HTML omitted -->
+<h4 id="6构造函数可以是虚函数吗">6.构造函数可以是虚函数吗</h4>
 <p>不可以， 构造函数是知道全部信息才能创建对象，然而虚函数允许只知道部分信息。</p>
-
-<p><br></p>
-
-<h4 id="6-深拷贝and浅拷贝">6.深拷贝and浅拷贝</h4>
-
+<!-- raw HTML omitted -->
+<h4 id="6深拷贝and浅拷贝">6.深拷贝and浅拷贝</h4>
 <p>深复制和浅复制最根本的区别在于是否是真正获取了一个对象的复制实体，而不是引用。</p>
-
 <p>浅拷贝：夫妻共同账号。不同的名字，同一个账号</p>
-
 <p>深拷贝：父子账号。        父亲给儿子开了账号，各用各的。</p>
-
-<p><br></p>
-
-<h4 id="7-c-中拷贝赋值函数的形参能否进行值传递">7.C++中拷贝赋值函数的形参能否进行值传递？</h4>
-
+<!-- raw HTML omitted -->
+<h4 id="7c中拷贝赋值函数的形参能否进行值传递">7.C++中拷贝赋值函数的形参能否进行值传递？</h4>
 <p>不能。如果是这种情况下，调用拷贝构造函数的时候，首先要将实参传递给形参，这个传递的时候又要调用拷贝构造函数。。如此循环，无法完成拷贝，栈也会满。</p>
-
-<p><br></p>
-
-<h4 id="8-区别拷贝和赋值操作">8.区别拷贝和赋值操作</h4>
-
+<!-- raw HTML omitted -->
+<h4 id="8区别拷贝和赋值操作">8.区别拷贝和赋值操作</h4>
 <p>没重载 = 之前</p>
-
 <p>A a ;</p>
-
 <p>A b;</p>
-
 <p>a = b;  （这个是赋值操作）</p>
-
-<p><br></p>
-
+<!-- raw HTML omitted -->
 <p>A a;</p>
-
 <p>A b = a;   (这个是拷贝)   注意：这里B还没定义。</p>
-
 <p>浅拷贝和赋值的区别，就是b是否已经定义</p>
-
 <p>重载 = 之后</p>
-
 <p>A a ;</p>
-
 <p>A b;</p>
-
 <p>a = b;   （这个是赋值操作）</p>
-
-<p><br></p>
-
+<!-- raw HTML omitted -->
 <p>A a;</p>
-
 <p>A b = a;    这里是深拷贝操作。  (=用的是自己重载的)</p>
-
 <p>PS：C++中类默认的都是浅拷贝，所以很多时候要根据自己的需要重载 =。例如，下面这种情况就需要重载：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">A</span>{
+	<span style="color:#66d9ef">int</span> a;
+	<span style="color:#66d9ef">char</span> b[<span style="color:#ae81ff">5</span>];  <span style="color:#75715e">//出现这种数组，指针，要自己重载= 
+</span><span style="color:#75715e"></span>}
+</code></pre></div><!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
 
-<pre><code class="language-c++">class A{
-	int a;
-	char b[5];  //出现这种数组，指针，要自己重载= 
-}
-</code></pre>
+        </div>
 
-<p><br></p>
-
-<p><br></p>
-
-                        </div>
-
-                        
+        
 
 
-                        
+        
 
 <div class="post-archive">
     <h2>See Also</h2>
@@ -229,17 +177,17 @@
 </div>
 
 
-                        <div class="post-meta meta-tags">
-                            
-                            <ul class="clearfix">
-                                
-                                <li><a href="https://zoux86.github.io/tags/c&#43;&#43;">C&#43;&#43;</a></li>
-                                
-                            </ul>
-                            
-                        </div>
-                    </article>
-                    
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/c&#43;&#43;'>C&#43;&#43;</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
     
 
     
@@ -254,11 +202,54 @@
       </script>
     </div>
     
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
                 </div>
-            </div>
-            <div id="secondary">
+
+                <div id="secondary">
     <section class="widget">
-        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
@@ -316,7 +307,7 @@
     
 
     <section class="widget">
-        <h3 class="widget-title">分类</h3>
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
 <ul class="widget-list">
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
@@ -359,7 +350,7 @@
     </section>
 
     <section class="widget">
-        <h3 class="widget-title">标签</h3>
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
 <div class="tagcloud">
     
     <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
@@ -451,46 +442,9 @@
         </ul>
     </section>
 </div>
+            </div>
         </div>
     </div>
-</div>
-<footer id="footer">
-    <div class="container">
-        &copy; 2020 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
-        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
-        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
-        
-    </div>
-</footer>
-
-
-    
-    <script type="text/javascript">
-        
-        (function () {
-            $("pre code").parent().addClass("line-numbers")
-        }());
-
-        window.MathJax = {
-            tex2jax: {
-                inlineMath: [['$', '$']],
-                processEscapes: true
-                }
-            };
-    </script>
-    <script type="text/javascript" src="/js/prism.js" async="true"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
-
-
-<a id="rocket" href="#top"></a>
-<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
-
-
-
-    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
-
-
-
-
 </body>
+
 </html>

@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>Posts | zoux的博客</title>
+    <meta property="og:title" content="Posts - zoux的博客">
+    <meta property="og:type" content="article">
+        
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
+    <meta name="description" content="Posts">
+        
+    <meta name="author" content="zoux">
+    <meta property="og:url" content="https://zoux86.github.io/post/">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <link rel="alternate" type="application/rss+xml" href="https://zoux86.github.io/post/index.xml" title="zoux的博客" />
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+    
+    
+    
+</head>
+
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zoux86.github.io/">
+                        zoux的博客
+                    </a>
+                
+                <p class="description">对Go语言(golang)、k8s、kubeflow，容器云，云原生感兴趣</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zoux86.github.io/">首页</a>
+                    
+                    <a  href="https://zoux86.github.io/tools/" title="工具">工具</a>
+                    
+                    <a  href="https://zoux86.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://zoux86.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E6%9C%AC%E5%9C%B0%E8%BF%90%E8%A1%8C%E5%AE%98%E6%96%B9ml-%E5%AE%9E%E4%BE%8B/" title="kubeflow pipelines--本地运行官方ML-实例">kubeflow pipelines--本地运行官方ML-实例</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年1月23日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/kubeflow'>kubeflow</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            在上面的文章中，我成功运行了pipelines的简单实例。这个简单的例子没有文件的操作，但是这肯定不符合我们的要求，所以接下来介绍如何运行官网的ML 例子。 这次试用的例子是：KubeFlow pipeline using TFX OSS components 准备工作 由于这个例子使用的镜像，文件都是某歌的，所以我们要想办法把他弄到自己服务器……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E6%9C%AC%E5%9C%B0%E8%BF%90%E8%A1%8C%E5%AE%98%E6%96%B9ml-%E5%AE%9E%E4%BE%8B/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/" title="kubeflow pipelines--国内环境安装">kubeflow pipelines--国内环境安装</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年1月23日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/kubeflow'>kubeflow</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            在前面的教程中，我们已经搭建好了本地的kubeflow集群，接下来因为个人需要，本人需要再在此基础上搭建好kubeflow pipelines. 首先需要了解pipelines是什么，能做什么，具体可以参考官网描述： https://www.kubeflow.org/docs/pipelines/pipelines-overview/ 从V0.1.3开始，Kubeflow Pipelines成为Kubeflow核心组件之……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E4%BD%BF%E7%94%A8ui%E7%95%8C%E9%9D%A2/" title="kubeflow pipelines--使用UI界面">kubeflow pipelines--使用UI界面</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年1月23日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/kubeflow'>kubeflow</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            前面的文章已经安装好了pipelines，接下来是体验如何使用pipelines了。 这是官网的图，进入Pipelines的图形界面就会出现这个。 但是官网给出的都是怎样在gcp上使用图形界面。所以怎么在自己本地集群使用Pipelines图形界面还得靠自己摸索。 既然我们都装好pipe……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E4%BD%BF%E7%94%A8ui%E7%95%8C%E9%9D%A2/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-%E4%BD%BF%E7%94%A8%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/" title="kubeflow使用图像界面">kubeflow使用图像界面</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年1月9日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/kubeflow'>kubeflow</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            按照前几篇文章搭建好Kubeflow集群后，所有的pod都能运行了。但是在自己本地浏览器访问界面时却发现网页一直打不开。访问不了jupyter。这样因为默认的这些服务都是使用cluster ip。只能集群内部访问，外网访问不了。 解决方法： 查看当前的服务 kubectl -n kubeflow get svc 如图所示，这里注意，……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-%E4%BD%BF%E7%94%A8%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/" title="kubeflow国内环境安装">kubeflow国内环境安装</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年1月7日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            最近一直在想在自己集群上搭建Kubeflow环境，兜兜转转最终终于装好了。这个过程中遇到了很多坑，而在整个过程中发现网上关于如何在国内环境下安装kubeflow的教程非常少。故在此记录我的搭建过程，希望能对想搭建kubeflow环境的小伙伴们一些帮助。这里特意感谢实验室董师兄的指……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F/" title="kubeflow准备--拉取镜像">kubeflow准备--拉取镜像</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年1月7日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            目的 某些情况下，我们可能需要让服务器能够下载到gcr.io，比如安装k8s/kubeflow的时候。这里设置ubuntu服务器环境下能让docker pull gcr.io镜像。 说在前面的话 如果服务器直接能直接下载，这个安装教程不适合你。 如果有shadowsocks服务器，可以参考这个教程……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87%E5%B7%A5%E5%85%B7-ksonnet-%E5%AE%89%E8%A3%85/" title="kubeflow准备--下载ks">kubeflow准备--下载ks</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年1月7日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            最近需要了解Kubeflow方面的知识，故需要自己配置kubeflow。安装Kubeflow需要按照以下的依赖: ksonnet version [0.11.0] (https://ksonnet.io/#get-started) or later. Kubernetes 1.8 or later kubectl 由于，k8s,kubectl的安装网上已经有很多教程了，而本人安装ksonnet时绕了一些弯，所以在此记录一些本人的安装过程。 安装环境介绍： 本人的……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87%E5%B7%A5%E5%85%B7-ksonnet-%E5%AE%89%E8%A3%85/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-nfs%E5%81%9A%E5%90%8E%E7%AB%AF%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/" title="kubeflow准备--NFS环境搭建">kubeflow准备--NFS环境搭建</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年1月7日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            目的 在搭建kubeflow的时候，要需要搭建存储卷。为了以后能更好的共享文件，我这里使用了NFS作为文件存储系统。 操作如下： 针对master节点： master节点上安装NFS服务 sudo apt-get update &amp;&amp; sudo apt-get install -y nfs-server 建立一个共享的文件夹 sudo mkdir /nfs-data/kubeflow-pv1 修改/etc/exports文件 (末尾添加) /nfs-data/kubeflow-pv1 *(rw,sync,no_root_squash,no_subtree_check) 这一行的意……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-nfs%E5%81%9A%E5%90%8E%E7%AB%AF%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/" title="kubeflow准备--搭建私有仓库">kubeflow准备--搭建私有仓库</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年1月6日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            在很多情况下，我们需要使用自己的docker仓库。接下来是在本地k8s集群上搭建本地仓库的过程。 假设我们将本地仓库搭建在k8s主节点上。 这里假设主节点是：192.168.14.84 运行registry镜像 docker run -d -p 5000:5000 --restart always --name registry registry:2 直接运行该命令即可，本地没有registry:2，会自动……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/hadoop-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-configuration.java/" title="Hadoop 源码分析-Configuration.java">Hadoop 源码分析-Configuration.java</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2018年11月12日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/hadoop'>Hadoop</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            万事开头难，今天开始Hadoop源码分析的第一天。首先从简单的入手，分析Configuration.java 【没有特别声明，源码都是Hadoop 0.20版本】 类结构 主要类成员介绍： 类方法介绍： 上面是我按照主要的功能将函数分了类，这样方便理解。 Configuration类分析 研究一……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/hadoop-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-configuration.java/">阅读全文</a></p>
+    </article>
+    
+    
+    
+
+
+
+<ol class="page-navigator">
+    
+    <li class="prev">
+        <a href="https://zoux86.github.io/post/page/5/">上一页</a>
+    </li>
+    
+
+    
+    <li >
+        <a href="https://zoux86.github.io/post/">1</a>
+    </li>
+    
+    <li >
+        <a href="https://zoux86.github.io/post/page/2/">2</a>
+    </li>
+    
+    <li >
+        <a href="https://zoux86.github.io/post/page/3/">3</a>
+    </li>
+    
+    <li >
+        <a href="https://zoux86.github.io/post/page/4/">4</a>
+    </li>
+    
+    <li >
+        <a href="https://zoux86.github.io/post/page/5/">5</a>
+    </li>
+    
+    <li  class="current">
+        <a href="https://zoux86.github.io/post/page/6/">6</a>
+    </li>
+    
+    <li >
+        <a href="https://zoux86.github.io/post/page/7/">7</a>
+    </li>
+    
+    <li >
+        <a href="https://zoux86.github.io/post/page/8/">8</a>
+    </li>
+    
+    <li >
+        <a href="https://zoux86.github.io/post/page/9/">9</a>
+    </li>
+    
+
+    
+    <li class="next">
+        <a href="https://zoux86.github.io/post/page/7/">下一页</a>
+    </li>
+    
+</ol>
+
+
+
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zoux86.github.io/post/%E5%AE%9E%E4%B9%A0%E6%80%BB%E7%BB%93/" title="实习总结">实习总结</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/" title="k8s的基本组件">k8s的基本组件</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-10-go%E7%9A%84%E5%90%84%E7%A7%8D%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" title="go的各种类型转换">go的各种类型转换</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-07-c&#43;&#43;-stl/" title="C&#43;&#43; STL">C&#43;&#43; STL</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-07-b%E6%A0%91b&#43;%E5%92%8Cb-/" title="B树,B&#43;和B-">B树,B&#43;和B-</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1/" title="C&#43;&#43;类和对象">C&#43;&#43;类和对象</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E6%8C%87%E9%92%88%E4%BD%A0%E8%A6%81%E4%BA%86%E8%A7%A3%E7%9A%84%E4%BA%8B/" title="C&#43;&#43;指针你要了解的事">C&#43;&#43;指针你要了解的事</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-05-%E5%87%A0%E9%81%93%E9%9D%9E%E5%B8%B8%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84c&#43;&#43;%E9%A2%98%E7%9B%AE/" title="几道非常有意思的C&#43;&#43;题目">几道非常有意思的C&#43;&#43;题目</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-04-c&#43;&#43;%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83/" title="C&#43;&#43;类对象的内存分布">C&#43;&#43;类对象的内存分布</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-02-volcano-scheduler%E4%BB%A3%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE/" title="volcano的代码流程图">volcano的代码流程图</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/c&#43;&#43;/">C&#43;&#43; (7)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/docker/">docker (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/go/">go (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/java/">Java (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (4)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kubeflow/">kubeflow (6)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/ubuntu/">ubuntu (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/uml/">UML (8)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/vmware/">VMware (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/volcano/">volcano (4)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/window%E5%B7%A5%E5%85%B7/">window工具 (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E4%B8%AA%E4%BA%BA%E6%84%9F%E6%82%9F/">个人感悟 (3)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建 (10)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题 (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记 (1)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
+    
+    <a href="https://zoux86.github.io/tags/clean-code/">clean code</a>
+    
+    <a href="https://zoux86.github.io/tags/docker/">docker</a>
+    
+    <a href="https://zoux86.github.io/tags/go/">go</a>
+    
+    <a href="https://zoux86.github.io/tags/golang/">golang</a>
+    
+    <a href="https://zoux86.github.io/tags/hadoop/">Hadoop</a>
+    
+    <a href="https://zoux86.github.io/tags/java/">Java</a>
+    
+    <a href="https://zoux86.github.io/tags/jupyter/">jupyter</a>
+    
+    <a href="https://zoux86.github.io/tags/k8s/">k8s</a>
+    
+    <a href="https://zoux86.github.io/tags/ks/">ks</a>
+    
+    <a href="https://zoux86.github.io/tags/kube-batch/">kube-batch</a>
+    
+    <a href="https://zoux86.github.io/tags/kubeflow/">kubeflow</a>
+    
+    <a href="https://zoux86.github.io/tags/nfs/">NFS</a>
+    
+    <a href="https://zoux86.github.io/tags/pipelines/">pipelines</a>
+    
+    <a href="https://zoux86.github.io/tags/tf-operator/">tf-operator</a>
+    
+    <a href="https://zoux86.github.io/tags/tfjob/">tfjob</a>
+    
+    <a href="https://zoux86.github.io/tags/ubuntu/">ubuntu</a>
+    
+    <a href="https://zoux86.github.io/tags/uml/">UML</a>
+    
+    <a href="https://zoux86.github.io/tags/vmware/">VMware</a>
+    
+    <a href="https://zoux86.github.io/tags/volcano/">volcano</a>
+    
+    <a href="https://zoux86.github.io/tags/window%E5%B7%A5%E5%85%B7/">window工具</a>
+    
+    <a href="https://zoux86.github.io/tags/%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93/">代码整洁之道</a>
+    
+    <a href="https://zoux86.github.io/tags/%E5%8D%9A%E5%AE%A2/">博客</a>
+    
+    <a href="https://zoux86.github.io/tags/%E5%AE%9E%E4%B9%A0/">实习</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%84%9F%E6%82%9F/">感悟</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%A0%A1%E6%8B%9B/">校招</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%BA%90%E7%A0%81/">源码</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/">私有仓库</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%AC%94%E8%AE%B0/">笔记</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题</a>
+    
+    <a href="https://zoux86.github.io/tags/%E8%B0%83%E5%BA%A6/">调度</a>
+    
+    <a href="https://zoux86.github.io/tags/%E9%95%9C%E5%83%8F/">镜像</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://www.jianshu.com/u/305d8226ced4" title="个人简书主页">个人简书主页</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zoux86.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

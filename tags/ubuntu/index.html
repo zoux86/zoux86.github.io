@@ -3,9 +3,11 @@
 <head>
 
     <meta charset="utf-8">
-    <meta name="generator" content="Hugo 0.59.1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
 
     <title>ubuntu | zoux的博客</title>
     <meta property="og:title" content="ubuntu - zoux的博客">
@@ -17,24 +19,24 @@
         
     <meta name="author" content="zoux">
     <meta property="og:url" content="https://zoux86.github.io/tags/ubuntu/">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
-    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <link rel="alternate" type="application/rss+xml" href="https://zoux86.github.io/tags/ubuntu/index.xml" title="zoux的博客" />
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
     
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="alternate" type="application/rss+xml+xml" href="https://zoux86.github.io/tags/ubuntu/index.xml" title="zoux的博客" />
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
     
-
-
+    
+    
     
     
 </head>
 
 
 <body>
-<header id="header" class="clearfix">
+    <header id="header" class="clearfix">
     <div class="container">
         <div class="col-group">
             <div class="site-name ">
@@ -61,150 +63,182 @@
     </div>
 </header>
 
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
 
-<div id="body">
-    <div class="container">
-        <div class="col-group">
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <h3 class="archive-title">
+        包含标签
+        <span class="keyword">ubuntu</span>
+        的文章
+    </h3>
+    
 
-            <div class="col-8" id="main">
-                <div class="res-cons">
-                    
-                    <h3 class="archive-title">
-                        包含标签
-                        <span class="keyword">ubuntu</span>
-                        的文章
-                    </h3>
-                    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-k8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85helm/">k8s集群安装helm</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年4月1日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a>
+            
+        </div>
+        
+        <div class="post-content">
+            helm介绍 helm的作用： Kubernetes一个包管理引擎 tiller的作用：功能和软件仓库一样，类似于/etc/yum.repos.d目录下的xxx.repo。 安装helm的目的是为了后面安装kube-batch 环境说明 环境：4台ubuntu16.04 1个master 3个n……
+            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-k8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85helm/">阅读全文</a></p>
+        </div>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-ubuntu%E5%AE%89%E8%A3%85go/">ubuntua安装go语言环境</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年4月1日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a>
+            
+        </div>
+        
+        <div class="post-content">
+            地址：https://studygolang.com/dl 注意下载Linux-amd64(64位)版本的 ，例如我下载的就是 go1.13.4.linux-amd64.tar.gz 安装 go语言有两个很重要的环境变量 gopath和goroot。 GOROOT：go的安装路径。一般是-C /usr/local/ GOPATH: GOPATH是作为编译后二进制的存放目的地和imp……
+            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-ubuntu%E5%AE%89%E8%A3%85go/">阅读全文</a></p>
+        </div>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-%E6%90%AD%E5%BB%BAk8s%E9%9B%86%E7%BE%A4/">ubuntu搭建k8s机器</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年3月5日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a>
+            
+        </div>
+        
+        <div class="post-content">
+            本次在搭建k8s集群的过程中，遇到了很多问题，幸好最后终于成功。故将整个过程记录下来，希望对大家有所帮助。 环境说明 环境：4台ubuntu16.04 1个master 3个node k8s版本：V1.13.2 搭建说明 本教程采用kubeadm的方式安装，主要针对的是国内用户，因为安装k8s……
+            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-%E6%90%AD%E5%BB%BAk8s%E9%9B%86%E7%BE%A4/">阅读全文</a></p>
+        </div>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-ubuntu%E6%9C%BA%E5%99%A8%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">ubuntu机器之间免密登录</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2018年11月5日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a>
+            
+        </div>
+        
+        <div class="post-content">
+            在自己动手搭建k8s集群环境之前，经常遇到的一个问题就是，集群机器之间能互相免密登录。故在此记录整个搭建过程。 假设有俩台机器： 192.168.115.70 zx-1 master 192.168.115.66 zx-2 现在要修改成密码登录，并且这俩台机器免密登录。步骤如下： 修改 etc/hosts zx-1机器上 127.0.0.1 localhost zx-1 192.168.14.70 zx-1 192.168.14.66 zx-2 zx-2机器上 127.0.0.1 localhost zx-2 192.168.14.70 zx-1 192.168.14.66 zx-2 修改登录密码 修改root密……
+            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-ubuntu%E6%9C%BA%E5%99%A8%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">阅读全文</a></p>
+        </div>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/ubuntu%E4%BF%A9%E5%8F%B0%E6%9C%BA%E5%99%A8%E4%B9%8B%E9%97%B4%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">ubuntu俩台机器之间免密登录</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2018年7月17日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/ubuntu'>ubuntu</a>
+            
+        </div>
+        
+        <div class="post-content">
+            1.首先使用 ipconfig 命令查看俩台电脑的ip地址 图中的192.168.111.136 就是这个机器的ip地址。 2.安装ssh 使用 ps -e | grep ssh 命令查看是否安装了ssh。没有的话，使用 sudo apt-get install openssh-server命令安装即可。 3.生成A机器的公钥 输入ssh-keygen，然后一路回车下去。……
+            <p class="readmore"><a href="https://zoux86.github.io/post/ubuntu%E4%BF%A9%E5%8F%B0%E6%9C%BA%E5%99%A8%E4%B9%8B%E9%97%B4%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">阅读全文</a></p>
+        </div>
+    </article>
+    
 
-                    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/2019-11-24-k8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85helm/">k8s集群安装helm</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2019年4月1日
-                            </date>
-                            
-                            <div class="post-meta meta-category">
-                                |
-                                
-                                    <a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                helm介绍 helm的作用： Kubernetes一个包管理引擎 tiller的作用：功能和软件仓库一样，类似于/etc/yum.repos.d目录下的xxx.repo。 安装helm的目的是为了后面安装kube-batch 环境说明 环境：4台ubuntu16.04 1个master 3个n……
-                                <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-k8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85helm/">阅读全文</a></p>
-                            </div>
-                        </article>
-                    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/2019-11-24-ubuntu%E5%AE%89%E8%A3%85go/">ubuntua安装go语言环境</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2019年4月1日
-                            </date>
-                            
-                            <div class="post-meta meta-category">
-                                |
-                                
-                                    <a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                地址：https://studygolang.com/dl 注意下载Linux-amd64(64位)版本的 ，例如我下载的就是 go1.13.4.linux-amd64.tar.gz 安装 go语言有两个很重要的环境变量 gopath和goroot。 GOROOT：go的安装路径。一般是-C /usr/local/ GOPATH: GOPATH是作为编译后二进制的存放目的地和imp……
-                                <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-ubuntu%E5%AE%89%E8%A3%85go/">阅读全文</a></p>
-                            </div>
-                        </article>
-                    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/2019-11-24-%E6%90%AD%E5%BB%BAk8s%E9%9B%86%E7%BE%A4/">ubuntu搭建k8s机器</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2019年3月5日
-                            </date>
-                            
-                            <div class="post-meta meta-category">
-                                |
-                                
-                                    <a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                本次在搭建k8s集群的过程中，遇到了很多问题，幸好最后终于成功。故将整个过程记录下来，希望对大家有所帮助。 环境说明 环境：4台ubuntu16.04 1个master 3个node k8s版本：V1.13.2 搭建说明 本教程采用kubeadm的方式安装，主要针对的是国内用户，因为安装k8s……
-                                <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-%E6%90%AD%E5%BB%BAk8s%E9%9B%86%E7%BE%A4/">阅读全文</a></p>
-                            </div>
-                        </article>
-                    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/2019-11-24-ubuntu%E6%9C%BA%E5%99%A8%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">ubuntu机器之间免密登录</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2018年11月5日
-                            </date>
-                            
-                            <div class="post-meta meta-category">
-                                |
-                                
-                                    <a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA">环境搭建</a>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                在自己动手搭建k8s集群环境之前，经常遇到的一个问题就是，集群机器之间能互相免密登录。故在此记录整个搭建过程。 假设有俩台机器： 192.168.115.70 zx-1 master 192.168.115.66 zx-2 现在要修改成密码登录，并且这俩台机器免密登录。步骤如下： 修改 etc/hosts zx-1机器上 127.0.0.1 localhost zx-1 192.168.14.70 zx-1 192.168.14.66 zx-2 zx-2机器上 127.0.0.1 localhost zx-2 192.168.14.70 zx-1 192.168.14.66 zx-2 修改登录密码 修改root密……
-                                <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-ubuntu%E6%9C%BA%E5%99%A8%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">阅读全文</a></p>
-                            </div>
-                        </article>
-                    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="https://zoux86.github.io/post/ubuntu%E4%BF%A9%E5%8F%B0%E6%9C%BA%E5%99%A8%E4%B9%8B%E9%97%B4%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">ubuntu俩台机器之间免密登录</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2018年7月17日
-                            </date>
-                            
-                            <div class="post-meta meta-category">
-                                |
-                                
-                                    <a href="https://zoux86.github.io/categories/ubuntu">ubuntu</a>
-                                
-                            </div>
-                            
-                            <div class="post-content">
-                                1.首先使用 ipconfig 命令查看俩台电脑的ip地址 图中的192.168.111.136 就是这个机器的ip地址。 2.安装ssh 使用 ps -e | grep ssh 命令查看是否安装了ssh。没有的话，使用 sudo apt-get install openssh-server命令安装即可。 3.生成A机器的公钥 输入ssh-keygen，然后一路回车下去。……
-                                <p class="readmore"><a href="https://zoux86.github.io/post/ubuntu%E4%BF%A9%E5%8F%B0%E6%9C%BA%E5%99%A8%E4%B9%8B%E9%97%B4%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">阅读全文</a></p>
-                            </div>
-                        </article>
-                    
+    
 
-                    
 
+
+
+
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
 
 
 
 
                 </div>
-            </div>
 
-            <div id="secondary">
+                <div id="secondary">
     <section class="widget">
-        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
@@ -262,7 +296,7 @@
     
 
     <section class="widget">
-        <h3 class="widget-title">分类</h3>
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
 <ul class="widget-list">
     
     <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
@@ -305,7 +339,7 @@
     </section>
 
     <section class="widget">
-        <h3 class="widget-title">标签</h3>
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
 <div class="tagcloud">
     
     <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
@@ -397,30 +431,9 @@
         </ul>
     </section>
 </div>
+            </div>
         </div>
     </div>
-</div>
-<footer id="footer">
-    <div class="container">
-        &copy; 2020 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>.
-        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
-        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
-        
-    </div>
-</footer>
-
-
-
-<a id="rocket" href="#top"></a>
-<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
-
-
-
-    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
-
-
-
-
-
 </body>
+
 </html>
