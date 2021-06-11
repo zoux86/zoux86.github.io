@@ -73,7 +73,115 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#k8s版本-v1-13">k8s版本：v1.13</a></li>
+<li><a href="#k8s代码的结构">k8s代码的结构</a></li>
+<li><a href="#参考的学习资料">参考的学习资料</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">k8s源码学习--代码结构</h1>
@@ -97,49 +205,95 @@
         
         
         <div class="post-content">
-            <h4 id="k8s版本v113">k8s版本：v1.13</h4>
+            
+
+<h4 id="k8s版本-v1-13">k8s版本：v1.13</h4>
+
 <h4 id="k8s代码的结构">k8s代码的结构</h4>
+
 <p>api: 输出接口文档用，基本是json源码</p>
+
 <p>build：构建脚本</p>
+
 <p>cmd：所有的二进制可执行文件入口代码，也就是各种命令的接口代码。</p>
+
 <p>pkg：项目diamante主目录，cmd只是接口，这里是具体实现。cmd类似业务代码，pkg类似核心</p>
+
 <p>plugin：插件</p>
+
 <p>test：测试相关的工具</p>
+
 <p>third_party：第三方工具</p>
+
 <p>docs：文档</p>
+
 <p>example：使用例子</p>
+
 <p>Godeps：项目依赖的Go的第三方包，比如docker客户端sdk，rest等</p>
+
 <p>hack：工具箱，各种编译，构建，校验的脚本都在这。</p>
+
 <p>translations ：不同国家的语言包，使用poedit查看及编辑</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#f92672">/</span>cmd<span style="color:#f92672">/</span>kube<span style="color:#f92672">-</span>scheduler
-<span style="color:#960050;background-color:#1e0010">├──</span> app  
-<span style="color:#960050;background-color:#1e0010">│</span>   <span style="color:#960050;background-color:#1e0010">├──</span> BUILD
-<span style="color:#960050;background-color:#1e0010">│</span>   <span style="color:#960050;background-color:#1e0010">├──</span> server.go  <span style="color:#75715e">//schedule初始化以及运行启动函数
-</span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">├──</span> BUILD
-<span style="color:#960050;background-color:#1e0010">├──</span> OWNERS
-<span style="color:#960050;background-color:#1e0010">├──</span> scheduler.go   <span style="color:#75715e">//schedule main函数
-</span><span style="color:#75715e"></span><span style="color:#f92672">/</span>pkg
-<span style="color:#960050;background-color:#1e0010">├──</span> plugin<span style="color:#f92672">/</span>pkg<span style="color:#f92672">/</span>admission
-<span style="color:#960050;background-color:#1e0010">├──</span> plugin<span style="color:#f92672">/</span>pkg<span style="color:#f92672">/</span>auth  <span style="color:#75715e">//相关认证
-</span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">├──</span> plugin<span style="color:#f92672">/</span>pkg<span style="color:#f92672">/</span>scheduler  <span style="color:#75715e">//schedule主要逻辑，包含预选优选算法、测量等
-</span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">├──</span> plugin<span style="color:#f92672">/</span>pkg<span style="color:#f92672">/</span>scheduler<span style="color:#f92672">/</span>algorithm  <span style="color:#75715e">//schedule预选优选算法
-</span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">├──</span> ...
-<span style="color:#960050;background-color:#1e0010">├──</span> plugin<span style="color:#f92672">/</span>pkg<span style="color:#f92672">/</span>scheduler<span style="color:#f92672">/</span>schedulercache <span style="color:#75715e">//schedule缓存，便于业务逻辑
-</span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">├──</span> plugin<span style="color:#f92672">/</span>pkg<span style="color:#f92672">/</span>scheduler<span style="color:#f92672">/</span>metrics<span style="color:#75715e">// 测量相关
-</span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">├──</span> BUILD
-<span style="color:#960050;background-color:#1e0010">├──</span> testutil.go    
-<span style="color:#960050;background-color:#1e0010">├──</span> OWNERS
-<span style="color:#960050;background-color:#1e0010">├──</span> scheduler.go <span style="color:#75715e">// scheduler的代码逻辑入口，其中scheduleOne函数就在里面
-</span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">├──</span> scheduler_test.go
-</code></pre></div><p>根据功能主要分成以下三类：
-1、<code>文档类</code>（api、docs、logo）
-2、<code>工具类</code>（build、cluster、Godeps、hack、staging、translations）
-3、<code>代码类</code>（cmd、pkg、plugin、test、third_party）</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#000;font-weight:bold">/</span>cmd<span style="color:#000;font-weight:bold">/</span>kube<span style="color:#000;font-weight:bold">-</span>scheduler<span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">├──</span><span style="color:#bbb"> </span>app<span style="color:#bbb">  
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">│</span><span style="color:#bbb">   </span><span style="color:#a61717;background-color:#e3d2d2">├──</span><span style="color:#bbb"> </span>BUILD<span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">│</span><span style="color:#bbb">   </span><span style="color:#a61717;background-color:#e3d2d2">├──</span><span style="color:#bbb"> </span>server.go<span style="color:#bbb">  </span><span style="color:#998;font-style:italic">//schedule初始化以及运行启动函数
+</span><span style="color:#998;font-style:italic"></span><span style="color:#a61717;background-color:#e3d2d2">├──</span><span style="color:#bbb"> </span>BUILD<span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">├──</span><span style="color:#bbb"> </span>OWNERS<span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">├──</span><span style="color:#bbb"> </span>scheduler.go<span style="color:#bbb">   </span><span style="color:#998;font-style:italic">//schedule main函数
+</span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">/</span>pkg<span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">├──</span><span style="color:#bbb"> </span>plugin<span style="color:#000;font-weight:bold">/</span>pkg<span style="color:#000;font-weight:bold">/</span>admission<span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">├──</span><span style="color:#bbb"> </span>plugin<span style="color:#000;font-weight:bold">/</span>pkg<span style="color:#000;font-weight:bold">/</span>auth<span style="color:#bbb">  </span><span style="color:#998;font-style:italic">//相关认证
+</span><span style="color:#998;font-style:italic"></span><span style="color:#a61717;background-color:#e3d2d2">├──</span><span style="color:#bbb"> </span>plugin<span style="color:#000;font-weight:bold">/</span>pkg<span style="color:#000;font-weight:bold">/</span>scheduler<span style="color:#bbb">  </span><span style="color:#998;font-style:italic">//schedule主要逻辑，包含预选优选算法、测量等
+</span><span style="color:#998;font-style:italic"></span><span style="color:#a61717;background-color:#e3d2d2">├──</span><span style="color:#bbb"> </span>plugin<span style="color:#000;font-weight:bold">/</span>pkg<span style="color:#000;font-weight:bold">/</span>scheduler<span style="color:#000;font-weight:bold">/</span>algorithm<span style="color:#bbb">  </span><span style="color:#998;font-style:italic">//schedule预选优选算法
+</span><span style="color:#998;font-style:italic"></span><span style="color:#a61717;background-color:#e3d2d2">├──</span><span style="color:#bbb"> </span>...<span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">├──</span><span style="color:#bbb"> </span>plugin<span style="color:#000;font-weight:bold">/</span>pkg<span style="color:#000;font-weight:bold">/</span>scheduler<span style="color:#000;font-weight:bold">/</span>schedulercache<span style="color:#bbb"> </span><span style="color:#998;font-style:italic">//schedule缓存，便于业务逻辑
+</span><span style="color:#998;font-style:italic"></span><span style="color:#a61717;background-color:#e3d2d2">├──</span><span style="color:#bbb"> </span>plugin<span style="color:#000;font-weight:bold">/</span>pkg<span style="color:#000;font-weight:bold">/</span>scheduler<span style="color:#000;font-weight:bold">/</span>metrics<span style="color:#998;font-style:italic">// 测量相关
+</span><span style="color:#998;font-style:italic"></span><span style="color:#a61717;background-color:#e3d2d2">├──</span><span style="color:#bbb"> </span>BUILD<span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">├──</span><span style="color:#bbb"> </span>testutil.go<span style="color:#bbb">    
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">├──</span><span style="color:#bbb"> </span>OWNERS<span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">├──</span><span style="color:#bbb"> </span>scheduler.go<span style="color:#bbb"> </span><span style="color:#998;font-style:italic">// scheduler的代码逻辑入口，其中scheduleOne函数就在里面
+</span><span style="color:#998;font-style:italic"></span><span style="color:#a61717;background-color:#e3d2d2">├──</span><span style="color:#bbb"> </span>scheduler_test.go</code></pre></td></tr></table>
+</div>
+</div>
+<p>根据功能主要分成以下三类：
+ 1、<code>文档类</code>（api、docs、logo）
+ 2、<code>工具类</code>（build、cluster、Godeps、hack、staging、translations）
+ 3、<code>代码类</code>（cmd、pkg、plugin、test、third_party）</p>
+
 <p>工具类主要用到的build目录下的文件，自己动手编译的时候会用到；核心代码集中在cmd和pkg中。
 cmd内部包含各个组件的入口，具体核心的实现部分在pkg目录下，分别如图：</p>
+
 <p>plugin目录之前的版本包括scheduler部分的代码，在1.10之后，已经将scheduler部分代码移到和其他组件一致的pkg目录，所以目前plugin主要包含的是<code>认证</code>与<code>鉴权</code>部分的代码。</p>
+
 <h4 id="参考的学习资料">参考的学习资料</h4>
+
 <p><a href="https://github.com/farmer-hutao/k8s-source-code-analysis/blob/master/README.md">https://github.com/farmer-hutao/k8s-source-code-analysis/blob/master/README.md</a></p>
+
 <p><a href="https://juejin.im/post/6844903795198001166">https://juejin.im/post/6844903795198001166</a></p>
 
         </div>
@@ -243,7 +397,7 @@ cmd内部包含各个组件的入口，具体核心的实现部分在pkg目录�
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

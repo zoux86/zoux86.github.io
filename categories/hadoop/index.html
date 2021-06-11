@@ -97,7 +97,7 @@
         </div>
         
         <div class="post-content">
-            在我们布置好Hadoop环境后我们做的第一件就是 执行 start-all.sh 命令。 那么这个命令都做了什么，今天来探讨一下这个。 start-all.sh内容 Start all hadoop daemons. Run this on master node. bin=`dirname &quot;$0&quot;` bin=`cd &quot;$bin&quot;; pwd` . &quot;$bin&quot;/hadoop-config.sh start dfs daemons &quot;$bin&quot;/start-dfs.sh --config $HADOOP_CONF_DIR start mapred daemons &quot;$bin&quot;/start-mapred.sh --config $HADOOP_CONF_DIR 从上面可以看出来这个脚本，执行了三个脚本，分别是： hadoop-config.sh start-dfs.sh start-mapred.sh hadoop-config.sh 内容 this=&quot;$0&quot; while [ -h &quot;$this&quot; ]; do ls=`ls -ld &quot;$this&quot;` link=`expr &quot;$ls&quot; : '.*-&gt; \(.*\)$'`……
+            在我们布置好Hadoop环境后我们做的第一件就是 执行 start-all.sh 命令。 那么这个命令都做了什么，今天来探讨一下这个。 start-all.sh内容 Start all hadoop daemons. Run this on master node. bin=`dirname &#34;$0&#34;` bin=`cd &#34;$bin&#34;; pwd` . &#34;$bin&#34;/hadoop-config.sh start dfs daemons &#34;$bin&#34;/start-dfs.sh --config $HADOOP_CONF_DIR start mapred daemons &#34;$bin&#34;/start-mapred.sh --config $HADOOP_CONF_DIR 从上面可以看出来这个脚本，执行了三个脚本，分别是： hadoop-config.sh start-dfs.sh start-mapred.sh hadoop-config.sh 内容 this=&#34;$0&#34; while [ -h &#34;$this&#34; ]; do ls=`ls -ld &#34;$this&#34;` link=`expr &#34;$ls&#34; : &#39;.*-&gt; \(.*\)$&#39;`……
             <p class="readmore"><a href="https://zoux86.github.io/post/hadoop-%E5%90%AF%E5%8A%A8%E9%9B%86%E7%BE%A4%E8%83%8C%E5%90%8E%E7%9A%84%E4%BA%8B/">阅读全文</a></p>
         </div>
     </article>
@@ -284,7 +284,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

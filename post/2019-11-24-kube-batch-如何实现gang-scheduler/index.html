@@ -73,7 +73,113 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#一-介绍kube-batch的基本概念-queue-podgroup-job">一：介绍kube-batch的基本概念：queue, podgroup, job。</a></li>
+<li><a href="#二-总结这些概念的关系">二：总结这些概念的关系</a></li>
+<li><a href="#三-介绍如何实现gang-scheduler">三：介绍如何实现gang scheduler</a></li>
+<li><a href="#四-总结gang-scheduler的实现流程">四：总结gang scheduler的实现流程</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">kube-batch如何实现gang-scheduler</h1>
@@ -97,121 +203,237 @@
         
         
         <div class="post-content">
-            <h5 id="heading"></h5>
+            
+
 <p>gang scheduler介绍：一个job，可能有多个tasks,这些tasks要不全部执行，要不一个都不执行。</p>
+
 <p>上面说到 kube-batch自定义了一个podGroup，调度时以podGroup为单位的。现在说一下调度podGroup的整个过程。</p>
+
 <p>本文分为四个部分：</p>
+
 <p>一：介绍kube-batch的基本概念</p>
+
 <p>二：总结这些概念的关系，已经列出可能的疑问</p>
+
 <p>三：介绍如何实现gang scheduler</p>
+
 <p>四：总结gang scheduler的实现流程</p>
+
 <p>第一二部分是为了帮助理解，第四部分是从代码角度深入理解。想大概了解的，看到第三部分就可以了。</p>
-<h3 id="一介绍kube-batch的基本概念queue-podgroup-job">一：介绍kube-batch的基本概念：queue, podgroup, job。</h3>
+
+<h3 id="一-介绍kube-batch的基本概念-queue-podgroup-job">一：介绍kube-batch的基本概念：queue, podgroup, job。</h3>
+
 <p>(1) queue
 这个一个全局的概念，意思就是没有Namespace的这一说法。用这个概念的目的是为了实现多租户。这里一个租户就是一个队列。kube-batch默认有一个default-queue。如果用户创建的任务没有指定队列，都会放在默认的这个队列里。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">QueueInfo</span> <span style="color:#66d9ef">struct</span> {
-	UID  QueueID
-	Name string
-	Weight int32
-	Queue <span style="color:#f92672">*</span>arbcorev1.Queue
-}
-</code></pre></div><p>查看 queue 的定义，发现这里有个 Weight的属性。这个干什么用的呢？继续往下。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#000;font-weight:bold">type</span> <span style="color:#458;font-weight:bold">QueueInfo</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">struct</span> {<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>UID<span style="color:#bbb">  </span>QueueID<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>Name<span style="color:#bbb"> </span>string<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>Weight<span style="color:#bbb"> </span>int32<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>Queue<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">*</span>arbcorev1.Queue<span style="color:#bbb">
+</span><span style="color:#bbb"></span>}</code></pre></td></tr></table>
+</div>
+</div>
+<p>查看 queue 的定义，发现这里有个 Weight的属性。这个干什么用的呢？继续往下。</p>
+
 <p>proportion.go：116</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">// Calculates the deserved of each Queue.
-</span><span style="color:#75715e"></span>		deserved :<span style="color:#f92672">=</span> api.EmptyResource()
-		<span style="color:#66d9ef">for</span> _, attr :<span style="color:#f92672">=</span> range pp.queueOpts {
-			glog.V(<span style="color:#ae81ff">4</span>).Infof(<span style="color:#e6db74">&#34;Considering Queue &lt;%s&gt;: weight &lt;%d&gt;, total weight &lt;%d&gt;.&#34;</span>,
-				attr.name, attr.weight, totalWeight)
-			<span style="color:#66d9ef">if</span> _, found :<span style="color:#f92672">=</span> meet[attr.queueID]; found {
-				<span style="color:#66d9ef">continue</span>
-			}
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#998;font-style:italic">// Calculates the deserved of each Queue.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">		</span>deserved<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>api.EmptyResource()<span style="color:#bbb">
+</span><span style="color:#bbb">		</span><span style="color:#000;font-weight:bold">for</span><span style="color:#bbb"> </span>_,<span style="color:#bbb"> </span>attr<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>range<span style="color:#bbb"> </span>pp.queueOpts<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>glog.V(<span style="color:#099">4</span>).Infof(<span style="color:#d14">&#34;Considering Queue &lt;%s&gt;: weight &lt;%d&gt;, total weight &lt;%d&gt;.&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">				</span>attr.name,<span style="color:#bbb"> </span>attr.weight,<span style="color:#bbb"> </span>totalWeight)<span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>_,<span style="color:#bbb"> </span>found<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>meet[attr.queueID];<span style="color:#bbb"> </span>found<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">				</span><span style="color:#000;font-weight:bold">continue</span><span style="color:#bbb">
+</span><span style="color:#bbb">			</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">			</span>attr.deserved.Add(remaining.<span style="color:#0086b3">Clone</span>().Multi(float64(attr.weight)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">/</span><span style="color:#bbb"> </span>float64(totalWeight)))<span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">!</span>attr.deserved.LessEqual(attr.request)<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">				</span>attr.deserved<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>helpers.Min(attr.deserved,<span style="color:#bbb"> </span>attr.request)<span style="color:#bbb">
+</span><span style="color:#bbb">				</span>meet[attr.queueID]<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">struct</span>{}{}<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>pp.updateShare(attr)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">			</span>glog.V(<span style="color:#099">4</span>).Infof(<span style="color:#d14">&#34;The attributes of queue &lt;%s&gt; in proportion: deserved &lt;%v&gt;, allocate &lt;%v&gt;, request &lt;%v&gt;, share &lt;%0.2f&gt;&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">				</span>attr.name,<span style="color:#bbb"> </span>attr.deserved,<span style="color:#bbb"> </span>attr.allocated,<span style="color:#bbb"> </span>attr.request,<span style="color:#bbb"> </span>attr.share)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">			</span>deserved.Add(attr.deserved)<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>}</code></pre></td></tr></table>
+</div>
+</div>
+<p>可以看出来，&rdquo;Weight&rdquo; 是分配资源用的。一个Queue代表一个租户，它们按照权重分配集群的资源。下面这个图清晰明了：</p>
 
-			attr.deserved.Add(remaining.Clone().Multi(float64(attr.weight) <span style="color:#f92672">/</span> float64(totalWeight)))
-			<span style="color:#66d9ef">if</span> <span style="color:#f92672">!</span>attr.deserved.LessEqual(attr.request) {
-				attr.deserved <span style="color:#f92672">=</span> helpers.Min(attr.deserved, attr.request)
-				meet[attr.queueID] <span style="color:#f92672">=</span> <span style="color:#66d9ef">struct</span>{}{}
-			}
-			pp.updateShare(attr)
+<p><img src="../../resources/images/kubeflow/image29" alt="image.png" /></p>
 
-			glog.V(<span style="color:#ae81ff">4</span>).Infof(<span style="color:#e6db74">&#34;The attributes of queue &lt;%s&gt; in proportion: deserved &lt;%v&gt;, allocate &lt;%v&gt;, request &lt;%v&gt;, share &lt;%0.2f&gt;&#34;</span>,
-				attr.name, attr.deserved, attr.allocated, attr.request, attr.share)
-
-			deserved.Add(attr.deserved)
-		}
-</code></pre></div><p>可以看出来，&ldquo;Weight&rdquo; 是分配资源用的。一个Queue代表一个租户，它们按照权重分配集群的资源。下面这个图清晰明了：</p>
-<p>
-        <img class="mx-auto" alt="image.png" src="../../resources/images/kubeflow/image29" />   
-    </p>
 <p>（2）job
 这里很容易弄混，kube-batch的job 和 k8s的job是不一样的。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">JobInfo</span> <span style="color:#66d9ef">struct</span> {
-	UID JobID
-	Name      string
-	Namespace string
-	Queue QueueID
-	Priority int32
-	NodeSelector map[string]string
-	MinAvailable int32
-	NodesFitDelta NodeResourceMap
-	<span style="color:#75715e">// All tasks of the Job.
-</span><span style="color:#75715e"></span>	TaskStatusIndex map[TaskStatus]tasksMap
-	Tasks           tasksMap
-	Allocated    <span style="color:#f92672">*</span>Resource
-	TotalRequest <span style="color:#f92672">*</span>Resource
-	CreationTimestamp metav1.Time
-	PodGroup          <span style="color:#f92672">*</span>v1alpha1.PodGroup
-	<span style="color:#75715e">// TODO(k82cn): keep backward compatibility, removed it when v1alpha1 finalized.
-</span><span style="color:#75715e"></span>	PDB <span style="color:#f92672">*</span>policyv1.PodDisruptionBudget
-}
-</code></pre></div><p>这是kube-batch 中job的定义，这里要理解成: kube-batch job是一堆Task的集合(1个Task是一个pod)。</p>
-<p>这里的job和K8s中job的区别是：</p>
-<p>如果有一个k8s的job, 假设为Job1，有2个pod,  他指定的podgroup是gp1.</p>
-<p>同时还有一个k8s的job, 假设为Job2，有2个pod, 他指定的podgroup也是gp1.</p>
-<p>如果同时提交这俩个k8s job。那么在kube-batch看来，当前要调度的只有一个&quot;job&quot;(这是kube-batch的一个作</p>
-<p>业)。这个kube-batch job总共有4个Tasks(pod)需要绑定。</p>
-<p>所以，kube-batch的job,它是指向某个podgroup 所有的k8s job的pod集合。有点拗口，结合上面例子再读读。</p>
-<p>(3) podgroup</p>
-<p>我原本以为一个podgroup对应的是一个k8s job。后面我发现：</p>
-<p>​      a. 我运行一个job不指定podgroup也能正常运行。</p>
-<p>​      b. 我同时运行俩个job,指定的是同一个podgroup也能正常运行。</p>
-<p>所以，我就非常奇怪，看了相关源码后发现，这里的podgroup是一个pod的集合。</p>
-<p>如果有n个k8s job指向他，那么他就是这个n个Job的所有pod的集合。</p>
-<h3 id="二总结这些概念的关系">二：总结这些概念的关系</h3>
-<p>（1）提交每个k8s job都必须指定一个podgroup</p>
-<p>​          Q: 为什么创建job时，不指定也能运行？</p>
-<p>​          A: kube-batch会为这类job,创建一个 shadow PodGroup</p>
-<p>（2）一个podGroup对应一个queue</p>
-<p>​         Q:为什么创建queue时，不指定也能运行</p>
-<p>​          A:不指定，默认使用default-queue</p>
-<p>（3）一个kube-batch中的job 包含podgroup中所有的pod.</p>
-<p>（4）这个kube-batch的job使用 queue中的资源，完成task</p>
-<h3 id="三介绍如何实现gang-scheduler">三：介绍如何实现gang scheduler</h3>
-<p>结合图片和文字一起看，能加深理解
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#000;font-weight:bold">type</span> <span style="color:#458;font-weight:bold">JobInfo</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">struct</span> {<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>UID<span style="color:#bbb"> </span>JobID<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>Name<span style="color:#bbb">      </span>string<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>Namespace<span style="color:#bbb"> </span>string<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>Queue<span style="color:#bbb"> </span>QueueID<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>Priority<span style="color:#bbb"> </span>int32<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>NodeSelector<span style="color:#bbb"> </span>map[string]string<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>MinAvailable<span style="color:#bbb"> </span>int32<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>NodesFitDelta<span style="color:#bbb"> </span>NodeResourceMap<span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// All tasks of the Job.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span>TaskStatusIndex<span style="color:#bbb"> </span>map[TaskStatus]tasksMap<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>Tasks<span style="color:#bbb">           </span>tasksMap<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>Allocated<span style="color:#bbb">    </span><span style="color:#000;font-weight:bold">*</span>Resource<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>TotalRequest<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">*</span>Resource<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>CreationTimestamp<span style="color:#bbb"> </span>metav1.Time<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>PodGroup<span style="color:#bbb">          </span><span style="color:#000;font-weight:bold">*</span>v1alpha1.PodGroup<span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// TODO(k82cn): keep backward compatibility, removed it when v1alpha1 finalized.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span>PDB<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">*</span>policyv1.PodDisruptionBudget<span style="color:#bbb">
+</span><span style="color:#bbb"></span>}</code></pre></td></tr></table>
+</div>
+</div>
+<p>这是kube-batch 中job的定义，这里要理解成: kube-batch job是一堆Task的集合(1个Task是一个pod)。</p>
 
-        <img class="mx-auto" alt="image.png" src="../../resources/images/kubeflow/image30" />   
-    </p>
+<p>这里的job和K8s中job的区别是：</p>
+
+<p>如果有一个k8s的job, 假设为Job1，有2个pod,  他指定的podgroup是gp1.</p>
+
+<p>同时还有一个k8s的job, 假设为Job2，有2个pod, 他指定的podgroup也是gp1.</p>
+
+<p>如果同时提交这俩个k8s job。那么在kube-batch看来，当前要调度的只有一个&rdquo;job&rdquo;(这是kube-batch的一个作</p>
+
+<p>业)。这个kube-batch job总共有4个Tasks(pod)需要绑定。</p>
+
+<p>所以，kube-batch的job,它是指向某个podgroup 所有的k8s job的pod集合。有点拗口，结合上面例子再读读。</p>
+
+<p>(3) podgroup</p>
+
+<p>我原本以为一个podgroup对应的是一个k8s job。后面我发现：</p>
+
+<p>​      a. 我运行一个job不指定podgroup也能正常运行。</p>
+
+<p>​      b. 我同时运行俩个job,指定的是同一个podgroup也能正常运行。</p>
+
+<p>所以，我就非常奇怪，看了相关源码后发现，这里的podgroup是一个pod的集合。</p>
+
+<p>如果有n个k8s job指向他，那么他就是这个n个Job的所有pod的集合。</p>
+
+<h3 id="二-总结这些概念的关系">二：总结这些概念的关系</h3>
+
+<p>（1）提交每个k8s job都必须指定一个podgroup</p>
+
+<p>​          Q: 为什么创建job时，不指定也能运行？</p>
+
+<p>​          A: kube-batch会为这类job,创建一个 shadow PodGroup</p>
+
+<p>（2）一个podGroup对应一个queue</p>
+
+<p>​         Q:为什么创建queue时，不指定也能运行</p>
+
+<p>​          A:不指定，默认使用default-queue</p>
+
+<p>（3）一个kube-batch中的job 包含podgroup中所有的pod.</p>
+
+<p>（4）这个kube-batch的job使用 queue中的资源，完成task</p>
+
+<h3 id="三-介绍如何实现gang-scheduler">三：介绍如何实现gang scheduler</h3>
+
+<p>结合图片和文字一起看，能加深理解
+<img src="../../resources/images/kubeflow/image30" alt="image.png" /></p>
+
 <p>这里以俩个k8s job为例介绍这个过程</p>
+
 <p>（1）将指向某个podgroup的 所有k8s job中的pod合在一起生成一个 kube-batch job.  （比如上面图中，最后kube-batch job的Tasks是 n1+n2）</p>
+
 <p>(2)  开始调度kube-batch中的job</p>
+
 <p>(3) 每次完成一个task（这里是假装绑定一个pod）,当完成的task数量 达到MIN（podgroup设定的值）时，开始真正的绑定，一次性绑定MIN个task。然后将剩下的Tasks 生成一个新的kube-batch job 再次调度。如果在没达到MIN 个之前，已经资源不足，那么进入backfill 操作，释放之前绑定的job。</p>
+
 <p>所以实现gang scheduler的关键还是 podgroup，通过设置podgroup的minNumber。达到每次调度要么 执行minNumber个tasks.要么一个都不执行。</p>
+
 <p>PS：
 上面的图片是为了解释, 所以放了俩个k8s job. 如果想让这俩个job进行gang scheduer, 直接令  minNumber = n1+n2. 这样俩个job就会同时执行。</p>
-<h3 id="四总结gang-scheduler的实现流程">四：总结gang scheduler的实现流程</h3>
+
+<h3 id="四-总结gang-scheduler的实现流程">四：总结gang scheduler的实现流程</h3>
+
 <p>我一开始非常纳闷为什么podgroup不是和k8s job一一对应。后面我仔细想想，发现这样设计，更加灵活。
 如果是k8s job和podgroup一一对应的话。那么podgroup包含的就是这个k8s job的所有pod.这样每次就只能对一个k8s job进行gang scheduler.</p>
+
 <p>而他这样设计，则同时进行一个或者多个K8s job的调度。（通过调整n1,n2以及minNumber的值）</p>
+
 <p>注意：
 这样也可能产生不好的影响。</p>
+
 <p>例如我有两个K8s job.描述如下：</p>
+
 <p>job1  需要6个pod，1个pod需要1个cpu</p>
+
 <p>job2  需要6个pod，1个pod需要100个cpu</p>
+
 <p>现在集群总共有6个cpu.</p>
+
 <p>如果我不小心，将job1,job2的podgroup设置成一样。那么这次就会出现死锁，这俩个job都不会执行。</p>
+
 <p>原因：</p>
+
 <p>此时只有一个kube-batch的job,并且Tasks队列很有可能为：</p>
+
 <p>job1-pod1, job2-pod1,job1-pod1&hellip;&hellip;</p>
+
 <p>这样当创建到job2-pod1,  这个任务时，已经资源不足了。然后释放资源，重新再来。这样就会一直死循环。</p>
+
 <p>所以，要灵活使用Podgroup.</p>
 
         </div>
@@ -311,7 +533,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

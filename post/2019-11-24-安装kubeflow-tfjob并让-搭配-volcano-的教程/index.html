@@ -73,7 +73,123 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#搭建说明">搭建说明</a></li>
+<li><a href="#准备工作">准备工作</a></li>
+<li><a href="#确保集群中有默认的sc">确保集群中有默认的sc</a></li>
+<li><a href="#安装-istio-和-kubeflow的一些组件">安装 istio 和 kubeflow的一些组件</a></li>
+<li><a href="#安装valcano">安装valcano</a></li>
+<li><a href="#修改valcano的-clustterrole">修改valcano的 clustterrole</a>
+<ul>
+<li><a href="#修改tf-operator的cluster-role">修改tf-operator的cluster role</a></li>
+<li><a href="#修改tf-operator-让其能使用gang-scheduling">修改tf-operator，让其能使用gang-scheduling</a></li>
+<li><a href="#参考网址">参考网址：</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">安装kubeflow tfjob并让 搭配 volcano 的教程</h1>
@@ -97,77 +213,190 @@
         
         
         <div class="post-content">
-            <h4 id="搭建说明">搭建说明</h4>
+            
+
+<h4 id="搭建说明">搭建说明</h4>
+
 <p>最终目的：修改深度学习作业的调度算法</p>
+
 <p>当前要搭建的环境：</p>
+
 <p>（1）能运行kubeflow的tfjob的集群</p>
+
 <p>（2）kubeflow进行gang-scheduler的调度算法 volcano</p>
+
 <h4 id="准备工作">准备工作</h4>
+
 <p>(1) 安装好 k8s集群，安装好kfctl</p>
+
 <p>(2) 确认你是否有一个默认StorageClass且也配置好了动态pv，确认方法如下:</p>
+
 <h4 id="确保集群中有默认的sc">确保集群中有默认的sc</h4>
+
 <p>目的：安装kubeflow过程，SC会自动根据PVC创建PV，这样就不会提前创建PV了。</p>
+
 <p>输出：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">NAME            PROVISIONER            AGE
-nfs (default)   fuseim.pri<span style="color:#f92672">/</span>ifs         <span style="color:#ae81ff">147</span>m
-slow            kubernetes.io<span style="color:#f92672">/</span>gce<span style="color:#f92672">-</span>pd   <span style="color:#ae81ff">5</span>d
-</code></pre></div><p>default表示这个storageclass是默认的。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">NAME<span style="color:#bbb">            </span>PROVISIONER<span style="color:#bbb">            </span>AGE<span style="color:#bbb">
+</span><span style="color:#bbb"></span>nfs<span style="color:#bbb"> </span>(default)<span style="color:#bbb">   </span>fuseim.pri<span style="color:#000;font-weight:bold">/</span>ifs<span style="color:#bbb">         </span><span style="color:#099">147</span>m<span style="color:#bbb">
+</span><span style="color:#bbb"></span>slow<span style="color:#bbb">            </span>kubernetes.io<span style="color:#000;font-weight:bold">/</span>gce<span style="color:#000;font-weight:bold">-</span>pd<span style="color:#bbb">   </span><span style="color:#099">5</span>d</code></pre></td></tr></table>
+</div>
+</div>
+<p>default表示这个storageclass是默认的。</p>
+
 <p>修改一个storageclass为默认：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"> kubectl patch storageclass <span style="color:#f92672">&lt;</span>your<span style="color:#f92672">-</span>class<span style="color:#f92672">-</span>name<span style="color:#f92672">&gt;</span> <span style="color:#f92672">-</span>p <span style="color:#960050;background-color:#1e0010">&#39;</span>{<span style="color:#e6db74">&#34;metadata&#34;</span>: {<span style="color:#e6db74">&#34;annotations&#34;</span>:{<span style="color:#e6db74">&#34;storageclass.kubernetes.io/is-default-class&#34;</span>:<span style="color:#e6db74">&#34;true&#34;</span>}}}<span style="color:#960050;background-color:#1e0010">&#39;</span>
-</code></pre></div><h4 id="安装-istio-和-kubeflow的一些组件">安装 istio 和 kubeflow的一些组件</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">export PATH<span style="color:#f92672">=</span><span style="color:#75715e">$PATH</span>:<span style="color:#e6db74">&#34;/usr/bin/kfctl&#34;</span>
-export KF_NAME<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;my-kubeflow&#34;</span>
-export BASE_DIR<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/opt&#34;</span>
-export KF_DIR<span style="color:#f92672">=</span><span style="color:#75715e">$</span>{BASE_DIR}<span style="color:#f92672">/</span><span style="color:#75715e">$</span>{KF_NAME}
-export CONFIG_URI<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://raw.githubusercontent.com/kubeflow/manifests/v1.0-branch/kfdef/kfctl_k8s_istio.v1.0.1.yaml&#34;</span>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#bbb"> </span>kubectl<span style="color:#bbb"> </span>patch<span style="color:#bbb"> </span>storageclass<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">&lt;</span>your<span style="color:#000;font-weight:bold">-</span>class<span style="color:#000;font-weight:bold">-</span>name<span style="color:#000;font-weight:bold">&gt;</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">-</span>p<span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>{<span style="color:#d14">&#34;metadata&#34;</span>: {<span style="color:#d14">&#34;annotations&#34;</span>:{<span style="color:#d14">&#34;storageclass.kubernetes.io/is-default-class&#34;</span>:<span style="color:#d14">&#34;true&#34;</span>}}}<span style="color:#a61717;background-color:#e3d2d2">&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="安装-istio-和-kubeflow的一些组件">安装 istio 和 kubeflow的一些组件</h4>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">export<span style="color:#bbb"> </span>PATH<span style="color:#000;font-weight:bold">=</span><span style="color:#999;font-weight:bold;font-style:italic">$PATH</span>:<span style="color:#d14">&#34;/usr/bin/kfctl&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>export<span style="color:#bbb"> </span>KF_NAME<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;my-kubeflow&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>export<span style="color:#bbb"> </span>BASE_DIR<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;/opt&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>export<span style="color:#bbb"> </span>KF_DIR<span style="color:#000;font-weight:bold">=</span><span style="color:#999;font-weight:bold;font-style:italic">$</span>{BASE_DIR}<span style="color:#000;font-weight:bold">/</span><span style="color:#999;font-weight:bold;font-style:italic">$</span>{KF_NAME}<span style="color:#bbb">
+</span><span style="color:#bbb"></span>export<span style="color:#bbb"> </span>CONFIG_URI<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;https://raw.githubusercontent.com/kubeflow/manifests/v1.0-branch/kfdef/kfctl_k8s_istio.v1.0.1.yaml&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>kfctl<span style="color:#bbb"> </span>init<span style="color:#bbb"> </span><span style="color:#999;font-weight:bold;font-style:italic">$</span>{KF_DIR}<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">--</span>config<span style="color:#000;font-weight:bold">=</span><span style="color:#999;font-weight:bold;font-style:italic">$</span>{CONFIG_URI}<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">-</span>V<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>cd<span style="color:#bbb"> </span><span style="color:#999;font-weight:bold;font-style:italic">$</span>{KFAPP}<span style="color:#bbb">
+</span><span style="color:#bbb"></span>kfctl<span style="color:#bbb"> </span>generate<span style="color:#bbb"> </span>all<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">-</span>V</code></pre></td></tr></table>
+</div>
+</div>
+<p>到这一步后会生成 app.yaml 和 kustomize文件夹</p>
 
-
-kfctl init <span style="color:#75715e">$</span>{KF_DIR} <span style="color:#f92672">--</span>config<span style="color:#f92672">=</span><span style="color:#75715e">$</span>{CONFIG_URI} <span style="color:#f92672">-</span>V
-
-cd <span style="color:#75715e">$</span>{KFAPP}
-kfctl generate all <span style="color:#f92672">-</span>V
-</code></pre></div><p>到这一步后会生成 app.yaml 和 kustomize文件夹</p>
 <p>注意要 提前创建namespace kubeflow-anonymous</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">kubectl create namespace kubeflow<span style="color:#f92672">-</span>anonymous
-</code></pre></div><p>然后就可以</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">kfctl apply all <span style="color:#f92672">-</span>V
-</code></pre></div><p>但是我直接使用apply的时候seldon-core-operator这个组件装不上，所有我修改了app.yaml并且从kustomize文件夹删除了seldon-core-operator。然后执行apply命令。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">kubectl<span style="color:#bbb"> </span>create<span style="color:#bbb"> </span>namespace<span style="color:#bbb"> </span>kubeflow<span style="color:#000;font-weight:bold">-</span>anonymous</code></pre></td></tr></table>
+</div>
+</div>
+<p>然后就可以</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">kfctl<span style="color:#bbb"> </span>apply<span style="color:#bbb"> </span>all<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">-</span>V</code></pre></td></tr></table>
+</div>
+</div>
+<p>但是我直接使用apply的时候seldon-core-operator这个组件装不上，所有我修改了app.yaml并且从kustomize文件夹删除了seldon-core-operator。然后执行apply命令。</p>
+
 <h4 id="安装valcano">安装valcano</h4>
+
 <p>见官网</p>
+
 <h4 id="修改valcano的-clustterrole">修改valcano的 clustterrole</h4>
+
 <p>添加</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#f92672">-</span> apiGroups:
-  <span style="color:#f92672">-</span> <span style="color:#e6db74">&#39;*&#39;</span>
-  resources:
-  <span style="color:#f92672">-</span> <span style="color:#e6db74">&#39;*&#39;</span>
-  verbs:
-  <span style="color:#f92672">-</span> <span style="color:#e6db74">&#39;*&#39;</span>
-</code></pre></div><h5 id="修改tf-operator的cluster-role">修改tf-operator的cluster role</h5>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>apiGroups:
+  <span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span><span style="color:#d14">&#39;*&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb">  </span>resources:
+  <span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span><span style="color:#d14">&#39;*&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb">  </span>verbs:
+  <span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span><span style="color:#d14">&#39;*&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="修改tf-operator的cluster-role">修改tf-operator的cluster role</h5>
+
 <p>$ kubectl -n kubeflow edit clusterrole  tf-job-operator</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">$</span> kubectl <span style="color:#f92672">-</span>n kubeflow edit clusterrole  tf<span style="color:#f92672">-</span>job<span style="color:#f92672">-</span>operator
-...
-...
-<span style="color:#f92672">-</span> apiGroups:
-  <span style="color:#f92672">-</span> scheduling.incubator.k8s.io
-  resources:
-  <span style="color:#f92672">-</span> podgroups
-  verbs:
-  <span style="color:#f92672">-</span> <span style="color:#e6db74">&#39;*&#39;</span>
-</code></pre></div><h5 id="修改tf-operator让其能使用gang-scheduling">修改tf-operator，让其能使用gang-scheduling</h5>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">  Take tf<span style="color:#f92672">-</span>operator <span style="color:#66d9ef">for</span> example, enable gang<span style="color:#f92672">-</span>scheduling <span style="color:#66d9ef">in</span> tf<span style="color:#f92672">-</span>operator by setting <span style="color:#66d9ef">true</span> to <span style="color:#f92672">--</span>enable<span style="color:#f92672">-</span>gang<span style="color:#f92672">-</span>scheduling flag.
-  
-  <span style="color:#75715e">$</span> kubectl <span style="color:#f92672">-</span>n kubeflow edit deployment tf<span style="color:#f92672">-</span>job<span style="color:#f92672">-</span>operator
-...
-spec:
-      <span style="color:#a6e22e">containers</span>:
-      <span style="color:#f92672">-</span> command:
-        <span style="color:#f92672">-</span> <span style="color:#f92672">/</span>opt<span style="color:#f92672">/</span>kubeflow<span style="color:#f92672">/</span>tf<span style="color:#f92672">-</span>operator.v1beta2
-        <span style="color:#f92672">-</span> <span style="color:#f92672">--</span>alsologtostderr
-        <span style="color:#f92672">-</span> <span style="color:#f92672">-</span>v<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
-        <span style="color:#f92672">-</span> <span style="color:#f92672">--</span>enable<span style="color:#f92672">-</span>gang<span style="color:#f92672">-</span>scheduling<span style="color:#f92672">=</span><span style="color:#66d9ef">true</span>
-</code></pre></div><h5 id="参考网址">参考网址：</h5>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">9
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#999;font-weight:bold;font-style:italic">$</span><span style="color:#bbb"> </span>kubectl<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">-</span>n<span style="color:#bbb"> </span>kubeflow<span style="color:#bbb"> </span>edit<span style="color:#bbb"> </span>clusterrole<span style="color:#bbb">  </span>tf<span style="color:#000;font-weight:bold">-</span>job<span style="color:#000;font-weight:bold">-</span>operator<span style="color:#bbb">
+</span><span style="color:#bbb"></span>...<span style="color:#bbb">
+</span><span style="color:#bbb"></span>...<span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>apiGroups:
+  <span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>scheduling.incubator.k8s.io<span style="color:#bbb">
+</span><span style="color:#bbb">  </span>resources:
+  <span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>podgroups<span style="color:#bbb">
+</span><span style="color:#bbb">  </span>verbs:
+  <span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span><span style="color:#d14">&#39;*&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="修改tf-operator-让其能使用gang-scheduling">修改tf-operator，让其能使用gang-scheduling</h5>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#bbb">  </span>Take<span style="color:#bbb"> </span>tf<span style="color:#000;font-weight:bold">-</span>operator<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">for</span><span style="color:#bbb"> </span>example,<span style="color:#bbb"> </span>enable<span style="color:#bbb"> </span>gang<span style="color:#000;font-weight:bold">-</span>scheduling<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">in</span><span style="color:#bbb"> </span>tf<span style="color:#000;font-weight:bold">-</span>operator<span style="color:#bbb"> </span>by<span style="color:#bbb"> </span>setting<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">true</span><span style="color:#bbb"> </span>to<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">--</span>enable<span style="color:#000;font-weight:bold">-</span>gang<span style="color:#000;font-weight:bold">-</span>scheduling<span style="color:#bbb"> </span>flag.<span style="color:#bbb">
+</span><span style="color:#bbb">  
+</span><span style="color:#bbb">  </span><span style="color:#999;font-weight:bold;font-style:italic">$</span><span style="color:#bbb"> </span>kubectl<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">-</span>n<span style="color:#bbb"> </span>kubeflow<span style="color:#bbb"> </span>edit<span style="color:#bbb"> </span>deployment<span style="color:#bbb"> </span>tf<span style="color:#000;font-weight:bold">-</span>job<span style="color:#000;font-weight:bold">-</span>operator<span style="color:#bbb">
+</span><span style="color:#bbb"></span>...<span style="color:#bbb">
+</span><span style="color:#bbb"></span>spec:
+      <span style="color:#458;font-weight:bold">containers</span>:
+      <span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>command:
+        <span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">/</span>opt<span style="color:#000;font-weight:bold">/</span>kubeflow<span style="color:#000;font-weight:bold">/</span>tf<span style="color:#000;font-weight:bold">-</span>operator.v1beta2<span style="color:#bbb">
+</span><span style="color:#bbb">        </span><span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">--</span>alsologtostderr<span style="color:#bbb">
+</span><span style="color:#bbb">        </span><span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">-</span>v<span style="color:#000;font-weight:bold">=</span><span style="color:#099">1</span><span style="color:#bbb">
+</span><span style="color:#bbb">        </span><span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">--</span>enable<span style="color:#000;font-weight:bold">-</span>gang<span style="color:#000;font-weight:bold">-</span>scheduling<span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">true</span></code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="参考网址">参考网址：</h5>
+
 <p><a href="https://www.kubeflow.org/docs/started/k8s/overview/">https://www.kubeflow.org/docs/started/k8s/overview/</a></p>
+
 <p><a href="https://yylin1.github.io/2019/01/22/kubeflow-job-scheduling/">https://yylin1.github.io/2019/01/22/kubeflow-job-scheduling/</a></p>
+
 <p><a href="https://www.kubeflow.org/docs/use-cases/job-scheduling/">https://www.kubeflow.org/docs/use-cases/job-scheduling/</a></p>
 
         </div>
@@ -273,7 +502,7 @@ spec:
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

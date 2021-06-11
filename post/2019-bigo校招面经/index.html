@@ -73,7 +73,112 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#一面-视频">一面（视频）</a></li>
+</ul></li>
+<li><a href="#二面-现场">二面（现场）</a></li>
+<li><a href="#三面-现场">三面（现场）</a></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">2019 bigo面经</h1>
@@ -97,38 +202,72 @@
         
         
         <div class="post-content">
-            <p>面试时间：2019年月</p>
+            
+
+<p>面试时间：2019年月</p>
+
 <p>岗位：机器学习平台</p>
+
 <p>形式：现场面试</p>
-<h3 id="一面视频">一面（视频）</h3>
+
+<h3 id="一面-视频">一面（视频）</h3>
+
 <p>1.自我介绍</p>
+
 <p>2.项目介绍</p>
+
 <p>3.C++虚函数的实现</p>
+
 <p>4.C++程序的内存分布</p>
+
 <p>5.TCP，UDP的区别？三次握手，四次挥手？</p>
+
 <p>6.算法题：</p>
+
 <p>（1）Leetcode 原题 不同的二叉搜索树 （1和2）</p>
+
 <p>（2）二叉树的非递归遍历</p>
-<h2 id="二面现场">二面（现场）</h2>
+
+<h2 id="二面-现场">二面（现场）</h2>
+
 <p>1.自我介绍</p>
+
 <p>2.项目介绍</p>
+
 <p>3.介绍一下k8s</p>
+
 <p>4.C++虚函数如何实现的</p>
+
 <p>5.实现一个类，使得其他类都不能继承它</p>
+
 <p>6.C++智能指针</p>
+
 <p>7.算法题：</p>
+
 <p>有两个数组：A，B。里面的元素都一样，而且没有重复。但是顺序不一样。问在A，B中删除最少多少个数，能使得A，B元素顺序也一样。例如 A（1,2,4,3） B（1,2,3,4）。 同时删除1个数（4或者3）就能使得A，B数组的值一模一样。</p>
-<h2 id="三面现场">三面（现场）</h2>
+
+<h2 id="三面-现场">三面（现场）</h2>
+
 <p>1.自我介绍</p>
+
 <p>2.介绍项目</p>
+
 <p>3.介绍k8s结构</p>
+
 <p>4.k8s的优势</p>
+
 <p>5.docker中cgroup是如何限制资源的，具体的实现过程</p>
+
 <p>6.go语言的优势</p>
+
 <p>7.go语言中协程的实现</p>
+
 <p>8.针对大量的&lt;域名，ip&gt;格式，你会怎样存储</p>
+
 <p>9.flink和spark的区别</p>
+
 <p>10.C++ 11 auto关键字的作用</p>
+
 <p>11.C++ range的格式</p>
 
         </div>
@@ -228,7 +367,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

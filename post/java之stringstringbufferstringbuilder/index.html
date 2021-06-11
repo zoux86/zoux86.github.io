@@ -73,7 +73,111 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#string">String：</a></li>
+<li><a href="#stringbuilder">StringBuilder</a></li>
+<li><a href="#stringbuffer">StringBuffer</a></li>
+<li><a href="#总结">总结：</a></li>
+<li><a href="#eclipse常用快捷键">eclipse常用快捷键</a></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">Java之String、StringBuffer、StringBuilder</h1>
@@ -97,23 +201,35 @@
         
         
         <div class="post-content">
-            <h2 id="string">String：</h2>
+            
+
+<h2 id="string">String：</h2>
+
 <p>String类是final修饰的，是不可变的。我们看到的例如:
 String a = &ldquo;hello&rdquo;;
 a = a + &ldquo;1&rdquo;;
-实际上是先生成了一个对象然后得到结果&quot;hello1&quot;,最后在赋值给对象a;
+实际上是先生成了一个对象然后得到结果&rdquo;hello1&rdquo;,最后在赋值给对象a;
 String 类型的任何改动都是先生成一个其他对象再重新赋值。
 所以String类适合那种常量或者基本没变化的字符串。</p>
+
 <h2 id="stringbuilder">StringBuilder</h2>
+
 <p>Stringbuffer是可改变的，用append就可以增加字符。适用于经常改动的字符串。</p>
+
 <h2 id="stringbuffer">StringBuffer</h2>
+
 <p>StringBuffer和StringBuilder可以看出是一样的实现，不同在于StringBuffer加了synchronized 关键字，他是线程安全的。如果牵涉多线程用这个比较好。</p>
+
 <h2 id="总结">总结：</h2>
+
 <p>String类适合那种常量或者基本没变化的字符串。
 StringBuilder适用于经常改动的字符串。
 StringBuffer适用于多线程的改动的字符串。</p>
+
 <p>补充：</p>
+
 <h2 id="eclipse常用快捷键">eclipse常用快捷键</h2>
+
 <p><a href="https://www.cnblogs.com/syxchina/archive/2010/11/10/2197335.html">https://www.cnblogs.com/syxchina/archive/2010/11/10/2197335.html</a></p>
 
         </div>
@@ -213,7 +329,7 @@ StringBuffer适用于多线程的改动的字符串。</p>
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

@@ -73,7 +73,112 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#个人基础情况">个人基础情况</a>
+<ul>
+<li><a href="#初期准备">初期准备</a></li>
+<li><a href="#正式开始">正式开始</a></li>
+</ul></li>
+<li><a href="#总结">总结</a></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">2019校招总结</h1>
@@ -97,145 +202,190 @@
         
         
         <div class="post-content">
-            <h2 id="个人基础情况">个人基础情况</h2>
+            
+
+<h2 id="个人基础情况">个人基础情况</h2>
+
 <p>学历：北京中科院某所硕士</p>
+
 <p>专业：机器学习，云计算</p>
+
 <p>秋招岗位：基础平台研发，基础架构研发，云平台研发，AI平台研发，容器云开发</p>
+
 <h3 id="初期准备">初期准备</h3>
+
 <p>2019年4月开始，准备了初始版的简历，然后投递了几个实习岗位。投递的目的主要是为了希望能获得面试，然后补充自己的不足。到5月初，获得了两个实习offer，但是最终因为实验室不能实习的规定，并没有去实习。然后五月也因为实验室的项目，自己也放弃投递。</p>
+
 <h3 id="正式开始">正式开始</h3>
+
 <p>正式的秋招从6月底开始，一直到10月底结束，历时4个月。投递的公司以及最终结果如下：</p>
+
 <table>
 <thead>
 <tr>
-<th style="text-align:center">公司名</th>
-<th style="text-align:center">结果</th>
+<th align="center">公司名</th>
+<th align="center">结果</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
-<td style="text-align:center">百度</td>
-<td style="text-align:center">拿到offer</td>
+<td align="center">百度</td>
+<td align="center">拿到offer</td>
 </tr>
+
 <tr>
-<td style="text-align:center">星环科技</td>
-<td style="text-align:center">拿到offer</td>
+<td align="center">星环科技</td>
+<td align="center">拿到offer</td>
 </tr>
+
 <tr>
-<td style="text-align:center">寒武纪提前批</td>
-<td style="text-align:center">拿到offer</td>
+<td align="center">寒武纪提前批</td>
+<td align="center">拿到offer</td>
 </tr>
+
 <tr>
-<td style="text-align:center">网易</td>
-<td style="text-align:center">拿到offer</td>
+<td align="center">网易</td>
+<td align="center">拿到offer</td>
 </tr>
+
 <tr>
-<td style="text-align:center">快手</td>
-<td style="text-align:center">拿到offer</td>
+<td align="center">快手</td>
+<td align="center">拿到offer</td>
 </tr>
+
 <tr>
-<td style="text-align:center">电信云</td>
-<td style="text-align:center">拿到offer</td>
+<td align="center">电信云</td>
+<td align="center">拿到offer</td>
 </tr>
+
 <tr>
-<td style="text-align:center">华为</td>
-<td style="text-align:center">拿到offer</td>
+<td align="center">华为</td>
+<td align="center">拿到offer</td>
 </tr>
+
 <tr>
-<td style="text-align:center">深信服</td>
-<td style="text-align:center">拿到offer</td>
+<td align="center">深信服</td>
+<td align="center">拿到offer</td>
 </tr>
+
 <tr>
-<td style="text-align:center">bigo</td>
-<td style="text-align:center">拿到offer</td>
+<td align="center">bigo</td>
+<td align="center">拿到offer</td>
 </tr>
+
 <tr>
-<td style="text-align:center">微软</td>
-<td style="text-align:center">拿到offer</td>
+<td align="center">微软</td>
+<td align="center">拿到offer</td>
 </tr>
+
 <tr>
-<td style="text-align:center">文远知行</td>
-<td style="text-align:center">SP</td>
+<td align="center">文远知行</td>
+<td align="center">SP</td>
 </tr>
+
 <tr>
-<td style="text-align:center">商汤</td>
-<td style="text-align:center">sp</td>
+<td align="center">商汤</td>
+<td align="center">sp</td>
 </tr>
+
 <tr>
-<td style="text-align:center">追一科技</td>
-<td style="text-align:center">SP</td>
+<td align="center">追一科技</td>
+<td align="center">SP</td>
 </tr>
+
 <tr>
-<td style="text-align:center">亚马逊-云解决方案架构师</td>
-<td style="text-align:center">面完所有技术面后主动放弃，岗位不合适</td>
+<td align="center">亚马逊-云解决方案架构师</td>
+<td align="center">面完所有技术面后主动放弃，岗位不合适</td>
 </tr>
+
 <tr>
-<td style="text-align:center">阿里</td>
-<td style="text-align:center">通过所有面试，需重新调岗，主动放弃</td>
+<td align="center">阿里</td>
+<td align="center">通过所有面试，需重新调岗，主动放弃</td>
 </tr>
+
 <tr>
-<td style="text-align:center">腾讯</td>
-<td style="text-align:center">岗位不匹配主动放弃</td>
+<td align="center">腾讯</td>
+<td align="center">岗位不匹配主动放弃</td>
 </tr>
+
 <tr>
-<td style="text-align:center">虎牙</td>
-<td style="text-align:center">主动放弃面试</td>
+<td align="center">虎牙</td>
+<td align="center">主动放弃面试</td>
 </tr>
+
 <tr>
-<td style="text-align:center">微众银行</td>
-<td style="text-align:center">主动放弃面试</td>
+<td align="center">微众银行</td>
+<td align="center">主动放弃面试</td>
 </tr>
+
 <tr>
-<td style="text-align:center">农行</td>
-<td style="text-align:center">主动放弃面试</td>
+<td align="center">农行</td>
+<td align="center">主动放弃面试</td>
 </tr>
+
 <tr>
-<td style="text-align:center">招商银行</td>
-<td style="text-align:center">主动放弃面试</td>
+<td align="center">招商银行</td>
+<td align="center">主动放弃面试</td>
 </tr>
+
 <tr>
-<td style="text-align:center">360</td>
-<td style="text-align:center">主动放弃面试</td>
+<td align="center">360</td>
+<td align="center">主动放弃面试</td>
 </tr>
+
 <tr>
-<td style="text-align:center">今日头条提前批</td>
-<td style="text-align:center">面试挂（二面写算法题超时）</td>
+<td align="center">今日头条提前批</td>
+<td align="center">面试挂（二面写算法题超时）</td>
 </tr>
+
 <tr>
-<td style="text-align:center">vivo提前批</td>
-<td style="text-align:center">笔试未通过</td>
+<td align="center">vivo提前批</td>
+<td align="center">笔试未通过</td>
 </tr>
+
 <tr>
-<td style="text-align:center">Tp-link提前批</td>
-<td style="text-align:center">笔试未通过</td>
+<td align="center">Tp-link提前批</td>
+<td align="center">笔试未通过</td>
 </tr>
+
 <tr>
-<td style="text-align:center">拼多多提前批</td>
-<td style="text-align:center">笔试未通过</td>
+<td align="center">拼多多提前批</td>
+<td align="center">笔试未通过</td>
 </tr>
+
 <tr>
-<td style="text-align:center">图森未来</td>
-<td style="text-align:center">笔试未通过</td>
+<td align="center">图森未来</td>
+<td align="center">笔试未通过</td>
 </tr>
+
 <tr>
-<td style="text-align:center">大疆</td>
-<td style="text-align:center">笔试未通过</td>
+<td align="center">大疆</td>
+<td align="center">笔试未通过</td>
 </tr>
+
 <tr>
-<td style="text-align:center">Airbnb</td>
-<td style="text-align:center">笔试未通过</td>
+<td align="center">Airbnb</td>
+<td align="center">笔试未通过</td>
 </tr>
+
 <tr>
-<td style="text-align:center">hulu</td>
-<td style="text-align:center">笔试未通过</td>
+<td align="center">hulu</td>
+<td align="center">笔试未通过</td>
 </tr>
 </tbody>
 </table>
+
 <p>印象中就这么一些公司，北京的很多公司最后都没有投递，例如，美团，京东，滴滴，小米等。因为一开始就有比较满意的公司了，而且个人可能最后不会留北京，所以都没有投递简历。</p>
+
 <h2 id="总结">总结</h2>
+
 <p>个人感觉对秋招的最终结果还算满意。如果有同学找我同样方向的岗位，我给出的建议是：</p>
+
 <p>（1）一定要提前准备，可以的话，尽量去实习</p>
+
 <p>（2）算法题一定要刷，现在公司越来越重视手撕代码</p>
+
 <p>（3）基础知识一定要牢固，基础知识不仅仅指数据库，网络，操作系统等。还包括linux内核，docker,k8s，设计模式等等，编程语言（c++/java/go/python等）。我还被问到过如何手写线程池的实现。。</p>
 
         </div>
@@ -335,7 +485,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

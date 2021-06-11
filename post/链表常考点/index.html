@@ -73,7 +73,110 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#寻找链表的倒数第k个-或者类似的题目-类似的比如-输出链表的后一半">寻找链表的倒数第K个，或者类似的题目。类似的比如：输出链表的后一半。</a></li>
+<li><a href="#判断链表是否是回文链表">判断链表是否是回文链表</a></li>
+<li><a href="#判断链表是否有环-以及输出环的入口">判断链表是否有环，以及输出环的入口</a></li>
+<li><a href="#给链表排序">给链表排序</a></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">链表常考点</h1>
@@ -97,9 +200,14 @@
         
         
         <div class="post-content">
-            <p>最近一口气刷完了Leetcode上链表专栏下的所有题。有好几题非常有意思，记录一下：</p>
+            
+
+<p>最近一口气刷完了Leetcode上链表专栏下的所有题。有好几题非常有意思，记录一下：</p>
+
 <p>感觉链表的题，大部分都是考察细心的题。你定义好的遍历指针，一定要细心的检查当它遍历时，它的子节点正确赋值，同时要非常注意链表指针非空的情况。</p>
-<h2 id="寻找链表的倒数第k个或者类似的题目类似的比如输出链表的后一半">寻找链表的倒数第K个，或者类似的题目。类似的比如：输出链表的后一半。</h2>
+
+<h2 id="寻找链表的倒数第k个-或者类似的题目-类似的比如-输出链表的后一半">寻找链表的倒数第K个，或者类似的题目。类似的比如：输出链表的后一半。</h2>
+
 <p>​        要求：时间复杂度限制O(n), 空间复杂度是O(1)
 解题思路：开辟两个指针p,q. 开始时俩个指针都指向头结点。然后p往后走，q不走。当P走了k步时，q再走。当p走到链表末尾事，q就是倒数第k个了。
 代码：</p>
@@ -123,21 +231,27 @@
 		}
 		return q;
     }
-}
-</code></pre><h2 id="判断链表是否是回文链表">判断链表是否是回文链表</h2>
+}</code></pre>
+<h2 id="判断链表是否是回文链表">判断链表是否是回文链表</h2>
+
 <p>（回文链表：链表的值从左往右，从右往左都是一样的）
 要求：时间复杂度O(n) ,空间O(1)
 解题思路：
 首先找到链表的中间，将链表从中间分为俩个链表。
 然后反转俩个链表中的一个。最后进行依次对比。</p>
-<h2 id="判断链表是否有环以及输出环的入口">判断链表是否有环，以及输出环的入口</h2>
+
+<h2 id="判断链表是否有环-以及输出环的入口">判断链表是否有环，以及输出环的入口</h2>
+
 <p>判断有环解题思路：p,q两个指针指向头结点。然后p每次往前走一步，q走俩步，如果再次相遇则有环。</p>
+
 <p>输出环入口解题思路：先运行判断有环的程序。这时，p,q相遇在环中的某个结点。这个结点不一定是入口。
 接下来 p=相遇结点，q= 头结点。然后他们每次都走一步，再次相遇就是环入口结点。
-具体证明参考：https://blog.csdn.net/xyzxiaoxiong/article/details/78761940
+具体证明参考：<a href="https://blog.csdn.net/xyzxiaoxiong/article/details/78761940">https://blog.csdn.net/xyzxiaoxiong/article/details/78761940</a>
 PS：我当时采取的是一个很暴力的方法。因为没有规定空间复杂度，所以我直接
 开辟了一个HashSet的数组。每次遍历时，将当前节点加入hashSet中，第一个出现重复的元素即 是环入口。</p>
+
 <h2 id="给链表排序">给链表排序</h2>
+
 <p>题目：用O(N*logN)的时间复杂度给链表排序
 解题思路：先将链表分为左右俩部分，形成俩个链表。然后对这俩个链表使用归并排序。</p>
 <pre><code>/**
@@ -206,8 +320,8 @@ class Solution {
         return head;
     }
     
-}
-</code></pre><p>待添加。。。</p>
+}</code></pre>
+<p>待添加。。。</p>
 
         </div>
 
@@ -306,7 +420,7 @@ class Solution {
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

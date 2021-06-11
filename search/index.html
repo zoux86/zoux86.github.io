@@ -9,21 +9,20 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
     
 
-    <title>jupyter | zoux的博客</title>
-    <meta property="og:title" content="jupyter - zoux的博客">
+    <title>搜索 | zoux的博客</title>
+    <meta property="og:title" content="搜索 - zoux的博客">
     <meta property="og:type" content="article">
         
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
-    <meta name="description" content="jupyter">
+    <meta name="description" content="搜索页面">
         
     <meta name="author" content="zoux">
-    <meta property="og:url" content="https://zoux86.github.io/tags/jupyter/">
+    <meta property="og:url" content="https://zoux86.github.io/search/">
     <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
     <link rel="stylesheet" href='/css/normalize.css'>
     <link rel="stylesheet" href='/css/style.css'>
-    <link rel="alternate" type="application/rss+xml" href="https://zoux86.github.io/tags/jupyter/index.xml" title="zoux的博客" />
     <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     
@@ -70,46 +69,71 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
     <h3 class="archive-title">
-        包含标签
-        <span class="keyword">jupyter</span>
-        的文章
+        搜索
+        <span class="keyword">哈哈</span>
+        的结果
     </h3>
-    
 
-    
     <article class="post">
         <header>
             <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-%E4%BD%BF%E7%94%A8%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/">kubeflow使用图像界面</a>
+                <a href="链接">标题</a>
             </h1>
         </header>
         <date class="post-meta meta-date">
-            2019年1月9日
+            2019年12月01日
         </date>
-        
-        <div class="post-meta meta-category">
-            |
-            
-            <a href='/categories/kubeflow'>kubeflow</a>
-            
-        </div>
-        
         <div class="post-content">
-            按照前几篇文章搭建好Kubeflow集群后，所有的pod都能运行了。但是在自己本地浏览器访问界面时却发现网页一直打不开。访问不了jupyter。这样因为默认的这些服务都是使用cluster ip。只能集群内部访问，外网访问不了。 解决方法： 查看当前的服务 1 kubectl-nkubeflowgetsvc 如图所示，这里注意，这是我……
-            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-%E4%BD%BF%E7%94%A8%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/">阅读全文</a></p>
+            概要……
+            <p class="readmore"><a href="链接">阅读全文</a></p>
         </div>
     </article>
-    
-
-    
-
-
-
-
 
 </div>
+
+<script type="text/javascript">
+
+    var getUrlParameter = function getUrlParameter(sParam) {
+        var sPageURL = window.location.search.substring(1),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+
+            if (sParameterName[0] === sParam) {
+                return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+            }
+        }
+    };
+
+    $(document).ready(function () {
+        var q = getUrlParameter("q");
+        $("span.keyword").text(q);
+        $("article.post").remove();
+        $.ajax({
+            url: 'https:\/\/zoux86.github.io\/index.xml',
+            dataType: "xml",
+            success: function (data) {
+                $(data).find("item").each(function () {
+                    var item = $(this);
+                    var title = item.find("title").text();
+                    if (title.toLowerCase().indexOf(q.toLowerCase()) >= 0) {
+                        var url = item.find("link").text();
+                        var searchItem = `<article class="post"><header><h1 class="post-title"><a href="` + url + `">` + title + `</a></h1></header>`;
+                        var pubDate = new Date(item.find("pubDate").text())
+                        searchItem += `<date class="post-meta meta-date">` + pubDate.getFullYear() + `年` + (pubDate.getMonth() + 1) + `月` + pubDate.getDate() + `日</date>`;
+                        searchItem += `<div class="post-content">` + item.find("description").text() + `……<p class="readmore"><a href="` + url + `">阅读全文</a></p></div></article>`;
+
+                        $("div.res-cons").append(searchItem);
+                    }
+                });
+            }
+        });
+    });
+</script>
 
                     <footer id="footer">
     <div>
@@ -131,6 +155,16 @@
 </footer>
 
 
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 
 <a id="rocket" href="#top"></a>
 <script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>

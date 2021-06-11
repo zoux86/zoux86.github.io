@@ -73,7 +73,100 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">Hadoop 每次打开虚拟机重启hadoop都要重新格式化才能启动Namenode</h1>
@@ -99,15 +192,28 @@
         <div class="post-content">
             <p>前面配置好hadoop后，每次开启虚拟机，启动集群后，总是有一些节点起不来。要不就是namenode，要不就是datanode。后面百度找到了原因所在：
 在配置hdfs时，我们只配置了datanode的目录，而没有配置namdenode的相关信息。默认的tmp文件每次重新开机会被清空，与此同时namenode的格式化信息就会丢失。所以，每次一开机，集群找不到namenode的信息，故每次都要重新格式化集群。</p>
+
 <p>解决办法：
 修改hadoop/conf目录里面的core-site.xml文件，加入下面的配置</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#ae81ff">&lt;property&gt;</span>
-        <span style="color:#ae81ff">&lt;name&gt;hadoop.tmp.dir&lt;/name&gt;</span>
-        <span style="color:#ae81ff">&lt;value&gt;/zoux/hadoop/Hadoop_tmp&lt;/value&gt;</span>
-        <span style="color:#ae81ff">&lt;description&gt;A base for other temporary directories.&lt;/description&gt;</span>
- <span style="color:#ae81ff">&lt;/property&gt;</span>
-</code></pre></div><p>我将从hadoop官网下载的Hadoop-0.20.2的安装包解压在/zoux目录下，
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">&lt;property&gt;<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>&lt;name&gt;hadoop.tmp.dir&lt;/name&gt;<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>&lt;value&gt;/zoux/hadoop/Hadoop_tmp&lt;/value&gt;<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>&lt;description&gt;A base for other temporary directories.&lt;/description&gt;<span style="color:#bbb">
+</span><span style="color:#bbb"> </span>&lt;/property&gt;</code></pre></td></tr></table>
+</div>
+</div>
+<p>我将从hadoop官网下载的Hadoop-0.20.2的安装包解压在/zoux目录下，
 然后将Hadoop-0.20.2重命名了hadoop，然后再在hadoop目录下建立Hadoop_tmp目录，用于存放namenode的信息。</p>
+
 <p>然后在重新格式化，重启就行！
 关于如何初始化，详见我上一篇文章！</p>
 
@@ -208,7 +314,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

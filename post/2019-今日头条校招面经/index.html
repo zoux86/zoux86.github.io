@@ -73,7 +73,112 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#一面">一面</a></li>
+</ul></li>
+<li><a href="#二面">二面</a></li>
+<li><a href="#总结">总结</a></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">2019今日头条面经</h1>
@@ -97,35 +202,66 @@
         
         
         <div class="post-content">
-            <p>面试时间：应该是19年7月初</p>
+            
+
+<p>面试时间：应该是19年7月初</p>
+
 <p>岗位：容器云研发相关岗位</p>
+
 <p>形式：现场面试</p>
+
 <h3 id="一面">一面</h3>
+
 <p>1.自我介绍</p>
+
 <p>2.介绍进程，线程，协程？有什么区别？java，C++, python, go中的线程有什么不同</p>
+
 <p>3.进程间的通信方式有哪几种，线程呢？</p>
+
 <p>4.操作系统虚拟内存的工作流程，有什么好处？</p>
+
 <p>5.描述一下一个二进制文件变成线程这个过程发生了什么，越详细越好？具体使用了哪些系统调用？</p>
+
 <p>6.TCP，UDP的区别？三次握手，四次挥手？</p>
+
 <p>7.C++ 中vector的底层实现？扩容策略？</p>
+
 <p>8.二叉树的先中后序遍历</p>
+
 <p>9.算法题：二分查找的变体题</p>
+
 <h2 id="二面">二面</h2>
+
 <p>1.自我介绍</p>
+
 <p>2.讲一下k8s吧，具体有什么组件，他们的作用</p>
+
 <p>3.K8s创建job的整个过程</p>
+
 <p>4.进程，线程，协程</p>
+
 <p>5.为什么k8s中gpu只能一个任务独自用，其他人不能用</p>
+
 <p>6.docker的底层实现</p>
+
 <p>7.cgroup, namespace能不能具体讲讲，源代码有没有读过</p>
+
 <p>8.kubelet,apiservice的源代码有没有了解过，有没有改过k8s代码</p>
+
 <p>9.看过哪些linux的书，能不能讲一下linux偏底层的东西</p>
+
 <p>10.算法题:   有一个int型数组，假设是1,3,4,2,5,7,9。要求对它进行重新排列，最后的数组的的格式是：每一个元素，比它前一个元素和后一个元素都大，或者都小。例如1,3,4,2,5,7,9。最后的形式是：1,5,2,7,3,9,4。</p>
+
 <p>要求：时间O(n)，空间O(n)</p>
+
 <p>思路：快排的变体，先找到数组中的第n/2大元素,这样就将数组分为两部分，第一部分都是小于4，第二部分都是大于4。然后每次从第一部分取一个数，然后再从第二部分取一个数即可。</p>
+
 <p>一开始没想到，想到的是nlogn的算法。提示了一下才想到。然后考虑一个边界卡住了，最后被他打断了，说时间来不及了。</p>
+
 <h2 id="总结">总结</h2>
+
 <p>这是正式的第一次面试，最终未通过第二轮面试。后面在10月中旬的时候，通过头条的同学，又得到一次正式校招的面试机会，因为已找到满意工作，故放弃了面试。</p>
+
 <p>个人对头条的印象很好，前台非常热情。一面面试官人非常好，看我非常紧张一直在安慰我，最后出的算法题也不是很难。</p>
 
         </div>
@@ -225,7 +361,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

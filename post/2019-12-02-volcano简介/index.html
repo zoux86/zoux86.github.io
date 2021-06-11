@@ -73,7 +73,116 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#背景">背景</a></li>
+<li><a href="#volcano的结构">volcano的结构</a>
+<ul>
+<li><a href="#volcano-scheduler">volcano-Scheduler</a></li>
+<li><a href="#volcano-control">volcano-control</a></li>
+<li><a href="#vkctl">vkctl</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">volcano简介</h1>
@@ -97,16 +206,24 @@
         
         
         <div class="post-content">
-            <h3 id="背景">背景</h3>
+            
+
+<h3 id="背景">背景</h3>
+
 <p>volcano的前身是kube-batch，Kube-batch的知识参考之前的博客。</p>
+
 <h3 id="volcano的结构">volcano的结构</h3>
-<p>
-        <img class="mx-auto" alt="image1" src="../../resources/images/volcano/image1.png" />   
-    </p>
+
+<p><img src="../../resources/images/volcano/image1.png" alt="image1" /></p>
+
 <p>volcano主要分为两个部分：</p>
+
 <p>（1） <strong>Volcano-Scheduler</strong>:</p>
+
 <p>（2） <strong>Volcano-Controller</strong></p>
+
 <p>使用volcano的流程一般如下：</p>
+
 <ol>
 <li>用户通过kubectl创建Volcano Job资源。</li>
 <li>Volcano Controller监测到Job资源创建，校验资源有效性，依据JobSpec创建依赖的Pod， Service， ConfigMap等资源，执行配置的插件。</li>
@@ -114,28 +231,47 @@
 <li>Kubelet负责Pod资源的创建，业务开始执行。</li>
 <li>Volcano Controller负责Job后续的生命周期管理(状态监控，事件响应，资源清理等)</li>
 </ol>
+
 <h4 id="volcano-scheduler">volcano-Scheduler</h4>
+
 <p>这个组件其实就是Kube-Batch，但是它相比kube-batch增加了一些东西。具体是：</p>
+
 <p>（1）增加了一个action，enqueue</p>
+
 <p>Kube-batch中待调度作业的状态只有两种，pending 和 runing。每次调度时都要从pending作业中选取作业调度，但实际上有些作业一直是资源不够，处于pending状态。这样每次调度都重复浪费资源。</p>
+
 <p>为了解决这个情况，Volcano增加了一个新的状态，InQueue。代表某个作业有足够的资源能被调度。然后真正调度时候，调度器从InQueue=true的作业中调度。</p>
+
 <p>（2）增加了一个Plugin, binpack</p>
+
 <p>Binpack就是给各个可以绑定的节点打分：“假如放在当前节点后，谁更满，谁的分数就高”。</p>
+
 <p>可能还有其他增加的内容，待补充。。</p>
+
 <h4 id="volcano-control">volcano-control</h4>
+
 <p>control主要起到作业控制的功能。主要作用如下：</p>
+
 <p>（1）自定义的Job资源: 跟K8s内置的Job(作业)资源相比，Volcano Job有了更多增强配置，比如：任务配置，提交重试，最小调度资源数，作业优先级, 资源队列等。</p>
+
 <p>（2）Job 生命周期管理 : Volcano Controller会监控Job的创建，创建和管理对应的子资源(Pod, ConfigMap, Service)，刷新作业的进度概要，提供CLI方便用户查看和管理作业资源等。</p>
+
 <p>（3）任务执行策略:  单个Job下面往往会关联多个任务(Task)，而且任务之间可能存在相互依赖关系，Volcano Controller支持配置任务策略，方便异常情况下的任务间关联性重试或终止。</p>
+
 <p>（4）扩展插件: 在提交作业、创建Pod等多个阶段，Controller支持配置插件用来执行自定义的环境准备和清理的工作，比如常见的MPI作业，在提交前就需要配置SSH插件，用来完成Pod资源的SSH信息配置。</p>
+
 <h4 id="vkctl">vkctl</h4>
+
 <p>vkctl是volcano提供的命令工具，可以创建，查看任务等等。例如查看任务：</p>
-<p>
-        <img class="mx-auto" alt="image-20191202173516058" src="../../resources/images/volcano/image2.png" />   
-    </p>
+
+<p><img src="../../resources/images/volcano/image2.png" alt="image-20191202173516058" /></p>
+
 <p>可见，还是很方便的。</p>
+
 <p>参考：</p>
+
 <p><a href="https://volcano.sh/">https://volcano.sh/</a></p>
+
 <p><a href="https://github.com/volcano-sh/volcano">https://github.com/volcano-sh/volcano</a></p>
 
         </div>
@@ -235,7 +371,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

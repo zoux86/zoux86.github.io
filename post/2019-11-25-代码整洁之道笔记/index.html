@@ -73,7 +73,122 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#动机">动机</a></li>
+<li><a href="#什么才是整洁的代码">什么才是整洁的代码</a></li>
+<li><a href="#变量">变量</a>
+<ul>
+<li><a href="#变量命名">变量命名</a></li>
+</ul></li>
+<li><a href="#函数">函数</a>
+<ul>
+<li><a href="#函数命名">函数命名</a></li>
+<li><a href="#函数组织方式">函数组织方式</a></li>
+</ul></li>
+<li><a href="#注释">注释</a></li>
+<li><a href="#代码格式">代码格式</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">代码整洁之道笔记</h1>
@@ -97,61 +212,117 @@
         
         
         <div class="post-content">
-            <h3 id="动机">动机</h3>
+            
+
+<h3 id="动机">动机</h3>
+
 <p>最近在回顾自己之前写的代码时，发现之前的惨不忍睹。最大的问题是，几个月前自己写的居然都看不懂。 有些问题自己能避免，例如有意义的变量命名问题，但是由于当时英文卡住了，直接就随便命名了，当时以为自己看得懂，以后就能懂，最后发现是自己想多了。</p>
+
 <p>刚好今天没事翻了一下之前买的书籍《代码整洁之道》，看到下面一段话，引起了我的共鸣，所以我决定，记录一下自己的心得，以形成一套自己整洁的代码风格。</p>
 <pre><code>是的，我们就是一群代码猴子，上蹿下跳，自以为领略了编程的真谛。可惜，当我们抓着几个酸桃子，得意洋洋坐到树枝
-上，却对自己造成的胡乱熟视无睹。那堆“可以运行”的乱麻程序，就在我们的眼皮底下慢慢腐坏。
-</code></pre><!-- raw HTML omitted -->
+上，却对自己造成的胡乱熟视无睹。那堆“可以运行”的乱麻程序，就在我们的眼皮底下慢慢腐坏。</code></pre>
+<p><br></p>
+
 <h3 id="什么才是整洁的代码">什么才是整洁的代码</h3>
 <pre><code>能通过所有的测试
 没有重复代码
 体现系统中的全部设计理念
-包括尽量少的实体，比如类，方法，函数等
-</code></pre><p>我追求的代码是这样的，它像一篇满分作文一样，不啰嗦但是又极具表现力。所以如何提高代码的表现力，是我接下来学习的事情，我目前离这条路还有很远，加油努力！</p>
-<!-- raw HTML omitted -->
+包括尽量少的实体，比如类，方法，函数等</code></pre>
+<p>我追求的代码是这样的，它像一篇满分作文一样，不啰嗦但是又极具表现力。所以如何提高代码的表现力，是我接下来学习的事情，我目前离这条路还有很远，加油努力！</p>
+
+<p><br></p>
+
 <h3 id="变量">变量</h3>
+
 <h4 id="变量命名">变量命名</h4>
+
 <p>（1）采用驼峰式命名,第一个字母小写;</p>
+
 <p>（2）变量都是单词的组合，很明显的可以用缩写，例如：addr （地址）</p>
+
 <p>（3）单词都是名词形式</p>
+
 <p>（4）单词不能有歧义，例如  addedNumber (add可以是添加，也可以是插入)</p>
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
 <h3 id="函数">函数</h3>
+
 <h4 id="函数命名">函数命名</h4>
+
 <p>（1）同上，但是函数名第一个单词是动词，例如deletePage</p>
+
 <p>（2）能用函数名说清楚的事情，尽量不要用注释，函数名字长一点为所谓，eg.</p>
-<pre><code>deletePagaAndAllReferences()
-</code></pre><p>个人感觉，最关键的是取一个好的名字，但是这需要很强的描述技巧和英文表达能力。这个还是要多看源代码，多联系。</p>
+<pre><code>deletePagaAndAllReferences()</code></pre>
+<p>个人感觉，最关键的是取一个好的名字，但是这需要很强的描述技巧和英文表达能力。这个还是要多看源代码，多联系。</p>
+
 <h4 id="函数组织方式">函数组织方式</h4>
+
 <p>（1）函数要短小，一个函数只负责一件事件</p>
+
 <p>（2）if,else,switch语句后面应该只能是一句话,例如</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">switch</span>(choice){
-    <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span> addStudent();
-    <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">:</span> deleteStudent();
-}
-</code></pre></div><p>（3）函数参数尽可能少，最理想是没有参数，一个，二个，三个都还可以。超过三个就考虑是否弄一个类了。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#000;font-weight:bold">switch</span>(choice){
+    <span style="color:#000;font-weight:bold">case</span> <span style="color:#099">1</span><span style="color:#000;font-weight:bold">:</span> addStudent();
+    <span style="color:#000;font-weight:bold">case</span> <span style="color:#099">2</span><span style="color:#000;font-weight:bold">:</span> deleteStudent();
+}</code></pre></td></tr></table>
+</div>
+</div>
+<p>（3）函数参数尽可能少，最理想是没有参数，一个，二个，三个都还可以。超过三个就考虑是否弄一个类了。</p>
+
 <p>函数参数尽量不要使用bool型的变量，如果是这种情况，可以考虑写两个函数，一个是True情况下的，一个是false情况下的。</p>
+
 <p>（4）try/catch错误处理的情况应该单独弄一个函数，而不是要放在主函数里面，这样会弄乱主函数的代码结构。</p>
+
 <p>（5）对于大函数，遵循只有一个return的原则</p>
+
 <p>​          小函数，可以出现多个return  (if里面)</p>
+
 <p>语录： 大师级程序员将系统当做故事来讲，而不是当程序来写。</p>
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
 <h3 id="注释">注释</h3>
+
 <p>注释出现的目的：注释是因为代码不能很好的表达我们的意图的时候，采用的一种弥补方式。所以要尽可能的避免注释（不是不用），因为代码而且会变，但是注释不能跟着变，而且不同人表达的可能不同。</p>
+
 <p>（1）注释应该是对意图的解释</p>
+
 <p>（2）注释可以是一些警告</p>
+
 <p>（3）TODO注释</p>
+
 <p>（4）不要出现无意义，多余的注释</p>
+
 <p>（5）不要注释代码，如果不要直接删除，但是要做好版本控制</p>
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
 <h3 id="代码格式">代码格式</h3>
+
 <p>代码格式就像文章的排版，同样非常重要。</p>
+
 <p>（1）用空行分割出不同逻辑的代码</p>
+
 <p>（2）相关函数尽可能放到一块，并且按照调用顺序从上至下，以方便可读性</p>
+
 <p>（3）赋值=左右两边有空格隔开；函数参数之间用空格隔开；同时出现乘法和加法，乘法不用空格隔开，例如：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">return</span> b<span style="color:#f92672">*</span>b <span style="color:#f92672">-</span> <span style="color:#ae81ff">4</span><span style="color:#f92672">*</span>a<span style="color:#f92672">*</span>c;
-</code></pre></div><p>（4）一行if代码尽量避免，也使用缩进形式</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#000;font-weight:bold">return</span><span style="color:#bbb"> </span>b<span style="color:#000;font-weight:bold">*</span>b<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span><span style="color:#099">4</span><span style="color:#000;font-weight:bold">*</span>a<span style="color:#000;font-weight:bold">*</span>c;</code></pre></td></tr></table>
+</div>
+</div>
+<p>（4）一行if代码尽量避免，也使用缩进形式</p>
 
         </div>
 
@@ -254,7 +425,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

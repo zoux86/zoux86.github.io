@@ -73,7 +73,100 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">k8s源码学习 - Scheduler笔记（2）</h1>
@@ -98,29 +191,66 @@
         
         <div class="post-content">
             <p>接上文的工作，上文是找到了scheduler的入口。接下来看scheduler具体的执行。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">cmd<span style="color:#f92672">/</span>kube<span style="color:#f92672">-</span>scheduler<span style="color:#f92672">/</span>scheduler.go:<span style="color:#ae81ff">34</span> main函数 -&gt;
-<span style="color:#a6e22e">cmd</span><span style="color:#f92672">/</span>kube<span style="color:#f92672">-</span>scheduler<span style="color:#f92672">/</span>app<span style="color:#f92672">/</span>server.go:<span style="color:#ae81ff">70</span> NewSchedulerCommand-&gt;
-<span style="color:#a6e22e">cmd</span><span style="color:#f92672">/</span>kube<span style="color:#f92672">-</span>scheduler<span style="color:#f92672">/</span>app<span style="color:#f92672">/</span>server.go:<span style="color:#ae81ff">117</span> runCommand -&gt;
-<span style="color:#a6e22e">cmd</span><span style="color:#f92672">/</span>kube<span style="color:#f92672">-</span>scheduler<span style="color:#f92672">/</span>app<span style="color:#f92672">/</span>server.go:<span style="color:#ae81ff">167</span> Run -&gt;
-<span style="color:#a6e22e">pkg</span><span style="color:#f92672">/</span>scheduler<span style="color:#f92672">/</span>scheduler.go:<span style="color:#ae81ff">276</span> run   -&gt;
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">cmd<span style="color:#000;font-weight:bold">/</span>kube<span style="color:#000;font-weight:bold">-</span>scheduler<span style="color:#000;font-weight:bold">/</span>scheduler.go:<span style="color:#099">34</span><span style="color:#bbb"> </span>main函数<span style="color:#bbb"> </span>-&gt;
+<span style="color:#458;font-weight:bold">cmd</span><span style="color:#000;font-weight:bold">/</span>kube<span style="color:#000;font-weight:bold">-</span>scheduler<span style="color:#000;font-weight:bold">/</span>app<span style="color:#000;font-weight:bold">/</span>server.go:<span style="color:#099">70</span><span style="color:#bbb"> </span>NewSchedulerCommand-&gt;
+<span style="color:#458;font-weight:bold">cmd</span><span style="color:#000;font-weight:bold">/</span>kube<span style="color:#000;font-weight:bold">-</span>scheduler<span style="color:#000;font-weight:bold">/</span>app<span style="color:#000;font-weight:bold">/</span>server.go:<span style="color:#099">117</span><span style="color:#bbb"> </span>runCommand<span style="color:#bbb"> </span>-&gt;
+<span style="color:#458;font-weight:bold">cmd</span><span style="color:#000;font-weight:bold">/</span>kube<span style="color:#000;font-weight:bold">-</span>scheduler<span style="color:#000;font-weight:bold">/</span>app<span style="color:#000;font-weight:bold">/</span>server.go:<span style="color:#099">167</span><span style="color:#bbb"> </span>Run<span style="color:#bbb"> </span>-&gt;
+<span style="color:#458;font-weight:bold">pkg</span><span style="color:#000;font-weight:bold">/</span>scheduler<span style="color:#000;font-weight:bold">/</span>scheduler.go:<span style="color:#099">276</span><span style="color:#bbb"> </span>run<span style="color:#bbb">   </span>-&gt;</code></pre></td></tr></table>
+</div>
+</div>
+<p>这是上文的工作</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">pkg<span style="color:#000;font-weight:bold">/</span>scheduler<span style="color:#000;font-weight:bold">/</span>scheduler.go:<span style="color:#099">501</span><span style="color:#bbb"> </span>scheduleOne<span style="color:#bbb"> </span>-&gt;
+<span style="color:#458;font-weight:bold">pkg</span><span style="color:#000;font-weight:bold">/</span>scheduler<span style="color:#000;font-weight:bold">/</span>scheduler.go:<span style="color:#099">291</span><span style="color:#bbb"> </span>schedule-&gt;</code></pre></td></tr></table>
+</div>
+</div>
+<p>这里schedule只是一个街口，定义在 schedule/algorithm/interface中</p>
 
-</code></pre></div><p>这是上文的工作</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">pkg<span style="color:#f92672">/</span>scheduler<span style="color:#f92672">/</span>scheduler.go:<span style="color:#ae81ff">501</span> scheduleOne -&gt;
-<span style="color:#a6e22e">pkg</span><span style="color:#f92672">/</span>scheduler<span style="color:#f92672">/</span>scheduler.go:<span style="color:#ae81ff">291</span> schedule-&gt;
-</code></pre></div><p>这里schedule只是一个街口，定义在 schedule/algorithm/interface中</p>
 <p>pkg/scheduler/core/generic_scheduler.go:139 Schedule</p>
+
 <p>（这一步是参考的，我具体是没有找出来，这里先存个疑，有机会补补接口这方面的知识）</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">func (g <span style="color:#f92672">*</span>genericScheduler) Schedule(pod <span style="color:#f92672">*</span>v1.Pod, nodeLister algorithm.NodeLister) (string, error) {
-	nodes, err :<span style="color:#f92672">=</span> nodeLister.List()
-	trace.Step(<span style="color:#e6db74">&#34;Computing predicates&#34;</span>)
-	filteredNodes, failedPredicateMap, err :<span style="color:#f92672">=</span> g.findNodesThatFit(pod, nodes)
-	trace.Step(<span style="color:#e6db74">&#34;Prioritizing&#34;</span>)
-	priorityList, err :<span style="color:#f92672">=</span> PrioritizeNodes(pod, g.cachedNodeInfoMap, metaPrioritiesInterface, g.prioritizers, filteredNodes, g.extenders)
-	trace.Step(<span style="color:#e6db74">&#34;Selecting host&#34;</span>)
-	<span style="color:#66d9ef">return</span> g.selectHost(priorityList)
-}
-</code></pre></div><p>这是函数的主要内容，可以出来调度的顺序了。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">9
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">func<span style="color:#bbb"> </span>(g<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">*</span>genericScheduler)<span style="color:#bbb"> </span>Schedule(pod<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">*</span>v1.Pod,<span style="color:#bbb"> </span>nodeLister<span style="color:#bbb"> </span>algorithm.NodeLister)<span style="color:#bbb"> </span>(string,<span style="color:#bbb"> </span>error)<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>nodes,<span style="color:#bbb"> </span>err<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>nodeLister.List()<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>trace.Step(<span style="color:#d14">&#34;Computing predicates&#34;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>filteredNodes,<span style="color:#bbb"> </span>failedPredicateMap,<span style="color:#bbb"> </span>err<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>g.findNodesThatFit(pod,<span style="color:#bbb"> </span>nodes)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>trace.Step(<span style="color:#d14">&#34;Prioritizing&#34;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>priorityList,<span style="color:#bbb"> </span>err<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>PrioritizeNodes(pod,<span style="color:#bbb"> </span>g.cachedNodeInfoMap,<span style="color:#bbb"> </span>metaPrioritiesInterface,<span style="color:#bbb"> </span>g.prioritizers,<span style="color:#bbb"> </span>filteredNodes,<span style="color:#bbb"> </span>g.extenders)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>trace.Step(<span style="color:#d14">&#34;Selecting host&#34;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#000;font-weight:bold">return</span><span style="color:#bbb"> </span>g.selectHost(priorityList)<span style="color:#bbb">
+</span><span style="color:#bbb"></span>}</code></pre></td></tr></table>
+</div>
+</div>
+<p>这是函数的主要内容，可以出来调度的顺序了。</p>
+
 <p>先用findNodesThatFit删选出不合适的，然后PrioritizeNodes进行打分，最后selectHost选出来一个最好的。</p>
+
 <p>findNodesThatFit，PrioritizeNodes，selectHost都在pkg/scheduler/core/generic_scheduler.go中。</p>
 
         </div>
@@ -224,7 +354,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

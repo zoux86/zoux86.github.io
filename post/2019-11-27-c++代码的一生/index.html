@@ -73,7 +73,123 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#目录">目录</a>
+<ul>
+<li><a href="#c-代码变成可执行文件">c++代码变成可执行文件</a></li>
+<li><a href="#可执行文件变成进程">可执行文件变成进程</a></li>
+<li><a href="#正文">正文</a></li>
+<li><a href="#预处理过程">预处理过程</a></li>
+<li><a href="#编译过程">编译过程</a></li>
+<li><a href="#汇编过程">汇编过程</a></li>
+<li><a href="#链接过程">链接过程</a></li>
+<li><a href="#目标代码">目标代码</a></li>
+<li><a href="#静态链接">静态链接</a></li>
+<li><a href="#动态链接">动态链接</a></li>
+<li><a href="#可执行文件变成一个进程">可执行文件变成一个进程</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">C&#43;&#43;代码的一生</h1>
@@ -97,120 +213,218 @@
         
         
         <div class="post-content">
-            <h3 id="目录">目录</h3>
-<h4 id="c代码变成可执行文件">c++代码变成可执行文件</h4>
+            
+
+<h3 id="目录">目录</h3>
+
+<h4 id="c-代码变成可执行文件">c++代码变成可执行文件</h4>
+
 <p>（1）预处理过程</p>
+
 <p>（2）编译过程</p>
+
 <p>（3）汇编过程</p>
+
 <p>（4）链接过程</p>
+
 <p>（5）目标文件</p>
+
 <p>（6）静态链接和动态链接</p>
+
 <h4 id="可执行文件变成进程">可执行文件变成进程</h4>
+
 <h4 id="正文">正文</h4>
-<p>
-        <img class="mx-auto" alt="image-20191128103820967" src="../../resources/images/C&#43;&#43;/image1.png" />   
-    </p>
+
+<p><img src="../../resources/images/C++/image1.png" alt="image-20191128103820967" /></p>
+
 <p>一个c++程序，从.c文件，变成二进制可执行文件，会经历上述四个过程。</p>
+
 <p>预处理阶段：对源代码文件中文件包含关系（头文件）、预编译语句（宏定义）进行分析和替换，生成预编译文件。</p>
+
 <p>编译阶段：将经过预处理后的预编译文件转换成特定汇编代码，生成汇编文件</p>
+
 <p>汇编阶段：将编译阶段生成的汇编文件转化成机器码，生成可重定位目标文件</p>
+
 <p>链接阶段：将多个目标文件及所需要的库连接成最终的可执行目标文件</p>
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
 <h4 id="预处理过程">预处理过程</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">gcc <span style="color:#f92672">-</span>E hello.c <span style="color:#f92672">-</span>o hello.i
-</code></pre></div><p>预处理最终生成.i文件。预处理主要处理“#”开头的代码指令。主要内容如下：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">gcc<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">-</span>E<span style="color:#bbb"> </span>hello.c<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">-</span>o<span style="color:#bbb"> </span>hello.i</code></pre></td></tr></table>
+</div>
+</div>
+<p>预处理最终生成.i文件。预处理主要处理“#”开头的代码指令。主要内容如下：</p>
+
 <p>（1）展开所有的宏定义（#define）</p>
-<p>（2）处理“#if”，&quot;#endif&quot;</p>
+
+<p>（2）处理“#if”，&rdquo;#endif&rdquo;</p>
+
 <p>（3）递归的处理“#include”文件</p>
+
 <p>（4）删除所有的注释</p>
+
 <p>（5）给代码，添加行号，一边编译和调试输出信息</p>
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
 <h4 id="编译过程">编译过程</h4>
-<pre><code>gcc -S hello.i -O hello.s
-</code></pre><p>编译过程最终生成.s文件。编译过程就是吧预处理完的文件，进行词法分析，语法分析，语义分析以及优化后产生相应的汇编代码。</p>
+<pre><code>gcc -S hello.i -O hello.s</code></pre>
+<p>编译过程最终生成.s文件。编译过程就是吧预处理完的文件，进行词法分析，语法分析，语义分析以及优化后产生相应的汇编代码。</p>
+
 <p>关于词法分析，语法分析等这些更具体的过程，可以回顾一下编译原理这门课程，或者相关书籍。</p>
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
 <h4 id="汇编过程">汇编过程</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">gcc <span style="color:#f92672">-</span>C hello.s <span style="color:#f92672">-</span>O hello.o
-</code></pre></div><p>汇编过程最终生成.o文件(目标文件)。这个过程相对简单，它就是将汇编代码，根据具体的对照表进行翻译，生成一句一句的机器指令的过程。</p>
-<!-- raw HTML omitted -->
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">gcc<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">-</span>C<span style="color:#bbb"> </span>hello.s<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">-</span>O<span style="color:#bbb"> </span>hello.o</code></pre></td></tr></table>
+</div>
+</div>
+<p>汇编过程最终生成.o文件(目标文件)。这个过程相对简单，它就是将汇编代码，根据具体的对照表进行翻译，生成一句一句的机器指令的过程。</p>
+
+<p><br></p>
+
 <h4 id="链接过程">链接过程</h4>
+
 <p>链接器比编译器出现的还要早，在纸带打孔的时代就已经出现。链接器的作用其实就是 将不同的模块分别进行编译，生成目标文件。这样的好处是一个模块的修改，不会影响到整个系统，更便于修改和重复使用。</p>
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
 <h4 id="目标代码">目标代码</h4>
+
 <p>目标文件主要分为两种：Windows的PE（Portable Executable）和linux下的ELF（Executable Linkable Format）,以ELF为例，它的格式如下：</p>
+
 <table>
 <thead>
 <tr>
-<th style="text-align:left">Other Data</th>
+<th align="left">Other Data</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
-<td style="text-align:left">.comment                         存放编译器版本信</td>
+<td align="left">.comment                         存放编译器版本信</td>
 </tr>
+
 <tr>
-<td style="text-align:left">.rodata                              存放只读数据，如常量，const</td>
+<td align="left">.rodata                              存放只读数据，如常量，const</td>
 </tr>
+
 <tr>
-<td style="text-align:left">.data                                 数据段</td>
+<td align="left">.data                                 数据段</td>
 </tr>
+
 <tr>
-<td style="text-align:left">.text                                  代码段</td>
+<td align="left">.text                                  代码段</td>
 </tr>
+
 <tr>
-<td style="text-align:left">ELF head                          文件头</td>
+<td align="left">ELF head                          文件头</td>
 </tr>
 </tbody>
 </table>
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
 <p>目标文件的头中包含一个长度为 32 个字节的 exec 数据结构，通常称为文件头结构或执行头结构，其具体定义如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">exec</span>{
-    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> a_magic,    <span style="color:#75715e">//执行文件魔数，使用 N_MAGIC 等宏访问
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">unsigned</span> a_text ,   <span style="color:#75715e">//代码段长度 byte
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">unsigned</span> a_data,  <span style="color:#75715e">//数据区长度 byte
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">unsigned</span> a_bss,  <span style="color:#75715e">//文件中未初始化数据区长度
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">unsigned</span> a_syms,  <span style="color:#75715e">//文件中符号表长度
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">unsigned</span> a_entry,  <span style="color:#75715e">//执行地址入口
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">unsigned</span> a_trsize,  <span style="color:#75715e">//代码重定位信息长度
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">unsigned</span> a_drsize   <span style="color:#75715e">//数据重定位信息长度
-</span><span style="color:#75715e"></span>};
-</code></pre></div><p>其中一个有意思的就是 魔数，这个是头文件的最开始的两个字节。它的作用就是用来判断文件的类型。操作系统在加载可执行文件的时候，首先检查的就是这个魔数，如果魔数不正确，就不会加载。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#000;font-weight:bold">struct</span> <span style="color:#458;font-weight:bold">exec</span>{
+    <span style="color:#458;font-weight:bold">unsigned</span> <span style="color:#458;font-weight:bold">long</span> a_magic,    <span style="color:#998;font-style:italic">//执行文件魔数，使用 N_MAGIC 等宏访问
+</span><span style="color:#998;font-style:italic"></span>    <span style="color:#458;font-weight:bold">unsigned</span> a_text ,   <span style="color:#998;font-style:italic">//代码段长度 byte
+</span><span style="color:#998;font-style:italic"></span>    <span style="color:#458;font-weight:bold">unsigned</span> a_data,  <span style="color:#998;font-style:italic">//数据区长度 byte
+</span><span style="color:#998;font-style:italic"></span>    <span style="color:#458;font-weight:bold">unsigned</span> a_bss,  <span style="color:#998;font-style:italic">//文件中未初始化数据区长度
+</span><span style="color:#998;font-style:italic"></span>    <span style="color:#458;font-weight:bold">unsigned</span> a_syms,  <span style="color:#998;font-style:italic">//文件中符号表长度
+</span><span style="color:#998;font-style:italic"></span>    <span style="color:#458;font-weight:bold">unsigned</span> a_entry,  <span style="color:#998;font-style:italic">//执行地址入口
+</span><span style="color:#998;font-style:italic"></span>    <span style="color:#458;font-weight:bold">unsigned</span> a_trsize,  <span style="color:#998;font-style:italic">//代码重定位信息长度
+</span><span style="color:#998;font-style:italic"></span>    <span style="color:#458;font-weight:bold">unsigned</span> a_drsize   <span style="color:#998;font-style:italic">//数据重定位信息长度
+</span><span style="color:#998;font-style:italic"></span>};</code></pre></td></tr></table>
+</div>
+</div>
+<p>其中一个有意思的就是 魔数，这个是头文件的最开始的两个字节。它的作用就是用来判断文件的类型。操作系统在加载可执行文件的时候，首先检查的就是这个魔数，如果魔数不正确，就不会加载。</p>
+
 <p>注意上面的是ELF文件结构，这和进程的虚拟空间结构不同，这个没有.bss。进程的空间结构如下。</p>
-<p>
-        <img class="mx-auto" alt="image-20191128112903472" src="../../resources/images/C&#43;&#43;/image2.png" />   
-    </p>
+
+<p><img src="../../resources/images/C++/image2.png" alt="image-20191128112903472" /></p>
+
 <p>在C++中，虚拟内存分为代码段、数据段、BSS段、堆区、文件映射区以及栈区六部分。</p>
+
 <p><strong>代码段</strong>:包括只读存储区和文本区，其中只读存储区存储字符串常量，文本区存储程序的机器代码。</p>
+
 <p><strong>数据段</strong>：存储程序中已初始化的全局变量和静态变量</p>
+
 <p><strong>bss</strong> <strong>段</strong>：存储未初始化的全局变量和静态变量（局部+全局），以及所有被初始化为0的全局变量和静态变量。</p>
+
 <p><strong>堆区</strong>：调用new/malloc函数时在堆区动态分配内存，同时需要调用delete/free来手动释放申请的内存。</p>
+
 <p><strong>映射区</strong>:存储动态链接库以及调用mmap函数进行的文件映射. 处理大文件。</p>
+
 <p><strong>栈</strong>：使用栈空间存储函数的返回地址、参数、局部变量、返回值</p>
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
 <p>链接分为两种，一种是动态链接，一种是静态链接</p>
+
 <h4 id="静态链接">静态链接</h4>
-<p>
-        <img class="mx-auto" alt="image-20191128114231593" src="../../resources/images/C&#43;&#43;/image4.png" />   
-    </p>
+
+<p><img src="../../resources/images/C++/image4.png" alt="image-20191128114231593" /></p>
+
 <p>静态链接做的事情如上图所示，它将不同的目标文件合并，生成一个大的目标文件。</p>
+
 <p>静态链接具体做的事情如下：</p>
+
 <p>（1）空间与地址的分配</p>
+
 <p>扫描所有的输入目标文件,并且获得它们的各个段的长度,属性和位置,并且将输入目标文件中的符号表中所有的符号和符号引用收集起来，统一放在一个全局符号表中。这一步中，链接器将能获得所有输入目标文件的段长度，并且将它们合并，计算出输出文件中各个段合并后的长度与位置，并建立映射关系</p>
+
 <p>（2）符号解析与重定位
 使用上面第一步中收集的信息,读取输入文件中段的数据，重定位数据,并且进行符号解析与重定位，调整代码中的地址等。事实上第二步是链接过程的核心,特别是重定位的过程。</p>
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
 <h4 id="动态链接">动态链接</h4>
+
 <p>可以看出来静态链接有一个很不好的地方在于，它浪费了内存空间。如上图所示，假设object C是某个公共库的文件，例如printf的二进制文件，假设占1M。那么假设电脑中有100个使用了printf的程序。那么printf最终会占用100M。所以这个时候动态链接出现了，</p>
+
 <p>动态链接的核心就是，运行的时候加载需要的目标文件。这样带来的挑战就是如何装载时重定位。</p>
+
 <p>具体的过程大概是这样。 在形成可执行程序时，发现引用了一个外部的函数，此时会检查动态链接库，发现这个函数名是一个动态链接符号，此时可执行程序就不对这个符号进行重定位，而把这个过程留到装载时再进行。</p>
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
 <h4 id="可执行文件变成一个进程">可执行文件变成一个进程</h4>
+
 <p>一般的操作系统都包括shell。shell是壳, 它是一个软件, 它提供了一个用户操作系统的一个接口, 通过shell我们可以调用其他软件,比如chmod chown firefox man 等, 它可以调用内核来工作. shell其实就是一个接口；</p>
+
 <p>在我们通过shell，运行一个编译链接好的二进制文件后。发生了什么事情呢？</p>
+
 <p>首先，shell是一个进程，它有一个主循环，能通过<strong>getcmd</strong> 读取命令行的输入。然后它调用<strong>fork</strong>生成一个shell进程的副本。父shell调用wait   ，而子进程执行用户命令。</p>
+
 <p>需要留意的是父子进程拥有不同的内存空间和寄存器，改变一个进程中的变量不会影响另一个进程。 但是刚开始子进程和父shell使用的都是同一份代码。</p>
+
 <p>接下来shell在调用 <strong>exec</strong>，将从某个文件（通常是可执行文件）里读取内存镜像，并将其替换到调用它的进程的内存空间。这份文件必 须符合特定的格式，规定文件的哪一部分是指令，哪一部分是数据，哪里是指令的开始等等。而这里的文件就是我们上面提到的ELF文件。</p>
+
 <p>子进程执行完后exit.然后返回到父进程 shell.</p>
 
         </div>
@@ -310,7 +524,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

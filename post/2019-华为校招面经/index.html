@@ -73,7 +73,113 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#一面">一面</a></li>
+</ul></li>
+<li><a href="#二面">二面</a></li>
+<li><a href="#三面">三面</a></li>
+<li><a href="#总结">总结</a></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">2019华为面经</h1>
@@ -97,31 +203,58 @@
         
         
         <div class="post-content">
-            <p>面试时间：2019年9月</p>
+            
+
+<p>面试时间：2019年9月</p>
+
 <p>岗位：Ucloud部云计算开发</p>
+
 <p>形式：现场面试</p>
+
 <h3 id="一面">一面</h3>
+
 <p>1.自我介绍</p>
+
 <p>2.项目介绍</p>
+
 <p>3.介绍k8s,画架构图，介绍组件以及通信方式</p>
+
 <p>4.C++ static,const的作用，越详细越好</p>
+
 <p>5.算法题：最长连续自然数序列的长度，例如253498，总共有两个连续自然数序列（2345,89），结果为4</p>
+
 <h2 id="二面">二面</h2>
+
 <p>1.自我介绍</p>
+
 <p>2.介绍项目</p>
+
 <p>3.使用过哪些linux命名</p>
+
 <p>4.给出要求，写出linux命令，具体题目忘了</p>
+
 <p>5.go和C++的区别</p>
+
 <p>6.描述一下go的协程实现</p>
+
 <p>7.协程和进程的区别，什么时候用协程好</p>
+
 <p>8.算法题：求两条链表第一个相交的节点，不相交输出NULL，第一条链表长m，第二条长n</p>
+
 <p>要求：时间O(n+m),空间O(1)</p>
+
 <h2 id="三面">三面</h2>
+
 <p>1.自我介绍</p>
+
 <p>2.介绍项目</p>
+
 <p>3.详细描述在项目中负责的工作</p>
+
 <p>4.意向工作城市以及岗位</p>
+
 <h2 id="总结">总结</h2>
+
 <p>华为和电信一样，包了一个酒店，进行集中面试。到了先签到，然后等到叫号。我签到后等了30分钟，然后开始一面。一面30分钟，然后等了30分钟进行二面。二面30分钟，然后等了二个小时三面。不过好的一点是，等待的地方有零食，饮料充足，而且中午还给我们点了外卖。</p>
 
         </div>
@@ -221,7 +354,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

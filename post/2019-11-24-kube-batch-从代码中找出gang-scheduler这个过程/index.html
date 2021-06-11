@@ -73,7 +73,115 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#目录">目录：</a>
+<ul>
+<li><a href="#一-流程解释">一： 流程解释</a></li>
+<li><a href="#二-代码说明">二：代码说明</a></li>
+<li><a href="#总结">总结：</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">kube-batch 从代码中找出gang scheduler这个过程</h1>
@@ -97,250 +205,511 @@
         
         
         <div class="post-content">
-            <p>从之前的分析中，已经知道了kube-batch的启动过程。kube-batch总共有4个过程。这里我们从Allocate开始。</p>
+            
+
+<p>从之前的分析中，已经知道了kube-batch的启动过程。kube-batch总共有4个过程。这里我们从Allocate开始。</p>
+
 <h3 id="目录">目录：</h3>
+
 <p>一： 流程解释</p>
+
 <p>二：代码说明</p>
+
 <h4 id="一-流程解释">一： 流程解释</h4>
+
 <p>在allocate.go中：找到Execute函数。首先用文字解释一下整个的过程：</p>
+
 <p>（1）将kube-batch的job放入对应的队列。这是一个具有优先级的队列。</p>
+
 <p>（2）依次遍历这些队列，如果为空就跳过</p>
+
 <p>（3）如果不为空，依次从队列中pop出一个job.即接下来要调度这个job</p>
+
 <p>（4）取出这个job对应的所有Tasks(即要绑定的pod),对每个task进行假绑定,这里的假绑定意思是 只是更新task的状态，先记录pod绑定在哪个节点上。当达到JobReady时，进行真正的绑定。这样就实现了一次性绑定了好几个Pod.</p>
+
 <p>（5）更新job的信息，将pod重新加入队列。跳出循环，再次进行调度。</p>
+
 <p>对上面流程有两个地方需要再解释一下:</p>
+
 <p>(1) jobReady 作用是什么，gang scheduler和这个有什么关系？</p>
+
 <p>allocate每次都是对task进行假绑定。jobReady是一个信号。表示现在可以进行真正的绑定了。</p>
+
 <p>在gang.go的75行，实现了这个接口：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">func jobReady(obj interface{}) <span style="color:#66d9ef">bool</span> {
-	job :<span style="color:#f92672">=</span> obj.(<span style="color:#f92672">*</span>api.JobInfo)
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">func<span style="color:#bbb"> </span>jobReady(obj<span style="color:#bbb"> </span>interface{})<span style="color:#bbb"> </span><span style="color:#458;font-weight:bold">bool</span><span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>job<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>obj.(<span style="color:#000;font-weight:bold">*</span>api.JobInfo)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span>occupied<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>readyTaskNum(job)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#000;font-weight:bold">return</span><span style="color:#bbb"> </span>occupied<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">&gt;=</span><span style="color:#bbb"> </span>job.MinAvailable<span style="color:#bbb">
+</span><span style="color:#bbb"></span>}</code></pre></td></tr></table>
+</div>
+</div>
+<p>可以看出来，gang scheduler中 就是通过数量上的判断来进行限制的。job.MinAvailable这个是podgroup的minNumber数量。这样就使得每次调度的时候，只有当MinAvailable个task准备好了之后。才会进行调度，从而达到gang scheduler的效果。</p>
 
-	occupied :<span style="color:#f92672">=</span> readyTaskNum(job)
-
-	<span style="color:#66d9ef">return</span> occupied <span style="color:#f92672">&gt;=</span> job.MinAvailable
-}
-</code></pre></div><p>可以看出来，gang scheduler中 就是通过数量上的判断来进行限制的。job.MinAvailable这个是podgroup的minNumber数量。这样就使得每次调度的时候，只有当MinAvailable个task准备好了之后。才会进行调度，从而达到gang scheduler的效果。</p>
 <p>（2）为什么job还要重新加入队列。这个job不是已经调度了吗？</p>
+
 <p>因为有可能job的Tasks数量会多于 job.MinAvailable。例如，一个job有8个task，但是它指定的podgroup的 minNumber=4。这样调度时会首先调度4个task.当真正绑定之后。剩余没绑定的4个task是一个新的job.所有需要重新加入队列。</p>
-<h4 id="二代码说明">二：代码说明</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">func (alloc <span style="color:#f92672">*</span>allocateAction) Execute(ssn <span style="color:#f92672">*</span>framework.Session) {
-	glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Enter Allocate ...&#34;</span>)
-	defer glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Leaving Allocate ...&#34;</span>)
 
-	<span style="color:#75715e">// 这是优先级队列，即队列里面的内容是有优先级的
-</span><span style="color:#75715e"></span>	queues :<span style="color:#f92672">=</span> util.NewPriorityQueue(ssn.QueueOrderFn)
-	jobsMap :<span style="color:#f92672">=</span> map[api.QueueID]<span style="color:#f92672">*</span>util.PriorityQueue{}
+<h4 id="二-代码说明">二：代码说明</h4>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 52
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 53
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 54
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 55
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 56
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 57
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 58
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 59
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 60
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 61
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 62
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 63
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 64
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 65
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 66
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 67
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 68
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 69
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 70
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 71
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 72
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 73
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 74
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 75
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 76
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 77
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 78
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 79
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 80
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 81
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 82
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 83
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 84
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 85
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 86
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 87
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 88
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 89
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 90
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 91
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 92
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 93
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 94
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 95
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 96
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 97
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 98
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 99
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">100
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">101
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">102
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">103
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">104
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">105
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">106
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">107
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">108
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">109
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">110
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">111
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">112
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">113
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">114
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">115
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">116
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">117
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">118
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">119
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">120
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">121
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">122
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">123
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">124
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">125
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">126
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">127
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">128
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">129
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">130
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">131
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">132
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">133
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">134
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">135
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">136
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">137
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">138
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">139
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">140
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">141
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">142
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">143
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">144
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">145
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">146
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">147
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">148
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">149
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">150
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">151
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">152
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">153
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">154
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">155
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">156
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">157
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">158
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">159
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">160
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">161
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">162
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">163
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">164
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">func<span style="color:#bbb"> </span>(alloc<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">*</span>allocateAction)<span style="color:#bbb"> </span>Execute(ssn<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">*</span>framework.Session)<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>glog.V(<span style="color:#099">3</span>).Infof(<span style="color:#d14">&#34;Enter Allocate ...&#34;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>defer<span style="color:#bbb"> </span>glog.V(<span style="color:#099">3</span>).Infof(<span style="color:#d14">&#34;Leaving Allocate ...&#34;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// 这是优先级队列，即队列里面的内容是有优先级的
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span>queues<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>util.NewPriorityQueue(ssn.QueueOrderFn)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>jobsMap<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>map[api.QueueID]<span style="color:#000;font-weight:bold">*</span>util.PriorityQueue{}<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">//首先将所有的kube-batch job放入
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span><span style="color:#000;font-weight:bold">for</span><span style="color:#bbb"> </span>_,<span style="color:#bbb"> </span>job<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>range<span style="color:#bbb"> </span>ssn.Jobs<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">		</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>queue,<span style="color:#bbb"> </span>found<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>ssn.Queues[job.Queue];<span style="color:#bbb"> </span>found<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>queues.Push(queue)<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>}<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">else</span><span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>glog.Warningf(<span style="color:#d14">&#34;Skip adding Job &lt;%s/%s&gt; because its queue %s is not found&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">				</span>job.Namespace,<span style="color:#bbb"> </span>job.Name,<span style="color:#bbb"> </span>job.Queue)<span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#000;font-weight:bold">continue</span><span style="color:#bbb">
+</span><span style="color:#bbb">		</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">		</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>_,<span style="color:#bbb"> </span>found<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>jobsMap[job.Queue];<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">!</span>found<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>jobsMap[job.Queue]<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>util.NewPriorityQueue(ssn.JobOrderFn)<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">		</span>glog.V(<span style="color:#099">4</span>).Infof(<span style="color:#d14">&#34;Added Job &lt;%s/%s&gt; into Queue &lt;%s&gt;&#34;</span>,<span style="color:#bbb"> </span>job.Namespace,<span style="color:#bbb"> </span>job.Name,<span style="color:#bbb"> </span>job.Queue)<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>jobsMap[job.Queue].Push(job)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span>glog.V(<span style="color:#099">3</span>).Infof(<span style="color:#d14">&#34;Try to allocate resource to %d Queues&#34;</span>,<span style="color:#bbb"> </span>len(jobsMap))<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span>pendingTasks<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>map[api.JobID]<span style="color:#000;font-weight:bold">*</span>util.PriorityQueue{}<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#000;font-weight:bold">for</span><span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">		</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>queues.Empty()<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#000;font-weight:bold">break</span><span style="color:#bbb">
+</span><span style="color:#bbb">		</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">		</span><span style="color:#998;font-style:italic">// 从第一个队列开始寻找是否有job需要调度
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">		</span>queue<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>queues.Pop().(<span style="color:#000;font-weight:bold">*</span>api.QueueInfo)<span style="color:#bbb">
+</span><span style="color:#bbb">		</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>ssn.Overused(queue)<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>glog.V(<span style="color:#099">3</span>).Infof(<span style="color:#d14">&#34;Queue &lt;%s&gt; is overused, ignore it.&#34;</span>,<span style="color:#bbb"> </span>queue.Name)<span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#000;font-weight:bold">continue</span><span style="color:#bbb">
+</span><span style="color:#bbb">		</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">		</span>jobs,<span style="color:#bbb"> </span>found<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>jobsMap[queue.UID]<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">		</span>glog.V(<span style="color:#099">3</span>).Infof(<span style="color:#d14">&#34;Try to allocate resource to Jobs in Queue &lt;%v&gt;&#34;</span>,<span style="color:#bbb"> </span>queue.Name)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">		</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">!</span>found<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">||</span><span style="color:#bbb"> </span>jobs.Empty()<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>glog.V(<span style="color:#099">4</span>).Infof(<span style="color:#d14">&#34;Can not find jobs for queue %s.&#34;</span>,<span style="color:#bbb"> </span>queue.Name)<span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#000;font-weight:bold">continue</span><span style="color:#bbb">
+</span><span style="color:#bbb">		</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">		
+</span><span style="color:#bbb">		</span><span style="color:#998;font-style:italic">// 从队列中依次弹出job进行调度
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">		</span>job<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>jobs.Pop().(<span style="color:#000;font-weight:bold">*</span>api.JobInfo)<span style="color:#bbb">
+</span><span style="color:#bbb">		</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>_,<span style="color:#bbb"> </span>found<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>pendingTasks[job.UID];<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">!</span>found<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>tasks<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>util.NewPriorityQueue(ssn.TaskOrderFn)<span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#000;font-weight:bold">for</span><span style="color:#bbb"> </span>_,<span style="color:#bbb"> </span>task<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>range<span style="color:#bbb"> </span>job.TaskStatusIndex[api.Pending]<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">				</span><span style="color:#998;font-style:italic">// Skip BestEffort task in &#39;allocate&#39; action.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">				</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>task.Resreq.IsEmpty()<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">					</span>glog.V(<span style="color:#099">4</span>).Infof(<span style="color:#d14">&#34;Task &lt;%v/%v&gt; is BestEffort task, skip it.&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">						</span>task.Namespace,<span style="color:#bbb"> </span>task.Name)<span style="color:#bbb">
+</span><span style="color:#bbb">					</span><span style="color:#000;font-weight:bold">continue</span><span style="color:#bbb">
+</span><span style="color:#bbb">				</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">				</span>tasks.Push(task)<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>pendingTasks[job.UID]<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>tasks<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>tasks<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>pendingTasks[job.UID]<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">		</span>glog.V(<span style="color:#099">3</span>).Infof(<span style="color:#d14">&#34;Try to allocate resource to %d tasks of Job &lt;%v/%v&gt;&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>tasks.Len(),<span style="color:#bbb"> </span>job.Namespace,<span style="color:#bbb"> </span>job.Name)<span style="color:#bbb">
+</span><span style="color:#bbb">		
+</span><span style="color:#bbb">		</span><span style="color:#998;font-style:italic">// 具体调度Task的循环，每次都假绑定一个Task，表示这个task已经完成
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">		</span><span style="color:#000;font-weight:bold">for</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">!</span>tasks.Empty()<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>predicateNodes<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>[]<span style="color:#000;font-weight:bold">*</span>api.NodeInfo{}<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>nodeScores<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>map[int][]<span style="color:#000;font-weight:bold">*</span>api.NodeInfo{}<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">			</span>task<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>tasks.Pop().(<span style="color:#000;font-weight:bold">*</span>api.TaskInfo)<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>assigned<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">false</span><span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">			</span>glog.V(<span style="color:#099">3</span>).Infof(<span style="color:#d14">&#34;There are &lt;%d&gt; nodes for Job &lt;%v/%v&gt;&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">				</span>len(ssn.Nodes),<span style="color:#bbb"> </span>job.Namespace,<span style="color:#bbb"> </span>job.Name)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#998;font-style:italic">//any task that doesn&#39;t fit will be the last processed
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">			</span><span style="color:#998;font-style:italic">//within this loop context so any existing contents of
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">			</span><span style="color:#998;font-style:italic">//NodesFitDelta are for tasks that eventually did fit on a
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">			</span><span style="color:#998;font-style:italic">//node
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">			
+</span><span style="color:#bbb">			</span><span style="color:#998;font-style:italic">// 后面的很长一般分，就是为task选择一个合适的node。
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">			</span><span style="color:#998;font-style:italic">//主要内容是先过滤，然后选择一个满足task的最优节点，然后更新job中该task的信息
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">			</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>len(job.NodesFitDelta)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">&gt;</span><span style="color:#bbb"> </span><span style="color:#099">0</span><span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">				</span>job.NodesFitDelta<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>make(api.NodeResourceMap)<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#000;font-weight:bold">for</span><span style="color:#bbb"> </span>_,<span style="color:#bbb"> </span>node<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>range<span style="color:#bbb"> </span>ssn.Nodes<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">				</span>glog.V(<span style="color:#099">3</span>).Infof(<span style="color:#d14">&#34;Considering Task &lt;%v/%v&gt; on node &lt;%v&gt;: &lt;%v&gt; vs. &lt;%v&gt;&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">					</span>task.Namespace,<span style="color:#bbb"> </span>task.Name,<span style="color:#bbb"> </span>node.Name,<span style="color:#bbb"> </span>task.Resreq,<span style="color:#bbb"> </span>node.Idle)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">				</span><span style="color:#998;font-style:italic">// TODO (k82cn): Enable eCache for performance improvement.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">				</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>err<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>ssn.PredicateFn(task,<span style="color:#bbb"> </span>node);<span style="color:#bbb"> </span>err<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">!=</span><span style="color:#bbb"> </span>nil<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">					</span>glog.V(<span style="color:#099">3</span>).Infof(<span style="color:#d14">&#34;Predicates failed for task &lt;%s/%s&gt; on node &lt;%s&gt;: %v&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">						</span>task.Namespace,<span style="color:#bbb"> </span>task.Name,<span style="color:#bbb"> </span>node.Name,<span style="color:#bbb"> </span>err)<span style="color:#bbb">
+</span><span style="color:#bbb">					</span><span style="color:#000;font-weight:bold">continue</span><span style="color:#bbb">
+</span><span style="color:#bbb">				</span>}<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">else</span><span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">					</span>predicateNodes<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>append(predicateNodes,<span style="color:#bbb"> </span>node)<span style="color:#bbb">
+</span><span style="color:#bbb">				</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#000;font-weight:bold">for</span><span style="color:#bbb"> </span>_,<span style="color:#bbb"> </span>node<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>range<span style="color:#bbb"> </span>predicateNodes<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">				</span>score,<span style="color:#bbb"> </span>err<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>ssn.NodeOrderFn(task,<span style="color:#bbb"> </span>node)<span style="color:#bbb">
+</span><span style="color:#bbb">				</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>err<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">!=</span><span style="color:#bbb"> </span>nil<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">					</span>glog.V(<span style="color:#099">3</span>).Infof(<span style="color:#d14">&#34;Error in Calculating Priority for the node:%v&#34;</span>,<span style="color:#bbb"> </span>err)<span style="color:#bbb">
+</span><span style="color:#bbb">				</span>}<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">else</span><span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">					</span>nodeScores[score]<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>append(nodeScores[score],<span style="color:#bbb"> </span>node)<span style="color:#bbb">
+</span><span style="color:#bbb">				</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>selectedNodes<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>util.SelectBestNode(nodeScores)<span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#000;font-weight:bold">for</span><span style="color:#bbb"> </span>_,<span style="color:#bbb"> </span>node<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>range<span style="color:#bbb"> </span>selectedNodes<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">				</span><span style="color:#998;font-style:italic">// Allocate idle resource to the task.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">				</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>task.InitResreq.LessEqual(node.Idle)<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">					</span>glog.V(<span style="color:#099">3</span>).Infof(<span style="color:#d14">&#34;Binding Task &lt;%v/%v&gt; to node &lt;%v&gt;&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">						</span>task.Namespace,<span style="color:#bbb"> </span>task.Name,<span style="color:#bbb"> </span>node.Name)<span style="color:#bbb">
+</span><span style="color:#bbb">					</span><span style="color:#998;font-style:italic">// ！！！这里需要重点注意，这里调用了session.go中Allocate函数。 下面会将这个的作用
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">					</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>err<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>ssn.Allocate(task,<span style="color:#bbb"> </span>node.Name);<span style="color:#bbb"> </span>err<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">!=</span><span style="color:#bbb"> </span>nil<span style="color:#bbb"> </span>{<span style="color:#bbb">         
+</span><span style="color:#bbb">						</span>glog.Errorf(<span style="color:#d14">&#34;Failed to bind Task %v on %v in Session %v, err: %v&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">							</span>task.UID,<span style="color:#bbb"> </span>node.Name,<span style="color:#bbb"> </span>ssn.UID,<span style="color:#bbb"> </span>err)<span style="color:#bbb">
+</span><span style="color:#bbb">						</span><span style="color:#000;font-weight:bold">continue</span><span style="color:#bbb">
+</span><span style="color:#bbb">					</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">					</span>assigned<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">true</span><span style="color:#bbb">
+</span><span style="color:#bbb">					</span><span style="color:#000;font-weight:bold">break</span><span style="color:#bbb">
+</span><span style="color:#bbb">				</span>}<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">else</span><span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">					</span><span style="color:#998;font-style:italic">//store information about missing resources
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">					</span>job.NodesFitDelta[node.Name]<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>node.Idle.<span style="color:#0086b3">Clone</span>()<span style="color:#bbb">
+</span><span style="color:#bbb">					</span>job.NodesFitDelta[node.Name].FitDelta(task.Resreq)<span style="color:#bbb">
+</span><span style="color:#bbb">					</span>glog.V(<span style="color:#099">3</span>).Infof(<span style="color:#d14">&#34;Predicates failed for task &lt;%s/%s&gt; on node &lt;%s&gt; with limited resources&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">						</span>task.Namespace,<span style="color:#bbb"> </span>task.Name,<span style="color:#bbb"> </span>node.Name)<span style="color:#bbb">
+</span><span style="color:#bbb">				</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">				</span><span style="color:#998;font-style:italic">// Allocate releasing resource to the task if any.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">				</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>task.InitResreq.LessEqual(node.Releasing)<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">					</span>glog.V(<span style="color:#099">3</span>).Infof(<span style="color:#d14">&#34;Pipelining Task &lt;%v/%v&gt; to node &lt;%v&gt; for &lt;%v&gt; on &lt;%v&gt;&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">						</span>task.Namespace,<span style="color:#bbb"> </span>task.Name,<span style="color:#bbb"> </span>node.Name,<span style="color:#bbb"> </span>task.InitResreq,<span style="color:#bbb"> </span>node.Releasing)<span style="color:#bbb">
+</span><span style="color:#bbb">					</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>err<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>ssn.Pipeline(task,<span style="color:#bbb"> </span>node.Name);<span style="color:#bbb"> </span>err<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">!=</span><span style="color:#bbb"> </span>nil<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">						</span>glog.Errorf(<span style="color:#d14">&#34;Failed to pipeline Task %v on %v in Session %v&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">							</span>task.UID,<span style="color:#bbb"> </span>node.Name,<span style="color:#bbb"> </span>ssn.UID)<span style="color:#bbb">
+</span><span style="color:#bbb">						</span><span style="color:#000;font-weight:bold">continue</span><span style="color:#bbb">
+</span><span style="color:#bbb">					</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">					</span>assigned<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">true</span><span style="color:#bbb">
+</span><span style="color:#bbb">					</span><span style="color:#000;font-weight:bold">break</span><span style="color:#bbb">
+</span><span style="color:#bbb">				</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">			
+</span><span style="color:#bbb">			
+</span><span style="color:#bbb">			</span><span style="color:#998;font-style:italic">//如果绑定某个task过程中失败，比如资源不足。那么就会跳出这个循环。
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">			</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">!</span>assigned<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">				</span><span style="color:#000;font-weight:bold">break</span><span style="color:#bbb">
+</span><span style="color:#bbb">			</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#998;font-style:italic">// 将job重新加入队列，然后进行下一个job的调度。
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">			</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>ssn.JobReady(job)<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">				</span>jobs.Push(job)<span style="color:#bbb">
+</span><span style="color:#bbb">				</span><span style="color:#000;font-weight:bold">break</span><span style="color:#bbb">
+</span><span style="color:#bbb">			</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">		</span><span style="color:#998;font-style:italic">// Added Queue back until no job in Queue.  
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">		</span>queues.Push(queue)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>}</code></pre></td></tr></table>
+</div>
+</div>
+<p>session.go中Allocate函数</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">func<span style="color:#bbb"> </span>(ssn<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">*</span>Session)<span style="color:#bbb"> </span>Allocate(task<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">*</span>api.TaskInfo,<span style="color:#bbb"> </span>hostname<span style="color:#bbb"> </span>string)<span style="color:#bbb"> </span>error<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>err<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>ssn.cache.AllocateVolumes(task,<span style="color:#bbb"> </span>hostname);<span style="color:#bbb"> </span>err<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">!=</span><span style="color:#bbb"> </span>nil<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">		</span><span style="color:#000;font-weight:bold">return</span><span style="color:#bbb"> </span>err<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// 这里这是更新task的状态。
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// Only update status in session
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span>job,<span style="color:#bbb"> </span>found<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>ssn.Jobs[task.Job]<span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>found<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">		</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>err<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>job.UpdateTaskStatus(task,<span style="color:#bbb"> </span>api.Allocated);<span style="color:#bbb"> </span>err<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">!=</span><span style="color:#bbb"> </span>nil<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>glog.Errorf(<span style="color:#d14">&#34;Failed to update task &lt;%v/%v&gt; status to %v in Session &lt;%v&gt;: %v&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">				</span>task.Namespace,<span style="color:#bbb"> </span>task.Name,<span style="color:#bbb"> </span>api.Allocated,<span style="color:#bbb"> </span>ssn.UID,<span style="color:#bbb"> </span>err)<span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#000;font-weight:bold">return</span><span style="color:#bbb"> </span>err<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>}<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">else</span><span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>glog.Errorf(<span style="color:#d14">&#34;Failed to found Job &lt;%s&gt; in Session &lt;%s&gt; index when binding.&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>task.Job,<span style="color:#bbb"> </span>ssn.UID)<span style="color:#bbb">
+</span><span style="color:#bbb">		</span><span style="color:#000;font-weight:bold">return</span><span style="color:#bbb"> </span>fmt.Errorf(<span style="color:#d14">&#34;failed to find job %s&#34;</span>,<span style="color:#bbb"> </span>task.Job)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span>task.NodeName<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>hostname<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>node,<span style="color:#bbb"> </span>found<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>ssn.Nodes[hostname];<span style="color:#bbb"> </span>found<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">		</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>err<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>node.AddTask(task);<span style="color:#bbb"> </span>err<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">!=</span><span style="color:#bbb"> </span>nil<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>glog.Errorf(<span style="color:#d14">&#34;Failed to add task &lt;%v/%v&gt; to node &lt;%v&gt; in Session &lt;%v&gt;: %v&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">				</span>task.Namespace,<span style="color:#bbb"> </span>task.Name,<span style="color:#bbb"> </span>hostname,<span style="color:#bbb"> </span>ssn.UID,<span style="color:#bbb"> </span>err)<span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#000;font-weight:bold">return</span><span style="color:#bbb"> </span>err<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>glog.V(<span style="color:#099">3</span>).Infof(<span style="color:#d14">&#34;After allocated Task &lt;%v/%v&gt; to Node &lt;%v&gt;: idle &lt;%v&gt;, used &lt;%v&gt;, releasing &lt;%v&gt;&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>task.Namespace,<span style="color:#bbb"> </span>task.Name,<span style="color:#bbb"> </span>node.Name,<span style="color:#bbb"> </span>node.Idle,<span style="color:#bbb"> </span>node.Used,<span style="color:#bbb"> </span>node.Releasing)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>}<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">else</span><span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>glog.Errorf(<span style="color:#d14">&#34;Failed to found Node &lt;%s&gt; in Session &lt;%s&gt; index when binding.&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>hostname,<span style="color:#bbb"> </span>ssn.UID)<span style="color:#bbb">
+</span><span style="color:#bbb">		</span><span style="color:#000;font-weight:bold">return</span><span style="color:#bbb"> </span>fmt.Errorf(<span style="color:#d14">&#34;failed to find node %s&#34;</span>,<span style="color:#bbb"> </span>hostname)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#998;font-style:italic">//gang.go中有，这里是真正的绑定了，当jobReady时，调用dispatch函数对所有的Allocated的task进行绑定。
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// dispatch就在该函数的下面。内容也很直观，就是调用k8s的接口，真正的绑定pod
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>ssn.JobReady(job)<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">		</span><span style="color:#000;font-weight:bold">for</span><span style="color:#bbb"> </span>_,<span style="color:#bbb"> </span>task<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>range<span style="color:#bbb"> </span>job.TaskStatusIndex[api.Allocated]<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>err<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>ssn.dispatch(task);<span style="color:#bbb"> </span>err<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">!=</span><span style="color:#bbb"> </span>nil<span style="color:#bbb"> </span>{<span style="color:#bbb">                    </span><span style="color:#998;font-style:italic">// 如果job准备好了，就直接真正绑定所有准备好的任务？？
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">				</span>glog.Errorf(<span style="color:#d14">&#34;Failed to dispatch task &lt;%v/%v&gt;: %v&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">					</span>task.Namespace,<span style="color:#bbb"> </span>task.Name,<span style="color:#bbb"> </span>err)<span style="color:#bbb">
+</span><span style="color:#bbb">				</span><span style="color:#000;font-weight:bold">return</span><span style="color:#bbb"> </span>err<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#000;font-weight:bold">return</span><span style="color:#bbb"> </span>nil<span style="color:#bbb">
+</span><span style="color:#bbb"></span>}</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="总结">总结：</h4>
 
-	<span style="color:#75715e">//首先将所有的kube-batch job放入
-</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">for</span> _, job :<span style="color:#f92672">=</span> range ssn.Jobs {
-		<span style="color:#66d9ef">if</span> queue, found :<span style="color:#f92672">=</span> ssn.Queues[job.Queue]; found {
-			queues.Push(queue)
-		} <span style="color:#66d9ef">else</span> {
-			glog.Warningf(<span style="color:#e6db74">&#34;Skip adding Job &lt;%s/%s&gt; because its queue %s is not found&#34;</span>,
-				job.Namespace, job.Name, job.Queue)
-			<span style="color:#66d9ef">continue</span>
-		}
-
-		<span style="color:#66d9ef">if</span> _, found :<span style="color:#f92672">=</span> jobsMap[job.Queue]; <span style="color:#f92672">!</span>found {
-			jobsMap[job.Queue] <span style="color:#f92672">=</span> util.NewPriorityQueue(ssn.JobOrderFn)
-		}
-
-		glog.V(<span style="color:#ae81ff">4</span>).Infof(<span style="color:#e6db74">&#34;Added Job &lt;%s/%s&gt; into Queue &lt;%s&gt;&#34;</span>, job.Namespace, job.Name, job.Queue)
-		jobsMap[job.Queue].Push(job)
-	}
-
-	glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Try to allocate resource to %d Queues&#34;</span>, len(jobsMap))
-
-	pendingTasks :<span style="color:#f92672">=</span> map[api.JobID]<span style="color:#f92672">*</span>util.PriorityQueue{}
-
-	<span style="color:#66d9ef">for</span> {
-		<span style="color:#66d9ef">if</span> queues.Empty() {
-			<span style="color:#66d9ef">break</span>
-		}
-		<span style="color:#75715e">// 从第一个队列开始寻找是否有job需要调度
-</span><span style="color:#75715e"></span>		queue :<span style="color:#f92672">=</span> queues.Pop().(<span style="color:#f92672">*</span>api.QueueInfo)
-		<span style="color:#66d9ef">if</span> ssn.Overused(queue) {
-			glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Queue &lt;%s&gt; is overused, ignore it.&#34;</span>, queue.Name)
-			<span style="color:#66d9ef">continue</span>
-		}
-
-		jobs, found :<span style="color:#f92672">=</span> jobsMap[queue.UID]
-
-		glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Try to allocate resource to Jobs in Queue &lt;%v&gt;&#34;</span>, queue.Name)
-
-		<span style="color:#66d9ef">if</span> <span style="color:#f92672">!</span>found <span style="color:#f92672">||</span> jobs.Empty() {
-			glog.V(<span style="color:#ae81ff">4</span>).Infof(<span style="color:#e6db74">&#34;Can not find jobs for queue %s.&#34;</span>, queue.Name)
-			<span style="color:#66d9ef">continue</span>
-		}
-		
-		<span style="color:#75715e">// 从队列中依次弹出job进行调度
-</span><span style="color:#75715e"></span>		job :<span style="color:#f92672">=</span> jobs.Pop().(<span style="color:#f92672">*</span>api.JobInfo)
-		<span style="color:#66d9ef">if</span> _, found :<span style="color:#f92672">=</span> pendingTasks[job.UID]; <span style="color:#f92672">!</span>found {
-			tasks :<span style="color:#f92672">=</span> util.NewPriorityQueue(ssn.TaskOrderFn)
-			<span style="color:#66d9ef">for</span> _, task :<span style="color:#f92672">=</span> range job.TaskStatusIndex[api.Pending] {
-				<span style="color:#75715e">// Skip BestEffort task in &#39;allocate&#39; action.
-</span><span style="color:#75715e"></span>				<span style="color:#66d9ef">if</span> task.Resreq.IsEmpty() {
-					glog.V(<span style="color:#ae81ff">4</span>).Infof(<span style="color:#e6db74">&#34;Task &lt;%v/%v&gt; is BestEffort task, skip it.&#34;</span>,
-						task.Namespace, task.Name)
-					<span style="color:#66d9ef">continue</span>
-				}
-
-				tasks.Push(task)
-			}
-			pendingTasks[job.UID] <span style="color:#f92672">=</span> tasks
-		}
-		tasks :<span style="color:#f92672">=</span> pendingTasks[job.UID]
-
-		glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Try to allocate resource to %d tasks of Job &lt;%v/%v&gt;&#34;</span>,
-			tasks.Len(), job.Namespace, job.Name)
-		
-		<span style="color:#75715e">// 具体调度Task的循环，每次都假绑定一个Task，表示这个task已经完成
-</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">for</span> <span style="color:#f92672">!</span>tasks.Empty() {
-			predicateNodes :<span style="color:#f92672">=</span> []<span style="color:#f92672">*</span>api.NodeInfo{}
-			nodeScores :<span style="color:#f92672">=</span> map[int][]<span style="color:#f92672">*</span>api.NodeInfo{}
-
-			task :<span style="color:#f92672">=</span> tasks.Pop().(<span style="color:#f92672">*</span>api.TaskInfo)
-			assigned :<span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span>
-
-			glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;There are &lt;%d&gt; nodes for Job &lt;%v/%v&gt;&#34;</span>,
-				len(ssn.Nodes), job.Namespace, job.Name)
-
-			<span style="color:#75715e">//any task that doesn&#39;t fit will be the last processed
-</span><span style="color:#75715e"></span>			<span style="color:#75715e">//within this loop context so any existing contents of
-</span><span style="color:#75715e"></span>			<span style="color:#75715e">//NodesFitDelta are for tasks that eventually did fit on a
-</span><span style="color:#75715e"></span>			<span style="color:#75715e">//node
-</span><span style="color:#75715e"></span>			
-			<span style="color:#75715e">// 后面的很长一般分，就是为task选择一个合适的node。
-</span><span style="color:#75715e"></span>			<span style="color:#75715e">//主要内容是先过滤，然后选择一个满足task的最优节点，然后更新job中该task的信息
-</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">if</span> len(job.NodesFitDelta) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span> {
-				job.NodesFitDelta <span style="color:#f92672">=</span> make(api.NodeResourceMap)
-			}
-			<span style="color:#66d9ef">for</span> _, node :<span style="color:#f92672">=</span> range ssn.Nodes {
-				glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Considering Task &lt;%v/%v&gt; on node &lt;%v&gt;: &lt;%v&gt; vs. &lt;%v&gt;&#34;</span>,
-					task.Namespace, task.Name, node.Name, task.Resreq, node.Idle)
-
-				<span style="color:#75715e">// TODO (k82cn): Enable eCache for performance improvement.
-</span><span style="color:#75715e"></span>				<span style="color:#66d9ef">if</span> err :<span style="color:#f92672">=</span> ssn.PredicateFn(task, node); err <span style="color:#f92672">!=</span> nil {
-					glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Predicates failed for task &lt;%s/%s&gt; on node &lt;%s&gt;: %v&#34;</span>,
-						task.Namespace, task.Name, node.Name, err)
-					<span style="color:#66d9ef">continue</span>
-				} <span style="color:#66d9ef">else</span> {
-					predicateNodes <span style="color:#f92672">=</span> append(predicateNodes, node)
-				}
-			}
-			<span style="color:#66d9ef">for</span> _, node :<span style="color:#f92672">=</span> range predicateNodes {
-				score, err :<span style="color:#f92672">=</span> ssn.NodeOrderFn(task, node)
-				<span style="color:#66d9ef">if</span> err <span style="color:#f92672">!=</span> nil {
-					glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Error in Calculating Priority for the node:%v&#34;</span>, err)
-				} <span style="color:#66d9ef">else</span> {
-					nodeScores[score] <span style="color:#f92672">=</span> append(nodeScores[score], node)
-				}
-			}
-			selectedNodes :<span style="color:#f92672">=</span> util.SelectBestNode(nodeScores)
-			<span style="color:#66d9ef">for</span> _, node :<span style="color:#f92672">=</span> range selectedNodes {
-				<span style="color:#75715e">// Allocate idle resource to the task.
-</span><span style="color:#75715e"></span>				<span style="color:#66d9ef">if</span> task.InitResreq.LessEqual(node.Idle) {
-					glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Binding Task &lt;%v/%v&gt; to node &lt;%v&gt;&#34;</span>,
-						task.Namespace, task.Name, node.Name)
-					<span style="color:#75715e">// ！！！这里需要重点注意，这里调用了session.go中Allocate函数。 下面会将这个的作用
-</span><span style="color:#75715e"></span>					<span style="color:#66d9ef">if</span> err :<span style="color:#f92672">=</span> ssn.Allocate(task, node.Name); err <span style="color:#f92672">!=</span> nil {         
-						glog.Errorf(<span style="color:#e6db74">&#34;Failed to bind Task %v on %v in Session %v, err: %v&#34;</span>,
-							task.UID, node.Name, ssn.UID, err)
-						<span style="color:#66d9ef">continue</span>
-					}
-					assigned <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
-					<span style="color:#66d9ef">break</span>
-				} <span style="color:#66d9ef">else</span> {
-					<span style="color:#75715e">//store information about missing resources
-</span><span style="color:#75715e"></span>					job.NodesFitDelta[node.Name] <span style="color:#f92672">=</span> node.Idle.Clone()
-					job.NodesFitDelta[node.Name].FitDelta(task.Resreq)
-					glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Predicates failed for task &lt;%s/%s&gt; on node &lt;%s&gt; with limited resources&#34;</span>,
-						task.Namespace, task.Name, node.Name)
-				}
-
-				<span style="color:#75715e">// Allocate releasing resource to the task if any.
-</span><span style="color:#75715e"></span>				<span style="color:#66d9ef">if</span> task.InitResreq.LessEqual(node.Releasing) {
-					glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;Pipelining Task &lt;%v/%v&gt; to node &lt;%v&gt; for &lt;%v&gt; on &lt;%v&gt;&#34;</span>,
-						task.Namespace, task.Name, node.Name, task.InitResreq, node.Releasing)
-					<span style="color:#66d9ef">if</span> err :<span style="color:#f92672">=</span> ssn.Pipeline(task, node.Name); err <span style="color:#f92672">!=</span> nil {
-						glog.Errorf(<span style="color:#e6db74">&#34;Failed to pipeline Task %v on %v in Session %v&#34;</span>,
-							task.UID, node.Name, ssn.UID)
-						<span style="color:#66d9ef">continue</span>
-					}
-
-					assigned <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span>
-					<span style="color:#66d9ef">break</span>
-				}
-			}
-			
-			
-			<span style="color:#75715e">//如果绑定某个task过程中失败，比如资源不足。那么就会跳出这个循环。
-</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">if</span> <span style="color:#f92672">!</span>assigned {
-				<span style="color:#66d9ef">break</span>
-			}
-			<span style="color:#75715e">// 将job重新加入队列，然后进行下一个job的调度。
-</span><span style="color:#75715e"></span>			<span style="color:#66d9ef">if</span> ssn.JobReady(job) {
-				jobs.Push(job)
-				<span style="color:#66d9ef">break</span>
-			}
-		}
-		<span style="color:#75715e">// Added Queue back until no job in Queue.  
-</span><span style="color:#75715e"></span>		queues.Push(queue)
-	}
-</code></pre></div><p>session.go中Allocate函数</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">func (ssn <span style="color:#f92672">*</span>Session) Allocate(task <span style="color:#f92672">*</span>api.TaskInfo, hostname string) error {
-	<span style="color:#66d9ef">if</span> err :<span style="color:#f92672">=</span> ssn.cache.AllocateVolumes(task, hostname); err <span style="color:#f92672">!=</span> nil {
-		<span style="color:#66d9ef">return</span> err
-	}
-
-	<span style="color:#75715e">// 这里这是更新task的状态。
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// Only update status in session
-</span><span style="color:#75715e"></span>	job, found :<span style="color:#f92672">=</span> ssn.Jobs[task.Job]
-	<span style="color:#66d9ef">if</span> found {
-		<span style="color:#66d9ef">if</span> err :<span style="color:#f92672">=</span> job.UpdateTaskStatus(task, api.Allocated); err <span style="color:#f92672">!=</span> nil {
-			glog.Errorf(<span style="color:#e6db74">&#34;Failed to update task &lt;%v/%v&gt; status to %v in Session &lt;%v&gt;: %v&#34;</span>,
-				task.Namespace, task.Name, api.Allocated, ssn.UID, err)
-			<span style="color:#66d9ef">return</span> err
-		}
-	} <span style="color:#66d9ef">else</span> {
-		glog.Errorf(<span style="color:#e6db74">&#34;Failed to found Job &lt;%s&gt; in Session &lt;%s&gt; index when binding.&#34;</span>,
-			task.Job, ssn.UID)
-		<span style="color:#66d9ef">return</span> fmt.Errorf(<span style="color:#e6db74">&#34;failed to find job %s&#34;</span>, task.Job)
-	}
-
-	task.NodeName <span style="color:#f92672">=</span> hostname
-
-	<span style="color:#66d9ef">if</span> node, found :<span style="color:#f92672">=</span> ssn.Nodes[hostname]; found {
-		<span style="color:#66d9ef">if</span> err :<span style="color:#f92672">=</span> node.AddTask(task); err <span style="color:#f92672">!=</span> nil {
-			glog.Errorf(<span style="color:#e6db74">&#34;Failed to add task &lt;%v/%v&gt; to node &lt;%v&gt; in Session &lt;%v&gt;: %v&#34;</span>,
-				task.Namespace, task.Name, hostname, ssn.UID, err)
-			<span style="color:#66d9ef">return</span> err
-		}
-		glog.V(<span style="color:#ae81ff">3</span>).Infof(<span style="color:#e6db74">&#34;After allocated Task &lt;%v/%v&gt; to Node &lt;%v&gt;: idle &lt;%v&gt;, used &lt;%v&gt;, releasing &lt;%v&gt;&#34;</span>,
-			task.Namespace, task.Name, node.Name, node.Idle, node.Used, node.Releasing)
-	} <span style="color:#66d9ef">else</span> {
-		glog.Errorf(<span style="color:#e6db74">&#34;Failed to found Node &lt;%s&gt; in Session &lt;%s&gt; index when binding.&#34;</span>,
-			hostname, ssn.UID)
-		<span style="color:#66d9ef">return</span> fmt.Errorf(<span style="color:#e6db74">&#34;failed to find node %s&#34;</span>, hostname)
-	}
-
-    <span style="color:#75715e">//gang.go中有，这里是真正的绑定了，当jobReady时，调用dispatch函数对所有的Allocated的task进行绑定。
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// dispatch就在该函数的下面。内容也很直观，就是调用k8s的接口，真正的绑定pod
-</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">if</span> ssn.JobReady(job) {
-		<span style="color:#66d9ef">for</span> _, task :<span style="color:#f92672">=</span> range job.TaskStatusIndex[api.Allocated] {
-			<span style="color:#66d9ef">if</span> err :<span style="color:#f92672">=</span> ssn.dispatch(task); err <span style="color:#f92672">!=</span> nil {                    <span style="color:#75715e">// 如果job准备好了，就直接真正绑定所有准备好的任务？？
-</span><span style="color:#75715e"></span>				glog.Errorf(<span style="color:#e6db74">&#34;Failed to dispatch task &lt;%v/%v&gt;: %v&#34;</span>,
-					task.Namespace, task.Name, err)
-				<span style="color:#66d9ef">return</span> err
-			}
-		}
-	}
-
-	<span style="color:#66d9ef">return</span> nil
-}
-</code></pre></div><h4 id="总结">总结：</h4>
 <p>感觉自己的文字表达能力还是不行，还需要更多的锻炼。 结合代码的注释和上面的流程说明一起看会更容易理解。</p>
+
 <p>在session.go中可以看到，每次为task分配资源时，首先都是更新状态，只有达到jobReady时，才真正的绑定到具体的某个结点上。</p>
+
 <p>当然如果当前要调度的job1,它需要的资源不足，那么当前这个job1就会跳出循环，找下一个要进行调度的job。不用担心，job1中已经绑定的task所占的资源。backfill操作会将Job1清空。</p>
 
         </div>
@@ -440,7 +809,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

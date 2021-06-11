@@ -73,7 +73,120 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#初始">初始</a>
+<ul>
+<li>
+<ul>
+<li><a href="#萌芽期">萌芽期</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#重建">重建</a>
+<ul>
+<li>
+<ul>
+<li><a href="#重新感悟到写博客的魅力">重新感悟到写博客的魅力</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">开启新的博客历程</h1>
@@ -97,18 +210,27 @@
         
         
         <div class="post-content">
-            <h2 id="初始">初始</h2>
+            
+
+<h2 id="初始">初始</h2>
+
 <blockquote>
 <h4 id="萌芽期">萌芽期</h4>
 </blockquote>
-<p>           从大学开始，我一直想弄一个自己的Blog。大学期间还自学了CSS和html。后来因为两个原因放弃了。一是大学刚接触计算机，有时想记下学下的内容，但都是笔记本上记录，也没写什么技术博客的想法。二是当时感觉自建博客实在太麻烦，还要自己租服务器。所以搭建博客的计划一直搁浅。</p>
-<p>           2017年9月，我正式进入研究生阶段。在研究生阶段，从室友的口中得知了简书的存在，然后发现用得很方便，特别是上次图片的时候，直接Ctrl V就行。所以18年-19年末都是用的简书。当时主要的想法就是 分享自己学习计算机方向知识的一些笔记，包括自己踩过的一些坑，希望能帮助其他的人。例如在使用 kubeflow的时候，因为国内环境安装都很麻烦，自己踩了很多坑才将它弄好。所以当时就详细介绍了国内环境如何搭建kubeflow的教程。</p>
+
+<p>&nbsp;  &nbsp;  &nbsp;  &nbsp; 从大学开始，我一直想弄一个自己的Blog。大学期间还自学了CSS和html。后来因为两个原因放弃了。一是大学刚接触计算机，有时想记下学下的内容，但都是笔记本上记录，也没写什么技术博客的想法。二是当时感觉自建博客实在太麻烦，还要自己租服务器。所以搭建博客的计划一直搁浅。</p>
+
+<p>&nbsp;  &nbsp;  &nbsp;  &nbsp; 2017年9月，我正式进入研究生阶段。在研究生阶段，从室友的口中得知了简书的存在，然后发现用得很方便，特别是上次图片的时候，直接Ctrl V就行。所以18年-19年末都是用的简书。当时主要的想法就是 分享自己学习计算机方向知识的一些笔记，包括自己踩过的一些坑，希望能帮助其他的人。例如在使用 kubeflow的时候，因为国内环境安装都很麻烦，自己踩了很多坑才将它弄好。所以当时就详细介绍了国内环境如何搭建kubeflow的教程。</p>
+
 <h2 id="重建">重建</h2>
+
 <blockquote>
 <h4 id="重新感悟到写博客的魅力">重新感悟到写博客的魅力</h4>
 </blockquote>
-<p>           2019年5月份-10月，我断更了简书上的博客，原因主要有两个，一是当时在准备秋招，更新的文章不多，所以一直没有上传。二是发现了简书的一些不足，主要是简书有很严格的审核机制，我发表的一篇文章审核了好多次都没通过（就是关于如何下载国外镜像的教程）。当然最主要的原因是准备秋招。</p>
-<p>           秋招结束之后，我又开始更新博客，而且在面试的过程中，我感受到了博客带来的好处。直接的表现就是，我没论文，没实习，最后在19年的校招中拿到十几家公司的offer, 小到创业公司，中到华为商汤，大到微软。首先面试官通过博客能更好的了解你，而且很多面试官都非常赞同写博客这件事。最重要的是，我发现在我写博客的同时，更多人开始跟我互动，给我私信，加我微信，这本身就是一个很有成就感的事情，同时写完博客之后，自己的理解也更加深刻。所以从11月开始，我又开始更新博客，同时我也想重新开始，最终想搭建自己的一个博客。对比了很多后，我选择了hugo。今天新的环境搭建好了，就这样重新开始吧！</p>
+
+<p>&nbsp;  &nbsp;  &nbsp;  &nbsp; 2019年5月份-10月，我断更了简书上的博客，原因主要有两个，一是当时在准备秋招，更新的文章不多，所以一直没有上传。二是发现了简书的一些不足，主要是简书有很严格的审核机制，我发表的一篇文章审核了好多次都没通过（就是关于如何下载国外镜像的教程）。当然最主要的原因是准备秋招。</p>
+
+<p>&nbsp;  &nbsp;  &nbsp;  &nbsp; 秋招结束之后，我又开始更新博客，而且在面试的过程中，我感受到了博客带来的好处。直接的表现就是，我没论文，没实习，最后在19年的校招中拿到十几家公司的offer, 小到创业公司，中到华为商汤，大到微软。首先面试官通过博客能更好的了解你，而且很多面试官都非常赞同写博客这件事。最重要的是，我发现在我写博客的同时，更多人开始跟我互动，给我私信，加我微信，这本身就是一个很有成就感的事情，同时写完博客之后，自己的理解也更加深刻。所以从11月开始，我又开始更新博客，同时我也想重新开始，最终想搭建自己的一个博客。对比了很多后，我选择了hugo。今天新的环境搭建好了，就这样重新开始吧！</p>
 
         </div>
 
@@ -209,7 +331,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

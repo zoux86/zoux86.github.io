@@ -73,7 +73,142 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#1-背景介绍">1.背景介绍</a></li>
+<li><a href="#2-kube-batch介绍">2.kube-batch介绍</a></li>
+<li><a href="#3-kube-batch-关注点">3.Kube-batch 关注点</a></li>
+<li><a href="#4-kube-batch-的使用方式">4.Kube-batch 的使用方式</a></li>
+<li><a href="#5-kube-batch的调度的单位">5.Kube-batch的调度的单位</a></li>
+<li><a href="#6-kube-batch中的概念">6.kube-batch中的概念</a>
+<ul>
+<li><a href="#6-1podgroup">6.1podgroup</a></li>
+<li><a href="#6-2queue">6.2queue</a></li>
+</ul></li>
+<li><a href="#7-kube-batch原理和流程">7.kube-batch原理和流程</a></li>
+<li><a href="#8-kube-batch的调度流程">8.Kube-batch的调度流程</a></li>
+<li><a href="#9-actions介绍">9.Actions介绍</a>
+<ul>
+<li><a href="#9-1allocate-作业调度">9.1Allocate：作业调度</a></li>
+<li><a href="#9-2reclaim-回收满足条件的pod">9.2Reclaim:  回收满足条件的pod</a></li>
+<li><a href="#9-3backfill-回填">9.3Backfill: 回填</a></li>
+<li><a href="#9-4preempt-抢占">9.4Preempt: 抢占</a></li>
+</ul></li>
+<li><a href="#10-kube-batch调度逻辑">10.Kube-batch调度逻辑</a>
+<ul>
+<li><a href="#11-常见的plugin">11.常见的plugin</a>
+<ul>
+<li><a href="#11-1drf-dominant-resource-fairness">11.1DRF (Dominant　Resource　Fairness)</a></li>
+<li><a href="#11-2gang">11.2gang</a></li>
+<li><a href="#11-3proportion">11.3Proportion</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="#12-总结">12.总结</a></li>
+<li><a href="#13-优缺点">13.优缺点</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">kube-batch--简介</h1>
@@ -97,138 +232,259 @@
         
         
         <div class="post-content">
-            <h4 id="1背景介绍">1.背景介绍</h4>
+            
+
+<h4 id="1-背景介绍">1.背景介绍</h4>
+
 <p>K8s本身的调度器具有一些缺陷：</p>
+
 <p>（1） 默认的调度器是以 pod 为粒度的，对机器学习任务很不利。</p>
+
 <p>（2）默认的调度器无法提供队列调度的功能</p>
-<h4 id="2kube-batch介绍">2.kube-batch介绍</h4>
+
+<h4 id="2-kube-batch介绍">2.kube-batch介绍</h4>
+
 <p>Kube-batch 目前是 Kubernetes SIGs 旗下的一个孵化项目，是一个运行在 Kubernetes 上面向机器学习 / 大数据 /HPC 的批调度器（batch scheduler）。kubeflow中gang scheduler的实现就使用的是kube-batch.</p>
-<h4 id="3kube-batch-关注点">3.Kube-batch 关注点</h4>
+
+<h4 id="3-kube-batch-关注点">3.Kube-batch 关注点</h4>
+
 <p>&ldquo;Batch&rdquo; scheduling</p>
+
 <p>Resource sharing between multi-tenant</p>
-<h4 id="4kube-batch-的使用方式">4.Kube-batch 的使用方式</h4>
-<p>
-        <img class="mx-auto" alt="image24" src="../../resources/images/kubeflow/image24.png" />   
-    </p>
-<h4 id="5kube-batch的调度的单位">5.Kube-batch的调度的单位</h4>
-<p>
-        <img class="mx-auto" alt="image25" src="../../resources/images/kubeflow/image25.png" />   
-    </p>
+
+<h4 id="4-kube-batch-的使用方式">4.Kube-batch 的使用方式</h4>
+
+<p><img src="../../resources/images/kubeflow/image24.png" alt="image24" /></p>
+
+<h4 id="5-kube-batch的调度的单位">5.Kube-batch的调度的单位</h4>
+
+<p><img src="../../resources/images/kubeflow/image25.png" alt="image25" /></p>
+
 <p>一个task对应一个pod</p>
+
 <p>一个job对应一个或多个task</p>
+
 <p>一个job对应一个pod group</p>
+
 <p>PodGroup记录该job内的pod的状态</p>
-<h4 id="6kube-batch中的概念">6.kube-batch中的概念</h4>
-<h5 id="61podgroup">6.1podgroup</h5>
+
+<h4 id="6-kube-batch中的概念">6.kube-batch中的概念</h4>
+
+<h5 id="6-1podgroup">6.1podgroup</h5>
+
 <p>简单理解：一个PodGroup就是一个job中的所有Pod</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">// PodGroup is a collection of Pod; used for batch workload.
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">PodGroup</span> <span style="color:#66d9ef">struct</span> {
-	metav1.TypeMeta <span style="color:#960050;background-color:#1e0010">`</span>json:<span style="color:#e6db74">&#34;,inline&#34;</span><span style="color:#960050;background-color:#1e0010">`</span>
-	<span style="color:#75715e">// Standard object&#39;s metadata.
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// +optional
-</span><span style="color:#75715e"></span>	metav1.ObjectMeta <span style="color:#960050;background-color:#1e0010">`</span>json:<span style="color:#e6db74">&#34;metadata,omitempty&#34;</span> protobuf:<span style="color:#e6db74">&#34;bytes,1,opt,name=metadata&#34;</span><span style="color:#960050;background-color:#1e0010">`</span>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#998;font-style:italic">// PodGroup is a collection of Pod; used for batch workload.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">type</span> <span style="color:#458;font-weight:bold">PodGroup</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">struct</span> {<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>metav1.TypeMeta<span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">`</span>json:<span style="color:#d14">&#34;,inline&#34;</span><span style="color:#a61717;background-color:#e3d2d2">`</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// Standard object&#39;s metadata.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// +optional
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span>metav1.ObjectMeta<span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">`</span>json:<span style="color:#d14">&#34;metadata,omitempty&#34;</span><span style="color:#bbb"> </span>protobuf:<span style="color:#d14">&#34;bytes,1,opt,name=metadata&#34;</span><span style="color:#a61717;background-color:#e3d2d2">`</span><span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// Specification of the desired behavior of the pod group.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// +optional
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span>Spec<span style="color:#bbb"> </span>PodGroupSpec<span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">`</span>json:<span style="color:#d14">&#34;spec,omitempty&#34;</span><span style="color:#bbb"> </span>protobuf:<span style="color:#d14">&#34;bytes,2,opt,name=spec&#34;</span><span style="color:#a61717;background-color:#e3d2d2">`</span><span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// Status represents the current information about a pod group.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// This data may not be up to date.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// +optional
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span>Status<span style="color:#bbb"> </span>PodGroupStatus<span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">`</span>json:<span style="color:#d14">&#34;status,omitempty&#34;</span><span style="color:#bbb"> </span>protobuf:<span style="color:#d14">&#34;bytes,3,opt,name=status&#34;</span><span style="color:#a61717;background-color:#e3d2d2">`</span><span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">//Version represents the version of PodGroup
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span>Version<span style="color:#bbb"> </span>string<span style="color:#bbb">
+</span><span style="color:#bbb"></span>}</code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="6-2queue">6.2queue</h5>
 
-	<span style="color:#75715e">// Specification of the desired behavior of the pod group.
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// +optional
-</span><span style="color:#75715e"></span>	Spec PodGroupSpec <span style="color:#960050;background-color:#1e0010">`</span>json:<span style="color:#e6db74">&#34;spec,omitempty&#34;</span> protobuf:<span style="color:#e6db74">&#34;bytes,2,opt,name=spec&#34;</span><span style="color:#960050;background-color:#1e0010">`</span>
-
-	<span style="color:#75715e">// Status represents the current information about a pod group.
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// This data may not be up to date.
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// +optional
-</span><span style="color:#75715e"></span>	Status PodGroupStatus <span style="color:#960050;background-color:#1e0010">`</span>json:<span style="color:#e6db74">&#34;status,omitempty&#34;</span> protobuf:<span style="color:#e6db74">&#34;bytes,3,opt,name=status&#34;</span><span style="color:#960050;background-color:#1e0010">`</span>
-
-	<span style="color:#75715e">//Version represents the version of PodGroup
-</span><span style="color:#75715e"></span>	Version string
-}
-
-</code></pre></div><h5 id="62queue">6.2queue</h5>
 <p>简单理解：一个queue就是一个namespace(租户)</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">// Queue is a queue of PodGroup.
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Queue</span> <span style="color:#66d9ef">struct</span> {
-	metav1.TypeMeta <span style="color:#960050;background-color:#1e0010">`</span>json:<span style="color:#e6db74">&#34;,inline&#34;</span><span style="color:#960050;background-color:#1e0010">`</span>
-	<span style="color:#75715e">// Standard object&#39;s metadata.
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// +optional
-</span><span style="color:#75715e"></span>	metav1.ObjectMeta <span style="color:#960050;background-color:#1e0010">`</span>json:<span style="color:#e6db74">&#34;metadata,omitempty&#34;</span> protobuf:<span style="color:#e6db74">&#34;bytes,1,opt,name=metadata&#34;</span><span style="color:#960050;background-color:#1e0010">`</span>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#998;font-style:italic">// Queue is a queue of PodGroup.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">type</span> <span style="color:#458;font-weight:bold">Queue</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">struct</span> {<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>metav1.TypeMeta<span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">`</span>json:<span style="color:#d14">&#34;,inline&#34;</span><span style="color:#a61717;background-color:#e3d2d2">`</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// Standard object&#39;s metadata.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// +optional
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span>metav1.ObjectMeta<span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">`</span>json:<span style="color:#d14">&#34;metadata,omitempty&#34;</span><span style="color:#bbb"> </span>protobuf:<span style="color:#d14">&#34;bytes,1,opt,name=metadata&#34;</span><span style="color:#a61717;background-color:#e3d2d2">`</span><span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// Specification of the desired behavior of the queue.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// +optional
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span>Spec<span style="color:#bbb"> </span>QueueSpec<span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">`</span>json:<span style="color:#d14">&#34;spec,omitempty&#34;</span><span style="color:#bbb"> </span>protobuf:<span style="color:#d14">&#34;bytes,2,opt,name=spec&#34;</span><span style="color:#a61717;background-color:#e3d2d2">`</span><span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// The status of queue.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// +optional
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span>Status<span style="color:#bbb"> </span>QueueStatus<span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">`</span>json:<span style="color:#d14">&#34;status,omitempty&#34;</span><span style="color:#bbb"> </span>protobuf:<span style="color:#d14">&#34;bytes,3,opt,name=status&#34;</span><span style="color:#a61717;background-color:#e3d2d2">`</span><span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">//Version is used to retrieve information about queue version
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span>Version<span style="color:#bbb"> </span>string<span style="color:#bbb">
+</span><span style="color:#bbb"></span>}</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="7-kube-batch原理和流程">7.kube-batch原理和流程</h4>
 
-	<span style="color:#75715e">// Specification of the desired behavior of the queue.
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// +optional
-</span><span style="color:#75715e"></span>	Spec QueueSpec <span style="color:#960050;background-color:#1e0010">`</span>json:<span style="color:#e6db74">&#34;spec,omitempty&#34;</span> protobuf:<span style="color:#e6db74">&#34;bytes,2,opt,name=spec&#34;</span><span style="color:#960050;background-color:#1e0010">`</span>
+<p><img src="../../resources/images/kubeflow/image26.png" alt="image26" /></p>
 
-	<span style="color:#75715e">// The status of queue.
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// +optional
-</span><span style="color:#75715e"></span>	Status QueueStatus <span style="color:#960050;background-color:#1e0010">`</span>json:<span style="color:#e6db74">&#34;status,omitempty&#34;</span> protobuf:<span style="color:#e6db74">&#34;bytes,3,opt,name=status&#34;</span><span style="color:#960050;background-color:#1e0010">`</span>
-
-	<span style="color:#75715e">//Version is used to retrieve information about queue version
-</span><span style="color:#75715e"></span>	Version string
-}
-</code></pre></div><h4 id="7kube-batch原理和流程">7.kube-batch原理和流程</h4>
-<p>
-        <img class="mx-auto" alt="image26" src="../../resources/images/kubeflow/image26.png" />   
-    </p>
 <p>kube-batch的结果如上图所示，红圈是Kube-batch负责的事情。</p>
-<h4 id="8kube-batch的调度流程">8.Kube-batch的调度流程</h4>
-<p>
-        <img class="mx-auto" alt="image27" src="../../resources/images/kubeflow/image27.png" />   
-    </p>
+
+<h4 id="8-kube-batch的调度流程">8.Kube-batch的调度流程</h4>
+
+<p><img src="../../resources/images/kubeflow/image27.png" alt="image27" /></p>
+
 <p>kube-batch每个一秒开启一轮调度，然后依次执行四个action。</p>
-<h4 id="9actions介绍">9.Actions介绍</h4>
-<h5 id="91allocate作业调度">9.1Allocate：作业调度</h5>
+
+<h4 id="9-actions介绍">9.Actions介绍</h4>
+
+<h5 id="9-1allocate-作业调度">9.1Allocate：作业调度</h5>
+
 <p>调度流程：</p>
+
 <p>（1）将kube-batch的job放入对应的队列。这是一个具有优先级的队列。</p>
+
 <p>（2）依次遍历这些队列，如果为空就跳过</p>
+
 <p>（3）如果不为空，依次从队列中pop出一个job.即接下来要调度这个job</p>
+
 <p>（4）取出这个job对应的所有Tasks(即要绑定的pod),对每个task进行假绑定,这里的假绑定意思是 只是更新task的状态，先记录pod绑定在哪个节点上。当达到JobReady时，进行真正的绑定。这样就实现了一次性绑定了好几个Pod.</p>
+
 <p>（5）更新job的信息，将pod重新加入队列。跳出循环，再次进行调度。</p>
-<h5 id="92reclaim--回收满足条件的pod">9.2Reclaim:  回收满足条件的pod</h5>
-<h5 id="93backfill-回填">9.3Backfill: 回填</h5>
+
+<h5 id="9-2reclaim-回收满足条件的pod">9.2Reclaim:  回收满足条件的pod</h5>
+
+<h5 id="9-3backfill-回填">9.3Backfill: 回填</h5>
+
 <p>backfill是为了处理BestEffort后加的action，相关issue。</p>
+
 <p><a href="https://github.com/kubernetes-sigs/kube-batch/issues/409">https://github.com/kubernetes-sigs/kube-batch/issues/409</a></p>
+
 <p><a href="https://www.jianshu.com/p/4c0763967b3c">https://www.jianshu.com/p/4c0763967b3c</a></p>
-<h5 id="94preempt-抢占">9.4Preempt: 抢占</h5>
+
+<h5 id="9-4preempt-抢占">9.4Preempt: 抢占</h5>
+
 <p>实现抢占功能。但是每次只能抢占一个pod</p>
+
 <p><a href="https://github.com/volcano-sh/volcano/issues/377">https://github.com/volcano-sh/volcano/issues/377</a></p>
-<h4 id="10kube-batch调度逻辑">10.Kube-batch调度逻辑</h4>
-<p>
-        <img class="mx-auto" alt="image28" src="../../resources/images/kubeflow/image28.png" />   
-    </p>
+
+<h4 id="10-kube-batch调度逻辑">10.Kube-batch调度逻辑</h4>
+
+<p><img src="../../resources/images/kubeflow/image28.png" alt="image28" /></p>
+
 <p>每次开启一个回话，然后指向四个动作，每个动作会需要一些功能函数，这个由def,gang提供。</p>
+
 <p>例如：在allocate阶段，判断一个job ready的时候才会真正的绑定。而判断jobready的函数是gang 插件提供的。只有job中指定的pod数都准备好，才真正绑定。</p>
-<h5 id="11常见的plugin">11.常见的plugin</h5>
-<h6 id="111drf-dominantresourcefairness">11.1DRF (Dominant　Resource　Fairness)</h6>
+
+<h5 id="11-常见的plugin">11.常见的plugin</h5>
+
+<h6 id="11-1drf-dominant-resource-fairness">11.1DRF (Dominant　Resource　Fairness)</h6>
+
 <p>根据主要资源（cpu,memory,gpu）的均衡算法。</p>
+
 <p>定义的plugin function:</p>
+
 <p>jobOrderFn 是job的排序函数，会让share值越小的job排在最前面，即拥有最高的优先级，这个是实现DRF算法的关键。</p>
+
 <p>preemptableFn　返回可抢占的job列表，job的筛选规则是　：如果待选job的share值大于将被调度的job的share值，则选中该待选job。</p>
-<h6 id="112gang">11.2gang</h6>
+
+<h6 id="11-2gang">11.2gang</h6>
+
 <p>实现的功能: 只有当指定的某几个pod都分配到资源后，才正在地将pod调度到节点上.</p>
+
 <p>定义的plugin function:</p>
+
 <p>preemptableFn 为避免Gang的策略被preempt　和　reclaiｍ干扰，定义了preemptableFn,排除那些还未准备就绪的job，避免被抢占。虽然实际上这些job未真正调度到node上去，但是确实从逻辑上把资源分配给它了</p>
+
 <p>jobOrderFn 为让已经就绪的job尽快被调度到节点，定义了jobOrderFn ,让已经就绪的job拥有更高的优先级</p>
+
 <p>jobReadyFn 用来判断一个job是否已经就绪。</p>
-<h6 id="113proportion">11.3Proportion</h6>
+
+<h6 id="11-3proportion">11.3Proportion</h6>
+
 <p>实现了队列资源的分配</p>
+
 <p>定义的plugin function:</p>
+
 <p>QueueOrderFn：会决定哪一个队列里的job在调度时会被优先考虑,这里沿用了DRF处jobOrderFn的逻辑，即share值最小的queue　会最优先被考虑.</p>
+
 <p>OverusedFn：判断queue的资源使用是否已经超出限制了，即 allocated &gt; deserved == true</p>
+
 <p>ReclaimableFn：判断一个task是否可以被召回，如果召回之后使得已经分配到的资源小于等于deserved　就不应该被召回。</p>
-<h3 id="12总结">12.总结</h3>
+
+<h3 id="12-总结">12.总结</h3>
+
 <p>（1）Kube-batch如何Gang-Scheduler
 a. 增加一个PodGruop的CRD。调度以PodGroup为单位。同时对应还有一个PodGroupController进行PodGroup的管理</p>
+
 <p>b. 整个调度过程采用延迟创建Pod的过程。只有当PodGroup中的所有Pod都有合适的Node绑定时，才开始创建</p>
+
 <p>c. 定义了一种新的Action-BackFill.当PodGroup还有Pod没绑定时，之前绑定Pod的资源会释放。</p>
+
 <p>(2) Kube-batch如何共享多租户资源</p>
+
 <p>a. 多租户的实现：Queue + Namespace</p>
+
 <p>b. 租户间资源的共享：每个租户对应一个Namespace，以及一个Queue.每个Namespace的资源是按比例分配的。</p>
-<h3 id="13优缺点">13.优缺点</h3>
+
+<h3 id="13-优缺点">13.优缺点</h3>
+
 <p>优点：</p>
-<p>​	Gang Scheduler 的调度方式</p>
-<p>​	多租户的设计思想</p>
+
+<p>​   Gang Scheduler 的调度方式</p>
+
+<p>​   多租户的设计思想</p>
+
 <p>缺点：</p>
+
 <p>和默认的调度器冲突</p>
+
 <p>没有优选就没有soft亲和性目前还是孵化项目，文档不全面，特别是多租户这块，没有实例以及文档</p>
 
         </div>
@@ -328,7 +584,7 @@ a. 增加一个PodGruop的CRD。调度以PodGroup为单位。同时对应还有�
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

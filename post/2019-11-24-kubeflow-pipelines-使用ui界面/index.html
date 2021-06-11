@@ -73,7 +73,100 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">kubeflow pipelines--使用UI界面</h1>
@@ -98,31 +191,37 @@
         
         <div class="post-content">
             <p>前面的文章已经安装好了pipelines，接下来是体验如何使用pipelines了。</p>
+
 <p>这是官网的图，进入Pipelines的图形界面就会出现这个。
+<img src="../../resources/images/kubeflow/image17.png" alt="image17" /></p>
 
-        <img class="mx-auto" alt="image17" src="../../resources/images/kubeflow/image17.png" />   
-    </p>
 <p>但是官网给出的都是怎样在gcp上使用图形界面。所以怎么在自己本地集群使用Pipelines图形界面还得靠自己摸索。</p>
+
 <p>既然我们都装好pipelines的服务了，那么直观的感觉就是pipelines的界面服务没有暴露成外部访问。所以这里我们就得修改pipelines的UI服务，让自己的电脑浏览器能访问UI服务。</p>
+
 <p>使用kubectl get svc -n kubeflow查看</p>
-<p>
-        <img class="mx-auto" alt="image18" src="../../resources/images/kubeflow/image18.png" />   
-    
+
+<p><img src="../../resources/images/kubeflow/image18.png" alt="image18" />
 这里我自己已经修改好了pipelines-ui服务，让它的类型是LoadBalancer。</p>
+
 <p>修改方式：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">kubectl <span style="color:#f92672">-</span>n kubeflow edit svc ml<span style="color:#f92672">-</span>pipeline<span style="color:#f92672">-</span>ui
-</code></pre></div><p>
-        <img class="mx-auto" alt="image19" src="../../resources/images/kubeflow/image19.png" />   
-    </p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">kubectl<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">-</span>n<span style="color:#bbb"> </span>kubeflow<span style="color:#bbb"> </span>edit<span style="color:#bbb"> </span>svc<span style="color:#bbb"> </span>ml<span style="color:#000;font-weight:bold">-</span>pipeline<span style="color:#000;font-weight:bold">-</span>ui</code></pre></td></tr></table>
+</div>
+</div>
+<p><img src="../../resources/images/kubeflow/image19.png" alt="image19" /></p>
+
 <p>将 Type 修改成 LoadBalancer，并且新增 externalIPs 指定为 Master IP</p>
+
 <p>然后保存退出，这个时候在浏览器中输入你的 master ip:port 就可以访问图形界面了。
+<img src="../../resources/images/kubeflow/image20.png" alt="image20" /></p>
 
-        <img class="mx-auto" alt="image20" src="../../resources/images/kubeflow/image20.png" />   
-    </p>
 <p>如图所示，这里就可以跑pipelines的demo了。
-
-        <img class="mx-auto" alt="image21" src="../../resources/images/kubeflow/image21.png" />   
-    </p>
+<img src="../../resources/images/kubeflow/image21.png" alt="image21" /></p>
 
         </div>
 
@@ -225,7 +324,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

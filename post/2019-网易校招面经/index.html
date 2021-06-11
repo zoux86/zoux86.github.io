@@ -73,7 +73,122 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#网易互联网">网易互联网</a>
+<ul>
+<li><a href="#一面视频面">一面视频面</a></li>
+</ul></li>
+<li><a href="#二面">二面</a>
+<ul>
+<li><a href="#三面-现场hr面">三面（现场HR面）</a>
+<ul>
+<li><a href="#小小吐槽">小小吐槽</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#网易雷火">网易雷火</a>
+<ul>
+<li><a href="#一面">一面</a></li>
+<li><a href="#二面-1">二面</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">2019网易面经</h1>
@@ -97,59 +212,114 @@
         
         
         <div class="post-content">
-            <p>面试时间：2019年7-8月</p>
+            
+
+<p>面试时间：2019年7-8月</p>
+
 <p>岗位：云平台，机器学习平台</p>
+
 <h2 id="网易互联网">网易互联网</h2>
+
 <h3 id="一面视频面">一面视频面</h3>
+
 <p>1.自我介绍</p>
+
 <p>2.项目介绍</p>
+
 <p>3.介绍一下docker</p>
+
 <p>4.cgroup,namespace的底层实现</p>
+
 <p>5.k8s有状态服务和deployment的区别</p>
+
 <p>6.k8s创建一个pod的过程</p>
+
 <p>7.算法题：题目忘记了。不是很难。</p>
+
 <h2 id="二面">二面</h2>
+
 <p>1.自我介绍</p>
+
 <p>2.全程怼项目，问的很细，负责哪一块，代码量多少，有什么价值</p>
-<h3 id="三面现场hr面">三面（现场HR面）</h3>
+
+<h3 id="三面-现场hr面">三面（现场HR面）</h3>
+
 <p>面试时间10分钟左右，问的是HR基本问题。家里几口人，为什么选择这个岗位，考虑在杭州发展吗等问题。我感觉回答得也很好，结果回来之后等了几天，发现挂了。一脸懵逼！</p>
+
 <h4 id="小小吐槽">小小吐槽</h4>
+
 <p>（1）网易互联网每轮面试通过之后都是预约的形式选择面试时间，但是没有HR联系方式，找不到HR，只能在有限的几个时间段选择。</p>
+
 <p>（2）为什么最后一轮HR要现场面。。。而且都是常规问题，最关键的发现好多人都挂在HR面</p>
+
 <h2 id="网易雷火">网易雷火</h2>
+
 <h3 id="一面">一面</h3>
+
 <p>1.自我介绍</p>
+
 <p>2.问题</p>
+
 <p>（1）分布式训练分为几种</p>
+
 <p>（2）ps有异步，同步的说法，各有什么优缺点</p>
+
 <p>（3）ring-allreduce和Ps这种有什么优缺点</p>
+
 <p>（4）k8s的GPU实现</p>
+
 <p>（5）设备插件的底层实现</p>
+
 <p>（6）GPU是怎样调度的</p>
+
 <p>（7）介绍一下有状态的服务，介绍一下 deployment的区别，有状态的服务具体是怎么实现的</p>
+
 <p>（8）我现在有一块硬盘，想扩充一下linux机器的容量，怎么实现？   不知道</p>
+
 <p>（9）查看文件系统的命令是什么？不是ls,是看某个区的文件</p>
+
 <p>（10）查看cpu使用率的命令</p>
+
 <p>（11）虚拟机和容器有什么区别</p>
+
 <p>（12）go中 new 和make的区别</p>
+
 <p>（13）go中rontinue的实现</p>
+
 <p>（10）协程是什么，有什么优点</p>
+
 <p>3.算法题</p>
+
 <p>1个数组，只有1个出现一次，其他数出现2次。怎么找出，出现1次的数。</p>
+
 <p>变体：有2个出现1次的数，怎么找出。 没回答出来</p>
+
 <h3 id="二面-1">二面</h3>
+
 <p>1.自我介绍</p>
+
 <p>2.问题</p>
+
 <p>（1）service的底层实现</p>
+
 <p>（2）有状态服务的实现</p>
+
 <p>（3）熟悉哪个语言</p>
+
 <p>（4）C++开发过很大的项目吗</p>
+
 <p>（5）问简历上项目使用的是什么语言   go，为了防止他问go,我就直接说，我熟悉C/c++，go只会用</p>
+
 <p>（6）c++用过哪些容器</p>
+
 <p>（7）那我就问问map底层怎么实现的吧</p>
+
 <p>（8）那解释一下什么是红黑树吧</p>
+
 <p>（9）你是偏算法，还是偏k8s</p>
+
 <p>（10）有没有职业规划？</p>
+
 <p>雷火总共有四面，一二面连着面试。通过之后再进行三四面。当时在宿舍网速不好，并且确实有好几个问题没回答上来，所以一面二面就挂了。</p>
 
         </div>
@@ -249,7 +419,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

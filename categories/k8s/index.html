@@ -97,7 +97,7 @@
         </div>
         
         <div class="post-content">
-            目录 （1）k8s简介 （2）k8s组件介绍 背景简介 Docker 项目和容器技术目前还是非常火热，但是Docker 技术栈，有自己的局限性，这是它的出发点决定的。那么在docker层之上，例如 容器编排？调度？容器云？集群管理？这些事情就需要另外一个项目来解决了。 在我最开始接触k8s的时候，我看到的……
+            toc=true 目录 （1）k8s简介 （2）k8s组件介绍 背景简介 Docker 项目和容器技术目前还是非常火热，但是Docker 技术栈，有自己的局限性，这是它的出发点决定的。那么在docker层之上，例如 容器编排？调度？容器云？集群管理？这些事情就需要另外一个项目来解决了。 在我最开始接触k8s的时候，我看到……
             <p class="readmore"><a href="https://zoux86.github.io/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/">阅读全文</a></p>
         </div>
     </article>
@@ -120,7 +120,7 @@
         </div>
         
         <div class="post-content">
-            任务：找到scheduler的入口 k8s 代码目录结构 cmd：所有的二进制可执行文件入口代码，也就是各种命令的接口代码。 pkg：项目diamante主目录，cmd只是接口，这里是具体实现。cmd类似业务代码，pkg类似核心 寻找k8s入口函数 cmd/kube-scheduler/scheduler.go:34 main函数 -&gt; cmd/kube-scheduler/app/server.go:70 NewSchedulerCommand-&gt; cmd/kube-scheduler/app/server.go:117 runCommand -&gt; cmd/kube-scheduler/app/server.go:167 Run -&gt; pkg/scheduler/scheduler.go:276 run (cmd/kube-scheduler/scheduler.go:34 表示cm……
+            任务：找到scheduler的入口 k8s 代码目录结构 cmd：所有的二进制可执行文件入口代码，也就是各种命令的接口代码。 pkg：项目diamante主目录，cmd只是接口，这里是具体实现。cmd类似业务代码，pkg类似核心 寻找k8s入口函数 1 2 3 4 5 6 cmd/kube-schedule……
             <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B01/">阅读全文</a></p>
         </div>
     </article>
@@ -143,7 +143,7 @@
         </div>
         
         <div class="post-content">
-            接上文的工作，上文是找到了scheduler的入口。接下来看scheduler具体的执行。 cmd/kube-scheduler/scheduler.go:34 main函数 -&gt; cmd/kube-scheduler/app/server.go:70 NewSchedulerCommand-&gt; cmd/kube-scheduler/app/server.go:117 runCommand -&gt; cmd/kube-scheduler/app/server.go:167 Run -&gt; pkg/scheduler/scheduler.go:276 run -&gt; 这是上文的工作 pkg/scheduler/scheduler.go:501 scheduleOne -&gt; pkg/scheduler/scheduler.go:291 schedule-&gt; 这里schedule只是一个街口，定义在 schedule/algorithm/interface中 pkg/scheduler/core/generic_scheduler.go:139 Schedule （这一步是参考的，我具体是……
+            接上文的工作，上文是找到了scheduler的入口。接下来看scheduler具体的执行。 1 2 3 4 5 cmd/kube-scheduler/scheduler.go:34main函数-&gt; cmd/kube-scheduler/app/server.go:70NewSchedulerCommand-&gt; cmd/kube-scheduler/app/server.go:117runCommand-&gt; cmd/kube-scheduler/app/server.go:167Run-&gt; pkg/scheduler/scheduler.go:276run-&gt; 这是上文的工作 1 2 pkg/scheduler/scheduler.go:501scheduleOne-&gt; pkg/scheduler/scheduler.go:291schedule-&gt; 这里schedule只是一个街口，定义在 schedule/a……
             <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B02/">阅读全文</a></p>
         </div>
     </article>
@@ -215,7 +215,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

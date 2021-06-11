@@ -97,7 +97,7 @@
         </div>
         
         <div class="post-content">
-            目的 在搭建kubeflow的时候，要需要搭建存储卷。为了以后能更好的共享文件，我这里使用了NFS作为文件存储系统。 操作如下： 针对master节点： master节点上安装NFS服务 sudo apt-get update &amp;&amp; sudo apt-get install -y nfs-server 建立一个共享的文件夹 sudo mkdir /nfs-data/kubeflow-pv1 修改/etc/exports文件 (末尾添加) /nfs-data/kubeflow-pv1 *(rw,sync,no_root_squash,no_subtree_check) 这一行的意……
+            目的 在搭建kubeflow的时候，要需要搭建存储卷。为了以后能更好的共享文件，我这里使用了NFS作为文件存储系统。 操作如下： 针对master节点： master节点上安装NFS服务 1 sudoapt-getupdate&amp;&amp;sudoapt-getinstall-ynfs-server 建立一个共享的文件夹 1 sudomkdir/nfs-data/kubeflow-pv1 修改/etc/exports文件 (末尾添加) 1 /nfs-data/kubeflow-pv1*(rw,sync,no_root_squash,no_subtree_check) 这一行的意思是将/nfs-……
             <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-nfs%E5%81%9A%E5%90%8E%E7%AB%AF%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/">阅读全文</a></p>
         </div>
     </article>
@@ -146,7 +146,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

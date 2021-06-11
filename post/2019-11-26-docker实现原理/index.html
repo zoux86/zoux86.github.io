@@ -73,7 +73,127 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#目录">目录</a>
+<ul>
+<li><a href="#docker是什么-有什么用">docker是什么，有什么用</a></li>
+</ul></li>
+<li><a href="#docker的架构">docker的架构</a>
+<ul>
+<li><a href="#镜像">镜像</a></li>
+<li><a href="#镜像仓库">镜像仓库</a></li>
+<li><a href="#容器-container">容器（container）</a>
+<ul>
+<li><a href="#容器的本质">容器的本质</a></li>
+<li><a href="#namespace">Namespace</a></li>
+<li><a href="#举例如何隔离pid">举例如何隔离pid</a></li>
+<li><a href="#cgroup">Cgroup</a></li>
+<li><a href="#chroot">chroot</a></li>
+</ul></li>
+<li><a href="#总结">总结</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">docker实现原理</h1>
@@ -97,95 +217,150 @@
         
         
         <div class="post-content">
-            <h3 id="目录">目录</h3>
+            
+
+<h3 id="目录">目录</h3>
+
 <p>docker是什么，有什么用</p>
+
 <p>docker的架构</p>
+
 <p>（1）镜像</p>
+
 <p>（2）镜像仓库</p>
+
 <p>（3）容器</p>
+
 <p>总结</p>
-<h4 id="docker是什么有什么用">docker是什么，有什么用</h4>
+
+<h4 id="docker是什么-有什么用">docker是什么，有什么用</h4>
+
 <p>打个比方：</p>
+
 <p>云计算：是一艘大货轮，它有足够的空间（硬件资源）</p>
+
 <p>docker：是货轮的集装箱，装载着一个个的货物（应用）</p>
+
 <p>开发者在云端部署自己应用的时候，一个必须要考虑的问题就是，我如何在云端部署自己应用需要的环境。但是这是一个非常麻烦的问题，所以docker出现了。Docker 是一个便携的应用容器，它能让你在部署自己服务的时候更加方便。</p>
+
 <h3 id="docker的架构">docker的架构</h3>
+
 <p>Docker 包括三个基本概念:</p>
+
 <ul>
 <li><strong>镜像（Image）</strong>：Docker 镜像（Image），就相当于是一个 root 文件系统。比如官方镜像 ubuntu:16.04 就包含了完整的一套 Ubuntu16.04 最小系统的 root 文件系统。可以理解为一个镜像是一个带环境的二进制文件。</li>
 <li><strong>容器（Container）</strong>：镜像（Image）和容器（Container）的关系，就像是面向对象程序设计中的类和实例一样，镜像是静态的定义，容器是镜像运行时的实体。容器可以被创建、启动、停止、删除、暂停等。</li>
 <li><strong>仓库（Repository）</strong>：仓库可看着一个代码控制中心，用来保存镜像。</li>
 </ul>
+
 <h4 id="镜像">镜像</h4>
+
 <p>镜像的实质其实就是rootfs。具体rootfs的相关知识可参考</p>
+
 <p><a href="https://www.cnblogs.com/kelamoyujuzhen/p/11541495.html">https://www.cnblogs.com/kelamoyujuzhen/p/11541495.html</a></p>
+
 <p>rootfs 打包的不只是应用，而是整个操作系统的文件和目录，也就意味着，应用以及它运行所需要的所有依赖，都被封装在了一起。这个其实就解决云端和本地环境一致性的问题。因为它把依赖都封装了。但是rootfs是静态的，并不包括操作系统内核。</p>
+
 <p>镜像最精彩的地方在于，它制作rootfs的时候，采用了一个联合文件系统（UFS）的东西。UFS最主要的功能是将多个不同位置的目录联合挂载到同一个目录。最终rootfs的结构出来了，它是一层一层组合的，每一层都是一个rootfs增量。这样的好处就是，大家在定制自己的镜像之前，可以在之前镜像的基础上进行操作。而且每层的rootfs增量是可以共享的，也节省了空间。</p>
+
 <p>关于镜像目录的存储，可以参考这篇文章：</p>
+
 <p><a href="https://www.jianshu.com/p/8cd83436373b">https://www.jianshu.com/p/8cd83436373b</a></p>
+
 <h4 id="镜像仓库">镜像仓库</h4>
+
 <p>镜像仓库可以存储镜像的地方，镜像统一在一个地方更加方便的使用，和二次利用。当然还可以搭建私有仓库。</p>
-<p>
-        <img class="mx-auto" alt="image-20191126214817949" src="../../resources/images/docker/image1.png" />   
-    </p>
+
+<p><img src="../../resources/images/docker/image1.png" alt="image-20191126214817949" /></p>
+
 <p>上图是我拉取nginx镜像的过程。从过程中可以看出来，镜像也是以一层一层的形式组织的。</p>
+
 <p>bee5d581ef8b这是某个层的id，如果这个层已经存在，那么pull的时候不会重新下载。</p>
-<h4 id="容器container">容器（container）</h4>
+
+<h4 id="容器-container">容器（container）</h4>
+
 <h5 id="容器的本质">容器的本质</h5>
+
 <p>容器其实就是一个进程。容器技术的核心功能，就是通过约束和修改进程的动态表现，从而为其创造出一个“边界”。从而使得一个容器<strong>看起来</strong>就是一个完整的mini 服务器。它有自己的操作系统，有自己的文件系统等等。</p>
+
 <p>所以容器技术的关键就是如何创造一个“边界”。那么如何实现呢？其实还是linux的老一套，限制+隔离。具体就是Namespace + Cgroup。</p>
+
 <h5 id="namespace">Namespace</h5>
+
 <p>Linux 支持7种namespace:</p>
+
 <ol>
-<li>
-<p>cgroup用于隔离cgroup根目录;</p>
-</li>
-<li>
-<p>IPC用于隔离系统消息队列;</p>
-</li>
-<li>
-<p>Network隔离网络;</p>
-</li>
-<li>
-<p>Mount隔离挂载点;</p>
-</li>
-<li>
-<p>PID隔离进程;</p>
-</li>
-<li>
-<p>User隔离用户和用户组;</p>
-</li>
-<li>
-<p>UTS隔离主机名nis域名。</p>
-</li>
+<li><p>cgroup用于隔离cgroup根目录;</p></li>
+
+<li><p>IPC用于隔离系统消息队列;</p></li>
+
+<li><p>Network隔离网络;</p></li>
+
+<li><p>Mount隔离挂载点;</p></li>
+
+<li><p>PID隔离进程;</p></li>
+
+<li><p>User隔离用户和用户组;</p></li>
+
+<li><p>UTS隔离主机名nis域名。</p></li>
 </ol>
+
 <h5 id="举例如何隔离pid">举例如何隔离pid</h5>
+
 <p>当我们用docker exec命令进入容器内存的时候，我们用ps命令会发现：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#ae81ff">1</span>  root <span style="color:#ae81ff">0</span>:<span style="color:#ae81ff">00</span> <span style="color:#f92672">/</span>bin<span style="color:#f92672">/</span>sh
-<span style="color:#ae81ff">10</span> root <span style="color:#ae81ff">0</span>:<span style="color:#ae81ff">00</span> ps
-</code></pre></div><p>容器里只有这两个进程。这其实就是已经隔离了pid。某个容器只能看到自己相关的进程。并且/bin/sh的pid还是1。这样就给了这个容器，它本身就是“老大”的错觉。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#099">1</span><span style="color:#bbb">  </span>root<span style="color:#bbb"> </span><span style="color:#099">0</span>:<span style="color:#099">00</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">/</span>bin<span style="color:#000;font-weight:bold">/</span>sh<span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#099">10</span><span style="color:#bbb"> </span>root<span style="color:#bbb"> </span><span style="color:#099">0</span>:<span style="color:#099">00</span><span style="color:#bbb"> </span>ps</code></pre></td></tr></table>
+</div>
+</div>
+<p>容器里只有这两个进程。这其实就是已经隔离了pid。某个容器只能看到自己相关的进程。并且/bin/sh的pid还是1。这样就给了这个容器，它本身就是“老大”的错觉。</p>
+
 <p>这里起到关键作用的就是clone。在 Linux 系统中创建线程的系统调用是 clone()。</p>
-<pre><code>clone(main_function, stack_size, CLONE_NEWPID | SIGCHLD, NULL); 
-</code></pre><p>clone函数的使用如上，其中有一个参数为CLONE_NEWPID，它的作用就是新创建的这个进程将会“看到”一个全新的进程空间，在这个进程空间里，它的 PID 是 1。这个pid是针对新的命名空间而言的，就是容器里面的pid是1。但其实它本身在外面的pid不是，可能是100。</p>
+<pre><code>clone(main_function, stack_size, CLONE_NEWPID | SIGCHLD, NULL); </code></pre>
+<p>clone函数的使用如上，其中有一个参数为CLONE_NEWPID，它的作用就是新创建的这个进程将会“看到”一个全新的进程空间，在这个进程空间里，它的 PID 是 1。这个pid是针对新的命名空间而言的，就是容器里面的pid是1。但其实它本身在外面的pid不是，可能是100。</p>
+
 <p>这样就实现了pid的隔离。其他的Namespace的隔离，大体的原理都是一样，通过使用一些障眼法，让容器的进程，只能看到自己相关的东西。</p>
+
 <h5 id="cgroup">Cgroup</h5>
+
 <p>Cgroup是对进程的限制。有了隔离还是不够，还需要对进程进行限制，如果不限制的话，那一个容器如果占满了CPU，其他容器就只能等待。</p>
+
 <p>在 Linux 中，Cgroups 给用户暴露出来的操作接口是文件系统，具体来说是VFS。用户通过VFS和Cgroups进行操作。例如，使用 mount -t cgroup 命令，我们可以得到下面的结果。</p>
 <pre><code>cpuset on /sys/fs/cgroup/cpuset type cgroup (rw,nosuid,nodev,noexec,relatime,cpuset)
 cpu on /sys/fs/cgroup/cpu type cgroup (rw,nosuid,nodev,noexec,relatime,cpu)
 cpuacct on /sys/fs/cgroup/cpuacct type cgroup (rw,nosuid,nodev,noexec,relatime,cpuacct)
 blkio on /sys/fs/cgroup/blkio type cgroup (rw,nosuid,nodev,noexec,relatime,blkio)
-memory on /sys/fs/cgroup/memory type cgroup (rw,nosuid,nodev,noexec,relatime,memory)
-</code></pre><p>其中/sys/fs/cgroup/cpuset就是现在限制cpu使用暴露出来的接口。我们在该目录下，可以看到下面的文件。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">cgroup.clone_children cpu.cfs_period_us cpu.rt_period_us cpu.shares notify_on_release
-cgroup.procs cpu.cfs_quota_us cpu.rt_runtime_us cpu.stat tasks
-</code></pre></div><p>比如，我们修改cpu.cfs_period_us和cpu.cfs_quota_us里面的数组，我们就可以限制CPU的使用份额了。</p>
+memory on /sys/fs/cgroup/memory type cgroup (rw,nosuid,nodev,noexec,relatime,memory)</code></pre>
+<p>其中/sys/fs/cgroup/cpuset就是现在限制cpu使用暴露出来的接口。我们在该目录下，可以看到下面的文件。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">cgroup.clone_children<span style="color:#bbb"> </span>cpu.cfs_period_us<span style="color:#bbb"> </span>cpu.rt_period_us<span style="color:#bbb"> </span>cpu.shares<span style="color:#bbb"> </span>notify_on_release<span style="color:#bbb">
+</span><span style="color:#bbb"></span>cgroup.procs<span style="color:#bbb"> </span>cpu.cfs_quota_us<span style="color:#bbb"> </span>cpu.rt_runtime_us<span style="color:#bbb"> </span>cpu.stat<span style="color:#bbb"> </span>tasks</code></pre></td></tr></table>
+</div>
+</div>
+<p>比如，我们修改cpu.cfs_period_us和cpu.cfs_quota_us里面的数组，我们就可以限制CPU的使用份额了。</p>
+
 <p>例如：period文件内容为10000ms,某个容器的limit文件内容为-1（表示没限制）。如果limit文件内容为200,那么该容器CPU使用为 2%。（200/10000）</p>
+
 <p>对于 Docker 等 Linux 容器项目来说，它们只需要在每个子系统下面，为每个容器创建一个控制组（即创建一个新目录），然后在启动容器进程之后，把这个进程的 PID 填写到对应控制组的 tasks 文件中就可以了。</p>
+
 <h5 id="chroot">chroot</h5>
+
 <p>Namespace + Cgroup已经实现了进程的隔离和限制。但是对于进程来说，他的文件系统还是不全的。所以这个时候chroot出现了。 在 linux 系统中，系统默认的目录结构都是以<code>/</code>，即是以根 (root) 开始的。而在使用 chroot 之后，系统的目录结构将以指定的位置作为<code>/</code>位置。 所以我们容器之后，会发现容器里面的目录结构和主机的一模一样，它里面也有etc, tmp，usr等目录。这个其实就是chroot做的。</p>
+
 <h4 id="总结">总结</h4>
+
 <p>docker用的技术基本都是linux原来的那一套，以我目前的能力，只能看到这一层，再深一点就有点困难了，例如通过VFS可以修改cpu的限制，但是进程在调度的时候，具体的细节是怎么体现的呢，是否是来了一个进程，我都要查看一下他对应的cgroup文件，然后再进行限制？</p>
+
 <p>类似这种问题，我先自己存个疑。等自己以后对linux有了更多的了解，再细看docker的这一套。</p>
 
         </div>
@@ -285,7 +460,7 @@ cgroup.procs cpu.cfs_quota_us cpu.rt_runtime_us cpu.stat tasks
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

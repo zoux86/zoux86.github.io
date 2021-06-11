@@ -13,7 +13,7 @@
       <pubDate>Sun, 21 Apr 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B01/</guid>
-      <description>任务：找到scheduler的入口 k8s 代码目录结构 cmd：所有的二进制可执行文件入口代码，也就是各种命令的接口代码。 pkg：项目diamante主目录，cmd只是接口，这里是具体实现。cmd类似业务代码，pkg类似核心 寻找k8s入口函数 cmd/kube-scheduler/scheduler.go:34 main函数 -&amp;gt; cmd/kube-scheduler/app/server.go:70 NewSchedulerCommand-&amp;gt; cmd/kube-scheduler/app/server.go:117 runCommand -&amp;gt; cmd/kube-scheduler/app/server.go:167 Run -&amp;gt; pkg/scheduler/scheduler.go:276 run (cmd/kube-scheduler/scheduler.go:34 表示cm</description>
+      <description>任务：找到scheduler的入口 k8s 代码目录结构 cmd：所有的二进制可执行文件入口代码，也就是各种命令的接口代码。 pkg：项目diamante主目录，cmd只是接口，这里是具体实现。cmd类似业务代码，pkg类似核心 寻找k8s入口函数 1 2 3 4 5 6 cmd/kube-schedule</description>
     </item>
     
     <item>
@@ -22,7 +22,7 @@
       <pubDate>Sun, 21 Apr 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B02/</guid>
-      <description>接上文的工作，上文是找到了scheduler的入口。接下来看scheduler具体的执行。 cmd/kube-scheduler/scheduler.go:34 main函数 -&amp;gt; cmd/kube-scheduler/app/server.go:70 NewSchedulerCommand-&amp;gt; cmd/kube-scheduler/app/server.go:117 runCommand -&amp;gt; cmd/kube-scheduler/app/server.go:167 Run -&amp;gt; pkg/scheduler/scheduler.go:276 run -&amp;gt; 这是上文的工作 pkg/scheduler/scheduler.go:501 scheduleOne -&amp;gt; pkg/scheduler/scheduler.go:291 schedule-&amp;gt; 这里schedule只是一个街口，定义在 schedule/algorithm/interface中 pkg/scheduler/core/generic_scheduler.go:139 Schedule （这一步是参考的，我具体是</description>
+      <description>接上文的工作，上文是找到了scheduler的入口。接下来看scheduler具体的执行。 1 2 3 4 5 cmd/kube-scheduler/scheduler.go:34main函数-&amp;gt; cmd/kube-scheduler/app/server.go:70NewSchedulerCommand-&amp;gt; cmd/kube-scheduler/app/server.go:117runCommand-&amp;gt; cmd/kube-scheduler/app/server.go:167Run-&amp;gt; pkg/scheduler/scheduler.go:276run-&amp;gt; 这是上文的工作 1 2 pkg/scheduler/scheduler.go:501scheduleOne-&amp;gt; pkg/scheduler/scheduler.go:291schedule-&amp;gt; 这里schedule只是一个街口，定义在 schedule/a</description>
     </item>
     
     <item>

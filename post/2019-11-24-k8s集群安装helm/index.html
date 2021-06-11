@@ -73,7 +73,128 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#helm介绍">helm介绍</a></li>
+<li><a href="#环境说明">环境说明</a></li>
+<li><a href="#安装过程">安装过程</a>
+<ul>
+<li><a href="#官网下载二进制文件">官网下载二进制文件</a></li>
+<li><a href="#解压helm-然后移动helm文件到-usr-local-bin目录下">解压helm,然后移动helm文件到/usr/local/bin目录下</a></li>
+<li><a href="#添加执行权限">添加执行权限</a></li>
+<li><a href="#验证版本">验证版本</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#安装helm的服务端tiller">安装Helm的服务端tiller</a>
+<ul>
+<li>
+<ul>
+<li><a href="#给tiller创建权限">给tiller创建权限</a></li>
+<li><a href="#安装tiller">安装tiller</a></li>
+<li><a href="#为应用程序设置serviceaccount">为应用程序设置serviceaccount:</a></li>
+<li><a href="#验证是否安装成功">验证是否安装成功</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">k8s集群安装helm</h1>
@@ -97,37 +218,91 @@
         
         
         <div class="post-content">
-            <h3 id="helm介绍">helm介绍</h3>
+            
+
+<h3 id="helm介绍">helm介绍</h3>
+
 <p>helm的作用： Kubernetes一个包管理引擎</p>
+
 <p>tiller的作用：功能和软件仓库一样，类似于/etc/yum.repos.d目录下的xxx.repo。</p>
+
 <p>安装helm的目的是为了后面安装kube-batch</p>
+
 <h3 id="环境说明">环境说明</h3>
+
 <p>环境：4台ubuntu16.04
 1个master
 3个node</p>
+
 <p>k8s版本：V1.13.2</p>
+
 <p>helm版本：v2.13.0</p>
+
 <h3 id="安装过程">安装过程</h3>
+
 <h4 id="官网下载二进制文件">官网下载二进制文件</h4>
+
 <p>官网地址： <a href="https://github.com/helm/helm/releases">https://github.com/helm/helm/releases</a></p>
+
 <p>我下载的是helm-v2.13.0-linux-amd64.tar.gz</p>
-<h4 id="解压helm然后移动helm文件到usrlocalbin目录下">解压helm,然后移动helm文件到/usr/local/bin目录下</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">mv linux-amd64/helm /usr/local/bin/  
-</code></pre></div><h4 id="添加执行权限">添加执行权限</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">chmod +x /usr/local/bin/helm
-</code></pre></div><h4 id="验证版本">验证版本</h4>
-<pre><code class="language-undefined" data-lang="undefined">helm version
-</code></pre><h2 id="安装helm的服务端tiller">安装Helm的服务端tiller</h2>
+
+<h4 id="解压helm-然后移动helm文件到-usr-local-bin目录下">解压helm,然后移动helm文件到/usr/local/bin目录下</h4>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">mv linux-amd64/helm /usr/local/bin/  </code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="添加执行权限">添加执行权限</h4>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">chmod +x /usr/local/bin/helm</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="验证版本">验证版本</h4>
+<pre><code class="language-undefined" data-lang="undefined">helm version</code></pre>
+<h2 id="安装helm的服务端tiller">安装Helm的服务端tiller</h2>
+
 <h4 id="给tiller创建权限">给tiller创建权限</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">kubectl create serviceaccount <span style="color:#f92672">--</span><span style="color:#66d9ef">namespace</span> kube<span style="color:#f92672">-</span>system tiller  
-kubectl create clusterrolebinding tiller<span style="color:#f92672">-</span>cluster<span style="color:#f92672">-</span>rule <span style="color:#f92672">--</span>clusterrole<span style="color:#f92672">=</span>cluster<span style="color:#f92672">-</span>admin <span style="color:#f92672">--</span>serviceaccount<span style="color:#f92672">=</span>kube<span style="color:#f92672">-</span>system:tiller  
-</code></pre></div><h4 id="安装tiller">安装tiller</h4>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">kubectl create serviceaccount <span style="color:#000;font-weight:bold">--</span><span style="color:#000;font-weight:bold">namespace</span> kube<span style="color:#000;font-weight:bold">-</span>system tiller  
+kubectl create clusterrolebinding tiller<span style="color:#000;font-weight:bold">-</span>cluster<span style="color:#000;font-weight:bold">-</span>rule <span style="color:#000;font-weight:bold">--</span>clusterrole<span style="color:#000;font-weight:bold">=</span>cluster<span style="color:#000;font-weight:bold">-</span>admin <span style="color:#000;font-weight:bold">--</span>serviceaccount<span style="color:#000;font-weight:bold">=</span>kube<span style="color:#000;font-weight:bold">-</span><span style="color:#900;font-weight:bold">system</span>:tiller  
+</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="安装tiller">安装tiller</h4>
+
 <p>helm init -i  jessestuart/tiller:v2.13.0</p>
+
 <h4 id="为应用程序设置serviceaccount">为应用程序设置serviceaccount:</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">kubectl patch deploy <span style="color:#f92672">--</span>namespace kube<span style="color:#f92672">-</span>system tiller<span style="color:#f92672">-</span>deploy <span style="color:#f92672">-</span>p <span style="color:#960050;background-color:#1e0010">&#39;</span>{<span style="color:#e6db74">&#34;spec&#34;</span>:{<span style="color:#e6db74">&#34;template&#34;</span>:{<span style="color:#e6db74">&#34;spec&#34;</span>:{<span style="color:#e6db74">&#34;serviceAccount&#34;</span>:<span style="color:#e6db74">&#34;tiller&#34;</span>}}}}<span style="color:#960050;background-color:#1e0010">&#39;</span> 
-</code></pre></div><h4 id="验证是否安装成功">验证是否安装成功</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">helm repo list
-</code></pre></div>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">kubectl<span style="color:#bbb"> </span>patch<span style="color:#bbb"> </span>deploy<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">--</span>namespace<span style="color:#bbb"> </span>kube<span style="color:#000;font-weight:bold">-</span>system<span style="color:#bbb"> </span>tiller<span style="color:#000;font-weight:bold">-</span>deploy<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">-</span>p<span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>{<span style="color:#d14">&#34;spec&#34;</span>:{<span style="color:#d14">&#34;template&#34;</span>:{<span style="color:#d14">&#34;spec&#34;</span>:{<span style="color:#d14">&#34;serviceAccount&#34;</span>:<span style="color:#d14">&#34;tiller&#34;</span>}}}}<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb"> 
+</span></code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="验证是否安装成功">验证是否安装成功</h4>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">helm<span style="color:#bbb"> </span>repo<span style="color:#bbb"> </span>list</code></pre></td></tr></table>
+</div>
+</div>
         </div>
 
         
@@ -229,7 +404,7 @@ kubectl create clusterrolebinding tiller<span style="color:#f92672">-</span>clus
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

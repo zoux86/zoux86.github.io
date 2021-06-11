@@ -73,7 +73,117 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#二叉搜索树">二叉搜索树</a></li>
+<li><a href="#b数">B数</a></li>
+<li><a href="#红黑树">红黑树</a></li>
+<li><a href="#b-树">B-树</a></li>
+<li><a href="#b-树-1">B+树</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">B树,B&#43;和B-</h1>
@@ -97,64 +207,107 @@
         
         
         <div class="post-content">
-            <h4 id="二叉搜索树">二叉搜索树</h4>
+            
+
+<h4 id="二叉搜索树">二叉搜索树</h4>
+
 <p>二叉搜索树，BST（Binary Search Tree），即为特殊的二叉树。
 <strong>对于二叉树的任意一个节点，其左子树中所有的值均小于该节点；右子树中所有的值均大于该节点</strong>。</p>
+
 <p>二叉搜索树按照中序遍历的方式（左 - 中 - 右）得到的序列为从小到大的有序序列。</p>
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
 <h4 id="b数">B数</h4>
+
 <p>二叉搜索树，树如其名，它在搜索一个值的时候表现很好，但是二叉搜索树有一个很大的缺陷就是它不稳定，它的时间复杂度是O(h) 树的高度。所以可能会出现这种情况：</p>
-<p>
-        <img class="mx-auto" alt="image-20191207194141516" src="../../resources/images/C&#43;&#43;/image7.png" />   
-    </p>
+
+<p><img src="../../resources/images/C++/image7.png" alt="image-20191207194141516" /></p>
+
 <p>这个时候，B树（二叉平衡树）出现了，如下所示：</p>
-<p>
-        <img class="mx-auto" alt="image-20191207194640864" src="../../resources/images/C&#43;&#43;/image8.png" />   
-    </p>
+
+<p><img src="../../resources/images/C++/image8.png" alt="image-20191207194640864" /></p>
+
 <p>二叉平衡树的特点：</p>
+
 <p>（1）是二叉搜索树</p>
+
 <p>（2）树所有的叶子节点的高度差 不为 1</p>
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
 <h4 id="红黑树">红黑树</h4>
+
 <p>B树虽然能保持稳定的实际复杂度。但是它如果遇到增删操作比较多的场景。每次增删都要维护树的形状。这样也会造成额外的开销。</p>
+
 <p>一方面我们是希望二叉搜索树有一个非常好的结构（最好平衡二叉树），另一方面我们不希望要经常维护这个树的结构。这个是互相矛盾的，这个时候折中就出现了（计算机中出现了很多折中的思想），红黑树出现了。</p>
-<p>
-        <img class="mx-auto" alt="image-20191207202457345" src="../../resources/images/C&#43;&#43;/image9.png" />   
-    </p>
+
+<p><img src="../../resources/images/C++/image9.png" alt="image-20191207202457345" /></p>
+
 <p>红黑树 是一个不严格的平衡二叉树。它有以下几个特征：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#960050;background-color:#1e0010">节点是红色或者黑色</span>
-<span style="color:#960050;background-color:#1e0010">根节点是黑色</span>
-<span style="color:#960050;background-color:#1e0010">每个叶子的节点都是黑色的空节点（</span>NULL<span style="color:#960050;background-color:#1e0010">）</span>
-<span style="color:#960050;background-color:#1e0010">每个红色节点的两个子节点都是黑色的。</span>
-<span style="color:#960050;background-color:#1e0010">从任意节点到其每个叶子的所有路径都包含相同的黑色节点。</span>
-<span style="color:#960050;background-color:#1e0010">是一颗二叉搜索树</span>
-</code></pre></div><p>严格的平衡二叉树 要求节点之间高度不能超过1。这样会带来一些局限性。例如，插入操作很频繁。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#a61717;background-color:#e3d2d2">节点是红色或者黑色</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">根节点是黑色</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">每个叶子的节点都是黑色的空节点（</span>NULL<span style="color:#a61717;background-color:#e3d2d2">）</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">每个红色节点的两个子节点都是黑色的。</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">从任意节点到其每个叶子的所有路径都包含相同的黑色节点。</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">是一颗二叉搜索树</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>严格的平衡二叉树 要求节点之间高度不能超过1。这样会带来一些局限性。例如，插入操作很频繁。</p>
+
 <p>如果应用场景中对插入删除不频繁，只是对查找要求较高，那么AVL还是较优于红黑树。</p>
+
 <p>红黑树：是复杂的，但它的操作有着良好的最坏情况运行时间，并且在实践中是高效的。红黑树在插入删除的时候，左旋右旋的操作平均为3次（印象中的看到的数据，可能不准确）。</p>
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
 <h4 id="b-树">B-树</h4>
+
 <p>B-树是一种多路搜索树（并不是二叉的） ，它的目的是更快的查找。举例3路-B-树：</p>
-<p>
-        <img class="mx-auto" alt="image-20191207203256437" src="../../resources/images/C&#43;&#43;/image10.png" />   
-    </p>
+
+<p><img src="../../resources/images/C++/image10.png" alt="image-20191207203256437" /></p>
+
 <p>了解B-树是什么，需要了解两件事：</p>
+
 <p>（1）   确定M 是什么（M是阶数，代表每次有几条路可选）</p>
+
 <p>（2）   注意每一路是什么意思</p>
+
 <p>例如：第一层，P1代表少于17的数。P2表示17~35之间的，p3表示大于35的</p>
-<!-- raw HTML omitted -->
-<h4 id="b树">B+树</h4>
+
+<p><br></p>
+
+<h4 id="b-树-1">B+树</h4>
+
 <p>B+树是在B-树的基础上提出来的，B-树多用于文件系统，但是用于数据库的时候，经常会遇到区间查找的问题。这个时候B+树出现了。</p>
-<p>
-        <img class="mx-auto" alt="image-20191207203706869" src="../../resources/images/C&#43;&#43;/image11.png" />   
-    </p>
+
+<p><img src="../../resources/images/C++/image11.png" alt="image-20191207203706869" /></p>
+
 <p>B+树核心特点：</p>
+
 <p>（1）   每一次只存子孩子中最大或最小的数  （最后一层才是真正的数）</p>
+
 <p>（2）   最后一层用链表连接起来   （方便区间查询）</p>
+
 <p>总结：</p>
+
 <p>B-树：非关系型数据库的索引实现，如MongoDB</p>
+
 <p>B+树：关系型数据库的索引实现，如Mysql</p>
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
+<p><br></p>
 
         </div>
 
@@ -253,7 +406,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

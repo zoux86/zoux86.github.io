@@ -73,7 +73,119 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#安装环境介绍">安装环境介绍：</a></li>
+<li><a href="#安装步骤">安装步骤：</a>
+<ul>
+<li><a href="#首先下载ksonnet安装包-下载地址">首先下载ksonnet安装包，下载地址：</a></li>
+<li><a href="#安装">安装</a></li>
+<li><a href="#可能遇到的问题">可能遇到的问题：</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">kubeflow准备--下载ks</h1>
@@ -97,31 +209,48 @@
         
         
         <div class="post-content">
-            <p>最近需要了解Kubeflow方面的知识，故需要自己配置kubeflow。安装Kubeflow需要按照以下的依赖:</p>
+            
+
+<p>最近需要了解Kubeflow方面的知识，故需要自己配置kubeflow。安装Kubeflow需要按照以下的依赖:</p>
+
 <ul>
-<li>
-<p>ksonnet version [0.11.0] (<a href="https://ksonnet.io/#get-started">https://ksonnet.io/#get-started</a>) or later.</p>
-</li>
-<li>
-<p>Kubernetes <a href="https://kubernetes.io/docs/imported/release/notes/">1.8</a> or later</p>
-</li>
-<li>
-<p>kubectl</p>
-<p>由于，k8s,kubectl的安装网上已经有很多教程了，而本人安装ksonnet时绕了一些弯，所以在此记录一些本人的安装过程。</p>
-</li>
+<li><p>ksonnet version <a href="https://ksonnet.io/#get-started">0.11.0</a> or later.</p></li>
+
+<li><p>Kubernetes <a href="https://kubernetes.io/docs/imported/release/notes/">1.8</a> or later</p></li>
+
+<li><p>kubectl</p></li>
 </ul>
+
+<p>由于，k8s,kubectl的安装网上已经有很多教程了，而本人安装ksonnet时绕了一些弯，所以在此记录一些本人的安装过程。</p>
+
 <h4 id="安装环境介绍">安装环境介绍：</h4>
+
 <p>本人的k8s机器是按照的ubuntu 16.4上面，1个master,2个Node节点</p>
+
 <h4 id="安装步骤">安装步骤：</h4>
-<h5 id="首先下载ksonnet安装包下载地址">首先下载ksonnet安装包，下载地址：</h5>
+
+<h5 id="首先下载ksonnet安装包-下载地址">首先下载ksonnet安装包，下载地址：</h5>
+
 <p><a href="https://github.com/ksonnet/ksonnet/releases">https://github.com/ksonnet/ksonnet/releases</a></p>
+
 <p>本人是Ubuntu，所以下载的是：ks_0.13.1_linux_amd64.tar</p>
+
 <h5 id="安装">安装</h5>
+
 <p>将下载的ks包解压，解压后有5个文件，将ks文件复制到 usr/local/bin目录下即可，在命令行运行 ks 命令，即可看见安装成功</p>
+
 <h5 id="可能遇到的问题">可能遇到的问题：</h5>
+
 <p>将ks文件复制到 usr/local/bin目录下后，运行ks，显示</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>local<span style="color:#f92672">/</span>bin<span style="color:#f92672">/</span>ks: <span style="color:#a6e22e">Permission</span> denied
-</code></pre></div><p>解决办法：降低ks权限就好了。chmod 777 -R ks</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#000;font-weight:bold">/</span>usr<span style="color:#000;font-weight:bold">/</span>local<span style="color:#000;font-weight:bold">/</span>bin<span style="color:#000;font-weight:bold">/</span>ks: <span style="color:#458;font-weight:bold">Permission</span><span style="color:#bbb"> </span>denied</code></pre></td></tr></table>
+</div>
+</div>
+<p>解决办法：降低ks权限就好了。chmod 777 -R ks</p>
 
         </div>
 
@@ -224,7 +353,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

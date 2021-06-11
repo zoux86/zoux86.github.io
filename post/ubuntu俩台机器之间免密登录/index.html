@@ -73,7 +73,100 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">ubuntu俩台机器之间免密登录</h1>
@@ -98,30 +191,31 @@
         
         <div class="post-content">
             <p>1.首先使用 ipconfig 命令查看俩台电脑的ip地址
-
-        <img class="mx-auto" alt="image1" src="../../resources/images/ubuntu/image1.png" />   
-    
+<img src="../../resources/images/ubuntu/image1.png" alt="image1" />
 图中的192.168.111.136 就是这个机器的ip地址。</p>
+
 <p>2.安装ssh
 使用 ps -e | grep ssh 命令查看是否安装了ssh。没有的话，使用 sudo apt-get install openssh-server命令安装即可。</p>
+
 <p>3.生成A机器的公钥
 输入ssh-keygen，然后一路回车下去。直至生成了id_rsa.pub文件。</p>
+
 <p>4.将机器A生成的公钥发送给B机器
-scp /home/zoux/.ssh/id_rsa.pub <a href="mailto:zoux@192.168.111.137">zoux@192.168.111.137</a>:root
+ scp /home/zoux/.ssh/id_rsa.pub zoux@192.168.111.137:root
 这个命令是将A机器的id_rsa.pub 传送的zoux机器的root目录。
 可能出现的问题：
+<img src="../../resources/images/ubuntu/image2.png" alt="image2" /></p>
 
-        <img class="mx-auto" alt="image2" src="../../resources/images/ubuntu/image2.png" />   
-    </p>
 <p>5.在B机器中，将id_rsa.pub追加到authorized_keys文件中。
 使用以下的命令：
-cat /root/id_rsa.pub &raquo; /home/zoux/.ssh/authorized_keys</p>
-<p>6.返回A机器中，执行ssh B机器ip，如果能直接登录B机器。则说明A-&gt;B的免密码登录成功。
+cat /root/id_rsa.pub &gt;&gt; /home/zoux/.ssh/authorized_keys</p>
 
-        <img class="mx-auto" alt="image3" src="../../resources/images/ubuntu/image3.png" />   
-    </p>
+<p>6.返回A机器中，执行ssh B机器ip，如果能直接登录B机器。则说明A-&gt;B的免密码登录成功。
+<img src="../../resources/images/ubuntu/image3.png" alt="image3" /></p>
+
 <p>7.现在我们已经能A-&gt;B直接免密码通信了，发现A自己登录还需要密码。在A机器上运行：ssh localhost。如果发现要输入密码，即A-&gt;A还没实现免密码登录。实现方式很简单。在A机器的ssh目录下，加入这条语句即可。（将A的公钥加入keys文件中）
-cat ./id_rsa.pub &raquo; ./authorized_keys  # 加入授权</p>
+cat ./id_rsa.pub &gt;&gt; ./authorized_keys  # 加入授权</p>
+
 <p>8.前面六步已经实现A-&gt;A，A-&gt;B之间免密码登录。在B机器上重复1-6步骤，即可实现A&lt;-&gt;B之间互相通信。</p>
 
         </div>
@@ -142,6 +236,8 @@ cat ./id_rsa.pub &raquo; ./authorized_keys  # 加入授权</p>
         <li><a href="/post/%E6%B5%85%E8%B0%88%E5%8F%A4%E4%BA%BA%E6%B2%9F%E9%80%9A/">浅谈古人沟通</a></li>
         
         <li><a href="/archives/">归档</a></li>
+        
+        <li><a href="/search/">搜索</a></li>
         
     </ul>
 </div>
@@ -219,7 +315,7 @@ cat ./id_rsa.pub &raquo; ./authorized_keys  # 加入授权</p>
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

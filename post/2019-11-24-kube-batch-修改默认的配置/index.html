@@ -73,7 +73,122 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#创建pv-pvc-然后将自己的conf文件放到本地挂载的地方">创建pv,pvc,然后将自己的conf文件放到本地挂载的地方</a></li>
+<li><a href="#修改kube-batch-deployment-设置volumes和-mountpath-同时args加上对应的参数">修改kube-batch deployment，设置Volumes和 mountPath，同时args加上对应的参数</a>
+<ul>
+<li><a href="#修改args参数">修改args参数</a></li>
+<li><a href="#设置volumes和-mountpath">设置Volumes和 mountPath</a></li>
+<li><a href="#成功保存退出即可-修改后kube-batch会自动重启">成功保存退出即可。（修改后kube-batch会自动重启）</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">kube-batch 修改默认的配置</h1>
@@ -97,75 +212,170 @@
         
         
         <div class="post-content">
-            <p>在kube-batch V0.4及以上版本中，kube-batch默认的配置 只包含两个 Action(allocate, backfill)。</p>
+            
+
+<p>在kube-batch V0.4及以上版本中，kube-batch默认的配置 只包含两个 Action(allocate, backfill)。</p>
+
 <p>具体可以参考：
 <a href="https://github.com/kubernetes-sigs/kube-batch/blob/6e560929dcafec91b2b9a24f246a20b4569b39a8/pkg/scheduler/util.go">https://github.com/kubernetes-sigs/kube-batch/blob/6e560929dcafec91b2b9a24f246a20b4569b39a8/pkg/scheduler/util.go</a></p>
+
 <p>在自己的需求中，我们可能需要定义自己的配置。</p>
+
 <p>思路： 查看util.go中的代码发现，Kube-batch在发现用户指定配置文件后，会自动地读取该文件的内容，而不是使用自定义的config。所以，一个想法就是，使用NFS挂载卷，先生成自己的config file。然后修改kube-batch的deployment，让他读取这个config file。</p>
+
 <p>修改方式如下：</p>
-<h5 id="创建pvpvc然后将自己的conf文件放到本地挂载的地方">创建pv,pvc,然后将自己的conf文件放到本地挂载的地方</h5>
+
+<h5 id="创建pv-pvc-然后将自己的conf文件放到本地挂载的地方">创建pv,pvc,然后将自己的conf文件放到本地挂载的地方</h5>
+
 <p>pvc.yaml</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">apiVersion: <span style="color:#a6e22e">v1</span>
-kind: <span style="color:#a6e22e">PersistentVolumeClaim</span>
-metadata:
-  <span style="color:#a6e22e">name</span>: <span style="color:#a6e22e">kubebatch</span><span style="color:#f92672">-</span>pvc
-  namespace: <span style="color:#a6e22e">kube</span><span style="color:#f92672">-</span>system   <span style="color:#960050;background-color:#1e0010">#</span> <span style="color:#960050;background-color:#1e0010">一定要加</span>namespace,<span style="color:#960050;background-color:#1e0010">否则找不到</span>
-spec:
-  <span style="color:#a6e22e">accessModes</span>:
-    <span style="color:#f92672">-</span> ReadWriteOnce
-  resources:
-    <span style="color:#a6e22e">requests</span>:
-      <span style="color:#a6e22e">storage</span>: <span style="color:#ae81ff">5</span>Gi
-</code></pre></div><p>pv.yaml</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">apiVersion: <span style="color:#a6e22e">v1</span>
-kind: <span style="color:#a6e22e">PersistentVolume</span>
-metadata:
-  <span style="color:#a6e22e">name</span>: <span style="color:#a6e22e">kubebatch</span><span style="color:#f92672">-</span>pv
-  namespace: <span style="color:#a6e22e">kube</span><span style="color:#f92672">-</span>system
-spec:
-  <span style="color:#a6e22e">capacity</span>:
-    <span style="color:#a6e22e">storage</span>: <span style="color:#ae81ff">5</span>Gi
-  accessModes:
-    <span style="color:#f92672">-</span> ReadWriteOnce
-  nfs:
-    <span style="color:#a6e22e">server</span>: <span style="color:#ae81ff">192.168.14.69</span>
-    path: <span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>data<span style="color:#f92672">/</span>kube<span style="color:#f92672">-</span>batch
-</code></pre></div><p>自定义的配置文件 kube-batch-conf.yaml</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">actions: <span style="color:#e6db74">&#34;reclaim, allocate, backfill, preempt&#34;</span>
-tiers:
-<span style="color:#f92672">-</span> plugins:
-  <span style="color:#f92672">-</span> name: <span style="color:#a6e22e">priority</span>
-  <span style="color:#f92672">-</span> name: <span style="color:#a6e22e">gang</span>
-  <span style="color:#f92672">-</span> name: <span style="color:#a6e22e">conformance</span>
-<span style="color:#f92672">-</span> plugins:
-  <span style="color:#f92672">-</span> name: <span style="color:#a6e22e">drf</span>
-  <span style="color:#f92672">-</span> name: <span style="color:#a6e22e">predicates</span>
-  <span style="color:#f92672">-</span> name: <span style="color:#a6e22e">proportion</span>
-  <span style="color:#f92672">-</span> name: <span style="color:#a6e22e">nodeorder</span>
-</code></pre></div><h5 id="修改kube-batch-deployment设置volumes和-mountpath同时args加上对应的参数">修改kube-batch deployment，设置Volumes和 mountPath，同时args加上对应的参数</h5>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">apiVersion: <span style="color:#458;font-weight:bold">v1</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>kind: <span style="color:#458;font-weight:bold">PersistentVolumeClaim</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>metadata:
+  <span style="color:#458;font-weight:bold">name</span>: <span style="color:#458;font-weight:bold">kubebatch</span><span style="color:#000;font-weight:bold">-</span>pvc<span style="color:#bbb">
+</span><span style="color:#bbb">  </span>namespace: <span style="color:#458;font-weight:bold">kube</span><span style="color:#000;font-weight:bold">-</span>system<span style="color:#bbb">   </span><span style="color:#a61717;background-color:#e3d2d2">#</span><span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">一定要加</span>namespace,<span style="color:#a61717;background-color:#e3d2d2">否则找不到</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>spec:
+  <span style="color:#458;font-weight:bold">accessModes</span>:
+    <span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>ReadWriteOnce<span style="color:#bbb">
+</span><span style="color:#bbb">  </span>resources:
+    <span style="color:#458;font-weight:bold">requests</span>:
+      <span style="color:#458;font-weight:bold">storage</span>: <span style="color:#099">5</span>Gi</code></pre></td></tr></table>
+</div>
+</div>
+<p>pv.yaml</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">apiVersion: <span style="color:#458;font-weight:bold">v1</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>kind: <span style="color:#458;font-weight:bold">PersistentVolume</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>metadata:
+  <span style="color:#458;font-weight:bold">name</span>: <span style="color:#458;font-weight:bold">kubebatch</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#bbb">
+</span><span style="color:#bbb">  </span>namespace: <span style="color:#458;font-weight:bold">kube</span><span style="color:#000;font-weight:bold">-</span>system<span style="color:#bbb">
+</span><span style="color:#bbb"></span>spec:
+  <span style="color:#458;font-weight:bold">capacity</span>:
+    <span style="color:#458;font-weight:bold">storage</span>: <span style="color:#099">5</span>Gi<span style="color:#bbb">
+</span><span style="color:#bbb">  </span>accessModes:
+    <span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>ReadWriteOnce<span style="color:#bbb">
+</span><span style="color:#bbb">  </span>nfs:
+    <span style="color:#458;font-weight:bold">server</span>: <span style="color:#099">192.168.14.69</span><span style="color:#bbb">
+</span><span style="color:#bbb">    </span>path: <span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>data<span style="color:#000;font-weight:bold">/</span>kube<span style="color:#000;font-weight:bold">-</span>batch</code></pre></td></tr></table>
+</div>
+</div>
+<p>自定义的配置文件 kube-batch-conf.yaml</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">actions: <span style="color:#d14">&#34;reclaim, allocate, backfill, preempt&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>tiers:
+<span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>plugins:
+  <span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>name: <span style="color:#458;font-weight:bold">priority</span><span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>name: <span style="color:#458;font-weight:bold">gang</span><span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>name: <span style="color:#458;font-weight:bold">conformance</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>plugins:
+  <span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>name: <span style="color:#458;font-weight:bold">drf</span><span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>name: <span style="color:#458;font-weight:bold">predicates</span><span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>name: <span style="color:#458;font-weight:bold">proportion</span><span style="color:#bbb">
+</span><span style="color:#bbb">  </span><span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>name: <span style="color:#458;font-weight:bold">nodeorder</span></code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="修改kube-batch-deployment-设置volumes和-mountpath-同时args加上对应的参数">修改kube-batch deployment，设置Volumes和 mountPath，同时args加上对应的参数</h5>
+
 <p>使用kubectl edit deployment kube-batch -n kube-system 然后做以下的修改：</p>
+
 <h6 id="修改args参数">修改args参数</h6>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"> containers:
-      <span style="color:#f92672">-</span> args:
-        <span style="color:#f92672">-</span> <span style="color:#f92672">--</span>logtostderr
-        <span style="color:#f92672">-</span> <span style="color:#f92672">--</span>v
-        <span style="color:#f92672">-</span> <span style="color:#e6db74">&#34;3&#34;</span>
-        <span style="color:#f92672">-</span> <span style="color:#f92672">--</span>scheduler<span style="color:#f92672">-</span>conf
-        <span style="color:#f92672">-</span> <span style="color:#f92672">/</span>etc<span style="color:#f92672">/</span>zoux<span style="color:#f92672">/</span>kube<span style="color:#f92672">-</span>batch<span style="color:#f92672">-</span>conf.yaml  (<span style="color:#960050;background-color:#1e0010">与下面对应</span>)
-</code></pre></div><h6 id="设置volumes和-mountpath">设置Volumes和 mountPath</h6>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">volumeMounts:
-        <span style="color:#f92672">-</span> mountPath: <span style="color:#f92672">/</span>etc<span style="color:#f92672">/</span>zoux   (<span style="color:#960050;background-color:#1e0010">换成你自己的</span>)
-          name: <span style="color:#a6e22e">kube</span><span style="color:#f92672">-</span>batch
-      dnsPolicy: <span style="color:#a6e22e">ClusterFirst</span>
-      restartPolicy: <span style="color:#a6e22e">Always</span>
-      schedulerName: <span style="color:#a6e22e">default</span><span style="color:#f92672">-</span>scheduler
-      securityContext: {}
-      terminationGracePeriodSeconds: <span style="color:#ae81ff">30</span>
-      volumes:
-      <span style="color:#f92672">-</span> name: <span style="color:#a6e22e">kube</span><span style="color:#f92672">-</span>batch
-        persistentVolumeClaim:
-          <span style="color:#a6e22e">claimName</span>: <span style="color:#a6e22e">kubebatch</span><span style="color:#f92672">-</span>pvc  <span style="color:#960050;background-color:#1e0010">（换成你自己的</span>pvc)
-</code></pre></div><h6 id="成功保存退出即可修改后kube-batch会自动重启">成功保存退出即可。（修改后kube-batch会自动重启）</h6>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#bbb"> </span>containers:
+      <span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>args:
+        <span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">--</span>logtostderr<span style="color:#bbb">
+</span><span style="color:#bbb">        </span><span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">--</span>v<span style="color:#bbb">
+</span><span style="color:#bbb">        </span><span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span><span style="color:#d14">&#34;3&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">        </span><span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">--</span>scheduler<span style="color:#000;font-weight:bold">-</span>conf<span style="color:#bbb">
+</span><span style="color:#bbb">        </span><span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">/</span>etc<span style="color:#000;font-weight:bold">/</span>zoux<span style="color:#000;font-weight:bold">/</span>kube<span style="color:#000;font-weight:bold">-</span>batch<span style="color:#000;font-weight:bold">-</span>conf.yaml<span style="color:#bbb">  </span>(<span style="color:#a61717;background-color:#e3d2d2">与下面对应</span>)</code></pre></td></tr></table>
+</div>
+</div>
+<h6 id="设置volumes和-mountpath">设置Volumes和 mountPath</h6>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">volumeMounts:
+        <span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>mountPath: <span style="color:#000;font-weight:bold">/</span>etc<span style="color:#000;font-weight:bold">/</span>zoux<span style="color:#bbb">   </span>(<span style="color:#a61717;background-color:#e3d2d2">换成你自己的</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">          </span>name: <span style="color:#458;font-weight:bold">kube</span><span style="color:#000;font-weight:bold">-</span>batch<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>dnsPolicy: <span style="color:#458;font-weight:bold">ClusterFirst</span><span style="color:#bbb">
+</span><span style="color:#bbb">      </span>restartPolicy: <span style="color:#458;font-weight:bold">Always</span><span style="color:#bbb">
+</span><span style="color:#bbb">      </span>schedulerName: <span style="color:#458;font-weight:bold">default</span><span style="color:#000;font-weight:bold">-</span>scheduler<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>securityContext: {}<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>terminationGracePeriodSeconds: <span style="color:#099">30</span><span style="color:#bbb">
+</span><span style="color:#bbb">      </span>volumes:
+      <span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>name: <span style="color:#458;font-weight:bold">kube</span><span style="color:#000;font-weight:bold">-</span>batch<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>persistentVolumeClaim:
+          <span style="color:#458;font-weight:bold">claimName</span>: <span style="color:#458;font-weight:bold">kubebatch</span><span style="color:#000;font-weight:bold">-</span>pvc<span style="color:#bbb">  </span><span style="color:#a61717;background-color:#e3d2d2">（换成你自己的</span>pvc)</code></pre></td></tr></table>
+</div>
+</div>
+<h6 id="成功保存退出即可-修改后kube-batch会自动重启">成功保存退出即可。（修改后kube-batch会自动重启）</h6>
+
 <p>最后感谢義洋同学 一起讨论提供思路。</p>
 
         </div>
@@ -265,7 +475,7 @@ tiers:
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

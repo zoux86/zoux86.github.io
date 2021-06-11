@@ -73,7 +73,116 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#代码入口">代码入口</a></li>
+<li><a href="#真正的调度函数-pc-runonce">真正的调度函数 pc.runOnce</a></li>
+<li><a href="#volcano调度流程图">volcano调度流程图</a></li>
+<li><a href="#代码流程图">代码流程图</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">volcano的代码流程图</h1>
@@ -97,53 +206,109 @@
         
         
         <div class="post-content">
-            <h4 id="代码入口">代码入口</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">cmd<span style="color:#f92672">/</span>sheduler<span style="color:#f92672">/</span>main.go:<span style="color:#ae81ff">46</span> main       -&gt;  <span style="color:#a6e22e">cmd</span><span style="color:#f92672">/</span>sheduler<span style="color:#f92672">/</span>main.go:<span style="color:#ae81ff">62</span> app.Run
-cmd<span style="color:#f92672">/</span>sheduler<span style="color:#f92672">/</span>main.go:<span style="color:#ae81ff">62</span> app.Run    -&gt;  <span style="color:#a6e22e">cmd</span><span style="color:#f92672">/</span>app<span style="color:#f92672">/</span>server.go:<span style="color:#ae81ff">106</span> sched.Run
-cmd<span style="color:#f92672">/</span>app<span style="color:#f92672">/</span>server.go:<span style="color:#ae81ff">106</span> sched.Run    -&gt;  <span style="color:#a6e22e">pkg</span><span style="color:#f92672">/</span>scheduler<span style="color:#f92672">/</span>scheduler.go:<span style="color:#ae81ff">64</span> Run
-pkg<span style="color:#f92672">/</span>scheduler<span style="color:#f92672">/</span>scheduler.go:<span style="color:#ae81ff">64</span> Run  -&gt;  <span style="color:#a6e22e">pkg</span><span style="color:#f92672">/</span>scheduler<span style="color:#f92672">/</span>scheduler.go:<span style="color:#ae81ff">69</span> Run
-</code></pre></div><p>代码 pkg/scheduler/scheduler.go:69 中的Run 才是开启调度程序的真正入口，它的实现如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#75715e">// Run runs the Scheduler
-</span><span style="color:#75715e"></span>func (pc <span style="color:#f92672">*</span>Scheduler) Run(stopCh <span style="color:#f92672">&lt;-</span>chan <span style="color:#66d9ef">struct</span>{}) {
-	<span style="color:#75715e">// 同步cache，缓存节点，pod，job等信息
-</span><span style="color:#75715e"></span>	go pc.cache.Run(stopCh)
-	pc.cache.WaitForCacheSync(stopCh)
-	
-    <span style="color:#75715e">//真正的调度核心，意思是没隔pc.schedulePeriod（1秒），就开启一次调度（pc.runOnce）.收到stopCh信     //号才停止
-</span><span style="color:#75715e"></span>	go wait.Until(pc.runOnce, pc.schedulePeriod, stopCh)
-}
-</code></pre></div><h4 id="真正的调度函数-pcrunonce">真正的调度函数 pc.runOnce</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">func (pc <span style="color:#f92672">*</span>Scheduler) runOnce() {
-	klog.V(<span style="color:#ae81ff">4</span>).Infof(<span style="color:#e6db74">&#34;Start scheduling ...&#34;</span>)
-	scheduleStartTime :<span style="color:#f92672">=</span> time.Now()
-	defer klog.V(<span style="color:#ae81ff">4</span>).Infof(<span style="color:#e6db74">&#34;End scheduling ...&#34;</span>)
-	defer metrics.UpdateE2eDuration(metrics.Duration(scheduleStartTime))
-	
-    <span style="color:#75715e">// 导入配置文件
-</span><span style="color:#75715e"></span>	pc.loadSchedulerConf()
-	
-    <span style="color:#75715e">//根据配置文件的plugins(gang,drf等)，已经cache，开启一轮新的 会话
-</span><span style="color:#75715e"></span>	ssn :<span style="color:#f92672">=</span> framework.OpenSession(pc.cache, pc.plugins)
-	defer framework.CloseSession(ssn)
-	
-    <span style="color:#75715e">//依次执行配置文件中的指定的actions。现在默认是（enqueue,allocate,backfill）
-</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">for</span> _, action :<span style="color:#f92672">=</span> range pc.actions {
-		actionStartTime :<span style="color:#f92672">=</span> time.Now()
-		action.Execute(ssn)
-		metrics.UpdateActionDuration(action.Name(), metrics.Duration(actionStartTime))
-	}
-}
-</code></pre></div><h4 id="volcano调度流程图">volcano调度流程图</h4>
-<p>
-        <img class="mx-auto" alt="image-20191202165727868" src="../../resources/images/volcano/image5.png" />   
-    </p>
+            
+
+<h4 id="代码入口">代码入口</h4>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">cmd<span style="color:#000;font-weight:bold">/</span>sheduler<span style="color:#000;font-weight:bold">/</span>main.go:<span style="color:#099">46</span><span style="color:#bbb"> </span>main<span style="color:#bbb">       </span>-&gt;  <span style="color:#458;font-weight:bold">cmd</span><span style="color:#000;font-weight:bold">/</span>sheduler<span style="color:#000;font-weight:bold">/</span>main.go:<span style="color:#099">62</span><span style="color:#bbb"> </span>app.Run<span style="color:#bbb">
+</span><span style="color:#bbb"></span>cmd<span style="color:#000;font-weight:bold">/</span>sheduler<span style="color:#000;font-weight:bold">/</span>main.go:<span style="color:#099">62</span><span style="color:#bbb"> </span>app.Run<span style="color:#bbb">    </span>-&gt;  <span style="color:#458;font-weight:bold">cmd</span><span style="color:#000;font-weight:bold">/</span>app<span style="color:#000;font-weight:bold">/</span>server.go:<span style="color:#099">106</span><span style="color:#bbb"> </span>sched.Run<span style="color:#bbb">
+</span><span style="color:#bbb"></span>cmd<span style="color:#000;font-weight:bold">/</span>app<span style="color:#000;font-weight:bold">/</span>server.go:<span style="color:#099">106</span><span style="color:#bbb"> </span>sched.Run<span style="color:#bbb">    </span>-&gt;  <span style="color:#458;font-weight:bold">pkg</span><span style="color:#000;font-weight:bold">/</span>scheduler<span style="color:#000;font-weight:bold">/</span>scheduler.go:<span style="color:#099">64</span><span style="color:#bbb"> </span>Run<span style="color:#bbb">
+</span><span style="color:#bbb"></span>pkg<span style="color:#000;font-weight:bold">/</span>scheduler<span style="color:#000;font-weight:bold">/</span>scheduler.go:<span style="color:#099">64</span><span style="color:#bbb"> </span>Run<span style="color:#bbb">  </span>-&gt;  <span style="color:#458;font-weight:bold">pkg</span><span style="color:#000;font-weight:bold">/</span>scheduler<span style="color:#000;font-weight:bold">/</span>scheduler.go:<span style="color:#099">69</span><span style="color:#bbb"> </span>Run</code></pre></td></tr></table>
+</div>
+</div>
+<p>代码 pkg/scheduler/scheduler.go:69 中的Run 才是开启调度程序的真正入口，它的实现如下：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">9
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#998;font-style:italic">// Run runs the Scheduler
+</span><span style="color:#998;font-style:italic"></span>func<span style="color:#bbb"> </span>(pc<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">*</span>Scheduler)<span style="color:#bbb"> </span>Run(stopCh<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">&lt;-</span>chan<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">struct</span>{})<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// 同步cache，缓存节点，pod，job等信息
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span>go<span style="color:#bbb"> </span>pc.cache.Run(stopCh)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>pc.cache.WaitForCacheSync(stopCh)<span style="color:#bbb">
+</span><span style="color:#bbb">	
+</span><span style="color:#bbb">    </span><span style="color:#998;font-style:italic">//真正的调度核心，意思是没隔pc.schedulePeriod（1秒），就开启一次调度（pc.runOnce）.收到stopCh信     //号才停止
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span>go<span style="color:#bbb"> </span>wait.Until(pc.runOnce,<span style="color:#bbb"> </span>pc.schedulePeriod,<span style="color:#bbb"> </span>stopCh)<span style="color:#bbb">
+</span><span style="color:#bbb"></span>}</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="真正的调度函数-pc-runonce">真正的调度函数 pc.runOnce</h4>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">func<span style="color:#bbb"> </span>(pc<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">*</span>Scheduler)<span style="color:#bbb"> </span>runOnce()<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>klog.V(<span style="color:#099">4</span>).Infof(<span style="color:#d14">&#34;Start scheduling ...&#34;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>scheduleStartTime<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>time.Now()<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>defer<span style="color:#bbb"> </span>klog.V(<span style="color:#099">4</span>).Infof(<span style="color:#d14">&#34;End scheduling ...&#34;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>defer<span style="color:#bbb"> </span>metrics.UpdateE2eDuration(metrics.Duration(scheduleStartTime))<span style="color:#bbb">
+</span><span style="color:#bbb">	
+</span><span style="color:#bbb">    </span><span style="color:#998;font-style:italic">// 导入配置文件
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span>pc.loadSchedulerConf()<span style="color:#bbb">
+</span><span style="color:#bbb">	
+</span><span style="color:#bbb">    </span><span style="color:#998;font-style:italic">//根据配置文件的plugins(gang,drf等)，已经cache，开启一轮新的 会话
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span>ssn<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>framework.OpenSession(pc.cache,<span style="color:#bbb"> </span>pc.plugins)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>defer<span style="color:#bbb"> </span>framework.CloseSession(ssn)<span style="color:#bbb">
+</span><span style="color:#bbb">	
+</span><span style="color:#bbb">    </span><span style="color:#998;font-style:italic">//依次执行配置文件中的指定的actions。现在默认是（enqueue,allocate,backfill）
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span><span style="color:#000;font-weight:bold">for</span><span style="color:#bbb"> </span>_,<span style="color:#bbb"> </span>action<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>range<span style="color:#bbb"> </span>pc.actions<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>actionStartTime<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>time.Now()<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>action.Execute(ssn)<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>metrics.UpdateActionDuration(action.Name(),<span style="color:#bbb"> </span>metrics.Duration(actionStartTime))<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>}<span style="color:#bbb">
+</span><span style="color:#bbb"></span>}</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="volcano调度流程图">volcano调度流程图</h4>
+
+<p><img src="../../resources/images/volcano/image5.png" alt="image-20191202165727868" /></p>
+
 <h4 id="代码流程图">代码流程图</h4>
-<p>
-        <img class="mx-auto" alt="image-20191202163510557" src="../../resources/images/volcano/image6.png" />   
-    </p>
+
+<p><img src="../../resources/images/volcano/image6.png" alt="image-20191202163510557" /></p>
+
 <p>说明：</p>
+
 <p>（1）在每轮session调度期间，使用的都是缓存中的数据，如果这个时候集群资源更新了，当前session中的数据不会更新</p>
+
 <p>（2）enqueue的作用就是，根据当前集群资源情况预先筛选出一部分作业。集群资源更新相关的代码都要在这里修改。</p>
+
 <p>（3）allocate负责真正的pod 调度过程。调度逻辑相关的代码需要在这里修改。</p>
 
         </div>
@@ -243,7 +408,7 @@ pkg<span style="color:#f92672">/</span>scheduler<span style="color:#f92672">/</s
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

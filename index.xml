@@ -13,7 +13,7 @@
       <pubDate>Sun, 15 Dec 2019 01:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/</guid>
-      <description>目录 （1）k8s简介 （2）k8s组件介绍 背景简介 Docker 项目和容器技术目前还是非常火热，但是Docker 技术栈，有自己的局限性，这是它的出发点决定的。那么在docker层之上，例如 容器编排？调度？容器云？集群管理？这些事情就需要另外一个项目来解决了。 在我最开始接触k8s的时候，我看到的</description>
+      <description>toc=true 目录 （1）k8s简介 （2）k8s组件介绍 背景简介 Docker 项目和容器技术目前还是非常火热，但是Docker 技术栈，有自己的局限性，这是它的出发点决定的。那么在docker层之上，例如 容器编排？调度？容器云？集群管理？这些事情就需要另外一个项目来解决了。 在我最开始接触k8s的时候，我看到</description>
     </item>
     
     <item>
@@ -22,7 +22,7 @@
       <pubDate>Tue, 10 Dec 2019 01:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-12-10-go%E7%9A%84%E5%90%84%E7%A7%8D%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</guid>
-      <description>golang 中int, float, string 以及interface{}直接的互相转换 int 转float var a int var b float64 a = 10 b = float64(a) //ps: 如果是float32，就使用float32(a) int 转string //第一种方式通过 fmt.sPrintf() 转换string var str string a := 10 str = fmt.Sprintf(&amp;#34;%d&amp;#34;, a) //第二种方式通过 strconv包 转换 string var str1 string a1 := 10 str1 = strconv.FormatInt(int64(a1), 10) float 转</description>
+      <description>golang 中int, float, string 以及interface{}直接的互相转换 int 转float 1 2 3 4 var a int var b float64 a = 10 b = float64(a) //ps: 如果是float32，就使用float32(a) int 转string 1 2 3 4 5 6 7 8 9 //第一种方式通过 fmt.sPrintf() 转换string var str string a := 10 str = fmt.Sprintf(&amp;#34;%d&amp;#34;, a) //第二种方式通过 strconv包 转换</description>
     </item>
     
     <item>
@@ -58,7 +58,7 @@
       <pubDate>Fri, 06 Dec 2019 01:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E6%8C%87%E9%92%88%E4%BD%A0%E8%A6%81%E4%BA%86%E8%A7%A3%E7%9A%84%E4%BA%8B/</guid>
-      <description>指针和引用的区别 指针是一个变量，只不过这个变量存储的是一个地址，指向内存的一个存储单元；而引用仅是个别名； 引用使用时无需解引用(*)，指针需要解引用； 引用只能在定义时被初始化一次，之后不可变；指针可变； 引用没有 const，指针有 const； 引用不能为空，指针可以为空； “sizeo</description>
+      <description>指针和引用的区别 1 2 3 4 5 6 7 8 9 指针是一个变量，只不过这个变量存储的是一个地址，指向内存的一个存储单元；而引用仅是个别名；引用使用时无需解引用(*)，指针需要解引用；引用只能在定义时被初始化一次，之后不可变；指针可变；引用没有const，指针有const；引用不能为空，指针可以</description>
     </item>
     
     <item>
@@ -67,7 +67,7 @@
       <pubDate>Thu, 05 Dec 2019 00:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-12-05-%E5%87%A0%E9%81%93%E9%9D%9E%E5%B8%B8%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84c&#43;&#43;%E9%A2%98%E7%9B%AE/</guid>
-      <description>1.给私有成员变量赋值 已知一个类的结构，但是它所有的成员变量是私有的，有get方法，但是没有set方法，请问如何给成员变量赋值。 答案 #include &amp;lt;iostream&amp;gt;using namespace std; class A{ private: int b; public: int getB(){ return b; } }; int main(){ A *a = new A; int *p = (int *)a; *p = 1; cout&amp;lt;&amp;lt;a-&amp;gt;getB()&amp;lt;&amp;lt;endl; } 这道题的关键在于，要了解C++实例的内存分布。实现主要是下面两步： int *p = (int *)a; //将</description>
+      <description>1.给私有成员变量赋值 已知一个类的结构，但是它所有的成员变量是私有的，有get方法，但是没有set方法，请问如何给成员变量赋值。 答案 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 #include &amp;lt;iostream&amp;gt;using namespace std; class A{ private: int b; public: int getB(){ return b; } }; int main(){ A *a = new A; int *p = (int *)a; *p = 1; cout&amp;lt;&amp;lt;a-&amp;gt;getB()&amp;lt;&amp;lt;endl; } 这道题的关键在于，要了解C++实例的内存</description>
     </item>
     
     <item>
@@ -76,7 +76,7 @@
       <pubDate>Wed, 04 Dec 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-12-04-c&#43;&#43;%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83/</guid>
-      <description>C++中类初始化成一个对象之后，该对象实例在内存中是如何分布的呢？ 空类情况 如果实例化一个空类，这个对象会在内存中占用1个字节。目的只是标识一下，这是一个类实例（因为不占的话，就和空数据没什么区别）。 含基本数据，不含函数的情况 #include &amp;lt;iostream&amp;gt;using namespace std; class A{ char a; int b; char c; }; class B{ char a; char c; int b; }; int main(){ cout&amp;lt;&amp;lt;sizeof(A)&amp;lt;&amp;lt;endl; cout&amp;lt;&amp;lt;sizeof(B)&amp;lt;&amp;lt;endl; } 假</description>
+      <description>C++中类初始化成一个对象之后，该对象实例在内存中是如何分布的呢？ 空类情况 如果实例化一个空类，这个对象会在内存中占用1个字节。目的只是标识一下，这是一个类实例（因为不占的话，就和空数据没什么区别）。 含基本数据，不含函数的情况 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 #include &amp;lt;iostream&amp;gt;using namespace std; class A{ char</description>
     </item>
     
     <item>
@@ -85,7 +85,7 @@
       <pubDate>Mon, 02 Dec 2019 10:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-12-02-volcano-scheduler%E4%BB%A3%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE/</guid>
-      <description>代码入口 cmd/sheduler/main.go:46 main -&amp;gt; cmd/sheduler/main.go:62 app.Run cmd/sheduler/main.go:62 app.Run -&amp;gt; cmd/app/server.go:106 sched.Run cmd/app/server.go:106 sched.Run -&amp;gt; pkg/scheduler/scheduler.go:64 Run pkg/scheduler/scheduler.go:64 Run -&amp;gt; pkg/scheduler/scheduler.go:69 Run 代码 pkg/scheduler/scheduler.go:69 中的Run 才是开启调度程序的真正入口，它的实现如下： // Run runs the Scheduler func (pc *Scheduler) Run(stopCh &amp;lt;-chan struct{}) { // 同步cache，缓存节点，pod，job等信息 go pc.cache.Run(stopCh) pc.cache.WaitForCacheSync(stopCh) //真正的调度核心，意思是没隔pc.schedulePeriod（1秒），就开启一次调度（pc.</description>
+      <description>代码入口 1 2 3 4 cmd/sheduler/main.go:46main-&amp;gt; cmd/sheduler/main.go:62app.Runcmd/sheduler/main.go:62app.Run-&amp;gt; cmd/app/server.go:106sched.Runcmd/app/server.go:106sched.Run-&amp;gt; pkg/scheduler/scheduler.go:64Runpkg/scheduler/scheduler.go:64Run-&amp;gt; pkg/scheduler/scheduler.go:69Run 代码 pkg/scheduler/scheduler.go:69 中的Run 才是开启调度程序的真正入口，它的实现如下： 1 2 3 4 5 6 7 8 9 // Run runs the Scheduler func(pc*Scheduler)Run(stopCh&amp;lt;-chanstruct{}){// 同步cache，缓存节点，pod，job等信息 gopc.cache.Run(stopCh)pc.cache.WaitForCacheSync(stopCh)//真正的</description>
     </item>
     
     <item>
@@ -148,7 +148,7 @@
       <pubDate>Wed, 20 Nov 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/first/</guid>
-      <description>初始 萌芽期 从大学开始，我一直想弄一个自己的Blog。大学期间还自学了CSS和html。后来因为两个原因放弃了。一是大学刚接触计算机，有时想记下学下的内容，但都是笔记本上记录，也没写什么技术博客的想法。二是当时感觉自建博客实在太麻烦，还要自己租服务器。所以搭建博客的计划一直搁浅。 2</description>
+      <description>初始 萌芽期 &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; 从大学开始，我一直想弄一个自己的Blog。大学期间还自学了CSS和html。后来因为两个原因放弃了。一是大学刚接触计算机，有时想记下学下的内容，但都是笔记本上记录，也没写什么技术博客的想法。二是当时感觉自建博客实在太麻烦，还要自己租服务器。所以搭建博客的计划一直</description>
     </item>
     
     <item>
@@ -337,7 +337,7 @@
       <pubDate>Sun, 21 Apr 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B01/</guid>
-      <description>任务：找到scheduler的入口 k8s 代码目录结构 cmd：所有的二进制可执行文件入口代码，也就是各种命令的接口代码。 pkg：项目diamante主目录，cmd只是接口，这里是具体实现。cmd类似业务代码，pkg类似核心 寻找k8s入口函数 cmd/kube-scheduler/scheduler.go:34 main函数 -&amp;gt; cmd/kube-scheduler/app/server.go:70 NewSchedulerCommand-&amp;gt; cmd/kube-scheduler/app/server.go:117 runCommand -&amp;gt; cmd/kube-scheduler/app/server.go:167 Run -&amp;gt; pkg/scheduler/scheduler.go:276 run (cmd/kube-scheduler/scheduler.go:34 表示cm</description>
+      <description>任务：找到scheduler的入口 k8s 代码目录结构 cmd：所有的二进制可执行文件入口代码，也就是各种命令的接口代码。 pkg：项目diamante主目录，cmd只是接口，这里是具体实现。cmd类似业务代码，pkg类似核心 寻找k8s入口函数 1 2 3 4 5 6 cmd/kube-schedule</description>
     </item>
     
     <item>
@@ -346,7 +346,7 @@
       <pubDate>Sun, 21 Apr 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B02/</guid>
-      <description>接上文的工作，上文是找到了scheduler的入口。接下来看scheduler具体的执行。 cmd/kube-scheduler/scheduler.go:34 main函数 -&amp;gt; cmd/kube-scheduler/app/server.go:70 NewSchedulerCommand-&amp;gt; cmd/kube-scheduler/app/server.go:117 runCommand -&amp;gt; cmd/kube-scheduler/app/server.go:167 Run -&amp;gt; pkg/scheduler/scheduler.go:276 run -&amp;gt; 这是上文的工作 pkg/scheduler/scheduler.go:501 scheduleOne -&amp;gt; pkg/scheduler/scheduler.go:291 schedule-&amp;gt; 这里schedule只是一个街口，定义在 schedule/algorithm/interface中 pkg/scheduler/core/generic_scheduler.go:139 Schedule （这一步是参考的，我具体是</description>
+      <description>接上文的工作，上文是找到了scheduler的入口。接下来看scheduler具体的执行。 1 2 3 4 5 cmd/kube-scheduler/scheduler.go:34main函数-&amp;gt; cmd/kube-scheduler/app/server.go:70NewSchedulerCommand-&amp;gt; cmd/kube-scheduler/app/server.go:117runCommand-&amp;gt; cmd/kube-scheduler/app/server.go:167Run-&amp;gt; pkg/scheduler/scheduler.go:276run-&amp;gt; 这是上文的工作 1 2 pkg/scheduler/scheduler.go:501scheduleOne-&amp;gt; pkg/scheduler/scheduler.go:291schedule-&amp;gt; 这里schedule只是一个街口，定义在 schedule/a</description>
     </item>
     
     <item>
@@ -418,7 +418,7 @@
       <pubDate>Mon, 25 Mar 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/</guid>
-      <description>追踪整个代码跳过过程 cmd/kube-batch/main.go:39 main -&amp;gt; cmd/kube-batch/main.go:53 app.Run cmd/kube-batch/app/server.go:60 Run -&amp;gt; cmd/kube-batch/app/server.go:86 sched.Run cmd/kube-batch/app/server.go:86 sched.Run-&amp;gt; pkg/scheduler/scheduler.go:59 cmd/kube-batch/app/server.go:59 sched.Run-&amp;gt; pkg/scheduler/scheduler.runOnce:84 cmd/kube-batch/app/server.go:59 行代码 func (pc *Scheduler) Run(stopCh &amp;lt;-chan struct{}) { var err error // Start cache for policy. go pc.cache.Run(stopCh) pc.cache.WaitForCacheSync(stopCh) // Load configuration of scheduler schedConf := defaultSchedulerConf if len(pc.schedulerConf) != 0 { if schedConf, err = readSchedulerConf(pc.schedulerConf); err != nil { glog.Errorf(&amp;#34;Failed to read scheduler configuration &amp;#39;%s&amp;#39;, using default configuration: %v&amp;#34;, pc.schedulerConf, err) schedConf = defaultSchedulerConf } } pc.actions, pc.plugins, err = loadSchedulerConf(schedConf) if err != nil { panic(err) } // 这里又开始周期性调用 runOnce了。开始调用 go wait.Until(pc.runOnce, pc.schedulePeriod, stopCh) } cmd/kube-batch/app/server.go:84 行代码 func (pc *Scheduler) runOnce() { glog.V(4).Infof(&amp;#34;Start scheduling ...&amp;#34;)</description>
+      <description>追踪整个代码跳过过程 1 2 3 4 cmd/kube-batch/main.go:39main-&amp;gt; cmd/kube-batch/main.go:53app.Runcmd/kube-batch/app/server.go:60Run-&amp;gt; cmd/kube-batch/app/server.go:86sched.Runcmd/kube-batch/app/server.go:86sched.Run-&amp;gt; pkg/scheduler/scheduler.go:59cmd/kube-batch/app/server.go:59sched.Run-&amp;gt; pkg/scheduler/scheduler.runOnce:84 cmd/kube-batch/app/server.go:59 行代码 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 func(pc*Scheduler)Run(stopCh&amp;lt;-chanstruct{}){varerrerror// Start cache for policy. gopc.cache.Run(stopCh)pc.cache.WaitForCacheSync(stopCh)// Load configuration of scheduler schedConf:=defaultSchedulerConfiflen(pc.schedulerConf)!=0{ifschedConf,err=readSchedulerConf(pc.schedulerConf);err!=nil{glog.Errorf(&amp;#34;Failed to read scheduler configuration &amp;#39;%s&amp;#39;, using default configuration: %v&amp;#34;,pc.schedulerConf,err)schedConf=defaultSchedulerConf}}pc.actions,pc.plugins,err=loadSchedulerConf(schedConf)iferr!=nil{panic(err)}// 这里又开始周期性调用 runOnce了。开始调用 gowait.Until(pc.runOnce,pc.schedulePeriod,stopCh)} cmd/kube-batch/app/server.go:84 行代码 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 func(pc*Scheduler)runOnce(){glog.V(4).Infof(&amp;#34;Start scheduling ...&amp;#34;)scheduleStartTime:=time.Now()deferglog.V(4).Infof(&amp;#34;End scheduling ...&amp;#34;)defermetrics.UpdateE2eDuration(metrics.Duration(scheduleStartTime))ssn:=framework.OpenSession(pc.cache,pc.plugins)deferframework.CloseSession(ssn)for_,action:=rangepc.actions{actionStartTime:=time.Now()action.Execute(ssn)metrics.UpdateActionDuration(action.Name(),metrics.Duration(actionStartTime))}} 这里主要 defer 是延迟函数，就是返回值之前执行。所以上面</description>
     </item>
     
     <item>
@@ -499,7 +499,7 @@
       <pubDate>Wed, 09 Jan 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-11-24-kubeflow-%E4%BD%BF%E7%94%A8%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2/</guid>
-      <description>按照前几篇文章搭建好Kubeflow集群后，所有的pod都能运行了。但是在自己本地浏览器访问界面时却发现网页一直打不开。访问不了jupyter。这样因为默认的这些服务都是使用cluster ip。只能集群内部访问，外网访问不了。 解决方法： 查看当前的服务 kubectl -n kubeflow get svc 如图所示，这里注意，</description>
+      <description>按照前几篇文章搭建好Kubeflow集群后，所有的pod都能运行了。但是在自己本地浏览器访问界面时却发现网页一直打不开。访问不了jupyter。这样因为默认的这些服务都是使用cluster ip。只能集群内部访问，外网访问不了。 解决方法： 查看当前的服务 1 kubectl-nkubeflowgetsvc 如图所示，这里注意，这是我</description>
     </item>
     
     <item>
@@ -508,7 +508,7 @@
       <pubDate>Mon, 07 Jan 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-nfs%E5%81%9A%E5%90%8E%E7%AB%AF%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/</guid>
-      <description>目的 在搭建kubeflow的时候，要需要搭建存储卷。为了以后能更好的共享文件，我这里使用了NFS作为文件存储系统。 操作如下： 针对master节点： master节点上安装NFS服务 sudo apt-get update &amp;amp;&amp;amp; sudo apt-get install -y nfs-server 建立一个共享的文件夹 sudo mkdir /nfs-data/kubeflow-pv1 修改/etc/exports文件 (末尾添加) /nfs-data/kubeflow-pv1 *(rw,sync,no_root_squash,no_subtree_check) 这一行的意</description>
+      <description>目的 在搭建kubeflow的时候，要需要搭建存储卷。为了以后能更好的共享文件，我这里使用了NFS作为文件存储系统。 操作如下： 针对master节点： master节点上安装NFS服务 1 sudoapt-getupdate&amp;amp;&amp;amp;sudoapt-getinstall-ynfs-server 建立一个共享的文件夹 1 sudomkdir/nfs-data/kubeflow-pv1 修改/etc/exports文件 (末尾添加) 1 /nfs-data/kubeflow-pv1*(rw,sync,no_root_squash,no_subtree_check) 这一行的意思是将/nfs-</description>
     </item>
     
     <item>
@@ -517,7 +517,7 @@
       <pubDate>Mon, 07 Jan 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87%E5%B7%A5%E5%85%B7-ksonnet-%E5%AE%89%E8%A3%85/</guid>
-      <description>最近需要了解Kubeflow方面的知识，故需要自己配置kubeflow。安装Kubeflow需要按照以下的依赖: ksonnet version [0.11.0] (https://ksonnet.io/#get-started) or later. Kubernetes 1.8 or later kubectl 由于，k8s,kubectl的安装网上已经有很多教程了，而本人安装ksonnet时绕了一些弯，所以在此记录一些本人的安装过程。 安装环境介绍： 本人的</description>
+      <description>最近需要了解Kubeflow方面的知识，故需要自己配置kubeflow。安装Kubeflow需要按照以下的依赖: ksonnet version 0.11.0 or later. Kubernetes 1.8 or later kubectl 由于，k8s,kubectl的安装网上已经有很多教程了，而本人安装ksonnet时绕了一些弯，所以在此记录一些本人的安装过程。 安装环境介绍： 本人的k</description>
     </item>
     
     <item>
@@ -544,7 +544,7 @@
       <pubDate>Sun, 06 Jan 2019 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/</guid>
-      <description>在很多情况下，我们需要使用自己的docker仓库。接下来是在本地k8s集群上搭建本地仓库的过程。 假设我们将本地仓库搭建在k8s主节点上。 这里假设主节点是：192.168.14.84 运行registry镜像 docker run -d -p 5000:5000 --restart always --name registry registry:2 直接运行该命令即可，本地没有registry:2，会自动</description>
+      <description>在很多情况下，我们需要使用自己的docker仓库。接下来是在本地k8s集群上搭建本地仓库的过程。 假设我们将本地仓库搭建在k8s主节点上。 这里假设主节点是：192.168.14.84 运行registry镜像 1 dockerrun-d-p5000:5000--restartalways--nameregistryregistry:2 直接运行该命令即可，本地没有registry:2，会自动pull 修改配置</description>
     </item>
     
     <item>
@@ -553,7 +553,7 @@
       <pubDate>Mon, 12 Nov 2018 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/hadoop-%E5%90%AF%E5%8A%A8%E9%9B%86%E7%BE%A4%E8%83%8C%E5%90%8E%E7%9A%84%E4%BA%8B/</guid>
-      <description>在我们布置好Hadoop环境后我们做的第一件就是 执行 start-all.sh 命令。 那么这个命令都做了什么，今天来探讨一下这个。 start-all.sh内容 Start all hadoop daemons. Run this on master node. bin=`dirname &amp;quot;$0&amp;quot;` bin=`cd &amp;quot;$bin&amp;quot;; pwd` . &amp;quot;$bin&amp;quot;/hadoop-config.sh start dfs daemons &amp;quot;$bin&amp;quot;/start-dfs.sh --config $HADOOP_CONF_DIR start mapred daemons &amp;quot;$bin&amp;quot;/start-mapred.sh --config $HADOOP_CONF_DIR 从上面可以看出来这个脚本，执行了三个脚本，分别是： hadoop-config.sh start-dfs.sh start-mapred.sh hadoop-config.sh 内容 this=&amp;quot;$0&amp;quot; while [ -h &amp;quot;$this&amp;quot; ]; do ls=`ls -ld &amp;quot;$this&amp;quot;` link=`expr &amp;quot;$ls&amp;quot; : &#39;.*-&amp;gt; \(.*\)$&#39;`</description>
+      <description>在我们布置好Hadoop环境后我们做的第一件就是 执行 start-all.sh 命令。 那么这个命令都做了什么，今天来探讨一下这个。 start-all.sh内容 Start all hadoop daemons. Run this on master node. bin=`dirname &amp;#34;$0&amp;#34;` bin=`cd &amp;#34;$bin&amp;#34;; pwd` . &amp;#34;$bin&amp;#34;/hadoop-config.sh start dfs daemons &amp;#34;$bin&amp;#34;/start-dfs.sh --config $HADOOP_CONF_DIR start mapred daemons &amp;#34;$bin&amp;#34;/start-mapred.sh --config $HADOOP_CONF_DIR 从上面可以看出来这个脚本，执行了三个脚本，分别是： hadoop-config.sh start-dfs.sh start-mapred.sh hadoop-config.sh 内容 this=&amp;#34;$0&amp;#34; while [ -h &amp;#34;$this&amp;#34; ]; do ls=`ls -ld &amp;#34;$this&amp;#34;` link=`expr &amp;#34;$ls&amp;#34; : &amp;#39;.*-&amp;gt; \(.*\)$&amp;#39;`</description>
     </item>
     
     <item>
@@ -634,7 +634,7 @@
       <pubDate>Sat, 13 Oct 2018 20:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/java%E4%B9%8Bstringstringbufferstringbuilder/</guid>
-      <description>String： String类是final修饰的，是不可变的。我们看到的例如: String a = &amp;ldquo;hello&amp;rdquo;; a = a + &amp;ldquo;1&amp;rdquo;; 实际上是先生成了一个对象然后得到结果&amp;quot;hello1&amp;quot;,最后在赋值给对象a; String 类型的任何改动都是先生成一个其他对象再重新赋值。 所以String类适合那种常量或者基本没变</description>
+      <description>String： String类是final修饰的，是不可变的。我们看到的例如: String a = &amp;ldquo;hello&amp;rdquo;; a = a + &amp;ldquo;1&amp;rdquo;; 实际上是先生成了一个对象然后得到结果&amp;rdquo;hello1&amp;rdquo;,最后在赋值给对象a; String 类型的任何改动都是先生成一个其他对象再重新赋值。 所以String类适合那种常量或者基本</description>
     </item>
     
     <item>
@@ -689,6 +689,15 @@
       
       <guid>https://zoux86.github.io/archives/</guid>
       <description>本人信息 本人目前北京某校研究生在读，2020年毕业。专业方向是容器云方向。 对Go语言(golang)、k8s、kubeflow，容器云，云原生感兴趣 。 博客信息： 本人写博客的原因也非常简单，主要是记录自己的学习经历。一方面是加深自己的理解，锻炼自己。另一方面希望能借此机会和大家一起</description>
+    </item>
+    
+    <item>
+      <title>搜索</title>
+      <link>https://zoux86.github.io/search/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://zoux86.github.io/search/</guid>
+      <description></description>
     </item>
     
   </channel>

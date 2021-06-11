@@ -13,7 +13,7 @@
       <pubDate>Mon, 02 Dec 2019 10:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-12-02-volcano-scheduler%E4%BB%A3%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE/</guid>
-      <description>代码入口 cmd/sheduler/main.go:46 main -&amp;gt; cmd/sheduler/main.go:62 app.Run cmd/sheduler/main.go:62 app.Run -&amp;gt; cmd/app/server.go:106 sched.Run cmd/app/server.go:106 sched.Run -&amp;gt; pkg/scheduler/scheduler.go:64 Run pkg/scheduler/scheduler.go:64 Run -&amp;gt; pkg/scheduler/scheduler.go:69 Run 代码 pkg/scheduler/scheduler.go:69 中的Run 才是开启调度程序的真正入口，它的实现如下： // Run runs the Scheduler func (pc *Scheduler) Run(stopCh &amp;lt;-chan struct{}) { // 同步cache，缓存节点，pod，job等信息 go pc.cache.Run(stopCh) pc.cache.WaitForCacheSync(stopCh) //真正的调度核心，意思是没隔pc.schedulePeriod（1秒），就开启一次调度（pc.</description>
+      <description>代码入口 1 2 3 4 cmd/sheduler/main.go:46main-&amp;gt; cmd/sheduler/main.go:62app.Runcmd/sheduler/main.go:62app.Run-&amp;gt; cmd/app/server.go:106sched.Runcmd/app/server.go:106sched.Run-&amp;gt; pkg/scheduler/scheduler.go:64Runpkg/scheduler/scheduler.go:64Run-&amp;gt; pkg/scheduler/scheduler.go:69Run 代码 pkg/scheduler/scheduler.go:69 中的Run 才是开启调度程序的真正入口，它的实现如下： 1 2 3 4 5 6 7 8 9 // Run runs the Scheduler func(pc*Scheduler)Run(stopCh&amp;lt;-chanstruct{}){// 同步cache，缓存节点，pod，job等信息 gopc.cache.Run(stopCh)pc.cache.WaitForCacheSync(stopCh)//真正的</description>
     </item>
     
     <item>

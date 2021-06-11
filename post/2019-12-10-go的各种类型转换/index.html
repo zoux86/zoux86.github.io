@@ -73,7 +73,119 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#golang-中int-float-string-以及interface-直接的互相转换">golang 中int, float, string 以及interface{}直接的互相转换</a>
+<ul>
+<li><a href="#int-转float">int 转float</a></li>
+<li><a href="#int-转string">int 转string</a></li>
+<li><a href="#float-转int">float 转int</a></li>
+<li><a href="#float-转string">float 转string</a></li>
+<li><a href="#string-转int">string 转int</a></li>
+<li><a href="#string转float">string转float</a></li>
+<li><a href="#interface-转其他类型">interface{}转其他类型</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">go的各种类型转换</h1>
@@ -97,55 +209,126 @@
         
         
         <div class="post-content">
-            <h3 id="golang-中int-float-string-以及interface直接的互相转换">golang 中int, float, string 以及interface{}直接的互相转换</h3>
+            
+
+<h3 id="golang-中int-float-string-以及interface-直接的互相转换">golang 中int, float, string 以及interface{}直接的互相转换</h3>
+
 <h4 id="int-转float">int 转float</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#66d9ef">int</span>
-<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">b</span> <span style="color:#66d9ef">float64</span>
-<span style="color:#a6e22e">a</span> = <span style="color:#ae81ff">10</span>
-<span style="color:#a6e22e">b</span> = float64(<span style="color:#a6e22e">a</span>)           <span style="color:#75715e">//ps: 如果是float32，就使用float32(a)
-</span></code></pre></div><h4 id="int-转string">int 转string</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">//第一种方式通过 fmt.sPrintf() 转换string
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">str</span> <span style="color:#66d9ef">string</span>
-<span style="color:#a6e22e">a</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">10</span>
-<span style="color:#a6e22e">str</span> = <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%d&#34;</span>, <span style="color:#a6e22e">a</span>)
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000;font-weight:bold">var</span> a <span style="color:#458;font-weight:bold">int</span>
+<span style="color:#000;font-weight:bold">var</span> b <span style="color:#458;font-weight:bold">float64</span>
+a = <span style="color:#099">10</span>
+b = <span style="color:#0086b3">float64</span>(a)           <span style="color:#998;font-style:italic">//ps: 如果是float32，就使用float32(a)
+</span></code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="int-转string">int 转string</h4>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">9
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#998;font-style:italic">//第一种方式通过 fmt.sPrintf() 转换string
+</span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">var</span> str <span style="color:#458;font-weight:bold">string</span>
+a <span style="color:#000;font-weight:bold">:=</span> <span style="color:#099">10</span>
+str = fmt.<span style="color:#900;font-weight:bold">Sprintf</span>(<span style="color:#d14">&#34;%d&#34;</span>, a)
 
-<span style="color:#75715e">//第二种方式通过 strconv包 转换 string
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">str1</span> <span style="color:#66d9ef">string</span>
-<span style="color:#a6e22e">a1</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">10</span>
-<span style="color:#a6e22e">str1</span> = <span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">FormatInt</span>(int64(<span style="color:#a6e22e">a1</span>), <span style="color:#ae81ff">10</span>)
-</code></pre></div><!-- raw HTML omitted -->
+<span style="color:#998;font-style:italic">//第二种方式通过 strconv包 转换 string
+</span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">var</span> str1 <span style="color:#458;font-weight:bold">string</span>
+a1 <span style="color:#000;font-weight:bold">:=</span> <span style="color:#099">10</span>
+str1 = strconv.<span style="color:#900;font-weight:bold">FormatInt</span>(<span style="color:#0086b3">int64</span>(a1), <span style="color:#099">10</span>)</code></pre></td></tr></table>
+</div>
+</div>
+<p><br></p>
+
 <h4 id="float-转int">float 转int</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">a</span> <span style="color:#66d9ef">float32</span>
-<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">b</span> <span style="color:#66d9ef">int</span>
-<span style="color:#a6e22e">a</span> = <span style="color:#ae81ff">12.0</span>
-<span style="color:#a6e22e">b</span> = int(<span style="color:#a6e22e">a</span>)
-</code></pre></div><h4 id="float-转string">float 转string</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">也是两种方式</span>
-<span style="color:#a6e22e">第一种方式通过</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">sPrintf</span>() <span style="color:#a6e22e">转换string</span>
-<span style="color:#a6e22e">第二种方式通过</span> <span style="color:#a6e22e">strconv包</span> <span style="color:#a6e22e">转换</span> <span style="color:#66d9ef">string</span>  <span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">FormatFloat</span>()
-</code></pre></div><!-- raw HTML omitted -->
-<h4 id="string-转int">string 转int</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">//第一种方式通过 strconv.Atoi
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">str</span> <span style="color:#66d9ef">string</span>
-<span style="color:#a6e22e">str</span> = <span style="color:#ae81ff">10</span>
-<span style="color:#66d9ef">int</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">Atoi</span>(<span style="color:#a6e22e">str</span>)
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000;font-weight:bold">var</span> a <span style="color:#458;font-weight:bold">float32</span>
+<span style="color:#000;font-weight:bold">var</span> b <span style="color:#458;font-weight:bold">int</span>
+a = <span style="color:#099">12.0</span>
+b = <span style="color:#0086b3">int</span>(a)</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="float-转string">float 转string</h4>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">也是两种方式
+第一种方式通过 fmt.<span style="color:#900;font-weight:bold">sPrintf</span>() 转换string
+第二种方式通过 strconv包 转换 <span style="color:#458;font-weight:bold">string</span>  strconv.<span style="color:#900;font-weight:bold">FormatFloat</span>()</code></pre></td></tr></table>
+</div>
+</div>
+<p><br></p>
 
-<span style="color:#75715e">//第二种方式通过strconv.ParseInt
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">int64</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">ParseInt</span>(<span style="color:#66d9ef">string</span>, <span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">64</span>)
-</code></pre></div><h4 id="string转float">string转float</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">float</span>,<span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">ParseFloat</span>(<span style="color:#66d9ef">string</span>,<span style="color:#ae81ff">64</span>)  (<span style="color:#ae81ff">64</span><span style="color:#f92672">/</span><span style="color:#ae81ff">32</span>)
-</code></pre></div><!-- raw HTML omitted -->
-<h4 id="interface转其他类型">interface{}转其他类型</h4>
+<h4 id="string-转int">string 转int</h4>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#998;font-style:italic">//第一种方式通过 strconv.Atoi
+</span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">var</span> str <span style="color:#458;font-weight:bold">string</span>
+str = <span style="color:#099">10</span>
+<span style="color:#458;font-weight:bold">int</span>, err <span style="color:#000;font-weight:bold">:=</span> strconv.<span style="color:#900;font-weight:bold">Atoi</span>(str)
+
+<span style="color:#998;font-style:italic">//第二种方式通过strconv.ParseInt
+</span><span style="color:#998;font-style:italic"></span><span style="color:#458;font-weight:bold">int64</span>, err <span style="color:#000;font-weight:bold">:=</span> strconv.<span style="color:#900;font-weight:bold">ParseInt</span>(<span style="color:#458;font-weight:bold">string</span>, <span style="color:#099">10</span>, <span style="color:#099">64</span>)</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="string转float">string转float</h4>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#458;font-weight:bold">float</span>,err <span style="color:#000;font-weight:bold">:=</span> strconv.<span style="color:#900;font-weight:bold">ParseFloat</span>(<span style="color:#458;font-weight:bold">string</span>,<span style="color:#099">64</span>)  (<span style="color:#099">64</span><span style="color:#000;font-weight:bold">/</span><span style="color:#099">32</span>)</code></pre></td></tr></table>
+</div>
+</div>
+<p><br></p>
+
+<h4 id="interface-转其他类型">interface{}转其他类型</h4>
 <pre><code>var a interface{}
 	//a = 10
 	//a = 10.1
-	a = &quot;sss&quot;
+	a = &#34;sss&#34;
 	var b int
 	var c float64
 	var d string
 	switch t := a.(type) {
 	case int:
-		fmt.Println(&quot;int&quot;)
+		fmt.Println(&#34;int&#34;)
 		b = a.(int)            //interface{} 转 int
 		fmt.Println(b)
 	case float64:
@@ -156,9 +339,10 @@
 		fmt.Println(d)
 	default:
 		_ = t
-		fmt.Println(&quot;unKonw&quot;)
-	}
-</code></pre><p>使用  inter.(type)</p>
+		fmt.Println(&#34;unKonw&#34;)
+	}</code></pre>
+<p>使用  inter.(type)</p>
+
 <p>inter是interface{}变量的名字，type是具体的类型（int,float32等）</p>
 
         </div>
@@ -260,7 +444,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

@@ -73,7 +73,124 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#start-all-sh内容">start-all.sh内容</a></li>
+<li><a href="#start-dfs-daemons">start dfs daemons</a></li>
+<li><a href="#start-mapred-daemons">start mapred daemons</a></li>
+<li><a href="#hadoop-config-sh-内容">hadoop-config.sh 内容</a></li>
+<li><a href="#convert-relative-path-to-absolute-path">convert relative path to absolute path</a></li>
+<li><a href="#the-root-of-the-hadoop-installation">the root of the Hadoop installation</a></li>
+<li><a href="#allow-alternate-conf-dir-location">Allow alternate conf dir location.</a></li>
+<li><a href="#masters-file">masters file</a></li>
+<li><a href="#start-dfs-sh">start-dfs.sh</a></li>
+<li><a href="#get-arguments">get arguments</a></li>
+<li><a href="#start-mapred-sh">start-mapred.sh</a></li>
+</ul></li>
+<li><a href="#start-mapred-daemons-1">start mapred daemons</a>
+<ul>
+<li><a href="#start-jobtracker-first-to-minimize-connection-errors-at-startup">start jobtracker first to minimize connection errors at startup</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">Hadoop 启动集群背后的事</h1>
@@ -97,77 +214,81 @@
         
         
         <div class="post-content">
-            <p>在我们布置好Hadoop环境后我们做的第一件就是 执行  start-all.sh 命令。
+            
+
+<p>在我们布置好Hadoop环境后我们做的第一件就是 执行  start-all.sh 命令。
 那么这个命令都做了什么，今天来探讨一下这个。</p>
-<h3 id="start-allsh内容">start-all.sh内容</h3>
+
+<h3 id="start-all-sh内容">start-all.sh内容</h3>
 <pre><code>Start all hadoop daemons.  Run this on master node.
 
-bin=`dirname &quot;$0&quot;`
-bin=`cd &quot;$bin&quot;; pwd`
+bin=`dirname &#34;$0&#34;`
+bin=`cd &#34;$bin&#34;; pwd`
 
-. &quot;$bin&quot;/hadoop-config.sh
-</code></pre><h3 id="start-dfs-daemons">start dfs daemons</h3>
-<pre><code>&quot;$bin&quot;/start-dfs.sh --config $HADOOP_CONF_DIR
-</code></pre><h3 id="start-mapred-daemons">start mapred daemons</h3>
-<pre><code>&quot;$bin&quot;/start-mapred.sh --config $HADOOP_CONF_DIR
-</code></pre><p>从上面可以看出来这个脚本，执行了三个脚本，分别是：
+. &#34;$bin&#34;/hadoop-config.sh</code></pre>
+<h3 id="start-dfs-daemons">start dfs daemons</h3>
+<pre><code>&#34;$bin&#34;/start-dfs.sh --config $HADOOP_CONF_DIR</code></pre>
+<h3 id="start-mapred-daemons">start mapred daemons</h3>
+<pre><code>&#34;$bin&#34;/start-mapred.sh --config $HADOOP_CONF_DIR</code></pre>
+<p>从上面可以看出来这个脚本，执行了三个脚本，分别是：
 hadoop-config.sh          start-dfs.sh            start-mapred.sh</p>
-<h3 id="hadoop-configsh-内容">hadoop-config.sh 内容</h3>
-<pre><code>this=&quot;$0&quot;
-while [ -h &quot;$this&quot; ]; do
-  ls=`ls -ld &quot;$this&quot;`
-  link=`expr &quot;$ls&quot; : '.*-&gt; \(.*\)$'`
-  if expr &quot;$link&quot; : '.*/.*' &gt; /dev/null; then
-    this=&quot;$link&quot;
+
+<h3 id="hadoop-config-sh-内容">hadoop-config.sh 内容</h3>
+<pre><code>this=&#34;$0&#34;
+while [ -h &#34;$this&#34; ]; do
+  ls=`ls -ld &#34;$this&#34;`
+  link=`expr &#34;$ls&#34; : &#39;.*-&gt; \(.*\)$&#39;`
+  if expr &#34;$link&#34; : &#39;.*/.*&#39; &gt; /dev/null; then
+    this=&#34;$link&#34;
   else
-    this=`dirname &quot;$this&quot;`/&quot;$link&quot;
+    this=`dirname &#34;$this&#34;`/&#34;$link&#34;
   fi
-done
-</code></pre><h3 id="convert-relative-path-to-absolute-path">convert relative path to absolute path</h3>
-<pre><code>bin=`dirname &quot;$this&quot;`
-script=`basename &quot;$this&quot;`
-bin=`cd &quot;$bin&quot;; pwd`
-this=&quot;$bin/$script&quot;
-</code></pre><pre><code>bin=`dirname &quot;$this&quot;`
-script=`basename &quot;$this&quot;`
-bin=`cd &quot;$bin&quot;; pwd`
-this=&quot;$bin/$script&quot;
-</code></pre><h3 id="the-root-of-the-hadoop-installation">the root of the Hadoop installation</h3>
-<pre><code>export HADOOP_HOME=`dirname &quot;$this&quot;`/..
+done</code></pre>
+<h3 id="convert-relative-path-to-absolute-path">convert relative path to absolute path</h3>
+<pre><code>bin=`dirname &#34;$this&#34;`
+script=`basename &#34;$this&#34;`
+bin=`cd &#34;$bin&#34;; pwd`
+this=&#34;$bin/$script&#34;</code></pre><pre><code>bin=`dirname &#34;$this&#34;`
+script=`basename &#34;$this&#34;`
+bin=`cd &#34;$bin&#34;; pwd`
+this=&#34;$bin/$script&#34;</code></pre>
+<h3 id="the-root-of-the-hadoop-installation">the root of the Hadoop installation</h3>
+<pre><code>export HADOOP_HOME=`dirname &#34;$this&#34;`/..
 
 #check to see if the conf dir is given as an optional argument
 if [ $# -gt 1 ]
 then
-    if [ &quot;--config&quot; = &quot;$1&quot; ]
+    if [ &#34;--config&#34; = &#34;$1&#34; ]
 	  then
 	      shift
 	      confdir=$1
 	      shift
 	      HADOOP_CONF_DIR=$confdir
     fi
-fi
-</code></pre><h3 id="allow-alternate-conf-dir-location">Allow alternate conf dir location.</h3>
-<pre><code>HADOOP_CONF_DIR=&quot;${HADOOP_CONF_DIR:-$HADOOP_HOME/conf}&quot;
+fi</code></pre>
+<h3 id="allow-alternate-conf-dir-location">Allow alternate conf dir location.</h3>
+<pre><code>HADOOP_CONF_DIR=&#34;${HADOOP_CONF_DIR:-$HADOOP_HOME/conf}&#34;
 
-#check to see it is specified whether to use the slaves or the
-</code></pre><h3 id="masters-file">masters file</h3>
+#check to see it is specified whether to use the slaves or the</code></pre>
+<h3 id="masters-file">masters file</h3>
 <pre><code>if [ $# -gt 1 ]
 then
-    if [ &quot;--hosts&quot; = &quot;$1&quot; ]
+    if [ &#34;--hosts&#34; = &#34;$1&#34; ]
     then
         shift
         slavesfile=$1
         shift
-        export HADOOP_SLAVES=&quot;${HADOOP_CONF_DIR}/$slavesfile&quot;
+        export HADOOP_SLAVES=&#34;${HADOOP_CONF_DIR}/$slavesfile&#34;
     fi
-fi
-</code></pre><p>这里都有注释，就不解释了。</p>
-<h3 id="start-dfssh">start-dfs.sh</h3>
-<pre><code>bin=`dirname &quot;$0&quot;`
-bin=`cd &quot;$bin&quot;; pwd`
+fi</code></pre>
+<p>这里都有注释，就不解释了。</p>
 
-. &quot;$bin&quot;/hadoop-config.sh
-</code></pre><h3 id="get-arguments">get arguments</h3>
+<h3 id="start-dfs-sh">start-dfs.sh</h3>
+<pre><code>bin=`dirname &#34;$0&#34;`
+bin=`cd &#34;$bin&#34;; pwd`
+
+. &#34;$bin&#34;/hadoop-config.sh</code></pre>
+<h3 id="get-arguments">get arguments</h3>
 <pre><code>if [ $# -ge 1 ]; then
 	nameStartOpt=$1
 	shift
@@ -182,18 +303,21 @@ bin=`cd &quot;$bin&quot;; pwd`
 		  exit 1
 	    ;;
 	esac
-fi
-</code></pre><p>这里首先会执行hadoop-config.sh，然后在执行dfs的一些初始化。</p>
-<h3 id="start-mapredsh">start-mapred.sh</h3>
-<pre><code>bin=`dirname &quot;$0&quot;`
-bin=`cd &quot;$bin&quot;; pwd`
+fi</code></pre>
+<p>这里首先会执行hadoop-config.sh，然后在执行dfs的一些初始化。</p>
 
-. &quot;$bin&quot;/hadoop-config.sh
-</code></pre><h2 id="start-mapred-daemons-1">start mapred daemons</h2>
+<h3 id="start-mapred-sh">start-mapred.sh</h3>
+<pre><code>bin=`dirname &#34;$0&#34;`
+bin=`cd &#34;$bin&#34;; pwd`
+
+. &#34;$bin&#34;/hadoop-config.sh</code></pre>
+<h2 id="start-mapred-daemons-1">start mapred daemons</h2>
+
 <h3 id="start-jobtracker-first-to-minimize-connection-errors-at-startup">start jobtracker first to minimize connection errors at startup</h3>
-<pre><code>&quot;$bin&quot;/hadoop-daemon.sh --config $HADOOP_CONF_DIR start jobtracker
-&quot;$bin&quot;/hadoop-daemons.sh --config $HADOOP_CONF_DIR start tasktracker
-</code></pre><p>这里首先会执行hadoop-config.sh，然后在执行mapred的一些初始化。</p>
+<pre><code>&#34;$bin&#34;/hadoop-daemon.sh --config $HADOOP_CONF_DIR start jobtracker
+&#34;$bin&#34;/hadoop-daemons.sh --config $HADOOP_CONF_DIR start tasktracker</code></pre>
+<p>这里首先会执行hadoop-config.sh，然后在执行mapred的一些初始化。</p>
+
 <p>存个坑。等会在弄。和下文有出入，没看见调用hadoop-env.sh
 <a href="https://www.cnblogs.com/wolfblogs/p/4147485.html">https://www.cnblogs.com/wolfblogs/p/4147485.html</a></p>
 
@@ -294,7 +418,7 @@ bin=`cd &quot;$bin&quot;; pwd`
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

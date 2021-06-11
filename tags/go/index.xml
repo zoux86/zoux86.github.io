@@ -13,7 +13,7 @@
       <pubDate>Sun, 15 Dec 2019 01:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/</guid>
-      <description>目录 （1）k8s简介 （2）k8s组件介绍 背景简介 Docker 项目和容器技术目前还是非常火热，但是Docker 技术栈，有自己的局限性，这是它的出发点决定的。那么在docker层之上，例如 容器编排？调度？容器云？集群管理？这些事情就需要另外一个项目来解决了。 在我最开始接触k8s的时候，我看到的</description>
+      <description>toc=true 目录 （1）k8s简介 （2）k8s组件介绍 背景简介 Docker 项目和容器技术目前还是非常火热，但是Docker 技术栈，有自己的局限性，这是它的出发点决定的。那么在docker层之上，例如 容器编排？调度？容器云？集群管理？这些事情就需要另外一个项目来解决了。 在我最开始接触k8s的时候，我看到</description>
     </item>
     
     <item>
@@ -22,7 +22,7 @@
       <pubDate>Tue, 10 Dec 2019 01:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-12-10-go%E7%9A%84%E5%90%84%E7%A7%8D%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/</guid>
-      <description>golang 中int, float, string 以及interface{}直接的互相转换 int 转float var a int var b float64 a = 10 b = float64(a) //ps: 如果是float32，就使用float32(a) int 转string //第一种方式通过 fmt.sPrintf() 转换string var str string a := 10 str = fmt.Sprintf(&amp;#34;%d&amp;#34;, a) //第二种方式通过 strconv包 转换 string var str1 string a1 := 10 str1 = strconv.FormatInt(int64(a1), 10) float 转</description>
+      <description>golang 中int, float, string 以及interface{}直接的互相转换 int 转float 1 2 3 4 var a int var b float64 a = 10 b = float64(a) //ps: 如果是float32，就使用float32(a) int 转string 1 2 3 4 5 6 7 8 9 //第一种方式通过 fmt.sPrintf() 转换string var str string a := 10 str = fmt.Sprintf(&amp;#34;%d&amp;#34;, a) //第二种方式通过 strconv包 转换</description>
     </item>
     
     <item>

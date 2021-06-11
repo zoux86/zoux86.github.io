@@ -73,7 +73,113 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#追踪整个代码跳过过程">追踪整个代码跳过过程</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">kube-batch--启动过程</h1>
@@ -97,61 +203,138 @@
         
         
         <div class="post-content">
-            <h4 id="追踪整个代码跳过过程">追踪整个代码跳过过程</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">cmd<span style="color:#f92672">/</span>kube<span style="color:#f92672">-</span>batch<span style="color:#f92672">/</span>main.go:<span style="color:#ae81ff">39</span> main -&gt;  <span style="color:#a6e22e">cmd</span><span style="color:#f92672">/</span>kube<span style="color:#f92672">-</span>batch<span style="color:#f92672">/</span>main.go:<span style="color:#ae81ff">53</span> app.Run
-cmd<span style="color:#f92672">/</span>kube<span style="color:#f92672">-</span>batch<span style="color:#f92672">/</span>app<span style="color:#f92672">/</span>server.go:<span style="color:#ae81ff">60</span> Run -&gt; <span style="color:#a6e22e">cmd</span><span style="color:#f92672">/</span>kube<span style="color:#f92672">-</span>batch<span style="color:#f92672">/</span>app<span style="color:#f92672">/</span>server.go:<span style="color:#ae81ff">86</span> sched.Run
-cmd<span style="color:#f92672">/</span>kube<span style="color:#f92672">-</span>batch<span style="color:#f92672">/</span>app<span style="color:#f92672">/</span>server.go:<span style="color:#ae81ff">86</span> sched.Run-&gt; <span style="color:#a6e22e">pkg</span><span style="color:#f92672">/</span>scheduler<span style="color:#f92672">/</span>scheduler.go:<span style="color:#ae81ff">59</span>
-cmd<span style="color:#f92672">/</span>kube<span style="color:#f92672">-</span>batch<span style="color:#f92672">/</span>app<span style="color:#f92672">/</span>server.go:<span style="color:#ae81ff">59</span> sched.Run-&gt; <span style="color:#a6e22e">pkg</span><span style="color:#f92672">/</span>scheduler<span style="color:#f92672">/</span>scheduler.runOnce:<span style="color:#ae81ff">84</span>
-</code></pre></div><p>cmd/kube-batch/app/server.go:59 行代码</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">func (pc <span style="color:#f92672">*</span>Scheduler) Run(stopCh <span style="color:#f92672">&lt;-</span>chan <span style="color:#66d9ef">struct</span>{}) {
-	var err error
+            
 
-	<span style="color:#75715e">// Start cache for policy.
-</span><span style="color:#75715e"></span>	go pc.cache.Run(stopCh)
-	pc.cache.WaitForCacheSync(stopCh)
+<h4 id="追踪整个代码跳过过程">追踪整个代码跳过过程</h4>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">cmd<span style="color:#000;font-weight:bold">/</span>kube<span style="color:#000;font-weight:bold">-</span>batch<span style="color:#000;font-weight:bold">/</span>main.go:<span style="color:#099">39</span><span style="color:#bbb"> </span>main<span style="color:#bbb"> </span>-&gt;  <span style="color:#458;font-weight:bold">cmd</span><span style="color:#000;font-weight:bold">/</span>kube<span style="color:#000;font-weight:bold">-</span>batch<span style="color:#000;font-weight:bold">/</span>main.go:<span style="color:#099">53</span><span style="color:#bbb"> </span>app.Run<span style="color:#bbb">
+</span><span style="color:#bbb"></span>cmd<span style="color:#000;font-weight:bold">/</span>kube<span style="color:#000;font-weight:bold">-</span>batch<span style="color:#000;font-weight:bold">/</span>app<span style="color:#000;font-weight:bold">/</span>server.go:<span style="color:#099">60</span><span style="color:#bbb"> </span>Run<span style="color:#bbb"> </span>-&gt; <span style="color:#458;font-weight:bold">cmd</span><span style="color:#000;font-weight:bold">/</span>kube<span style="color:#000;font-weight:bold">-</span>batch<span style="color:#000;font-weight:bold">/</span>app<span style="color:#000;font-weight:bold">/</span>server.go:<span style="color:#099">86</span><span style="color:#bbb"> </span>sched.Run<span style="color:#bbb">
+</span><span style="color:#bbb"></span>cmd<span style="color:#000;font-weight:bold">/</span>kube<span style="color:#000;font-weight:bold">-</span>batch<span style="color:#000;font-weight:bold">/</span>app<span style="color:#000;font-weight:bold">/</span>server.go:<span style="color:#099">86</span><span style="color:#bbb"> </span>sched.Run-&gt; <span style="color:#458;font-weight:bold">pkg</span><span style="color:#000;font-weight:bold">/</span>scheduler<span style="color:#000;font-weight:bold">/</span>scheduler.go:<span style="color:#099">59</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>cmd<span style="color:#000;font-weight:bold">/</span>kube<span style="color:#000;font-weight:bold">-</span>batch<span style="color:#000;font-weight:bold">/</span>app<span style="color:#000;font-weight:bold">/</span>server.go:<span style="color:#099">59</span><span style="color:#bbb"> </span>sched.Run-&gt; <span style="color:#458;font-weight:bold">pkg</span><span style="color:#000;font-weight:bold">/</span>scheduler<span style="color:#000;font-weight:bold">/</span>scheduler.runOnce:<span style="color:#099">84</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>cmd/kube-batch/app/server.go:59 行代码</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">func<span style="color:#bbb"> </span>(pc<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">*</span>Scheduler)<span style="color:#bbb"> </span>Run(stopCh<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">&lt;-</span>chan<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">struct</span>{})<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>var<span style="color:#bbb"> </span>err<span style="color:#bbb"> </span>error<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// Start cache for policy.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span>go<span style="color:#bbb"> </span>pc.cache.Run(stopCh)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>pc.cache.WaitForCacheSync(stopCh)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// Load configuration of scheduler
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span>schedConf<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>defaultSchedulerConf<span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>len(pc.schedulerConf)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">!=</span><span style="color:#bbb"> </span><span style="color:#099">0</span><span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">		</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>schedConf,<span style="color:#bbb"> </span>err<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>readSchedulerConf(pc.schedulerConf);<span style="color:#bbb"> </span>err<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">!=</span><span style="color:#bbb"> </span>nil<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>glog.Errorf(<span style="color:#d14">&#34;Failed to read scheduler configuration &#39;%s&#39;, using default configuration: %v&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">				</span>pc.schedulerConf,<span style="color:#bbb"> </span>err)<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>schedConf<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>defaultSchedulerConf<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span>pc.actions,<span style="color:#bbb"> </span>pc.plugins,<span style="color:#bbb"> </span>err<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>loadSchedulerConf(schedConf)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>err<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">!=</span><span style="color:#bbb"> </span>nil<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>panic(err)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#998;font-style:italic">// 这里又开始周期性调用 runOnce了。开始调用
+</span><span style="color:#998;font-style:italic"></span><span style="color:#bbb">	</span>go<span style="color:#bbb"> </span>wait.Until(pc.runOnce,<span style="color:#bbb"> </span>pc.schedulePeriod,<span style="color:#bbb"> </span>stopCh)<span style="color:#bbb">
+</span><span style="color:#bbb"></span>}</code></pre></td></tr></table>
+</div>
+</div>
+<p>cmd/kube-batch/app/server.go:84 行代码</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">func<span style="color:#bbb"> </span>(pc<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">*</span>Scheduler)<span style="color:#bbb"> </span>runOnce()<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>glog.V(<span style="color:#099">4</span>).Infof(<span style="color:#d14">&#34;Start scheduling ...&#34;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>scheduleStartTime<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>time.Now()<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>defer<span style="color:#bbb"> </span>glog.V(<span style="color:#099">4</span>).Infof(<span style="color:#d14">&#34;End scheduling ...&#34;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>defer<span style="color:#bbb"> </span>metrics.UpdateE2eDuration(metrics.Duration(scheduleStartTime))<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span>ssn<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>framework.OpenSession(pc.cache,<span style="color:#bbb"> </span>pc.plugins)<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>defer<span style="color:#bbb"> </span>framework.CloseSession(ssn)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">	</span><span style="color:#000;font-weight:bold">for</span><span style="color:#bbb"> </span>_,<span style="color:#bbb"> </span>action<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>range<span style="color:#bbb"> </span>pc.actions<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>actionStartTime<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>time.Now()<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>action.Execute(ssn)<span style="color:#bbb">
+</span><span style="color:#bbb">		</span>metrics.UpdateActionDuration(action.Name(),<span style="color:#bbb"> </span>metrics.Duration(actionStartTime))<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>}<span style="color:#bbb">
+</span><span style="color:#bbb"></span>}</code></pre></td></tr></table>
+</div>
+</div>
+<p>这里主要 defer 是延迟函数，就是返回值之前执行。所以上面的代码相当于</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">ssn<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>framework.OpenSession(pc.cache,<span style="color:#bbb"> </span>pc.plugins)<span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">for</span><span style="color:#bbb"> </span>_,<span style="color:#bbb"> </span>action<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>range<span style="color:#bbb"> </span>pc.actions<span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>actionStartTime<span style="color:#bbb"> </span>:<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>time.Now()<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>action.Execute(ssn)<span style="color:#bbb">
+</span><span style="color:#bbb">  </span>metrics.UpdateActionDuration(action.Name(),metrics.Duration(actionStartTime))<span style="color:#bbb">
+</span><span style="color:#bbb"></span>}<span style="color:#bbb">
+</span><span style="color:#bbb"></span>framework.CloseSession(ssn)</code></pre></td></tr></table>
+</div>
+</div>
+<p>每次开启一个回话，分别运行actions。这里其实就是前面说的kube-batch自己定义的四种Action.[Reclaim，Allocate，Backfill，Preempt]</p>
 
-	<span style="color:#75715e">// Load configuration of scheduler
-</span><span style="color:#75715e"></span>	schedConf :<span style="color:#f92672">=</span> defaultSchedulerConf
-	<span style="color:#66d9ef">if</span> len(pc.schedulerConf) <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span> {
-		<span style="color:#66d9ef">if</span> schedConf, err <span style="color:#f92672">=</span> readSchedulerConf(pc.schedulerConf); err <span style="color:#f92672">!=</span> nil {
-			glog.Errorf(<span style="color:#e6db74">&#34;Failed to read scheduler configuration &#39;%s&#39;, using default configuration: %v&#34;</span>,
-				pc.schedulerConf, err)
-			schedConf <span style="color:#f92672">=</span> defaultSchedulerConf
-		}
-	}
-
-	pc.actions, pc.plugins, err <span style="color:#f92672">=</span> loadSchedulerConf(schedConf)
-	<span style="color:#66d9ef">if</span> err <span style="color:#f92672">!=</span> nil {
-		panic(err)
-	}
-	<span style="color:#75715e">// 这里又开始周期性调用 runOnce了。开始调用
-</span><span style="color:#75715e"></span>	go wait.Until(pc.runOnce, pc.schedulePeriod, stopCh)
-}
-</code></pre></div><p>cmd/kube-batch/app/server.go:84 行代码</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">func (pc <span style="color:#f92672">*</span>Scheduler) runOnce() {
-	glog.V(<span style="color:#ae81ff">4</span>).Infof(<span style="color:#e6db74">&#34;Start scheduling ...&#34;</span>)
-	scheduleStartTime :<span style="color:#f92672">=</span> time.Now()
-	defer glog.V(<span style="color:#ae81ff">4</span>).Infof(<span style="color:#e6db74">&#34;End scheduling ...&#34;</span>)
-	defer metrics.UpdateE2eDuration(metrics.Duration(scheduleStartTime))
-
-	ssn :<span style="color:#f92672">=</span> framework.OpenSession(pc.cache, pc.plugins)
-	defer framework.CloseSession(ssn)
-
-	<span style="color:#66d9ef">for</span> _, action :<span style="color:#f92672">=</span> range pc.actions {
-		actionStartTime :<span style="color:#f92672">=</span> time.Now()
-		action.Execute(ssn)
-		metrics.UpdateActionDuration(action.Name(), metrics.Duration(actionStartTime))
-	}
-}
-</code></pre></div><p>这里主要 defer 是延迟函数，就是返回值之前执行。所以上面的代码相当于</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">ssn :<span style="color:#f92672">=</span> framework.OpenSession(pc.cache, pc.plugins)
-<span style="color:#66d9ef">for</span> _, action :<span style="color:#f92672">=</span> range pc.actions {
-    actionStartTime :<span style="color:#f92672">=</span> time.Now()
-    action.Execute(ssn)
-  metrics.UpdateActionDuration(action.Name(),metrics.Duration(actionStartTime))
-}
-framework.CloseSession(ssn)
-</code></pre></div><p>每次开启一个回话，分别运行actions。这里其实就是前面说的kube-batch自己定义的四种Action.[Reclaim，Allocate，Backfill，Preempt]</p>
 <p>到此为止，就知道kube-batch的启动过程了。</p>
 
         </div>
@@ -251,7 +434,7 @@ framework.CloseSession(ssn)
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

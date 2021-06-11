@@ -73,7 +73,118 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li><a href="#背景简介">背景简介</a></li>
+<li><a href="#k8s组件介绍">k8s组件介绍</a>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#k8s设计背景">k8s设计背景</a></li>
+<li><a href="#k8s的架构图">k8s的架构图</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">k8s的基本组件</h1>
@@ -97,13 +208,24 @@
         
         
         <div class="post-content">
-            <h4 id="目录">目录</h4>
+            
+
+<p>toc=true</p>
+
+<p>目录</p>
+
 <p>（1）k8s简介</p>
+
 <p>（2）k8s组件介绍</p>
-<h4 id="背景简介">背景简介</h4>
+
+<h1 id="背景简介">背景简介</h1>
+
 <p>Docker 项目和容器技术目前还是非常火热，但是Docker 技术栈，有自己的局限性，这是它的出发点决定的。那么在docker层之上，例如 容器编排？调度？容器云？集群管理？这些事情就需要另外一个项目来解决了。</p>
+
 <p>在我最开始接触k8s的时候，我看到的对k8s的介绍，都是：目前最主流的容器编排工具。当时非常困惑的一点在于什么是容器编排？</p>
+
 <p>我认为的容器编排是 针对这些容器中运行的服务进行的一系列操作，什么操作呢：</p>
+
 <ul>
 <li>弹性伸缩、自动扩容</li>
 <li>健康检查</li>
@@ -112,64 +234,114 @@
 <li>滚动升级</li>
 <li>等等</li>
 </ul>
+
 <p>这些年，容器编排工具最受欢迎的就是 Google 与 RedHat 公司共同主导的 Kubernetes 项目。</p>
-<p>
-        <img class="mx-auto" alt="image-20191215174037573" src="../../resources/images/k8s/image1.png" />   
-    </p>
+
+<p><img src="../../resources/images/k8s/image1.png" alt="image-20191215174037573" /></p>
+
 <p>图片来源于 【Sysdig： 2019年容器使用报告】</p>
+
 <p>可见，目前k8s已经成为了编排工具的主流。</p>
-<h4 id="k8s组件介绍">k8s组件介绍</h4>
+
+<h1 id="k8s组件介绍">k8s组件介绍</h1>
+
 <h5 id="k8s设计背景">k8s设计背景</h5>
+
 <p>k8s的设计思路来源于Borg 系统，Borg一直以来都被誉为 Google 公司内部最强大的“秘密武器”。</p>
+
 <p>所以k8s在一开始就站在一个非常高的角度，即：如何编排、管理、调度用户提交的作业？</p>
+
 <p>borg作者认为： 运行在大规模集群中的各种任务之间，实际上存在着各种各样的关系。这些关系的处理，才是作业编排和管理系统最困难的地方。那么k8s是如何表示用户的各种各样的任务呢，k8s又是如何处理这些任务直接的关系呢？</p>
+
 <p>（1）k8s是如何表示管理用户提交的作业</p>
+
 <p>k8s中有 各种资源对象，例如deployment, job, service， Replication 等等。这里的每一中类型都是代表用户的一种任务需求。例如job是批处理作业，运行完就结束。service是要一直运行的任务等。用户可能还有自己特定的一些需求，所以k8s有CRD（用户自定义资源）的概念。</p>
+
 <p>（2）k8s是如何解决这种任务直接的关系呢</p>
+
 <p>k8s提出了一个pod的概念，k8s是调度的最小逻辑。所有的任务类型最终都是以pod的形式运行在集群中。</p>
+
 <p>不同的作业类型有自己的控制器，他们负责pod的逻辑。然后集群只负责管理pod，调度器也只进行作业的调度。</p>
+
 <p>具体细节请往下看。</p>
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
 <h5 id="k8s的架构图">k8s的架构图</h5>
-<p>
-        <img class="mx-auto" alt="image-20191215201331922" src="../../resources/images/k8s/image2.png" />   
-    </p>
+
+<p><img src="../../resources/images/k8s/image2.png" alt="image-20191215201331922" /></p>
+
 <p>如上图所示，k8s集群中 关键组件</p>
+
 <p>master: api-service , controller manage,scheduler。 PS(etcd可以是放在master节点，也可以说是4个）</p>
+
 <p>node：api-proxy, kubelet</p>
+
 <p>(1) api-service (master)</p>
+
 <p>用于暴露Kubernetes API。任何的资源请求/调用操作都是通过kube-apiserver提供的接口进行。</p>
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
 <p>(2)  Scheduler  (master)</p>
+
 <p>k8s的调度器，将pod调度的具体的节点上，并启动容器</p>
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
 <p>(3) controller manager (master)</p>
+
 <p>这是控制器的集合。，它们是集群中处理常规任务的后台线程。逻辑上，每个控制器是一个单独的进程，但为了降低复杂性，它们都被编译成单个二进制文件，并在单个进程中运行。</p>
+
 <p>这些控制器包括：</p>
+
 <p>NodeController : 节点控制器</p>
+
 <p>JobController ：作业控制器</p>
+
 <p>replicationController: 副本控制器：负责维护系统中每个副本中的pod。</p>
+
 <p>EndpointsController：填充Endpoints对象（即连接Services＆Pods）。</p>
+
 <p>Service Account和Token控制器：为新的Namespace 创建默认帐户访问API Token。</p>
+
 <p>等等。。。</p>
+
 <p>在这里可以更详细的介绍k8s是如何解决作业之间的关系了。</p>
+
 <p>k8s中scheduler只负责调度pod，它每次从api-service中监听，哪些pod需要调度。然后将调度的结果返回给api-service，至于是哪种类型的任务，他根本就不管。这些的逻辑是由Controller管的。</p>
+
 <p>举例来说：假如集群中提交了一个rc的作业（假设副本数为3）。这个时候 replicationController通过api-service感知到了，它一次性创建3个pod,然后提交到api-service。</p>
+
 <p>这个时候呢，scheduler看到了3个pod,然后它就创建，然后给出结果。至于创建没成功怎么办，创建成功了怎么办。scheduler不管，它只给api-service报告结果，api-service也不管，它扔给replicationController处理。</p>
+
 <p>然后jobController管job类型的。StatefulController管理statefulset类型的。他们最终都是由pod表示并运行的。pod就是他们的联系，k8s scheduler统一对pod进行管理。</p>
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
 <p>(4) kubelet （node）</p>
+
 <p>是主要的节点代理，它会监视已分配给节点的pod，具体功能：</p>
+
 <p>安装Pod所需的volume。</p>
+
 <p>下载Pod的Secrets。</p>
+
 <p>Pod中运行的 docker（或experimentally，rkt）容器。</p>
+
 <p>定期执行容器健康检查。等等</p>
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
 <p>(5) kube-proxy</p>
+
 <p>POD的IP是动态分配的而且经常会变，所以为了可以通过一个不太容易变化的IP访问POD就会使用一个叫做service的东西，通过标签选择器和POD进行关联。</p>
+
 <p>每个NODE都运行一个kube-proxy进程，这个就是service的载体。它负责建立和删除包括更新IPVS规则、通知api-service自己的更新，或者从api-service那里获取其他kube-proxy的IPVS规则变化来更新自己的。</p>
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
+
+<p><br></p>
+
+<p><br></p>
 
         </div>
 
@@ -270,7 +442,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

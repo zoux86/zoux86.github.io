@@ -73,7 +73,115 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#搭建说明">搭建说明</a></li>
+<li><a href="#准备工作">准备工作</a></li>
+<li><a href="#部署过程">部署过程</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">部署自己的volcano</h1>
@@ -97,47 +205,66 @@
         
         
         <div class="post-content">
-            <h4 id="搭建说明">搭建说明</h4>
+            
+
+<h4 id="搭建说明">搭建说明</h4>
+
 <p>有时候，我们需要对volcano二次开发，所有需要部署自己的volcano</p>
+
 <h4 id="准备工作">准备工作</h4>
+
 <p>(1) 安装好 k8s集群</p>
+
 <h4 id="部署过程">部署过程</h4>
+
 <p>（1）在go的安装目录下，创建volcano目录，并下载</p>
+
 <p>mkdir -p $GOPATH/src/volcano.sh/</p>
+
 <p>cd $GOPATH/src/volcano.sh/</p>
+
 <p>git clone <a href="https://github.com/volcano-sh/volcano.git">https://github.com/volcano-sh/volcano.git</a></p>
+
 <p>PS: 这里是官网的volcano，你可以在这里修改，也可以git你自己的代码。</p>
+
 <p>(2)在$GOPATH/src/volcano.sh/volcano目录执行    make images命令。这个是编译，并且生成新镜像</p>
+
 <p>(3)docker images查看新生成的镜像</p>
-<p>
-        <img class="mx-auto" alt="image3" src="../../resources/images/volcano/image3.png" />   
-    </p>
+
+<p><img src="../../resources/images/volcano/image3.png" alt="image3" /></p>
+
 <p>（4）将镜像改名，并上传到自己的dockerhub上去，这样是能自己能用到最新的</p>
+
 <p>假设我使用的是  zoux/vk-admission:latest</p>
+
 <p>（5）进入 $GOPATH/src/volcano.sh/volcano/installer/helm/chart/volcano目录</p>
+
 <p>该目录有  Chart.yaml  config  templates  values.yaml 这四个文件（有俩个是文件夹）</p>
+
 <p>然后修改 values.yaml文件的镜像，换成自己的(zoux/vk-admission:latest)。</p>
+
 <p>然后执行：</p>
-<pre><code>helm install . --namespace volcano-trial --name volcano-trial
-</code></pre><p>进行安装</p>
+<pre><code>helm install . --namespace volcano-trial --name volcano-trial</code></pre>
+<p>进行安装</p>
+
 <p>(6) 测试安装是否成功</p>
-<pre><code>kubectl get pod -n volcano-trial
-</code></pre><p>
-        <img class="mx-auto" alt="image4" src="../../resources/images/volcano/image4.png" />   
-    </p>
+<pre><code>kubectl get pod -n volcano-trial</code></pre>
+<p><img src="../../resources/images/volcano/image4.png" alt="image4" /></p>
+
 <p>出现这个就是成功了</p>
+
 <p>PS：</p>
+
 <p>如果要删除volcano的话. 先使用</p>
-<pre><code>helm list  
-</code></pre><p>找到对应安装volcano的helm应用名字，然后使用下面命名删除</p>
+<pre><code>helm list  </code></pre>
+<p>找到对应安装volcano的helm应用名字，然后使用下面命名删除</p>
 <pre><code>helm delete --purge XXX
-helm delete --purge volcano-trial
-</code></pre><p>每次删除后，volcano安装的CRD不会删除，并且下次安装也会出现重复问题，使用下面的脚步删除</p>
+helm delete --purge volcano-trial</code></pre>
+<p>每次删除后，volcano安装的CRD不会删除，并且下次安装也会出现重复问题，使用下面的脚步删除</p>
 <pre><code>kubectl delete crd commands.bus.volcano.sh
 kubectl delete crd jobs.batch.volcano.sh
 kubectl delete crd queues.scheduling.incubator.k8s.io
-kubectl delete crd podgroups.scheduling.incubator.k8s.io
-</code></pre>
+kubectl delete crd podgroups.scheduling.incubator.k8s.io</code></pre>
         </div>
 
         
@@ -237,7 +364,7 @@ kubectl delete crd podgroups.scheduling.incubator.k8s.io
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

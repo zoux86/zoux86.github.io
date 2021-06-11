@@ -73,7 +73,123 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#一面">一面</a></li>
+</ul></li>
+<li><a href="#二面">二面</a></li>
+<li><a href="#三面">三面</a></li>
+<li><a href="#四面">四面</a>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#原题目是-求一个二叉树中序遍历中-指定节点的前一个节点">原题目是：求一个二叉树中序遍历中，指定节点的前一个节点。</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="#总结">总结</a></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">2019微软面经</h1>
@@ -97,36 +213,68 @@
         
         
         <div class="post-content">
-            <p>面试时间：2019年10月</p>
+            
+
+<p>面试时间：2019年10月</p>
+
 <p>岗位：微软亚洲工程院-软件工程师</p>
+
 <p>形式：视频面试</p>
+
 <h3 id="一面">一面</h3>
+
 <p>1.英文自我介绍</p>
+
 <p>2.项目介绍</p>
+
 <p>3.手写代码：</p>
+
 <p>特殊质数的定义：本身是质数，并且他的所有的组合也全是质数。例如13就是特殊的质数，因为（13,31）都是质数。而123不是，因为（123,132,213,231,312,321）中有数不是质数。</p>
+
 <p>问题：求1~N中出现特殊质数的个数</p>
+
 <h2 id="二面">二面</h2>
+
 <p>1.英文自我介绍</p>
+
 <p>2.手写代码</p>
+
 <p>（1）合并俩条有序链表</p>
+
 <p>（2）合并K条有序链表</p>
+
 <h2 id="三面">三面</h2>
+
 <p>1.自我介绍（没说英文，我就用中文了）</p>
+
 <p>2.项目介绍</p>
+
 <p>3.手写代码</p>
+
 <p>给定一个二叉树，并给出两个节点，求他们最近的公共父节点</p>
+
 <p>要求：要处理边界条件，就是这俩个节点都有可能不在这个二叉树上。并且不能提前判断，就是不能提前判断节点是否在一棵二叉树上。要边遍历边判断</p>
+
 <h2 id="四面">四面</h2>
+
 <p>1.自我介绍</p>
+
 <p>2.项目介绍</p>
+
 <p>3.项目难点已经参与的工作</p>
+
 <p>4.专业以及成绩排名</p>
+
 <p>5.首先代码</p>
-<h5 id="原题目是求一个二叉树中序遍历中指定节点的前一个节点">原题目是：求一个二叉树中序遍历中，指定节点的前一个节点。</h5>
+
+<h5 id="原题目是-求一个二叉树中序遍历中-指定节点的前一个节点">原题目是：求一个二叉树中序遍历中，指定节点的前一个节点。</h5>
+
 <p>但是因为面试官是用英文说的，而且当时网速也不是很好，所以我听成了 求二叉树的先序遍历。</p>
+
 <p>然后我给出了非递归的形式。面试官问我时间空间复杂度。我说时间是O(n),空间是O(h).面试官不满意。所以我当时就慌了，心想不愧是AA面。因为我知道有一个神奇的方法求二叉树的遍历，不用辅助空间，大家可以搜索 “Morris遍历”。但是我这个方法很久没写了，所以我只能硬着头皮现场边推边写。最后写出来了，但是面试官说我写的完全不对，仔细询问之后，发现题目都听错了。但是面试官可能以前没听说过这个遍历方法，我解释了半天，最后用了一个他的测试样例，现场跑了一遍，他才信。最后他有让我写了一个O(1)时间遍历中序的。最后他又回到了原问题，问了我的解题思路，不用写代码了。最后也完成。</p>
+
 <h2 id="总结">总结</h2>
+
 <p>微软这种外企，考察更多的是算法能力就是不太注重当前的项目，主要考察基础能力，具体的经验和技能去了再学，他们更看重快速的学习能力。在11月初的时候，微软打电话说通过了，但是由于地域和其他原因，最终忍痛放弃了微软，也希望自己以后不要后悔。</p>
 
         </div>
@@ -226,7 +374,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

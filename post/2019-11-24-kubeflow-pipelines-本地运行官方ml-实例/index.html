@@ -73,7 +73,122 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#准备工作">准备工作</a></li>
+</ul></li>
+<li><a href="#运行代码">运行代码</a>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#代码片段1-定义文件路径和镜像名称">代码片段1-定义文件路径和镜像名称</a></li>
+<li><a href="#代码片段2-导入python-sdk">代码片段2-导入python sdk</a></li>
+<li><a href="#代码片段3-创建pipelines">代码片段3-创建pipelines</a>
+<ul>
+<li><a href="#创建pv-pvc">创建pv,pvc</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">kubeflow pipelines--本地运行官方ML-实例</h1>
@@ -97,240 +212,503 @@
         
         
         <div class="post-content">
-            <p>在上面的文章中，我成功运行了pipelines的简单实例。这个简单的例子没有文件的操作，但是这肯定不符合我们的要求，所以接下来介绍如何运行官网的ML 例子。</p>
+            
+
+<p>在上面的文章中，我成功运行了pipelines的简单实例。这个简单的例子没有文件的操作，但是这肯定不符合我们的要求，所以接下来介绍如何运行官网的ML 例子。</p>
+
 <p>这次试用的例子是：<a href="https://github.com/kubeflow/pipelines/blob/master/samples/notebooks/KubeFlow%20Pipeline%20Using%20TFX%20OSS%20Components.ipynb">KubeFlow pipeline using TFX OSS components</a></p>
+
 <h2 id="准备工作">准备工作</h2>
+
 <p>由于这个例子使用的镜像，文件都是某歌的，所以我们要想办法把他弄到自己服务器能pull到的地方。</p>
+
 <p>镜像：大家可以在dockerhub上搜索‘zoux’。所有相关的镜像，我都上传到dockerhub上去了。</p>
-<p>文件：https://github.com/zoux86/kubeflow/tree/master/taxi-cab-classification</p>
+
+<p>文件：<a href="https://github.com/zoux86/kubeflow/tree/master/taxi-cab-classification">https://github.com/zoux86/kubeflow/tree/master/taxi-cab-classification</a></p>
+
 <h1 id="运行代码">运行代码</h1>
+
 <h4 id="代码片段1-定义文件路径和镜像名称">代码片段1-定义文件路径和镜像名称</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">EXPERIMENT_NAME <span style="color:#f92672">=</span> <span style="color:#a6e22e">&#39;TFX16</span><span style="color:#960050;background-color:#1e0010">&#39;</span>
-OUTPUT_DIR <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">&#39;</span>.<span style="color:#f92672">/</span>output<span style="color:#960050;background-color:#1e0010">&#39;</span> 
-PROJECT_NAME <span style="color:#f92672">=</span> <span style="color:#a6e22e">&#39;TFX16</span><span style="color:#960050;background-color:#1e0010">&#39;</span>
-TRAIN_DATA <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>home<span style="color:#f92672">/</span>zoux<span style="color:#f92672">/</span>data<span style="color:#f92672">/</span>taxi<span style="color:#f92672">-</span>cab<span style="color:#f92672">-</span>classification<span style="color:#f92672">/</span>train.csv<span style="color:#960050;background-color:#1e0010">&#39;</span>
-EVAL_DATA <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>home<span style="color:#f92672">/</span>zoux<span style="color:#f92672">/</span>data<span style="color:#f92672">/</span>taxi<span style="color:#f92672">-</span>cab<span style="color:#f92672">-</span>classification<span style="color:#f92672">/</span>eval.csv<span style="color:#960050;background-color:#1e0010">&#39;</span>
-HIDDEN_LAYER_SIZE <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#ae81ff">1500</span><span style="color:#960050;background-color:#1e0010">&#39;</span>
-STEPS <span style="color:#f92672">=</span> <span style="color:#ae81ff">3000</span>
-DATAFLOW_TFDV_IMAGE <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#ae81ff">192.168.14.66</span>:<span style="color:#ae81ff">5000</span><span style="color:#f92672">/</span>ml<span style="color:#f92672">-</span>pipeline<span style="color:#f92672">-</span>dataflow<span style="color:#f92672">-</span>tfdv:<span style="color:#a6e22e">v1</span><span style="color:#960050;background-color:#1e0010">&#39;</span>
-DATAFLOW_TFT_IMAGE <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#ae81ff">192.168.14.66</span>:<span style="color:#ae81ff">5000</span><span style="color:#f92672">/</span>ml<span style="color:#f92672">-</span>pipeline<span style="color:#f92672">-</span>dataflow<span style="color:#f92672">-</span>tft:<span style="color:#a6e22e">v1</span><span style="color:#960050;background-color:#1e0010">&#39;</span>
-DATAFLOW_TFMA_IMAGE <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#ae81ff">192.168.14.66</span>:<span style="color:#ae81ff">5000</span><span style="color:#f92672">/</span>ml<span style="color:#f92672">-</span>pipeline<span style="color:#f92672">-</span>dataflow<span style="color:#f92672">-</span>tfma:<span style="color:#a6e22e">v1</span><span style="color:#960050;background-color:#1e0010">&#39;</span>
-DATAFLOW_TF_PREDICT_IMAGE <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#ae81ff">192.168.14.66</span>:<span style="color:#ae81ff">5000</span><span style="color:#f92672">/</span>ml<span style="color:#f92672">-</span>pipeline<span style="color:#f92672">-</span>dataflow<span style="color:#f92672">-</span>tf<span style="color:#f92672">-</span>predict:<span style="color:#a6e22e">v1</span><span style="color:#960050;background-color:#1e0010">&#39;</span>
-KUBEFLOW_TF_TRAINER_IMAGE <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#ae81ff">192.168.14.66</span>:<span style="color:#ae81ff">5000</span><span style="color:#f92672">/</span>ml<span style="color:#f92672">-</span>pipeline<span style="color:#f92672">-</span>kubeflow<span style="color:#f92672">-</span>tf<span style="color:#f92672">-</span>trainer:<span style="color:#a6e22e">v1</span><span style="color:#960050;background-color:#1e0010">&#39;</span>
-KUBEFLOW_DEPLOYER_IMAGE <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#ae81ff">192.168.14.66</span>:<span style="color:#ae81ff">5000</span><span style="color:#f92672">/</span>ml<span style="color:#f92672">-</span>pipeline<span style="color:#f92672">-</span>kubeflow<span style="color:#f92672">-</span>deployer:<span style="color:#a6e22e">v1</span><span style="color:#960050;background-color:#1e0010">&#39;</span>
-</code></pre></div><p>注意：
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">EXPERIMENT_NAME<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#008080">&#39;TFX16</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>OUTPUT_DIR<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>.<span style="color:#000;font-weight:bold">/</span>output<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb"> 
+</span><span style="color:#bbb"></span>PROJECT_NAME<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#008080">&#39;TFX16</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>TRAIN_DATA<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>home<span style="color:#000;font-weight:bold">/</span>zoux<span style="color:#000;font-weight:bold">/</span>data<span style="color:#000;font-weight:bold">/</span>taxi<span style="color:#000;font-weight:bold">-</span>cab<span style="color:#000;font-weight:bold">-</span>classification<span style="color:#000;font-weight:bold">/</span>train.csv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>EVAL_DATA<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>home<span style="color:#000;font-weight:bold">/</span>zoux<span style="color:#000;font-weight:bold">/</span>data<span style="color:#000;font-weight:bold">/</span>taxi<span style="color:#000;font-weight:bold">-</span>cab<span style="color:#000;font-weight:bold">-</span>classification<span style="color:#000;font-weight:bold">/</span>eval.csv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>HIDDEN_LAYER_SIZE<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#099">1500</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>STEPS<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#099">3000</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>DATAFLOW_TFDV_IMAGE<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#099">192.168.14.66</span>:<span style="color:#099">5000</span><span style="color:#000;font-weight:bold">/</span>ml<span style="color:#000;font-weight:bold">-</span>pipeline<span style="color:#000;font-weight:bold">-</span>dataflow<span style="color:#000;font-weight:bold">-</span>tfdv:<span style="color:#458;font-weight:bold">v1</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>DATAFLOW_TFT_IMAGE<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#099">192.168.14.66</span>:<span style="color:#099">5000</span><span style="color:#000;font-weight:bold">/</span>ml<span style="color:#000;font-weight:bold">-</span>pipeline<span style="color:#000;font-weight:bold">-</span>dataflow<span style="color:#000;font-weight:bold">-</span>tft:<span style="color:#458;font-weight:bold">v1</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>DATAFLOW_TFMA_IMAGE<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#099">192.168.14.66</span>:<span style="color:#099">5000</span><span style="color:#000;font-weight:bold">/</span>ml<span style="color:#000;font-weight:bold">-</span>pipeline<span style="color:#000;font-weight:bold">-</span>dataflow<span style="color:#000;font-weight:bold">-</span>tfma:<span style="color:#458;font-weight:bold">v1</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>DATAFLOW_TF_PREDICT_IMAGE<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#099">192.168.14.66</span>:<span style="color:#099">5000</span><span style="color:#000;font-weight:bold">/</span>ml<span style="color:#000;font-weight:bold">-</span>pipeline<span style="color:#000;font-weight:bold">-</span>dataflow<span style="color:#000;font-weight:bold">-</span>tf<span style="color:#000;font-weight:bold">-</span>predict:<span style="color:#458;font-weight:bold">v1</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>KUBEFLOW_TF_TRAINER_IMAGE<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#099">192.168.14.66</span>:<span style="color:#099">5000</span><span style="color:#000;font-weight:bold">/</span>ml<span style="color:#000;font-weight:bold">-</span>pipeline<span style="color:#000;font-weight:bold">-</span>kubeflow<span style="color:#000;font-weight:bold">-</span>tf<span style="color:#000;font-weight:bold">-</span>trainer:<span style="color:#458;font-weight:bold">v1</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>KUBEFLOW_DEPLOYER_IMAGE<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#099">192.168.14.66</span>:<span style="color:#099">5000</span><span style="color:#000;font-weight:bold">/</span>ml<span style="color:#000;font-weight:bold">-</span>pipeline<span style="color:#000;font-weight:bold">-</span>kubeflow<span style="color:#000;font-weight:bold">-</span>deployer:<span style="color:#458;font-weight:bold">v1</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>注意：
 （1）这里我使用的都是集群本地仓库中的镜像，这些镜像我都是提前下载好，push到仓库中去的。
-（2）我的镜像是自己定义的V1版本，这是我自己build的一个新镜像。和原来某歌的镜像不同在于，我在镜像中创建了一个文件夹'/home/zoux/data/taxi-cab-classification/',并将所有需要的文件都放在了这个文件夹中，这样每个启动的每个容器都可以在自己的镜像中使用所需要的文件。</p>
+（2）我的镜像是自己定义的V1版本，这是我自己build的一个新镜像。和原来某歌的镜像不同在于，我在镜像中创建了一个文件夹&rsquo;/home/zoux/data/taxi-cab-classification/&lsquo;,并将所有需要的文件都放在了这个文件夹中，这样每个启动的每个容器都可以在自己的镜像中使用所需要的文件。</p>
+
 <h4 id="代码片段2-导入python-sdk">代码片段2-导入python sdk</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">import kfp
-from kfp import compiler
-import kfp.dsl <span style="color:#66d9ef">as</span> dsl
-import kfp.notebook
-import kfp.gcp <span style="color:#66d9ef">as</span> gcp
-client <span style="color:#f92672">=</span> kfp.Client()
-from kubernetes import client <span style="color:#66d9ef">as</span> k8s_client
-exp <span style="color:#f92672">=</span> client.create_experiment(name<span style="color:#f92672">=</span>EXPERIMENT_NAME)
-</code></pre></div><p>注意如果保存说找不到kfp模块，需要在jupyter中再下载一次python SDK。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#f92672">!</span>pip3 install https:<span style="color:#75715e">//storage.googleapis.com/ml-pipeline/release/0.1.3/kfp.tar.gz --upgrade
-</span></code></pre></div><h4 id="代码片段3-创建pipelines">代码片段3-创建pipelines</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">mport kfp.dsl <span style="color:#66d9ef">as</span> dsl
-<span style="color:#960050;background-color:#1e0010">#</span> Below are a list of helper functions to wrap the components to provide a simpler interface <span style="color:#66d9ef">for</span> pipeline function.
-def dataflow_tf_data_validation_op(inference_data: <span style="color:#a6e22e">&#39;GcsUri</span><span style="color:#960050;background-color:#1e0010">&#39;</span>, validation_data: <span style="color:#a6e22e">&#39;GcsUri</span><span style="color:#960050;background-color:#1e0010">&#39;</span>, column_names: <span style="color:#a6e22e">&#39;GcsUri</span>[text<span style="color:#f92672">/</span>json]<span style="color:#960050;background-color:#1e0010">&#39;</span>, key_columns, project: <span style="color:#a6e22e">&#39;GcpProject</span><span style="color:#960050;background-color:#1e0010">&#39;</span>, mode, validation_output: <span style="color:#a6e22e">&#39;GcsUri</span>[Directory]<span style="color:#960050;background-color:#1e0010">&#39;</span>, step_name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;validation</span><span style="color:#960050;background-color:#1e0010">&#39;</span>):
-    <span style="color:#a6e22e">return</span> dsl.ContainerOp(
-        name <span style="color:#f92672">=</span> step_name,
-        image <span style="color:#f92672">=</span> DATAFLOW_TFDV_IMAGE,
-        arguments <span style="color:#f92672">=</span> [
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>csv<span style="color:#f92672">-</span>data<span style="color:#f92672">-</span><span style="color:#66d9ef">for</span><span style="color:#f92672">-</span>inference<span style="color:#960050;background-color:#1e0010">&#39;</span>, inference_data,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>csv<span style="color:#f92672">-</span>data<span style="color:#f92672">-</span>to<span style="color:#f92672">-</span>validate<span style="color:#960050;background-color:#1e0010">&#39;</span>, validation_data,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>column<span style="color:#f92672">-</span>names<span style="color:#960050;background-color:#1e0010">&#39;</span>, column_names,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>key<span style="color:#f92672">-</span>columns<span style="color:#960050;background-color:#1e0010">&#39;</span>, key_columns,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>project<span style="color:#960050;background-color:#1e0010">&#39;</span>, project,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>mode<span style="color:#960050;background-color:#1e0010">&#39;</span>, mode,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>output<span style="color:#960050;background-color:#1e0010">&#39;</span>, validation_output,
-        ],
-        file_outputs <span style="color:#f92672">=</span> {
-            <span style="color:#a6e22e">&#39;schema</span><span style="color:#960050;background-color:#1e0010">&#39;</span>: <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>schema.txt<span style="color:#960050;background-color:#1e0010">&#39;</span>,
-        }
-    )
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">import<span style="color:#bbb"> </span>kfp<span style="color:#bbb">
+</span><span style="color:#bbb"></span>from<span style="color:#bbb"> </span>kfp<span style="color:#bbb"> </span>import<span style="color:#bbb"> </span>compiler<span style="color:#bbb">
+</span><span style="color:#bbb"></span>import<span style="color:#bbb"> </span>kfp.dsl<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">as</span><span style="color:#bbb"> </span>dsl<span style="color:#bbb">
+</span><span style="color:#bbb"></span>import<span style="color:#bbb"> </span>kfp.notebook<span style="color:#bbb">
+</span><span style="color:#bbb"></span>import<span style="color:#bbb"> </span>kfp.gcp<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">as</span><span style="color:#bbb"> </span>gcp<span style="color:#bbb">
+</span><span style="color:#bbb"></span>client<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>kfp.Client()<span style="color:#bbb">
+</span><span style="color:#bbb"></span>from<span style="color:#bbb"> </span>kubernetes<span style="color:#bbb"> </span>import<span style="color:#bbb"> </span>client<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">as</span><span style="color:#bbb"> </span>k8s_client<span style="color:#bbb">
+</span><span style="color:#bbb"></span>exp<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>client.create_experiment(name<span style="color:#000;font-weight:bold">=</span>EXPERIMENT_NAME)</code></pre></td></tr></table>
+</div>
+</div>
+<p>注意如果保存说找不到kfp模块，需要在jupyter中再下载一次python SDK。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#000;font-weight:bold">!</span>pip3<span style="color:#bbb"> </span>install<span style="color:#bbb"> </span>https:<span style="color:#998;font-style:italic">//storage.googleapis.com/ml-pipeline/release/0.1.3/kfp.tar.gz --upgrade
+</span></code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="代码片段3-创建pipelines">代码片段3-创建pipelines</h4>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 52
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 53
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 54
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 55
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 56
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 57
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 58
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 59
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 60
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 61
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 62
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 63
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 64
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 65
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 66
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 67
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 68
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 69
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 70
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 71
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 72
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 73
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 74
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 75
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 76
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 77
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 78
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 79
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 80
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 81
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 82
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 83
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 84
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 85
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 86
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 87
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 88
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 89
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 90
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 91
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 92
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 93
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 94
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 95
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 96
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 97
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 98
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 99
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">100
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">101
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">102
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">103
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">104
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">105
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">106
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">107
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">108
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">109
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">110
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">111
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">112
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">113
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">114
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">115
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">116
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">117
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">118
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">119
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">120
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">121
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">122
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">123
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">124
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">125
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">126
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">127
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">128
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">129
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">130
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">131
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">132
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">133
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">134
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">135
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">136
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">137
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">138
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">139
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">140
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">141
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">142
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">143
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">144
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">145
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">146
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">147
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">148
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">149
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">150
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">151
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">152
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">153
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">154
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">155
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">156
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">157
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">158
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">159
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">160
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">161
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">162
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">mport<span style="color:#bbb"> </span>kfp.dsl<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">as</span><span style="color:#bbb"> </span>dsl<span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">#</span><span style="color:#bbb"> </span>Below<span style="color:#bbb"> </span>are<span style="color:#bbb"> </span>a<span style="color:#bbb"> </span>list<span style="color:#bbb"> </span>of<span style="color:#bbb"> </span>helper<span style="color:#bbb"> </span>functions<span style="color:#bbb"> </span>to<span style="color:#bbb"> </span>wrap<span style="color:#bbb"> </span>the<span style="color:#bbb"> </span>components<span style="color:#bbb"> </span>to<span style="color:#bbb"> </span>provide<span style="color:#bbb"> </span>a<span style="color:#bbb"> </span>simpler<span style="color:#bbb"> </span>interface<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">for</span><span style="color:#bbb"> </span>pipeline<span style="color:#bbb"> </span>function.<span style="color:#bbb">
+</span><span style="color:#bbb"></span>def<span style="color:#bbb"> </span>dataflow_tf_data_validation_op(inference_data: <span style="color:#008080">&#39;GcsUri</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>validation_data: <span style="color:#008080">&#39;GcsUri</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>column_names: <span style="color:#008080">&#39;GcsUri</span>[text<span style="color:#000;font-weight:bold">/</span>json]<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>key_columns,<span style="color:#bbb"> </span>project: <span style="color:#008080">&#39;GcpProject</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>mode,<span style="color:#bbb"> </span>validation_output: <span style="color:#008080">&#39;GcsUri</span>[Directory]<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>step_name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;validation</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>):
+    <span style="color:#458;font-weight:bold">return</span><span style="color:#bbb"> </span>dsl.ContainerOp(<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>name<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>step_name,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>image<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>DATAFLOW_TFDV_IMAGE,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>arguments<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>[<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>csv<span style="color:#000;font-weight:bold">-</span>data<span style="color:#000;font-weight:bold">-</span><span style="color:#000;font-weight:bold">for</span><span style="color:#000;font-weight:bold">-</span>inference<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>inference_data,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>csv<span style="color:#000;font-weight:bold">-</span>data<span style="color:#000;font-weight:bold">-</span>to<span style="color:#000;font-weight:bold">-</span>validate<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>validation_data,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>column<span style="color:#000;font-weight:bold">-</span>names<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>column_names,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>key<span style="color:#000;font-weight:bold">-</span>columns<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>key_columns,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>project<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>project,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>mode<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>mode,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>output<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>validation_output,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>],<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>file_outputs<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#008080">&#39;schema</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>: <span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>schema.txt<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>}<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>def<span style="color:#bbb"> </span>dataflow_tf_transform_op(train_data: <span style="color:#008080">&#39;GcsUri</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>evaluation_data: <span style="color:#008080">&#39;GcsUri</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>schema: <span style="color:#008080">&#39;GcsUri</span>[text<span style="color:#000;font-weight:bold">/</span>json]<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>project: <span style="color:#008080">&#39;GcpProject</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>preprocess_mode,<span style="color:#bbb"> </span>preprocess_module: <span style="color:#008080">&#39;GcsUri</span>[text<span style="color:#000;font-weight:bold">/</span>code<span style="color:#000;font-weight:bold">/</span>python]<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>transform_output: <span style="color:#008080">&#39;GcsUri</span>[Directory]<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>step_name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;preprocess</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>):
+    <span style="color:#458;font-weight:bold">return</span><span style="color:#bbb"> </span>dsl.ContainerOp(<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>name<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>step_name,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>image<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>DATAFLOW_TFT_IMAGE,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>arguments<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>[<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>train<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>train_data,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>eval<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>evaluation_data,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>schema<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>schema,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>project<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>project,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>mode<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>preprocess_mode,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>preprocessing<span style="color:#000;font-weight:bold">-</span>module<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>preprocess_module,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>output<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>transform_output,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>],<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>file_outputs<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>{<span style="color:#008080">&#39;transformed</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>: <span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>output.txt<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>def<span style="color:#bbb"> </span>tf_train_op(transformed_data_dir,<span style="color:#bbb"> </span>schema: <span style="color:#008080">&#39;GcsUri</span>[text<span style="color:#000;font-weight:bold">/</span>json]<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>learning_rate: <span style="color:#458;font-weight:bold">float</span>,<span style="color:#bbb"> </span>hidden_layer_size: <span style="color:#458;font-weight:bold">int</span>,<span style="color:#bbb"> </span>steps: <span style="color:#458;font-weight:bold">int</span>,<span style="color:#bbb"> </span>target: <span style="color:#458;font-weight:bold">str</span>,<span style="color:#bbb"> </span>preprocess_module: <span style="color:#008080">&#39;GcsUri</span>[text<span style="color:#000;font-weight:bold">/</span>code<span style="color:#000;font-weight:bold">/</span>python]<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>training_output: <span style="color:#008080">&#39;GcsUri</span>[Directory]<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>step_name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;training</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>use_gpu<span style="color:#000;font-weight:bold">=</span>False):
+    <span style="color:#458;font-weight:bold">tf_train_op</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>dsl.ContainerOp(<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>name<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>step_name,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>image<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>KUBEFLOW_TF_TRAINER_IMAGE,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>arguments<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>[<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>transformed<span style="color:#000;font-weight:bold">-</span>data<span style="color:#000;font-weight:bold">-</span>dir<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>transformed_data_dir,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>schema<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>schema,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>learning<span style="color:#000;font-weight:bold">-</span>rate<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>learning_rate,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>hidden<span style="color:#000;font-weight:bold">-</span>layer<span style="color:#000;font-weight:bold">-</span>size<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>hidden_layer_size,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>steps<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>steps,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>target<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>target,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>preprocessing<span style="color:#000;font-weight:bold">-</span>module<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>preprocess_module,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>job<span style="color:#000;font-weight:bold">-</span>dir<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>training_output,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>],<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>file_outputs<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>{<span style="color:#008080">&#39;train</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>: <span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>output.txt<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#000;font-weight:bold">return</span><span style="color:#bbb"> </span>tf_train_op<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>def<span style="color:#bbb"> </span>dataflow_tf_model_analyze_op(model: <span style="color:#008080">&#39;TensorFlow</span><span style="color:#bbb"> </span>model<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>evaluation_data: <span style="color:#008080">&#39;GcsUri</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>schema: <span style="color:#008080">&#39;GcsUri</span>[text<span style="color:#000;font-weight:bold">/</span>json]<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>project: <span style="color:#008080">&#39;GcpProject</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>analyze_mode,<span style="color:#bbb"> </span>analyze_slice_column,<span style="color:#bbb"> </span>analysis_output: <span style="color:#008080">&#39;GcsUri</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>step_name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;analysis</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>):
+    <span style="color:#458;font-weight:bold">return</span><span style="color:#bbb"> </span>dsl.ContainerOp(<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>name<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>step_name,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>image<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>DATAFLOW_TFMA_IMAGE,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>arguments<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>[<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>model<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>model,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>eval<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>evaluation_data,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>schema<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>schema,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>project<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>project,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>mode<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>analyze_mode,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>slice<span style="color:#000;font-weight:bold">-</span>columns<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>analyze_slice_column,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>output<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>analysis_output,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>],<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>file_outputs<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>{<span style="color:#008080">&#39;analysis</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>: <span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>output.txt<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>def<span style="color:#bbb"> </span>dataflow_tf_predict_op(evaluation_data: <span style="color:#008080">&#39;GcsUri</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>schema: <span style="color:#008080">&#39;GcsUri</span>[text<span style="color:#000;font-weight:bold">/</span>json]<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>target: <span style="color:#458;font-weight:bold">str</span>,<span style="color:#bbb"> </span>model: <span style="color:#008080">&#39;TensorFlow</span><span style="color:#bbb"> </span>model<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>predict_mode,<span style="color:#bbb"> </span>project: <span style="color:#008080">&#39;GcpProject</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>prediction_output: <span style="color:#008080">&#39;GcsUri</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>step_name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;prediction</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>):
+    <span style="color:#458;font-weight:bold">return</span><span style="color:#bbb"> </span>dsl.ContainerOp(<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>name<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>step_name,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>image<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>DATAFLOW_TF_PREDICT_IMAGE,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>arguments<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>[<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>data<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>evaluation_data,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>schema<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>schema,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>target<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>target,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>model<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb">  </span>model,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>mode<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>predict_mode,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>project<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>project,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>output<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>prediction_output,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>],<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>file_outputs<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>{<span style="color:#008080">&#39;prediction</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>: <span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>output.txt<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>}<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>def<span style="color:#bbb"> </span>kubeflow_deploy_op(model: <span style="color:#008080">&#39;TensorFlow</span><span style="color:#bbb"> </span>model<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>tf_server_name,<span style="color:#bbb"> </span>step_name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;deploy</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>):
+    <span style="color:#458;font-weight:bold">return</span><span style="color:#bbb"> </span>dsl.ContainerOp(<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>name<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>step_name,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>image<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>KUBEFLOW_DEPLOYER_IMAGE,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>arguments<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>[<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>model<span style="color:#000;font-weight:bold">-</span>path<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>model,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>server<span style="color:#000;font-weight:bold">-</span>name<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>tf_server_name<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>]<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">#</span><span style="color:#bbb"> </span>The<span style="color:#bbb"> </span>pipeline<span style="color:#bbb"> </span>definition<span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">@</span>dsl.pipeline(<span style="color:#bbb">
+</span><span style="color:#bbb">  </span>name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;TFX</span><span style="color:#bbb"> </span>Taxi<span style="color:#bbb"> </span>Cab<span style="color:#bbb"> </span>Classification<span style="color:#bbb"> </span>Pipeline<span style="color:#bbb"> </span>Example<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">  </span>description<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;Example</span><span style="color:#bbb"> </span>pipeline<span style="color:#bbb"> </span>that<span style="color:#bbb"> </span>does<span style="color:#bbb"> </span>classification<span style="color:#bbb"> </span>with<span style="color:#bbb"> </span>model<span style="color:#bbb"> </span>analysis<span style="color:#bbb"> </span>based<span style="color:#bbb"> </span>on<span style="color:#bbb"> </span>a<span style="color:#bbb"> </span>public<span style="color:#bbb"> </span>BigQuery<span style="color:#bbb"> </span>dataset.<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>)<span style="color:#bbb">
+</span><span style="color:#bbb"></span>def<span style="color:#bbb"> </span>taxi_cab_classification(<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>output,<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>project,<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>column_names<span style="color:#000;font-weight:bold">=</span>dsl.PipelineParam(name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;column</span><span style="color:#000;font-weight:bold">-</span>names<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>value<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>home<span style="color:#000;font-weight:bold">/</span>zoux<span style="color:#000;font-weight:bold">/</span>data<span style="color:#000;font-weight:bold">/</span>taxi<span style="color:#000;font-weight:bold">-</span>cab<span style="color:#000;font-weight:bold">-</span>classification<span style="color:#000;font-weight:bold">/</span>column<span style="color:#000;font-weight:bold">-</span>names.json<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>),<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>key_columns<span style="color:#000;font-weight:bold">=</span>dsl.PipelineParam(name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;key</span><span style="color:#000;font-weight:bold">-</span>columns<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>value<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;trip_start_timestamp</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>),<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>train<span style="color:#000;font-weight:bold">=</span>dsl.PipelineParam(name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;train</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>value<span style="color:#000;font-weight:bold">=</span>TRAIN_DATA),<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>evaluation<span style="color:#000;font-weight:bold">=</span>dsl.PipelineParam(name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;evaluation</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>value<span style="color:#000;font-weight:bold">=</span>EVAL_DATA),<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>validation_mode<span style="color:#000;font-weight:bold">=</span>dsl.PipelineParam(name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;validation</span><span style="color:#000;font-weight:bold">-</span>mode<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>value<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;local</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>),<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>preprocess_mode<span style="color:#000;font-weight:bold">=</span>dsl.PipelineParam(name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;preprocess</span><span style="color:#000;font-weight:bold">-</span>mode<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>value<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;local</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>),<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>preprocess_module: <span style="color:#458;font-weight:bold">dsl</span>.PipelineParam<span style="color:#000;font-weight:bold">=</span>dsl.PipelineParam(name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;preprocess</span><span style="color:#000;font-weight:bold">-</span>module<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>value<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>home<span style="color:#000;font-weight:bold">/</span>zoux<span style="color:#000;font-weight:bold">/</span>data<span style="color:#000;font-weight:bold">/</span>taxi<span style="color:#000;font-weight:bold">-</span>cab<span style="color:#000;font-weight:bold">-</span>classification<span style="color:#000;font-weight:bold">/</span>preprocessing.py<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>),<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>target<span style="color:#000;font-weight:bold">=</span>dsl.PipelineParam(name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;target</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>value<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;tips</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>),<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>learning_rate<span style="color:#000;font-weight:bold">=</span>dsl.PipelineParam(name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;learning</span><span style="color:#000;font-weight:bold">-</span>rate<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>value<span style="color:#000;font-weight:bold">=</span><span style="color:#099">0.1</span>),<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>hidden_layer_size<span style="color:#000;font-weight:bold">=</span>dsl.PipelineParam(name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;hidden</span><span style="color:#000;font-weight:bold">-</span>layer<span style="color:#000;font-weight:bold">-</span>size<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>value<span style="color:#000;font-weight:bold">=</span>HIDDEN_LAYER_SIZE),<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>steps<span style="color:#000;font-weight:bold">=</span>dsl.PipelineParam(name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;steps</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>value<span style="color:#000;font-weight:bold">=</span>STEPS),<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>predict_mode<span style="color:#000;font-weight:bold">=</span>dsl.PipelineParam(name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;predict</span><span style="color:#000;font-weight:bold">-</span>mode<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>value<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;local</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>),<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>analyze_mode<span style="color:#000;font-weight:bold">=</span>dsl.PipelineParam(name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;analyze</span><span style="color:#000;font-weight:bold">-</span>mode<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>value<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;local</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>),<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>analyze_slice_column<span style="color:#000;font-weight:bold">=</span>dsl.PipelineParam(name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;analyze</span><span style="color:#000;font-weight:bold">-</span>slice<span style="color:#000;font-weight:bold">-</span>column<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>value<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;trip_start_hour</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>)):
 
-def dataflow_tf_transform_op(train_data: <span style="color:#a6e22e">&#39;GcsUri</span><span style="color:#960050;background-color:#1e0010">&#39;</span>, evaluation_data: <span style="color:#a6e22e">&#39;GcsUri</span><span style="color:#960050;background-color:#1e0010">&#39;</span>, schema: <span style="color:#a6e22e">&#39;GcsUri</span>[text<span style="color:#f92672">/</span>json]<span style="color:#960050;background-color:#1e0010">&#39;</span>, project: <span style="color:#a6e22e">&#39;GcpProject</span><span style="color:#960050;background-color:#1e0010">&#39;</span>, preprocess_mode, preprocess_module: <span style="color:#a6e22e">&#39;GcsUri</span>[text<span style="color:#f92672">/</span>code<span style="color:#f92672">/</span>python]<span style="color:#960050;background-color:#1e0010">&#39;</span>, transform_output: <span style="color:#a6e22e">&#39;GcsUri</span>[Directory]<span style="color:#960050;background-color:#1e0010">&#39;</span>, step_name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;preprocess</span><span style="color:#960050;background-color:#1e0010">&#39;</span>):
-    <span style="color:#a6e22e">return</span> dsl.ContainerOp(
-        name <span style="color:#f92672">=</span> step_name,
-        image <span style="color:#f92672">=</span> DATAFLOW_TFT_IMAGE,
-        arguments <span style="color:#f92672">=</span> [
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>train<span style="color:#960050;background-color:#1e0010">&#39;</span>, train_data,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>eval<span style="color:#960050;background-color:#1e0010">&#39;</span>, evaluation_data,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>schema<span style="color:#960050;background-color:#1e0010">&#39;</span>, schema,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>project<span style="color:#960050;background-color:#1e0010">&#39;</span>, project,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>mode<span style="color:#960050;background-color:#1e0010">&#39;</span>, preprocess_mode,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>preprocessing<span style="color:#f92672">-</span>module<span style="color:#960050;background-color:#1e0010">&#39;</span>, preprocess_module,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>output<span style="color:#960050;background-color:#1e0010">&#39;</span>, transform_output,
-        ],
-        file_outputs <span style="color:#f92672">=</span> {<span style="color:#a6e22e">&#39;transformed</span><span style="color:#960050;background-color:#1e0010">&#39;</span>: <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>output.txt<span style="color:#960050;background-color:#1e0010">&#39;</span>}
-    )
-
-
-def tf_train_op(transformed_data_dir, schema: <span style="color:#a6e22e">&#39;GcsUri</span>[text<span style="color:#f92672">/</span>json]<span style="color:#960050;background-color:#1e0010">&#39;</span>, learning_rate: <span style="color:#a6e22e">float</span>, hidden_layer_size: <span style="color:#a6e22e">int</span>, steps: <span style="color:#a6e22e">int</span>, target: <span style="color:#66d9ef">str</span>, preprocess_module: <span style="color:#a6e22e">&#39;GcsUri</span>[text<span style="color:#f92672">/</span>code<span style="color:#f92672">/</span>python]<span style="color:#960050;background-color:#1e0010">&#39;</span>, training_output: <span style="color:#a6e22e">&#39;GcsUri</span>[Directory]<span style="color:#960050;background-color:#1e0010">&#39;</span>, step_name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;training</span><span style="color:#960050;background-color:#1e0010">&#39;</span>, use_gpu<span style="color:#f92672">=</span>False):
-    <span style="color:#a6e22e">tf_train_op</span> <span style="color:#f92672">=</span> dsl.ContainerOp(
-        name <span style="color:#f92672">=</span> step_name,
-        image <span style="color:#f92672">=</span> KUBEFLOW_TF_TRAINER_IMAGE,
-        arguments <span style="color:#f92672">=</span> [
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>transformed<span style="color:#f92672">-</span>data<span style="color:#f92672">-</span>dir<span style="color:#960050;background-color:#1e0010">&#39;</span>, transformed_data_dir,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>schema<span style="color:#960050;background-color:#1e0010">&#39;</span>, schema,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>learning<span style="color:#f92672">-</span>rate<span style="color:#960050;background-color:#1e0010">&#39;</span>, learning_rate,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>hidden<span style="color:#f92672">-</span>layer<span style="color:#f92672">-</span>size<span style="color:#960050;background-color:#1e0010">&#39;</span>, hidden_layer_size,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>steps<span style="color:#960050;background-color:#1e0010">&#39;</span>, steps,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>target<span style="color:#960050;background-color:#1e0010">&#39;</span>, target,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>preprocessing<span style="color:#f92672">-</span>module<span style="color:#960050;background-color:#1e0010">&#39;</span>, preprocess_module,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>job<span style="color:#f92672">-</span>dir<span style="color:#960050;background-color:#1e0010">&#39;</span>, training_output,
-        ],
-        file_outputs <span style="color:#f92672">=</span> {<span style="color:#a6e22e">&#39;train</span><span style="color:#960050;background-color:#1e0010">&#39;</span>: <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>output.txt<span style="color:#960050;background-color:#1e0010">&#39;</span>}
-    )
-    <span style="color:#66d9ef">return</span> tf_train_op
-
-def dataflow_tf_model_analyze_op(model: <span style="color:#a6e22e">&#39;TensorFlow</span> model<span style="color:#960050;background-color:#1e0010">&#39;</span>, evaluation_data: <span style="color:#a6e22e">&#39;GcsUri</span><span style="color:#960050;background-color:#1e0010">&#39;</span>, schema: <span style="color:#a6e22e">&#39;GcsUri</span>[text<span style="color:#f92672">/</span>json]<span style="color:#960050;background-color:#1e0010">&#39;</span>, project: <span style="color:#a6e22e">&#39;GcpProject</span><span style="color:#960050;background-color:#1e0010">&#39;</span>, analyze_mode, analyze_slice_column, analysis_output: <span style="color:#a6e22e">&#39;GcsUri</span><span style="color:#960050;background-color:#1e0010">&#39;</span>, step_name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;analysis</span><span style="color:#960050;background-color:#1e0010">&#39;</span>):
-    <span style="color:#a6e22e">return</span> dsl.ContainerOp(
-        name <span style="color:#f92672">=</span> step_name,
-        image <span style="color:#f92672">=</span> DATAFLOW_TFMA_IMAGE,
-        arguments <span style="color:#f92672">=</span> [
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>model<span style="color:#960050;background-color:#1e0010">&#39;</span>, model,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>eval<span style="color:#960050;background-color:#1e0010">&#39;</span>, evaluation_data,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>schema<span style="color:#960050;background-color:#1e0010">&#39;</span>, schema,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>project<span style="color:#960050;background-color:#1e0010">&#39;</span>, project,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>mode<span style="color:#960050;background-color:#1e0010">&#39;</span>, analyze_mode,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>slice<span style="color:#f92672">-</span>columns<span style="color:#960050;background-color:#1e0010">&#39;</span>, analyze_slice_column,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>output<span style="color:#960050;background-color:#1e0010">&#39;</span>, analysis_output,
-        ],
-        file_outputs <span style="color:#f92672">=</span> {<span style="color:#a6e22e">&#39;analysis</span><span style="color:#960050;background-color:#1e0010">&#39;</span>: <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>output.txt<span style="color:#960050;background-color:#1e0010">&#39;</span>}
-    )
-
-
-def dataflow_tf_predict_op(evaluation_data: <span style="color:#a6e22e">&#39;GcsUri</span><span style="color:#960050;background-color:#1e0010">&#39;</span>, schema: <span style="color:#a6e22e">&#39;GcsUri</span>[text<span style="color:#f92672">/</span>json]<span style="color:#960050;background-color:#1e0010">&#39;</span>, target: <span style="color:#66d9ef">str</span>, model: <span style="color:#a6e22e">&#39;TensorFlow</span> model<span style="color:#960050;background-color:#1e0010">&#39;</span>, predict_mode, project: <span style="color:#a6e22e">&#39;GcpProject</span><span style="color:#960050;background-color:#1e0010">&#39;</span>, prediction_output: <span style="color:#a6e22e">&#39;GcsUri</span><span style="color:#960050;background-color:#1e0010">&#39;</span>, step_name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;prediction</span><span style="color:#960050;background-color:#1e0010">&#39;</span>):
-    <span style="color:#a6e22e">return</span> dsl.ContainerOp(
-        name <span style="color:#f92672">=</span> step_name,
-        image <span style="color:#f92672">=</span> DATAFLOW_TF_PREDICT_IMAGE,
-        arguments <span style="color:#f92672">=</span> [
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>data<span style="color:#960050;background-color:#1e0010">&#39;</span>, evaluation_data,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>schema<span style="color:#960050;background-color:#1e0010">&#39;</span>, schema,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>target<span style="color:#960050;background-color:#1e0010">&#39;</span>, target,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>model<span style="color:#960050;background-color:#1e0010">&#39;</span>,  model,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>mode<span style="color:#960050;background-color:#1e0010">&#39;</span>, predict_mode,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>project<span style="color:#960050;background-color:#1e0010">&#39;</span>, project,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>output<span style="color:#960050;background-color:#1e0010">&#39;</span>, prediction_output,
-        ],
-        file_outputs <span style="color:#f92672">=</span> {<span style="color:#a6e22e">&#39;prediction</span><span style="color:#960050;background-color:#1e0010">&#39;</span>: <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>output.txt<span style="color:#960050;background-color:#1e0010">&#39;</span>}
-    )
-
-def kubeflow_deploy_op(model: <span style="color:#a6e22e">&#39;TensorFlow</span> model<span style="color:#960050;background-color:#1e0010">&#39;</span>, tf_server_name, step_name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;deploy</span><span style="color:#960050;background-color:#1e0010">&#39;</span>):
-    <span style="color:#a6e22e">return</span> dsl.ContainerOp(
-        name <span style="color:#f92672">=</span> step_name,
-        image <span style="color:#f92672">=</span> KUBEFLOW_DEPLOYER_IMAGE,
-        arguments <span style="color:#f92672">=</span> [
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>model<span style="color:#f92672">-</span>path<span style="color:#960050;background-color:#1e0010">&#39;</span>, model,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>server<span style="color:#f92672">-</span>name<span style="color:#960050;background-color:#1e0010">&#39;</span>, tf_server_name
-        ]
-    )
-
-
-<span style="color:#960050;background-color:#1e0010">#</span> The pipeline definition
-<span style="color:#f92672">@</span>dsl.pipeline(
-  name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;TFX</span> Taxi Cab Classification Pipeline Example<span style="color:#960050;background-color:#1e0010">&#39;</span>,
-  description<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;Example</span> pipeline that does classification with model analysis based on a public BigQuery dataset.<span style="color:#960050;background-color:#1e0010">&#39;</span>
-)
-def taxi_cab_classification(
-    output,
-    project,
-    column_names<span style="color:#f92672">=</span>dsl.PipelineParam(name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;column</span><span style="color:#f92672">-</span>names<span style="color:#960050;background-color:#1e0010">&#39;</span>, value<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>home<span style="color:#f92672">/</span>zoux<span style="color:#f92672">/</span>data<span style="color:#f92672">/</span>taxi<span style="color:#f92672">-</span>cab<span style="color:#f92672">-</span>classification<span style="color:#f92672">/</span>column<span style="color:#f92672">-</span>names.json<span style="color:#960050;background-color:#1e0010">&#39;</span>),
-    key_columns<span style="color:#f92672">=</span>dsl.PipelineParam(name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;key</span><span style="color:#f92672">-</span>columns<span style="color:#960050;background-color:#1e0010">&#39;</span>, value<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;trip_start_timestamp</span><span style="color:#960050;background-color:#1e0010">&#39;</span>),
-    train<span style="color:#f92672">=</span>dsl.PipelineParam(name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;train</span><span style="color:#960050;background-color:#1e0010">&#39;</span>, value<span style="color:#f92672">=</span>TRAIN_DATA),
-    evaluation<span style="color:#f92672">=</span>dsl.PipelineParam(name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;evaluation</span><span style="color:#960050;background-color:#1e0010">&#39;</span>, value<span style="color:#f92672">=</span>EVAL_DATA),
-    validation_mode<span style="color:#f92672">=</span>dsl.PipelineParam(name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;validation</span><span style="color:#f92672">-</span>mode<span style="color:#960050;background-color:#1e0010">&#39;</span>, value<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;local</span><span style="color:#960050;background-color:#1e0010">&#39;</span>),
-    preprocess_mode<span style="color:#f92672">=</span>dsl.PipelineParam(name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;preprocess</span><span style="color:#f92672">-</span>mode<span style="color:#960050;background-color:#1e0010">&#39;</span>, value<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;local</span><span style="color:#960050;background-color:#1e0010">&#39;</span>),
-    preprocess_module: <span style="color:#a6e22e">dsl</span>.PipelineParam<span style="color:#f92672">=</span>dsl.PipelineParam(name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;preprocess</span><span style="color:#f92672">-</span>module<span style="color:#960050;background-color:#1e0010">&#39;</span>, value<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>home<span style="color:#f92672">/</span>zoux<span style="color:#f92672">/</span>data<span style="color:#f92672">/</span>taxi<span style="color:#f92672">-</span>cab<span style="color:#f92672">-</span>classification<span style="color:#f92672">/</span>preprocessing.py<span style="color:#960050;background-color:#1e0010">&#39;</span>),
-    target<span style="color:#f92672">=</span>dsl.PipelineParam(name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;target</span><span style="color:#960050;background-color:#1e0010">&#39;</span>, value<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;tips</span><span style="color:#960050;background-color:#1e0010">&#39;</span>),
-    learning_rate<span style="color:#f92672">=</span>dsl.PipelineParam(name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;learning</span><span style="color:#f92672">-</span>rate<span style="color:#960050;background-color:#1e0010">&#39;</span>, value<span style="color:#f92672">=</span><span style="color:#ae81ff">0.1</span>),
-    hidden_layer_size<span style="color:#f92672">=</span>dsl.PipelineParam(name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;hidden</span><span style="color:#f92672">-</span>layer<span style="color:#f92672">-</span>size<span style="color:#960050;background-color:#1e0010">&#39;</span>, value<span style="color:#f92672">=</span>HIDDEN_LAYER_SIZE),
-    steps<span style="color:#f92672">=</span>dsl.PipelineParam(name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;steps</span><span style="color:#960050;background-color:#1e0010">&#39;</span>, value<span style="color:#f92672">=</span>STEPS),
-    predict_mode<span style="color:#f92672">=</span>dsl.PipelineParam(name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;predict</span><span style="color:#f92672">-</span>mode<span style="color:#960050;background-color:#1e0010">&#39;</span>, value<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;local</span><span style="color:#960050;background-color:#1e0010">&#39;</span>),
-    analyze_mode<span style="color:#f92672">=</span>dsl.PipelineParam(name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;analyze</span><span style="color:#f92672">-</span>mode<span style="color:#960050;background-color:#1e0010">&#39;</span>, value<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;local</span><span style="color:#960050;background-color:#1e0010">&#39;</span>),
-    analyze_slice_column<span style="color:#f92672">=</span>dsl.PipelineParam(name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;analyze</span><span style="color:#f92672">-</span>slice<span style="color:#f92672">-</span>column<span style="color:#960050;background-color:#1e0010">&#39;</span>, value<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;trip_start_hour</span><span style="color:#960050;background-color:#1e0010">&#39;</span>)):
-
-    <span style="color:#960050;background-color:#1e0010">#</span> set the flag to <span style="color:#66d9ef">use</span> GPU trainer
-    use_gpu <span style="color:#f92672">=</span> False
-    
-    validation_output <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>tfx<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>
-    transform_output <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>tfx<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>
-    training_output <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>tfx<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>
-    analysis_output <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>tfx<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>
-    prediction_output <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>tfx<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>
-    tf_server_name <span style="color:#f92672">=</span> <span style="color:#a6e22e">&#39;taxi</span><span style="color:#f92672">-</span>cab<span style="color:#f92672">-</span>classification<span style="color:#f92672">-</span>model<span style="color:#f92672">-</span>{{workflow.name}}<span style="color:#960050;background-color:#1e0010">&#39;</span>
-
-    validation <span style="color:#f92672">=</span> dataflow_tf_data_validation_op(train, evaluation, column_names, key_columns, project, validation_mode, validation_output).add_volume(k8s_client.V1Volume(
-        name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;tfx</span><span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,
-        nfs<span style="color:#f92672">=</span>k8s_client.V1NFSVolumeSource(path<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>tfx<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,server<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#ae81ff">192.168.14.66</span><span style="color:#960050;background-color:#1e0010">&#39;</span>))).add_volume_mount(
-        k8s_client.V1VolumeMount(mount_path<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>tfx<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;tfx</span><span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>))
-    
-    preprocess <span style="color:#f92672">=</span> dataflow_tf_transform_op(train, evaluation, validation.outputs[<span style="color:#a6e22e">&#39;schema</span><span style="color:#960050;background-color:#1e0010">&#39;</span>], project, preprocess_mode, preprocess_module, transform_output).add_volume(k8s_client.V1Volume(
-        name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;tfx</span><span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,
-        nfs<span style="color:#f92672">=</span>k8s_client.V1NFSVolumeSource(path<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>tfx<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,server<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#ae81ff">192.168.14.66</span><span style="color:#960050;background-color:#1e0010">&#39;</span>))).add_volume_mount(
-        k8s_client.V1VolumeMount(mount_path<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>tfx<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;tfx</span><span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>))
-    
-    
-    training <span style="color:#f92672">=</span> tf_train_op(preprocess.output, validation.outputs[<span style="color:#a6e22e">&#39;schema</span><span style="color:#960050;background-color:#1e0010">&#39;</span>], learning_rate, hidden_layer_size, steps, target, preprocess_module, training_output, use_gpu<span style="color:#f92672">=</span>use_gpu).add_volume(k8s_client.V1Volume(
-        name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;tfx</span><span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,
-        nfs<span style="color:#f92672">=</span>k8s_client.V1NFSVolumeSource(path<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>tfx<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,server<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#ae81ff">192.168.14.66</span><span style="color:#960050;background-color:#1e0010">&#39;</span>))).add_volume_mount(
-        k8s_client.V1VolumeMount(mount_path<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>tfx<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;tfx</span><span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>))
-    
-    analysis <span style="color:#f92672">=</span> dataflow_tf_model_analyze_op(training.output, evaluation, validation.outputs[<span style="color:#a6e22e">&#39;schema</span><span style="color:#960050;background-color:#1e0010">&#39;</span>], project, analyze_mode, analyze_slice_column, analysis_output).add_volume(k8s_client.V1Volume(
-        name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;tfx</span><span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,
-        nfs<span style="color:#f92672">=</span>k8s_client.V1NFSVolumeSource(path<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>tfx<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,server<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#ae81ff">192.168.14.66</span><span style="color:#960050;background-color:#1e0010">&#39;</span>))).add_volume_mount(
-        k8s_client.V1VolumeMount(mount_path<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>tfx<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;tfx</span><span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>))
-    
-    prediction <span style="color:#f92672">=</span> dataflow_tf_predict_op(evaluation, validation.outputs[<span style="color:#a6e22e">&#39;schema</span><span style="color:#960050;background-color:#1e0010">&#39;</span>], target, training.output, predict_mode, project, prediction_output).add_volume(k8s_client.V1Volume(
-        name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;tfx</span><span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,
-        nfs<span style="color:#f92672">=</span>k8s_client.V1NFSVolumeSource(path<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>tfx<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,server<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#ae81ff">192.168.14.66</span><span style="color:#960050;background-color:#1e0010">&#39;</span>))).add_volume_mount(
-        k8s_client.V1VolumeMount(mount_path<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>tfx<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;tfx</span><span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>))
-    
-    deploy <span style="color:#f92672">=</span> kubeflow_deploy_op(training.output, tf_server_name).add_volume(k8s_client.V1Volume(
-        name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;tfx</span><span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,
-        nfs<span style="color:#f92672">=</span>k8s_client.V1NFSVolumeSource(path<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>tfx<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,server<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#ae81ff">192.168.14.66</span><span style="color:#960050;background-color:#1e0010">&#39;</span>))).add_volume_mount(
-        k8s_client.V1VolumeMount(mount_path<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>tfx<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;tfx</span><span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>))
-</code></pre></div><p>这里需要注意，这个和官网给的例子是不同的，细心一点就可以发现这里没有
+    <span style="color:#a61717;background-color:#e3d2d2">#</span><span style="color:#bbb"> </span>set<span style="color:#bbb"> </span>the<span style="color:#bbb"> </span>flag<span style="color:#bbb"> </span>to<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">use</span><span style="color:#bbb"> </span>GPU<span style="color:#bbb"> </span>trainer<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>use_gpu<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>False<span style="color:#bbb">
+</span><span style="color:#bbb">    
+</span><span style="color:#bbb">    </span>validation_output<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>tfx<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb">    </span>transform_output<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>tfx<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb">    </span>training_output<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>tfx<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb">    </span>analysis_output<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>tfx<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb">    </span>prediction_output<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>tfx<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb">    </span>tf_server_name<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#008080">&#39;taxi</span><span style="color:#000;font-weight:bold">-</span>cab<span style="color:#000;font-weight:bold">-</span>classification<span style="color:#000;font-weight:bold">-</span>model<span style="color:#000;font-weight:bold">-</span>{{workflow.name}}<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">    </span>validation<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>dataflow_tf_data_validation_op(train,<span style="color:#bbb"> </span>evaluation,<span style="color:#bbb"> </span>column_names,<span style="color:#bbb"> </span>key_columns,<span style="color:#bbb"> </span>project,<span style="color:#bbb"> </span>validation_mode,<span style="color:#bbb"> </span>validation_output).add_volume(k8s_client.V1Volume(<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;tfx</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>nfs<span style="color:#000;font-weight:bold">=</span>k8s_client.V1NFSVolumeSource(path<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>tfx<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,server<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#099">192.168.14.66</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>))).add_volume_mount(<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>k8s_client.V1VolumeMount(mount_path<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>tfx<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;tfx</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>))<span style="color:#bbb">
+</span><span style="color:#bbb">    
+</span><span style="color:#bbb">    </span>preprocess<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>dataflow_tf_transform_op(train,<span style="color:#bbb"> </span>evaluation,<span style="color:#bbb"> </span>validation.outputs[<span style="color:#008080">&#39;schema</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>],<span style="color:#bbb"> </span>project,<span style="color:#bbb"> </span>preprocess_mode,<span style="color:#bbb"> </span>preprocess_module,<span style="color:#bbb"> </span>transform_output).add_volume(k8s_client.V1Volume(<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;tfx</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>nfs<span style="color:#000;font-weight:bold">=</span>k8s_client.V1NFSVolumeSource(path<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>tfx<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,server<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#099">192.168.14.66</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>))).add_volume_mount(<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>k8s_client.V1VolumeMount(mount_path<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>tfx<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;tfx</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>))<span style="color:#bbb">
+</span><span style="color:#bbb">    
+</span><span style="color:#bbb">    
+</span><span style="color:#bbb">    </span>training<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>tf_train_op(preprocess.output,<span style="color:#bbb"> </span>validation.outputs[<span style="color:#008080">&#39;schema</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>],<span style="color:#bbb"> </span>learning_rate,<span style="color:#bbb"> </span>hidden_layer_size,<span style="color:#bbb"> </span>steps,<span style="color:#bbb"> </span>target,<span style="color:#bbb"> </span>preprocess_module,<span style="color:#bbb"> </span>training_output,<span style="color:#bbb"> </span>use_gpu<span style="color:#000;font-weight:bold">=</span>use_gpu).add_volume(k8s_client.V1Volume(<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;tfx</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>nfs<span style="color:#000;font-weight:bold">=</span>k8s_client.V1NFSVolumeSource(path<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>tfx<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,server<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#099">192.168.14.66</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>))).add_volume_mount(<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>k8s_client.V1VolumeMount(mount_path<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>tfx<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;tfx</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>))<span style="color:#bbb">
+</span><span style="color:#bbb">    
+</span><span style="color:#bbb">    </span>analysis<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>dataflow_tf_model_analyze_op(training.output,<span style="color:#bbb"> </span>evaluation,<span style="color:#bbb"> </span>validation.outputs[<span style="color:#008080">&#39;schema</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>],<span style="color:#bbb"> </span>project,<span style="color:#bbb"> </span>analyze_mode,<span style="color:#bbb"> </span>analyze_slice_column,<span style="color:#bbb"> </span>analysis_output).add_volume(k8s_client.V1Volume(<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;tfx</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>nfs<span style="color:#000;font-weight:bold">=</span>k8s_client.V1NFSVolumeSource(path<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>tfx<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,server<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#099">192.168.14.66</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>))).add_volume_mount(<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>k8s_client.V1VolumeMount(mount_path<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>tfx<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;tfx</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>))<span style="color:#bbb">
+</span><span style="color:#bbb">    
+</span><span style="color:#bbb">    </span>prediction<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>dataflow_tf_predict_op(evaluation,<span style="color:#bbb"> </span>validation.outputs[<span style="color:#008080">&#39;schema</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>],<span style="color:#bbb"> </span>target,<span style="color:#bbb"> </span>training.output,<span style="color:#bbb"> </span>predict_mode,<span style="color:#bbb"> </span>project,<span style="color:#bbb"> </span>prediction_output).add_volume(k8s_client.V1Volume(<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;tfx</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>nfs<span style="color:#000;font-weight:bold">=</span>k8s_client.V1NFSVolumeSource(path<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>tfx<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,server<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#099">192.168.14.66</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>))).add_volume_mount(<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>k8s_client.V1VolumeMount(mount_path<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>tfx<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;tfx</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>))<span style="color:#bbb">
+</span><span style="color:#bbb">    
+</span><span style="color:#bbb">    </span>deploy<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>kubeflow_deploy_op(training.output,<span style="color:#bbb"> </span>tf_server_name).add_volume(k8s_client.V1Volume(<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;tfx</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>nfs<span style="color:#000;font-weight:bold">=</span>k8s_client.V1NFSVolumeSource(path<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>tfx<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,server<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#099">192.168.14.66</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>))).add_volume_mount(<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>k8s_client.V1VolumeMount(mount_path<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>tfx<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;tfx</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>))</code></pre></td></tr></table>
+</div>
+</div>
+<p>这里需要注意，这个和官网给的例子是不同的，细心一点就可以发现这里没有
 “apply(gcp.use_gcp_secret(&lsquo;user-gcp-sa&rsquo;))”。</p>
+
 <p>这是因为上面那句话的作用是使用gs的挂载卷。我们国内服务器是访问不到的。所以我们得使用自己的挂载卷。</p>
+
 <p>说的明白一点就是，我们运作的是一个图，图中每一个节点是一个镜像。pipelines中每一个节点运行完，pod就</p>
+
 <p>会消失，所以该节点的数据也会丢失。所以我们必须让所有节点都能访问一个永远存在的目录。这是我们就需要为</p>
+
 <p>所有节点挂载持久存储卷。这里我使用的是NFS分布式存储系统来当存储卷。</p>
+
 <p>关于如何使用NFS，前面的文章已经有过说明，这里不再累赘。这里直接说明如何让所有的容器都关联一个NFS PV存储卷。</p>
-<h5 id="创建pvpvc">创建pv,pvc</h5>
+
+<h5 id="创建pv-pvc">创建pv,pvc</h5>
+
 <p>pv.yaml</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">apiVersion: <span style="color:#a6e22e">v1</span>
-kind: <span style="color:#a6e22e">PersistentVolume</span>
-metadata:
-  <span style="color:#a6e22e">name</span>: <span style="color:#a6e22e">tfx</span><span style="color:#f92672">-</span>pv
-spec:
-  <span style="color:#a6e22e">capacity</span>:
-    <span style="color:#a6e22e">storage</span>: <span style="color:#ae81ff">5</span>Gi
-  accessModes:
-    <span style="color:#f92672">-</span> ReadWriteOnce
-  nfs:
-    <span style="color:#a6e22e">server</span>: <span style="color:#ae81ff">192.168.14.66</span>
-    path: <span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>tfx<span style="color:#f92672">-</span>pv
-</code></pre></div><p>pvc.yaml</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">kind: <span style="color:#a6e22e">PersistentVolumeClaim</span>
-apiVersion: <span style="color:#a6e22e">v1</span>
-metadata:
-  <span style="color:#a6e22e">name</span>: <span style="color:#a6e22e">tfxclaim</span>
-spec:
-  <span style="color:#a6e22e">accessModes</span>:
-    <span style="color:#f92672">-</span> ReadWriteOnce
-  resources:
-    <span style="color:#a6e22e">requests</span>:
-      <span style="color:#a6e22e">storage</span>: <span style="color:#ae81ff">5</span>Gi
-</code></pre></div><p>创建好pv,pvc后。运行上面的代码就能跑TFX实例了。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">apiVersion: <span style="color:#458;font-weight:bold">v1</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>kind: <span style="color:#458;font-weight:bold">PersistentVolume</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>metadata:
+  <span style="color:#458;font-weight:bold">name</span>: <span style="color:#458;font-weight:bold">tfx</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#bbb">
+</span><span style="color:#bbb"></span>spec:
+  <span style="color:#458;font-weight:bold">capacity</span>:
+    <span style="color:#458;font-weight:bold">storage</span>: <span style="color:#099">5</span>Gi<span style="color:#bbb">
+</span><span style="color:#bbb">  </span>accessModes:
+    <span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>ReadWriteOnce<span style="color:#bbb">
+</span><span style="color:#bbb">  </span>nfs:
+    <span style="color:#458;font-weight:bold">server</span>: <span style="color:#099">192.168.14.66</span><span style="color:#bbb">
+</span><span style="color:#bbb">    </span>path: <span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>tfx<span style="color:#000;font-weight:bold">-</span>pv</code></pre></td></tr></table>
+</div>
+</div>
+<p>pvc.yaml</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">kind: <span style="color:#458;font-weight:bold">PersistentVolumeClaim</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>apiVersion: <span style="color:#458;font-weight:bold">v1</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>metadata:
+  <span style="color:#458;font-weight:bold">name</span>: <span style="color:#458;font-weight:bold">tfxclaim</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>spec:
+  <span style="color:#458;font-weight:bold">accessModes</span>:
+    <span style="color:#000;font-weight:bold">-</span><span style="color:#bbb"> </span>ReadWriteOnce<span style="color:#bbb">
+</span><span style="color:#bbb">  </span>resources:
+    <span style="color:#458;font-weight:bold">requests</span>:
+      <span style="color:#458;font-weight:bold">storage</span>: <span style="color:#099">5</span>Gi</code></pre></td></tr></table>
+</div>
+</div>
+<p>创建好pv,pvc后。运行上面的代码就能跑TFX实例了。</p>
+
 <p>结果如下：
-![image22](2019-11-24 kubeflow pipelines&ndash;本地运行官方ML-实例.assets/image22.png)</p>
+<img src="2019-11-24 kubeflow pipelines--本地运行官方ML-实例.assets/image22.png" alt="image22" /></p>
+
 <p>这里显示最后几个还有问题是因为最后的服务和分析也是在某歌平台上的，我就没修改了。</p>
+
 <p>到这里至少就知道pipelines能在自己的集群上跑起来。接下来就是自己写镜像，跑自己的代码了。</p>
 
         </div>
@@ -434,7 +812,7 @@ spec:
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

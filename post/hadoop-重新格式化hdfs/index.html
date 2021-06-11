@@ -73,7 +73,100 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">Hadoop重新格式化HDFS</h1>
@@ -100,14 +193,17 @@
             <p>有时候因为自己的一些错误修改，导致Hadoop集群总是有些节点启动不起来。
 这是就需要重新格式化HDFS，在重启。
 但是重新格式化会导致一个问题，就是以前的namenode中已经记录了datanode的namespaceId了，重新启动会给datanode另一个Id,导致最终启动集群的时候，datanode总是启动不起来。</p>
+
 <p>解决办法(执行下面两条命令)：
 先删除namenode历史的文件，再格式化重启。
 直接删除namenode的配置文件目录,在重新format</p>
 <pre><code>rm -rf ../hdfs/na*
-./hadoop namenode -format
-</code></pre><p>这时还需要将现在的新的datanode的namespaceId修改为以前的id。即和namenode的namespaceId一致。</p>
+./hadoop namenode -format</code></pre>
+<p>这时还需要将现在的新的datanode的namespaceId修改为以前的id。即和namenode的namespaceId一致。</p>
+
 <p>可以在重启直接先记下来。在hdfs.site.xml配置了datanode的目录
 找到current/version就可以看到namenode了。</p>
+
 <p>或者可以先直接运行 bin/start-all.sh命令，启动完，在hadoop/logs目录下查看namenode的log文件，里面会报错，指出来namenode里面的datanode对不上。
 再回到current/version，将datanode的namespaceId修改和namenode一致即可。</p>
 
@@ -208,7 +304,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

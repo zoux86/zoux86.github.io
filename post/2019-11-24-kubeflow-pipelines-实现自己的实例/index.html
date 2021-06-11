@@ -73,7 +73,117 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#步骤1-准备runtime-code-其实就是镜像">步骤1 - 准备Runtime code （其实就是镜像）</a></li>
+<li><a href="#步骤2-准备client-code-实际就是在kubeflow-pipelines上运行自己的实例">步骤2-准备client code （实际就是在kubeflow pipelines上运行自己的实例）</a>
+<ul>
+<li>
+<ul>
+<li><a href="#kubeflow-pipelines目前先琢磨到这里-接下来会关注kubeflow实现gang-scheduler这一方面">kubeflow pipelines目前先琢磨到这里。接下来会关注kubeflow实现gang scheduler这一方面。</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">kubeflow pipelines--实现自己的实例</h1>
@@ -97,211 +207,442 @@
         
         
         <div class="post-content">
-            <p>上篇文章实现了运行系统给出的pipelines实例。通过挂载自己的卷，以及使用自己的镜像总算可以运行官方给的ML实例了。但是我们的最终目的是运行自己的ML程序。</p>
+            
+
+<p>上篇文章实现了运行系统给出的pipelines实例。通过挂载自己的卷，以及使用自己的镜像总算可以运行官方给的ML实例了。但是我们的最终目的是运行自己的ML程序。</p>
+
 <p>接下来是实现自己的pipelines实例。</p>
+
 <p>根据官方文档的建议：</p>
-<p><a href="https://www.kubeflow.org/docs/pipelines/sdk/build-component/%5D(https://www.kubeflow.org/docs/pipelines/sdk/build-component/)">https://www.kubeflow.org/docs/pipelines/sdk/build-component/](https://www.kubeflow.org/docs/pipelines/sdk/build-component/)</a></p>
+
+<p><a href="https://www.kubeflow.org/docs/pipelines/sdk/build-component/](https://www.kubeflow.org/docs/pipelines/sdk/build-component/">https://www.kubeflow.org/docs/pipelines/sdk/build-component/](https://www.kubeflow.org/docs/pipelines/sdk/build-component/</a>)</p>
+
 <p>实现自己的ML实例，总共有两点：</p>
+
 <p>（1）Client code  （在kubeflow上运行你真正任务所需要的额外代码）</p>
+
 <p>（2）Runtime code （真正的ML代码，其实就是镜像）</p>
+
 <p>接下来用我设置的一个自定义实例来说明：</p>
-<p>
-        <img class="mx-auto" alt="" src="../../resources/images/kubeflow/image23.png" />   
-    </p>
+
+<p><img src="../../resources/images/kubeflow/image23.png" alt="" /></p>
+
 <p>说明：这里我自定义了一个任务。任务很简单：</p>
+
 <p>（1）先验证一个文件(FileInput1)中的数是否大于0. 将大于0，和小于0的数保存为俩个文件。</p>
+
 <p>（2）对俩个文件执行不同的操作，保存大于0的文件，将里面所有的数全加起来，然后输出（fileoutput1）</p>
+
 <p>(3)  对小于0的那个文件，将里面的数平方。</p>
+
 <p>eg：</p>
+
 <p>如果FileInput1文件中的数是：0，-1，-2，-3 ，4，5，6</p>
+
 <p>那么最后fileOutput1文件中的数为：15</p>
+
 <p>fileOutput2文件中的数为：1，4，9</p>
+
 <p>（不用纠结这个例子，主要是为了能了解如何在pipelines上写自己的实例并运行。）</p>
-<h3 id="步骤1---准备runtime-code-其实就是镜像">步骤1 - 准备Runtime code （其实就是镜像）</h3>
+
+<h3 id="步骤1-准备runtime-code-其实就是镜像">步骤1 - 准备Runtime code （其实就是镜像）</h3>
+
 <p>可以看出来这里总共三个节点：validateOp,MoreThanZeroOp和LessThanZeroOp</p>
+
 <p>三个节点的代码如下：</p>
+
 <p>validate.py  （validateOp）</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">import argparse
-import os
-
-def validate(output_dir,filename):
-    <span style="color:#a6e22e">f</span> <span style="color:#f92672">=</span> open(filename, <span style="color:#a6e22e">&#39;rb</span><span style="color:#f92672">+</span><span style="color:#960050;background-color:#1e0010">&#39;</span>)
-    lessOutput_path <span style="color:#f92672">=</span> os.path.join(output_dir, <span style="color:#a6e22e">&#39;lessThanZero</span>.txt<span style="color:#960050;background-color:#1e0010">&#39;</span>)
-    f1 <span style="color:#f92672">=</span> open(lessOutput_path, <span style="color:#e6db74">&#39;w&#39;</span>)
-	
-    moreOutput_path <span style="color:#f92672">=</span> os.path.join(output_dir, <span style="color:#a6e22e">&#39;moreThanZero</span>.txt<span style="color:#960050;background-color:#1e0010">&#39;</span>)
-    f2 <span style="color:#f92672">=</span> open(moreOutput_path, <span style="color:#e6db74">&#39;w&#39;</span>)
-    lines <span style="color:#f92672">=</span> f.readlines()
-    <span style="color:#66d9ef">for</span> line <span style="color:#66d9ef">in</span> lines:
-        <span style="color:#a6e22e">num</span> <span style="color:#f92672">=</span> int(line)
-        <span style="color:#66d9ef">if</span> num <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>:
-            <span style="color:#a6e22e">f1</span>.write(<span style="color:#66d9ef">str</span>(num) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;\n&#34;</span>)
-        elif num <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>:
-            <span style="color:#a6e22e">f2</span>.write(<span style="color:#66d9ef">str</span>(num) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;\n&#34;</span>)
-    f.close()
-    f1.close()
-    f2.close()
-    with open(<span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>lessFilePath.txt<span style="color:#960050;background-color:#1e0010">&#39;</span>, <span style="color:#a6e22e">&#39;w</span><span style="color:#f92672">+</span><span style="color:#960050;background-color:#1e0010">&#39;</span>) <span style="color:#66d9ef">as</span> f:
-        <span style="color:#a6e22e">f</span>.write(lessOutput_path)
-    with open(<span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>moreFilePath.txt<span style="color:#960050;background-color:#1e0010">&#39;</span>, <span style="color:#a6e22e">&#39;w</span><span style="color:#f92672">+</span><span style="color:#960050;background-color:#1e0010">&#39;</span>) <span style="color:#66d9ef">as</span> f:
-        <span style="color:#a6e22e">f</span>.write(moreOutput_path)
-
-def parse_arguments():
-    <span style="color:#e6db74">&#34;&#34;&#34;Parse command line arguments.&#34;&#34;&#34;</span>
-    parser <span style="color:#f92672">=</span> argparse.ArgumentParser()
-    parser.add_argument( <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>inputFilename<span style="color:#960050;background-color:#1e0010">&#39;</span>,<span style="color:#66d9ef">type</span><span style="color:#f92672">=</span><span style="color:#66d9ef">str</span>,required<span style="color:#f92672">=</span>True,help<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;local</span> file to be input<span style="color:#960050;background-color:#1e0010">&#39;</span>)
-    parser.add_argument(<span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>output_dir<span style="color:#960050;background-color:#1e0010">&#39;</span>,<span style="color:#66d9ef">type</span><span style="color:#f92672">=</span><span style="color:#66d9ef">str</span>,required<span style="color:#f92672">=</span>True,help<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;local</span> file to be input<span style="color:#960050;background-color:#1e0010">&#39;</span>)
-    args <span style="color:#f92672">=</span> parser.parse_args()
-    <span style="color:#66d9ef">return</span> args
-
-def main():
-    <span style="color:#a6e22e">args</span> <span style="color:#f92672">=</span> parse_arguments()
-    validate(args.output_dir,args.inputFilename)
-
-<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#a6e22e">&#39;__main__</span><span style="color:#960050;background-color:#1e0010">&#39;</span>:
-    <span style="color:#a6e22e">main</span>()
-</code></pre></div><p>MoreThanZero.py （MoreThanZeroOp）</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">import argparse
-import os
-
-def MoreThanZero(output_dir,filename):
-    <span style="color:#a6e22e">f</span> <span style="color:#f92672">=</span> open(filename, <span style="color:#a6e22e">&#39;rb</span><span style="color:#f92672">+</span><span style="color:#960050;background-color:#1e0010">&#39;</span>)
-    output_path<span style="color:#f92672">=</span>os.path.join(output_dir, <span style="color:#a6e22e">&#39;sum</span>.txt<span style="color:#960050;background-color:#1e0010">&#39;</span>)
-    f1 <span style="color:#f92672">=</span> open(output_path,<span style="color:#e6db74">&#39;w&#39;</span>)
-    lines <span style="color:#f92672">=</span> f.readlines()
-    sum <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
-    <span style="color:#66d9ef">for</span> line <span style="color:#66d9ef">in</span> lines:
-       <span style="color:#a6e22e">sum</span> <span style="color:#f92672">+=</span> int(line)
-    f1.write(<span style="color:#66d9ef">str</span>(sum) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;\n&#34;</span>)
-    f.close()
-    f1.close()
-
-def parse_arguments():
-    <span style="color:#e6db74">&#34;&#34;&#34;Parse command line arguments.&#34;&#34;&#34;</span>
-    parser <span style="color:#f92672">=</span> argparse.ArgumentParser()
-    parser.add_argument( <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>output_dir<span style="color:#960050;background-color:#1e0010">&#39;</span>,<span style="color:#66d9ef">type</span><span style="color:#f92672">=</span><span style="color:#66d9ef">str</span>,required<span style="color:#f92672">=</span>True,help<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;local</span> file to be input<span style="color:#960050;background-color:#1e0010">&#39;</span>)
-    parser.add_argument(<span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>data<span style="color:#960050;background-color:#1e0010">&#39;</span>,<span style="color:#66d9ef">type</span><span style="color:#f92672">=</span><span style="color:#66d9ef">str</span>,required<span style="color:#f92672">=</span>True,help<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;local</span> file to be input<span style="color:#960050;background-color:#1e0010">&#39;</span>)
-    args <span style="color:#f92672">=</span> parser.parse_args()
-    <span style="color:#66d9ef">return</span> args
-
-def main():
-    <span style="color:#a6e22e">args</span> <span style="color:#f92672">=</span> parse_arguments()
-    MoreThanZero(args.output_dir,args.data)
-
-<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#a6e22e">&#39;__main__</span><span style="color:#960050;background-color:#1e0010">&#39;</span>:
-    <span style="color:#a6e22e">main</span>()
-</code></pre></div><p>LessThanZero.py  （MoreThanZeroOp）</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">import argparse
-import os
-def LessThanZero(output_dir,filename):
-    <span style="color:#a6e22e">f</span> <span style="color:#f92672">=</span> open(filename, <span style="color:#a6e22e">&#39;rb</span><span style="color:#f92672">+</span><span style="color:#960050;background-color:#1e0010">&#39;</span>)
-    output_path<span style="color:#f92672">=</span>os.path.join(output_dir, <span style="color:#a6e22e">&#39;square</span>.txt<span style="color:#960050;background-color:#1e0010">&#39;</span>)
-    f1 <span style="color:#f92672">=</span> open(output_path,<span style="color:#e6db74">&#39;w&#39;</span>)
-    lines <span style="color:#f92672">=</span> f.readlines()
-    <span style="color:#66d9ef">for</span> line <span style="color:#66d9ef">in</span> lines:
-       <span style="color:#a6e22e">sum</span> <span style="color:#f92672">=</span> int(line) <span style="color:#f92672">*</span> int(line)
-       f1.write(<span style="color:#66d9ef">str</span>(sum) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;\n&#34;</span>)
-    f.close()
-    f1.close()
-
-def parse_arguments():
-    <span style="color:#e6db74">&#34;&#34;&#34;Parse command line arguments.&#34;&#34;&#34;</span>
-    parser <span style="color:#f92672">=</span> argparse.ArgumentParser()
-    parser.add_argument( <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>output_dir<span style="color:#960050;background-color:#1e0010">&#39;</span>,<span style="color:#66d9ef">type</span><span style="color:#f92672">=</span><span style="color:#66d9ef">str</span>,required<span style="color:#f92672">=</span>True,help<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;local</span> file to be input<span style="color:#960050;background-color:#1e0010">&#39;</span>)
-    parser.add_argument(<span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>data<span style="color:#960050;background-color:#1e0010">&#39;</span>,<span style="color:#66d9ef">type</span><span style="color:#f92672">=</span><span style="color:#66d9ef">str</span>,required<span style="color:#f92672">=</span>True, help<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;local</span> file to be input<span style="color:#960050;background-color:#1e0010">&#39;</span>)
-    args <span style="color:#f92672">=</span> parser.parse_args()
-    <span style="color:#66d9ef">return</span> args
-
-def main():
-    <span style="color:#a6e22e">args</span> <span style="color:#f92672">=</span> parse_arguments()
-    LessThanZero(args.output_dir,args.data)
-
-<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#a6e22e">&#39;__main__</span><span style="color:#960050;background-color:#1e0010">&#39;</span>:
-    <span style="color:#a6e22e">main</span>()
-</code></pre></div><p>接下来要将这些py打包成自己的任务镜像，拿Validate.py为例。
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">import<span style="color:#bbb"> </span>argparse<span style="color:#bbb">
+</span><span style="color:#bbb"></span>import<span style="color:#bbb"> </span>os<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>def<span style="color:#bbb"> </span>validate(output_dir,filename):
+    <span style="color:#458;font-weight:bold">f</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>open(filename,<span style="color:#bbb"> </span><span style="color:#008080">&#39;rb</span><span style="color:#000;font-weight:bold">+</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>lessOutput_path<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>os.path.join(output_dir,<span style="color:#bbb"> </span><span style="color:#008080">&#39;lessThanZero</span>.txt<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>f1<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>open(lessOutput_path,<span style="color:#bbb"> </span><span style="color:#d14">&#39;w&#39;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">	
+</span><span style="color:#bbb">    </span>moreOutput_path<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>os.path.join(output_dir,<span style="color:#bbb"> </span><span style="color:#008080">&#39;moreThanZero</span>.txt<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>f2<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>open(moreOutput_path,<span style="color:#bbb"> </span><span style="color:#d14">&#39;w&#39;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>lines<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>f.readlines()<span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#000;font-weight:bold">for</span><span style="color:#bbb"> </span>line<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">in</span><span style="color:#bbb"> </span>lines:
+        <span style="color:#458;font-weight:bold">num</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>int(line)<span style="color:#bbb">
+</span><span style="color:#bbb">        </span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>num<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">&gt;</span><span style="color:#bbb"> </span><span style="color:#099">0</span>:
+            <span style="color:#458;font-weight:bold">f1</span>.write(<span style="color:#458;font-weight:bold">str</span>(num)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">+</span><span style="color:#bbb"> </span><span style="color:#d14">&#34;\n&#34;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>elif<span style="color:#bbb"> </span>num<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">&lt;</span><span style="color:#bbb"> </span><span style="color:#099">0</span>:
+            <span style="color:#458;font-weight:bold">f2</span>.write(<span style="color:#458;font-weight:bold">str</span>(num)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">+</span><span style="color:#bbb"> </span><span style="color:#d14">&#34;\n&#34;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>f.close()<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>f1.close()<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>f2.close()<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>with<span style="color:#bbb"> </span>open(<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>lessFilePath.txt<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span><span style="color:#008080">&#39;w</span><span style="color:#000;font-weight:bold">+</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">as</span><span style="color:#bbb"> </span>f:
+        <span style="color:#458;font-weight:bold">f</span>.write(lessOutput_path)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>with<span style="color:#bbb"> </span>open(<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>moreFilePath.txt<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span><span style="color:#008080">&#39;w</span><span style="color:#000;font-weight:bold">+</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">as</span><span style="color:#bbb"> </span>f:
+        <span style="color:#458;font-weight:bold">f</span>.write(moreOutput_path)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>def<span style="color:#bbb"> </span>parse_arguments():
+    <span style="color:#d14">&#34;&#34;&#34;Parse command line arguments.&#34;&#34;&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">    </span>parser<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>argparse.ArgumentParser()<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>parser.add_argument(<span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>inputFilename<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#000;font-weight:bold">type</span><span style="color:#000;font-weight:bold">=</span><span style="color:#458;font-weight:bold">str</span>,required<span style="color:#000;font-weight:bold">=</span>True,help<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;local</span><span style="color:#bbb"> </span>file<span style="color:#bbb"> </span>to<span style="color:#bbb"> </span>be<span style="color:#bbb"> </span>input<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>parser.add_argument(<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>output_dir<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#000;font-weight:bold">type</span><span style="color:#000;font-weight:bold">=</span><span style="color:#458;font-weight:bold">str</span>,required<span style="color:#000;font-weight:bold">=</span>True,help<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;local</span><span style="color:#bbb"> </span>file<span style="color:#bbb"> </span>to<span style="color:#bbb"> </span>be<span style="color:#bbb"> </span>input<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>args<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>parser.parse_args()<span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#000;font-weight:bold">return</span><span style="color:#bbb"> </span>args<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>def<span style="color:#bbb"> </span>main():
+    <span style="color:#458;font-weight:bold">args</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>parse_arguments()<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>validate(args.output_dir,args.inputFilename)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>__name__<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">==</span><span style="color:#bbb"> </span><span style="color:#008080">&#39;__main__</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>:
+    <span style="color:#458;font-weight:bold">main</span>()</code></pre></td></tr></table>
+</div>
+</div>
+<p>MoreThanZero.py （MoreThanZeroOp）</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">import<span style="color:#bbb"> </span>argparse<span style="color:#bbb">
+</span><span style="color:#bbb"></span>import<span style="color:#bbb"> </span>os<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>def<span style="color:#bbb"> </span>MoreThanZero(output_dir,filename):
+    <span style="color:#458;font-weight:bold">f</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>open(filename,<span style="color:#bbb"> </span><span style="color:#008080">&#39;rb</span><span style="color:#000;font-weight:bold">+</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>output_path<span style="color:#000;font-weight:bold">=</span>os.path.join(output_dir,<span style="color:#bbb"> </span><span style="color:#008080">&#39;sum</span>.txt<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>f1<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>open(output_path,<span style="color:#d14">&#39;w&#39;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>lines<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>f.readlines()<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>sum<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#099">0</span><span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#000;font-weight:bold">for</span><span style="color:#bbb"> </span>line<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">in</span><span style="color:#bbb"> </span>lines:
+       <span style="color:#458;font-weight:bold">sum</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">+=</span><span style="color:#bbb"> </span>int(line)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>f1.write(<span style="color:#458;font-weight:bold">str</span>(sum)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">+</span><span style="color:#bbb"> </span><span style="color:#d14">&#34;\n&#34;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>f.close()<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>f1.close()<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>def<span style="color:#bbb"> </span>parse_arguments():
+    <span style="color:#d14">&#34;&#34;&#34;Parse command line arguments.&#34;&#34;&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">    </span>parser<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>argparse.ArgumentParser()<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>parser.add_argument(<span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>output_dir<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#000;font-weight:bold">type</span><span style="color:#000;font-weight:bold">=</span><span style="color:#458;font-weight:bold">str</span>,required<span style="color:#000;font-weight:bold">=</span>True,help<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;local</span><span style="color:#bbb"> </span>file<span style="color:#bbb"> </span>to<span style="color:#bbb"> </span>be<span style="color:#bbb"> </span>input<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>parser.add_argument(<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>data<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#000;font-weight:bold">type</span><span style="color:#000;font-weight:bold">=</span><span style="color:#458;font-weight:bold">str</span>,required<span style="color:#000;font-weight:bold">=</span>True,help<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;local</span><span style="color:#bbb"> </span>file<span style="color:#bbb"> </span>to<span style="color:#bbb"> </span>be<span style="color:#bbb"> </span>input<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>args<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>parser.parse_args()<span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#000;font-weight:bold">return</span><span style="color:#bbb"> </span>args<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>def<span style="color:#bbb"> </span>main():
+    <span style="color:#458;font-weight:bold">args</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>parse_arguments()<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>MoreThanZero(args.output_dir,args.data)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>__name__<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">==</span><span style="color:#bbb"> </span><span style="color:#008080">&#39;__main__</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>:
+    <span style="color:#458;font-weight:bold">main</span>()</code></pre></td></tr></table>
+</div>
+</div>
+<p>LessThanZero.py  （MoreThanZeroOp）</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">import<span style="color:#bbb"> </span>argparse<span style="color:#bbb">
+</span><span style="color:#bbb"></span>import<span style="color:#bbb"> </span>os<span style="color:#bbb">
+</span><span style="color:#bbb"></span>def<span style="color:#bbb"> </span>LessThanZero(output_dir,filename):
+    <span style="color:#458;font-weight:bold">f</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>open(filename,<span style="color:#bbb"> </span><span style="color:#008080">&#39;rb</span><span style="color:#000;font-weight:bold">+</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>output_path<span style="color:#000;font-weight:bold">=</span>os.path.join(output_dir,<span style="color:#bbb"> </span><span style="color:#008080">&#39;square</span>.txt<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>f1<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>open(output_path,<span style="color:#d14">&#39;w&#39;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>lines<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>f.readlines()<span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#000;font-weight:bold">for</span><span style="color:#bbb"> </span>line<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">in</span><span style="color:#bbb"> </span>lines:
+       <span style="color:#458;font-weight:bold">sum</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>int(line)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">*</span><span style="color:#bbb"> </span>int(line)<span style="color:#bbb">
+</span><span style="color:#bbb">       </span>f1.write(<span style="color:#458;font-weight:bold">str</span>(sum)<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">+</span><span style="color:#bbb"> </span><span style="color:#d14">&#34;\n&#34;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>f.close()<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>f1.close()<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>def<span style="color:#bbb"> </span>parse_arguments():
+    <span style="color:#d14">&#34;&#34;&#34;Parse command line arguments.&#34;&#34;&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">    </span>parser<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>argparse.ArgumentParser()<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>parser.add_argument(<span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>output_dir<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#000;font-weight:bold">type</span><span style="color:#000;font-weight:bold">=</span><span style="color:#458;font-weight:bold">str</span>,required<span style="color:#000;font-weight:bold">=</span>True,help<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;local</span><span style="color:#bbb"> </span>file<span style="color:#bbb"> </span>to<span style="color:#bbb"> </span>be<span style="color:#bbb"> </span>input<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>parser.add_argument(<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>data<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#000;font-weight:bold">type</span><span style="color:#000;font-weight:bold">=</span><span style="color:#458;font-weight:bold">str</span>,required<span style="color:#000;font-weight:bold">=</span>True,<span style="color:#bbb"> </span>help<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;local</span><span style="color:#bbb"> </span>file<span style="color:#bbb"> </span>to<span style="color:#bbb"> </span>be<span style="color:#bbb"> </span>input<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>args<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>parser.parse_args()<span style="color:#bbb">
+</span><span style="color:#bbb">    </span><span style="color:#000;font-weight:bold">return</span><span style="color:#bbb"> </span>args<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>def<span style="color:#bbb"> </span>main():
+    <span style="color:#458;font-weight:bold">args</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>parse_arguments()<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>LessThanZero(args.output_dir,args.data)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">if</span><span style="color:#bbb"> </span>__name__<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">==</span><span style="color:#bbb"> </span><span style="color:#008080">&#39;__main__</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>:
+    <span style="color:#458;font-weight:bold">main</span>()</code></pre></td></tr></table>
+</div>
+</div>
+<p>接下来要将这些py打包成自己的任务镜像，拿Validate.py为例。
 dockerfile</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">FROM python:<span style="color:#ae81ff">3.6</span><span style="color:#f92672">-</span>slim
-RUN mkdir <span style="color:#f92672">-</span>p <span style="color:#f92672">/</span>app
-ENV APP_HOME <span style="color:#f92672">/</span>app
-COPY src <span style="color:#75715e">$APP_HOME</span>
-WORKDIR <span style="color:#75715e">$APP_HOME</span>
-ENTRYPOINT [<span style="color:#e6db74">&#34;python&#34;</span>, <span style="color:#e6db74">&#34;validate.py&#34;</span>]
-</code></pre></div><p>这里我将上面的三个py分别打包成以下镜像：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#ae81ff">192.168.14.54</span>:<span style="color:#ae81ff">5000</span><span style="color:#f92672">/</span>user<span style="color:#f92672">-</span>validate:<span style="color:#a6e22e">v8</span>
-<span style="color:#ae81ff">192.168.14.54</span>:<span style="color:#ae81ff">5000</span><span style="color:#f92672">/</span>user<span style="color:#f92672">-</span>morethanzero:<span style="color:#a6e22e">v8</span>
-<span style="color:#ae81ff">192.168.14.54</span>:<span style="color:#ae81ff">5000</span><span style="color:#f92672">/</span>user<span style="color:#f92672">-</span>lessthanzero:<span style="color:#a6e22e">v8</span>
-</code></pre></div><p>到这里第一步（RunTime code）就完成了</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">FROM<span style="color:#bbb"> </span>python:<span style="color:#099">3.6</span><span style="color:#000;font-weight:bold">-</span>slim<span style="color:#bbb">
+</span><span style="color:#bbb"></span>RUN<span style="color:#bbb"> </span>mkdir<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">-</span>p<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">/</span>app<span style="color:#bbb">
+</span><span style="color:#bbb"></span>ENV<span style="color:#bbb"> </span>APP_HOME<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">/</span>app<span style="color:#bbb">
+</span><span style="color:#bbb"></span>COPY<span style="color:#bbb"> </span>src<span style="color:#bbb"> </span><span style="color:#999;font-weight:bold;font-style:italic">$APP_HOME</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>WORKDIR<span style="color:#bbb"> </span><span style="color:#999;font-weight:bold;font-style:italic">$APP_HOME</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>ENTRYPOINT<span style="color:#bbb"> </span>[<span style="color:#d14">&#34;python&#34;</span>,<span style="color:#bbb"> </span><span style="color:#d14">&#34;validate.py&#34;</span>]</code></pre></td></tr></table>
+</div>
+</div>
+<p>这里我将上面的三个py分别打包成以下镜像：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#099">192.168.14.54</span>:<span style="color:#099">5000</span><span style="color:#000;font-weight:bold">/</span>user<span style="color:#000;font-weight:bold">-</span>validate:<span style="color:#458;font-weight:bold">v8</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#099">192.168.14.54</span>:<span style="color:#099">5000</span><span style="color:#000;font-weight:bold">/</span>user<span style="color:#000;font-weight:bold">-</span>morethanzero:<span style="color:#458;font-weight:bold">v8</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#099">192.168.14.54</span>:<span style="color:#099">5000</span><span style="color:#000;font-weight:bold">/</span>user<span style="color:#000;font-weight:bold">-</span>lessthanzero:<span style="color:#458;font-weight:bold">v8</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>到这里第一步（RunTime code）就完成了</p>
+
 <h3 id="步骤2-准备client-code-实际就是在kubeflow-pipelines上运行自己的实例">步骤2-准备client code （实际就是在kubeflow pipelines上运行自己的实例）</h3>
+
 <p>打开jupyter(参考前面的文章)</p>
+
 <p>输入client.py文件内容即可</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#960050;background-color:#1e0010">（</span><span style="color:#ae81ff">1</span><span style="color:#960050;background-color:#1e0010">）</span>
-import kfp
-from kfp import compiler
-import kfp.dsl <span style="color:#66d9ef">as</span> dsl
-import kfp.notebook
-import kfp.gcp <span style="color:#66d9ef">as</span> gcp
-client <span style="color:#f92672">=</span> kfp.Client()
-from kubernetes import client <span style="color:#66d9ef">as</span> k8s_client
-EXPERIMENT_NAME <span style="color:#f92672">=</span> <span style="color:#a6e22e">&#39;usr1</span><span style="color:#960050;background-color:#1e0010">&#39;</span>
-exp <span style="color:#f92672">=</span> client.create_experiment(name<span style="color:#f92672">=</span>EXPERIMENT_NAME)
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">53
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">54
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">55
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">56
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">57
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">58
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">59
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">60
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">61
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">62
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">63
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">64
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">65
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">66
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#a61717;background-color:#e3d2d2">（</span><span style="color:#099">1</span><span style="color:#a61717;background-color:#e3d2d2">）</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>import<span style="color:#bbb"> </span>kfp<span style="color:#bbb">
+</span><span style="color:#bbb"></span>from<span style="color:#bbb"> </span>kfp<span style="color:#bbb"> </span>import<span style="color:#bbb"> </span>compiler<span style="color:#bbb">
+</span><span style="color:#bbb"></span>import<span style="color:#bbb"> </span>kfp.dsl<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">as</span><span style="color:#bbb"> </span>dsl<span style="color:#bbb">
+</span><span style="color:#bbb"></span>import<span style="color:#bbb"> </span>kfp.notebook<span style="color:#bbb">
+</span><span style="color:#bbb"></span>import<span style="color:#bbb"> </span>kfp.gcp<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">as</span><span style="color:#bbb"> </span>gcp<span style="color:#bbb">
+</span><span style="color:#bbb"></span>client<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>kfp.Client()<span style="color:#bbb">
+</span><span style="color:#bbb"></span>from<span style="color:#bbb"> </span>kubernetes<span style="color:#bbb"> </span>import<span style="color:#bbb"> </span>client<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">as</span><span style="color:#bbb"> </span>k8s_client<span style="color:#bbb">
+</span><span style="color:#bbb"></span>EXPERIMENT_NAME<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#008080">&#39;usr1</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>exp<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>client.create_experiment(name<span style="color:#000;font-weight:bold">=</span>EXPERIMENT_NAME)<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">（</span><span style="color:#099">2</span><span style="color:#a61717;background-color:#e3d2d2">）</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>class<span style="color:#bbb"> </span>validateOp(dsl.ContainerOp):
+  <span style="color:#d14">&#34;&#34;&#34;对文件中的数据进行验证&#34;&#34;&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">  </span>def<span style="color:#bbb"> </span>__init__(<span style="color:#999">self</span>,<span style="color:#bbb"> </span>output_dir,inputFilename):
+    <span style="color:#458;font-weight:bold">super</span>(validateOp,<span style="color:#bbb"> </span><span style="color:#999">self</span>).__init__(<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;validate_number</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>image<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#099">192.168.14.54</span>:<span style="color:#099">5000</span><span style="color:#000;font-weight:bold">/</span>user<span style="color:#000;font-weight:bold">-</span>validate:<span style="color:#458;font-weight:bold">v8</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>arguments<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>[<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>inputFilename<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>inputFilename,<span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>output_dir<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>output_dir,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>],<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>file_outputs<span style="color:#000;font-weight:bold">=</span>{<span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#008080">&#39;more</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>: <span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>moreFilePath.txt<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#008080">&#39;less</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>: <span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>lessFilePath.txt<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">			</span>})<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>class<span style="color:#bbb"> </span>MoreThanZeroOp(dsl.ContainerOp):
+  <span style="color:#d14">&#34;&#34;&#34;handle the number more than zero&#34;&#34;&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">  </span>def<span style="color:#bbb"> </span>__init__(<span style="color:#999">self</span>,output_dir,data):
+    <span style="color:#458;font-weight:bold">super</span>(MoreThanZeroOp,<span style="color:#bbb"> </span><span style="color:#999">self</span>).__init__(<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;MoreThanZero</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>image<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#099">192.168.14.54</span>:<span style="color:#099">5000</span><span style="color:#000;font-weight:bold">/</span>user<span style="color:#000;font-weight:bold">-</span>morethanzero:<span style="color:#458;font-weight:bold">v8</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>arguments<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>[<span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>output_dir<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,output_dir,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>data<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>data,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>])<span style="color:#bbb">
+</span><span style="color:#bbb">    
+</span><span style="color:#bbb"></span>class<span style="color:#bbb"> </span>LessThanZeroOp(dsl.ContainerOp):
+  <span style="color:#d14">&#34;&#34;&#34;handle the number less than zero&#34;&#34;&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">  </span>def<span style="color:#bbb"> </span>__init__(<span style="color:#999">self</span>,output_dir,data):
+    <span style="color:#458;font-weight:bold">super</span>(LessThanZeroOp,<span style="color:#bbb"> </span><span style="color:#999">self</span>).__init__(<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;LessThanZero</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>image<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#099">192.168.14.54</span>:<span style="color:#099">5000</span><span style="color:#000;font-weight:bold">/</span>user<span style="color:#000;font-weight:bold">-</span>lessthanzero:<span style="color:#458;font-weight:bold">v8</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>arguments<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>[<span style="color:#bbb">
+</span><span style="color:#bbb">			</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>output_dir<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,output_dir,<span style="color:#bbb">
+</span><span style="color:#bbb">            </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">--</span>data<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span>data,<span style="color:#bbb">
+</span><span style="color:#bbb">        </span>])<span style="color:#bbb">
+</span><span style="color:#bbb"> 
+</span><span style="color:#bbb"></span><span style="color:#000;font-weight:bold">@</span>dsl.pipeline(<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;Testpipelines</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">	</span>description<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;shows</span><span style="color:#bbb"> </span>how<span style="color:#bbb"> </span>to<span style="color:#bbb"> </span>define<span style="color:#bbb"> </span>dsl.Condition.<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span>)<span style="color:#bbb">
+</span><span style="color:#bbb"></span>def<span style="color:#bbb"> </span>ValidateTest():
+    <span style="color:#458;font-weight:bold">output_dir</span><span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>usr<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb">    </span>inputFilename<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span><span style="color:#008080">&#39;a</span>.txt<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#bbb">
+</span><span style="color:#bbb">    </span>validate<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>validateOp(output_dir,inputFilename).add_volume(k8s_client.V1Volume(name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;usr</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,nfs<span style="color:#000;font-weight:bold">=</span>k8s_client.V1NFSVolumeSource(path<span style="color:#000;font-weight:bold">=</span><span style="color:#bbb">		</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>usr<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,server<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#099">192.168.14.54</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>))).add_volume_mount(k8s_client.V1VolumeMount(mount_path<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>usr<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;usr</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>))<span style="color:#bbb">
+</span><span style="color:#bbb">    </span>moreThanZero<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>MoreThanZeroOp(output_dir,validate.outputs[<span style="color:#008080">&#39;more</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>]).add_volume(k8s_client.V1Volume(name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;usr</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,nfs<span style="color:#000;font-weight:bold">=</span>k8s_client.<span style="color:#bbb">			</span>V1NFSVolumeSource(path<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>usr<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,server<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#099">192.168.14.54</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>))).add_volume_mount(k8s_client.V1VolumeMount(mount_path<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>usr<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;usr</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>))<span style="color:#bbb">
+</span><span style="color:#bbb">    
+</span><span style="color:#bbb">	</span>lessThanZero<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>LessThanZeroOp(output_dir,validate.outputs[<span style="color:#008080">&#39;less</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>]).add_volume(k8s_client.V1Volume(name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;usr</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,nfs<span style="color:#000;font-weight:bold">=</span>k8s_client.<span style="color:#bbb">		 	</span>V1NFSVolumeSource(path<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>usr<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,server<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#099">192.168.14.54</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>))).add_volume_mount(k8s_client.V1VolumeMount(mount_path<span style="color:#000;font-weight:bold">=</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#000;font-weight:bold">/</span>usr<span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,name<span style="color:#000;font-weight:bold">=</span><span style="color:#008080">&#39;usr</span><span style="color:#000;font-weight:bold">-</span>pv<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>))<span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb">
+</span><span style="color:#bbb"></span><span style="color:#a61717;background-color:#e3d2d2">（</span><span style="color:#099">3</span><span style="color:#a61717;background-color:#e3d2d2">）#</span><span style="color:#bbb"> </span>Submit<span style="color:#bbb"> </span>a<span style="color:#bbb"> </span>run.<span style="color:#bbb">	
+</span><span style="color:#bbb"></span>compiler.Compiler().compile(ValidateTest,<span style="color:#bbb">  </span><span style="color:#008080">&#39;test</span>.tar.gz<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>)<span style="color:#bbb">
+</span><span style="color:#bbb"></span>run<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">=</span><span style="color:#bbb"> </span>client.run_pipeline(exp.id,<span style="color:#bbb"> </span><span style="color:#008080">&#39;usr</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#bbb"> </span><span style="color:#008080">&#39;test</span>.tar.gz<span style="color:#a61717;background-color:#e3d2d2">&#39;</span>)</code></pre></td></tr></table>
+</div>
+</div>
+<p>这里要注意的是，我自己建立一个共享存储卷（NFS）。这样我们将输入文件（a.txt）放入这个存储卷下面，容器可以直接去拿，并且最后产生的输出文件会保留在 存储卷里，不会因为任务完成了，容器就消失了，找不到文件。所以，上面的client.py 内容要根据自己的情况修改。</p>
 
-
-<span style="color:#960050;background-color:#1e0010">（</span><span style="color:#ae81ff">2</span><span style="color:#960050;background-color:#1e0010">）</span>
-class validateOp(dsl.ContainerOp):
-  <span style="color:#e6db74">&#34;&#34;&#34;对文件中的数据进行验证&#34;&#34;&#34;</span>
-  def __init__(self, output_dir,inputFilename):
-    <span style="color:#a6e22e">super</span>(validateOp, self).__init__(
-      name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;validate_number</span><span style="color:#960050;background-color:#1e0010">&#39;</span>,
-      image<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#ae81ff">192.168.14.54</span>:<span style="color:#ae81ff">5000</span><span style="color:#f92672">/</span>user<span style="color:#f92672">-</span>validate:<span style="color:#a6e22e">v8</span><span style="color:#960050;background-color:#1e0010">&#39;</span>,
-      arguments <span style="color:#f92672">=</span> [
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>inputFilename<span style="color:#960050;background-color:#1e0010">&#39;</span>, inputFilename,
-			<span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>output_dir<span style="color:#960050;background-color:#1e0010">&#39;</span>, output_dir,
-        ],
-      file_outputs<span style="color:#f92672">=</span>{
-			<span style="color:#a6e22e">&#39;more</span><span style="color:#960050;background-color:#1e0010">&#39;</span>: <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>moreFilePath.txt<span style="color:#960050;background-color:#1e0010">&#39;</span>,
-			<span style="color:#a6e22e">&#39;less</span><span style="color:#960050;background-color:#1e0010">&#39;</span>: <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>lessFilePath.txt<span style="color:#960050;background-color:#1e0010">&#39;</span>,
-			})
-
-class MoreThanZeroOp(dsl.ContainerOp):
-  <span style="color:#e6db74">&#34;&#34;&#34;handle the number more than zero&#34;&#34;&#34;</span>
-  def __init__(self,output_dir,data):
-    <span style="color:#a6e22e">super</span>(MoreThanZeroOp, self).__init__(
-      name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;MoreThanZero</span><span style="color:#960050;background-color:#1e0010">&#39;</span>,
-      image<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#ae81ff">192.168.14.54</span>:<span style="color:#ae81ff">5000</span><span style="color:#f92672">/</span>user<span style="color:#f92672">-</span>morethanzero:<span style="color:#a6e22e">v8</span><span style="color:#960050;background-color:#1e0010">&#39;</span>,
-      arguments <span style="color:#f92672">=</span> [
-			<span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>output_dir<span style="color:#960050;background-color:#1e0010">&#39;</span>,output_dir,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>data<span style="color:#960050;background-color:#1e0010">&#39;</span>, data,
-        ])
-    
-class LessThanZeroOp(dsl.ContainerOp):
-  <span style="color:#e6db74">&#34;&#34;&#34;handle the number less than zero&#34;&#34;&#34;</span>
-  def __init__(self,output_dir,data):
-    <span style="color:#a6e22e">super</span>(LessThanZeroOp, self).__init__(
-      name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;LessThanZero</span><span style="color:#960050;background-color:#1e0010">&#39;</span>,
-      image<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#ae81ff">192.168.14.54</span>:<span style="color:#ae81ff">5000</span><span style="color:#f92672">/</span>user<span style="color:#f92672">-</span>lessthanzero:<span style="color:#a6e22e">v8</span><span style="color:#960050;background-color:#1e0010">&#39;</span>,
-      arguments <span style="color:#f92672">=</span> [
-			<span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>output_dir<span style="color:#960050;background-color:#1e0010">&#39;</span>,output_dir,
-            <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">--</span>data<span style="color:#960050;background-color:#1e0010">&#39;</span>, data,
-        ])
- 
-<span style="color:#f92672">@</span>dsl.pipeline(
-	name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;Testpipelines</span><span style="color:#960050;background-color:#1e0010">&#39;</span>,
-	description<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;shows</span> how to define dsl.Condition.<span style="color:#960050;background-color:#1e0010">&#39;</span>
-)
-def ValidateTest():
-    <span style="color:#a6e22e">output_dir</span> <span style="color:#f92672">=</span> <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>usr<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>
-    inputFilename <span style="color:#f92672">=</span> <span style="color:#a6e22e">&#39;a</span>.txt<span style="color:#960050;background-color:#1e0010">&#39;</span>
-    validate <span style="color:#f92672">=</span> validateOp(output_dir,inputFilename).add_volume(k8s_client.V1Volume(name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;usr</span><span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,nfs<span style="color:#f92672">=</span>k8s_client.V1NFSVolumeSource(path<span style="color:#f92672">=</span>		<span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>usr<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,server<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#ae81ff">192.168.14.54</span><span style="color:#960050;background-color:#1e0010">&#39;</span>))).add_volume_mount(k8s_client.V1VolumeMount(mount_path<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>usr<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;usr</span><span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>))
-    moreThanZero <span style="color:#f92672">=</span> MoreThanZeroOp(output_dir,validate.outputs[<span style="color:#a6e22e">&#39;more</span><span style="color:#960050;background-color:#1e0010">&#39;</span>]).add_volume(k8s_client.V1Volume(name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;usr</span><span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,nfs<span style="color:#f92672">=</span>k8s_client.			V1NFSVolumeSource(path<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>usr<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,server<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#ae81ff">192.168.14.54</span><span style="color:#960050;background-color:#1e0010">&#39;</span>))).add_volume_mount(k8s_client.V1VolumeMount(mount_path<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>usr<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;usr</span><span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>))
-    
-	lessThanZero <span style="color:#f92672">=</span> LessThanZeroOp(output_dir,validate.outputs[<span style="color:#a6e22e">&#39;less</span><span style="color:#960050;background-color:#1e0010">&#39;</span>]).add_volume(k8s_client.V1Volume(name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;usr</span><span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,nfs<span style="color:#f92672">=</span>k8s_client.		 	V1NFSVolumeSource(path<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>usr<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,server<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#ae81ff">192.168.14.54</span><span style="color:#960050;background-color:#1e0010">&#39;</span>))).add_volume_mount(k8s_client.V1VolumeMount(mount_path<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>pv<span style="color:#f92672">/</span>usr<span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>,name<span style="color:#f92672">=</span><span style="color:#a6e22e">&#39;usr</span><span style="color:#f92672">-</span>pv<span style="color:#960050;background-color:#1e0010">&#39;</span>))
-
-
-<span style="color:#960050;background-color:#1e0010">（</span><span style="color:#ae81ff">3</span><span style="color:#960050;background-color:#1e0010">）#</span> Submit a run.	
-compiler.Compiler().compile(ValidateTest,  <span style="color:#a6e22e">&#39;test</span>.tar.gz<span style="color:#960050;background-color:#1e0010">&#39;</span>)
-run <span style="color:#f92672">=</span> client.run_pipeline(exp.id, <span style="color:#a6e22e">&#39;usr</span><span style="color:#960050;background-color:#1e0010">&#39;</span>, <span style="color:#a6e22e">&#39;test</span>.tar.gz<span style="color:#960050;background-color:#1e0010">&#39;</span>)
-</code></pre></div><p>这里要注意的是，我自己建立一个共享存储卷（NFS）。这样我们将输入文件（a.txt）放入这个存储卷下面，容器可以直接去拿，并且最后产生的输出文件会保留在 存储卷里，不会因为任务完成了，容器就消失了，找不到文件。所以，上面的client.py 内容要根据自己的情况修改。</p>
-<h5 id="kubeflow-pipelines目前先琢磨到这里接下来会关注kubeflow实现gang-scheduler这一方面">kubeflow pipelines目前先琢磨到这里。接下来会关注kubeflow实现gang scheduler这一方面。</h5>
+<h5 id="kubeflow-pipelines目前先琢磨到这里-接下来会关注kubeflow实现gang-scheduler这一方面">kubeflow pipelines目前先琢磨到这里。接下来会关注kubeflow实现gang scheduler这一方面。</h5>
 
         </div>
 
@@ -404,7 +745,7 @@ run <span style="color:#f92672">=</span> client.run_pipeline(exp.id, <span style
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

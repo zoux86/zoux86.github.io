@@ -73,7 +73,124 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#目的">目的</a></li>
+<li><a href="#操作如下">操作如下：</a>
+<ul>
+<li><a href="#针对master节点">针对master节点：</a>
+<ul>
+<li><a href="#master节点上安装nfs服务">master节点上安装NFS服务</a></li>
+<li><a href="#建立一个共享的文件夹">建立一个共享的文件夹</a></li>
+<li><a href="#修改-etc-exports文件-末尾添加">修改/etc/exports文件 (末尾添加)</a></li>
+<li><a href="#重启nfs服务">重启NFS服务</a></li>
+</ul></li>
+<li><a href="#针对node节点">针对node节点</a>
+<ul>
+<li><a href="#安装nfs客户端">安装NFS客户端</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">kubeflow准备--NFS环境搭建</h1>
@@ -97,23 +214,69 @@
         
         
         <div class="post-content">
-            <h3 id="目的">目的</h3>
+            
+
+<h3 id="目的">目的</h3>
+
 <p>在搭建kubeflow的时候，要需要搭建存储卷。为了以后能更好的共享文件，我这里使用了NFS作为文件存储系统。</p>
+
 <h3 id="操作如下">操作如下：</h3>
+
 <h4 id="针对master节点">针对master节点：</h4>
+
 <h5 id="master节点上安装nfs服务">master节点上安装NFS服务</h5>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">sudo apt<span style="color:#f92672">-</span>get update <span style="color:#f92672">&amp;&amp;</span> sudo apt<span style="color:#f92672">-</span>get install <span style="color:#f92672">-</span>y nfs<span style="color:#f92672">-</span>server
-</code></pre></div><h5 id="建立一个共享的文件夹">建立一个共享的文件夹</h5>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">sudo mkdir <span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>data<span style="color:#f92672">/</span>kubeflow<span style="color:#f92672">-</span>pv1
-</code></pre></div><h5 id="修改etcexports文件-末尾添加">修改/etc/exports文件 (末尾添加)</h5>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>data<span style="color:#f92672">/</span>kubeflow<span style="color:#f92672">-</span>pv1 <span style="color:#f92672">*</span>(rw,sync,no_root_squash,no_subtree_check) 
-</code></pre></div><p>这一行的意思是将/nfs-data/kubeflow-pv1作为服务文件夹向客户端开放，'*&lsquo;表示任何IP都可以访问，rw是读写权限，sync是同步权限，no_subtree_check表示如果输出目录是一个子目录，nfs不检查其父目录的权限；</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">sudo<span style="color:#bbb"> </span>apt<span style="color:#000;font-weight:bold">-</span>get<span style="color:#bbb"> </span>update<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">&amp;&amp;</span><span style="color:#bbb"> </span>sudo<span style="color:#bbb"> </span>apt<span style="color:#000;font-weight:bold">-</span>get<span style="color:#bbb"> </span>install<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">-</span>y<span style="color:#bbb"> </span>nfs<span style="color:#000;font-weight:bold">-</span>server</code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="建立一个共享的文件夹">建立一个共享的文件夹</h5>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">sudo<span style="color:#bbb"> </span>mkdir<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>data<span style="color:#000;font-weight:bold">/</span>kubeflow<span style="color:#000;font-weight:bold">-</span>pv1</code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="修改-etc-exports文件-末尾添加">修改/etc/exports文件 (末尾添加)</h5>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>data<span style="color:#000;font-weight:bold">/</span>kubeflow<span style="color:#000;font-weight:bold">-</span>pv1<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">*</span>(rw,sync,no_root_squash,no_subtree_check)<span style="color:#bbb"> 
+</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>这一行的意思是将/nfs-data/kubeflow-pv1作为服务文件夹向客户端开放，&rsquo;*&lsquo;表示任何IP都可以访问，rw是读写权限，sync是同步权限，no_subtree_check表示如果输出目录是一个子目录，nfs不检查其父目录的权限；</p>
+
 <h5 id="重启nfs服务">重启NFS服务</h5>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">sudo <span style="color:#f92672">/</span>etc<span style="color:#f92672">/</span>init.d<span style="color:#f92672">/</span>nfs<span style="color:#f92672">-</span>kernel<span style="color:#f92672">-</span>server restart 
-</code></pre></div><h4 id="针对node节点">针对node节点</h4>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">sudo<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">/</span>etc<span style="color:#000;font-weight:bold">/</span>init.d<span style="color:#000;font-weight:bold">/</span>nfs<span style="color:#000;font-weight:bold">-</span>kernel<span style="color:#000;font-weight:bold">-</span>server<span style="color:#bbb"> </span>restart<span style="color:#bbb"> 
+</span></code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="针对node节点">针对node节点</h4>
+
 <h5 id="安装nfs客户端">安装NFS客户端</h5>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">sudo apt<span style="color:#f92672">-</span>get update <span style="color:#f92672">&amp;&amp;</span> sudo apt<span style="color:#f92672">-</span>get install <span style="color:#f92672">-</span>y nfs<span style="color:#f92672">-</span>common 
-</code></pre></div><p>完成上面的操作已经建立好了NFS服务了。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust">sudo<span style="color:#bbb"> </span>apt<span style="color:#000;font-weight:bold">-</span>get<span style="color:#bbb"> </span>update<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">&amp;&amp;</span><span style="color:#bbb"> </span>sudo<span style="color:#bbb"> </span>apt<span style="color:#000;font-weight:bold">-</span>get<span style="color:#bbb"> </span>install<span style="color:#bbb"> </span><span style="color:#000;font-weight:bold">-</span>y<span style="color:#bbb"> </span>nfs<span style="color:#000;font-weight:bold">-</span>common<span style="color:#bbb"> 
+</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>完成上面的操作已经建立好了NFS服务了。</p>
 
         </div>
 
@@ -216,7 +379,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">

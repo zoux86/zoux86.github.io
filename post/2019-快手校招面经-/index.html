@@ -73,7 +73,114 @@
                 <div class="col-8" id="main">
                     
 <div class="res-cons">
-    
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#一面">一面</a></li>
+</ul></li>
+<li><a href="#二面">二面</a></li>
+<li><a href="#hr">HR</a></li>
+<li><a href="#结果">结果</a></li>
+<li><a href="#总结">总结</a></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
     <article class="post">
         <header>
             <h1 class="post-title">2019快手面经</h1>
@@ -97,43 +204,82 @@
         
         
         <div class="post-content">
-            <p>面试时间：19年8月</p>
+            
+
+<p>面试时间：19年8月</p>
+
 <p>岗位：云平台研发工程师</p>
+
 <p>形式：现场面试</p>
+
 <h3 id="一面">一面</h3>
+
 <p>一上来面试官就说，看过我博客，说我最近做的事情和他们做的很像，只不过是更深而且。并且还问了为什么博客后面没更新，最后跟我说博客要坚持写下去，说写技术博客的习惯很好。然后我当时都蒙了，感觉斗地主前三张牌就拿到了王炸。然后开始了正经的面试</p>
+
 <p>1.自我介绍</p>
+
 <p>2.熟悉什么语言（c++）</p>
+
 <p>3.C++中的接口如何实现</p>
+
 <p>4.智能指针了解吗</p>
+
 <p>5.你对go语言的看法</p>
+
 <p>6.一般在window下开发多一点，还是linux</p>
+
 <p>7.服务器如果很卡，你会怎么办</p>
+
 <p>8.算法题：</p>
+
 <p>（1）打家劫舍问题，有一排房子，房子有一定的金币（用数组表示），小偷不能偷相邻的房子，求小偷最后能偷到的最大金币数量</p>
+
 <p>要求：一遍遍历，O(1)空间</p>
+
 <p>（2）有下面的对应关系：</p>
+
 <p>1 ~ a</p>
+
 <p>2 ~ b</p>
+
 <p>3 ~ c</p>
+
 <p>。。。</p>
+
 <p>26 ~ z</p>
+
 <p>27 ~aa</p>
+
 <p>输入一个数，求对应的字符串。</p>
+
 <h2 id="二面">二面</h2>
+
 <p>1.自我介绍</p>
+
 <p>2.介绍项目</p>
+
 <p>3.画k8s的架构图，并介绍各个组件的作用</p>
+
 <p>4.k8s如何支持GPU</p>
+
 <p>5.讲一下看过的K8s源码</p>
+
 <p>6.写出对应的linux命令：求a.txt中第一列出现最多的单词</p>
+
 <p>7.GPU的结构</p>
+
 <p>8.算法题：复制带随机指针的链表</p>
+
 <h2 id="hr">HR</h2>
+
 <p>常规HR问题。自我介绍，哪里人，会不会留北京，最有意义的事情，最遗憾的事情等。</p>
+
 <h2 id="结果">结果</h2>
+
 <p>通过</p>
+
 <h2 id="总结">总结</h2>
+
 <p>对快手的感觉也非常好，在等待面试的时候，还收到了快手的下午茶。一根香蕉，一个派，还有一瓶饮料。一面面试官人很好，最后一直在和我聊天，一面最终面试了1小时40多分钟，还是我最后打断他的。。。</p>
 
         </div>
@@ -233,7 +379,7 @@
 
                 <div id="secondary">
     <section class="widget">
-        <form id="search" action='//www.google.com/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
       
       <input type="text" name="q" maxlength="20" placeholder="Search">
       <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
