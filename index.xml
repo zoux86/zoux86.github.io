@@ -629,15 +629,6 @@
     </item>
     
     <item>
-      <title>Java之String、StringBuffer、StringBuilder</title>
-      <link>https://zoux86.github.io/post/java%E4%B9%8Bstringstringbufferstringbuilder/</link>
-      <pubDate>Sat, 13 Oct 2018 20:31:20 +0800</pubDate>
-      
-      <guid>https://zoux86.github.io/post/java%E4%B9%8Bstringstringbufferstringbuilder/</guid>
-      <description>String： String类是final修饰的，是不可变的。我们看到的例如: String a = &amp;ldquo;hello&amp;rdquo;; a = a + &amp;ldquo;1&amp;rdquo;; 实际上是先生成了一个对象然后得到结果&amp;rdquo;hello1&amp;rdquo;,最后在赋值给对象a; String 类型的任何改动都是先生成一个其他对象再重新赋值。 所以String类适合那种常量或者基本</description>
-    </item>
-    
-    <item>
       <title>window下使用nc</title>
       <link>https://zoux86.github.io/post/window%E4%B8%8B%E4%BD%BF%E7%94%A8nc/</link>
       <pubDate>Fri, 21 Sep 2018 20:31:20 +0800</pubDate>
