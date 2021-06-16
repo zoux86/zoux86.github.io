@@ -13,7 +13,7 @@
       <pubDate>Sun, 15 Dec 2019 01:31:20 +0800</pubDate>
       
       <guid>https://zoux86.github.io/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/</guid>
-      <description>toc=true 目录 （1）k8s简介 （2）k8s组件介绍 背景简介 Docker 项目和容器技术目前还是非常火热，但是Docker 技术栈，有自己的局限性，这是它的出发点决定的。那么在docker层之上，例如 容器编排？调度？容器云？集群管理？这些事情就需要另外一个项目来解决了。 在我最开始接触k8s的时候，我看到</description>
+      <description>目录 （1）k8s简介 （2）k8s组件介绍 背景简介 Docker 项目和容器技术目前还是非常火热，但是Docker 技术栈，有自己的局限性，这是它的出发点决定的。那么在docker层之上，例如 容器编排？调度？容器云？集群管理？这些事情就需要另外一个项目来解决了。 在我最开始接触k8s的时候，我看到的</description>
     </item>
     
     <item>
@@ -608,15 +608,6 @@
       
       <guid>https://zoux86.github.io/post/%E7%AE%97%E6%B3%95-%E6%95%B0%E5%AD%97%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97/</guid>
       <description>https://www.cnblogs.com/masterlibin/p/5531399.html</description>
-    </item>
-    
-    <item>
-      <title>window下使用nc</title>
-      <link>https://zoux86.github.io/post/window%E4%B8%8B%E4%BD%BF%E7%94%A8nc/</link>
-      <pubDate>Fri, 21 Sep 2018 20:31:20 +0800</pubDate>
-      
-      <guid>https://zoux86.github.io/post/window%E4%B8%8B%E4%BD%BF%E7%94%A8nc/</guid>
-      <description>下载netcat 地址：https://eternallybored.org/misc/netcat/ 下载1.12，1.11都行。 安裝nc 将解压后的单个文件全部拷贝到C:\Windows\System32的文件夹下 Tips：注意不是拷贝整个文件夹，而是文件夹里面的全部文件。 使用nc</description>
     </item>
     
     <item>
