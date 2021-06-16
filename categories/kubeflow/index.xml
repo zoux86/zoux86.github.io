@@ -61,5 +61,50 @@
       <description>按照前几篇文章搭建好Kubeflow集群后，所有的pod都能运行了。但是在自己本地浏览器访问界面时却发现网页一直打不开。访问不了jupyter。这样因为默认的这些服务都是使用cluster ip。只能集群内部访问，外网访问不了。 解决方法： 查看当前的服务 1 kubectl-nkubeflowgetsvc 如图所示，这里注意，这是我</description>
     </item>
     
+    <item>
+      <title>kubeflow准备--NFS环境搭建</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-nfs%E5%81%9A%E5%90%8E%E7%AB%AF%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/</link>
+      <pubDate>Mon, 07 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-nfs%E5%81%9A%E5%90%8E%E7%AB%AF%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/</guid>
+      <description>目的 在搭建kubeflow的时候，要需要搭建存储卷。为了以后能更好的共享文件，我这里使用了NFS作为文件存储系统。 操作如下： 针对master节点： master节点上安装NFS服务 1 sudoapt-getupdate&amp;amp;&amp;amp;sudoapt-getinstall-ynfs-server 建立一个共享的文件夹 1 sudomkdir/nfs-data/kubeflow-pv1 修改/etc/exports文件 (末尾添加) 1 /nfs-data/kubeflow-pv1*(rw,sync,no_root_squash,no_subtree_check) 这一行的意思是将/nfs-</description>
+    </item>
+    
+    <item>
+      <title>kubeflow准备--下载ks</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87%E5%B7%A5%E5%85%B7-ksonnet-%E5%AE%89%E8%A3%85/</link>
+      <pubDate>Mon, 07 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87%E5%B7%A5%E5%85%B7-ksonnet-%E5%AE%89%E8%A3%85/</guid>
+      <description>最近需要了解Kubeflow方面的知识，故需要自己配置kubeflow。安装Kubeflow需要按照以下的依赖: ksonnet version 0.11.0 or later. Kubernetes 1.8 or later kubectl 由于，k8s,kubectl的安装网上已经有很多教程了，而本人安装ksonnet时绕了一些弯，所以在此记录一些本人的安装过程。 安装环境介绍： 本人的k</description>
+    </item>
+    
+    <item>
+      <title>kubeflow准备--拉取镜像</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F/</link>
+      <pubDate>Mon, 07 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F/</guid>
+      <description>目的 某些情况下，我们可能需要让服务器能够下载到gcr.io，比如安装k8s/kubeflow的时候。这里设置ubuntu服务器环境下能让docker pull gcr.io镜像。 说在前面的话 如果服务器直接能直接下载，这个安装教程不适合你。 如果有shadowsocks服务器，可以参考这个教程</description>
+    </item>
+    
+    <item>
+      <title>kubeflow国内环境安装</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kubeflow-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/</link>
+      <pubDate>Mon, 07 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kubeflow-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/</guid>
+      <description>最近一直在想在自己集群上搭建Kubeflow环境，兜兜转转最终终于装好了。这个过程中遇到了很多坑，而在整个过程中发现网上关于如何在国内环境下安装kubeflow的教程非常少。故在此记录我的搭建过程，希望能对想搭建kubeflow环境的小伙伴们一些帮助。这里特意感谢实验室董师兄的指</description>
+    </item>
+    
+    <item>
+      <title>kubeflow准备--搭建私有仓库</title>
+      <link>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/</link>
+      <pubDate>Sun, 06 Jan 2019 20:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/</guid>
+      <description>在很多情况下，我们需要使用自己的docker仓库。接下来是在本地k8s集群上搭建本地仓库的过程。 假设我们将本地仓库搭建在k8s主节点上。 这里假设主节点是：192.168.14.84 运行registry镜像 1 dockerrun-d-p5000:5000--restartalways--nameregistryregistry:2 直接运行该命令即可，本地没有registry:2，会自动pull 修改配置</description>
+    </item>
+    
   </channel>
 </rss>

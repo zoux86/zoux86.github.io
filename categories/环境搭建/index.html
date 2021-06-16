@@ -82,29 +82,6 @@
     <article class="post">
         <header>
             <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-11-24-%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F%E9%97%AE%E9%A2%98/">下载镜像问题</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2019年11月20日
-        </date>
-        
-        <div class="post-meta meta-category">
-            |
-            
-            <a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a>
-            
-        </div>
-        
-        <div class="post-content">
-            在本人安装k8s/kubeflow的时候，遇到一个很大的问题就是某些镜像下载不了。大家如果有什么镜像下载不了，可以留言，我会尝试帮忙下载。……
-            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F%E9%97%AE%E9%A2%98/">阅读全文</a></p>
-        </div>
-    </article>
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
                 <a href="https://zoux86.github.io/post/2019-11-24-k8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85helm/">k8s集群安装helm</a>
             </h1>
         </header>
@@ -174,121 +151,6 @@
     <article class="post">
         <header>
             <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-nfs%E5%81%9A%E5%90%8E%E7%AB%AF%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/">kubeflow准备--NFS环境搭建</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2019年1月7日
-        </date>
-        
-        <div class="post-meta meta-category">
-            |
-            
-            <a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a>
-            
-        </div>
-        
-        <div class="post-content">
-            目的 在搭建kubeflow的时候，要需要搭建存储卷。为了以后能更好的共享文件，我这里使用了NFS作为文件存储系统。 操作如下： 针对master节点： master节点上安装NFS服务 1 sudoapt-getupdate&amp;&amp;sudoapt-getinstall-ynfs-server 建立一个共享的文件夹 1 sudomkdir/nfs-data/kubeflow-pv1 修改/etc/exports文件 (末尾添加) 1 /nfs-data/kubeflow-pv1*(rw,sync,no_root_squash,no_subtree_check) 这一行的意思是将/nfs-……
-            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-nfs%E5%81%9A%E5%90%8E%E7%AB%AF%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/">阅读全文</a></p>
-        </div>
-    </article>
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87%E5%B7%A5%E5%85%B7-ksonnet-%E5%AE%89%E8%A3%85/">kubeflow准备--下载ks</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2019年1月7日
-        </date>
-        
-        <div class="post-meta meta-category">
-            |
-            
-            <a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a>
-            
-        </div>
-        
-        <div class="post-content">
-            最近需要了解Kubeflow方面的知识，故需要自己配置kubeflow。安装Kubeflow需要按照以下的依赖: ksonnet version 0.11.0 or later. Kubernetes 1.8 or later kubectl 由于，k8s,kubectl的安装网上已经有很多教程了，而本人安装ksonnet时绕了一些弯，所以在此记录一些本人的安装过程。 安装环境介绍： 本人的k……
-            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87%E5%B7%A5%E5%85%B7-ksonnet-%E5%AE%89%E8%A3%85/">阅读全文</a></p>
-        </div>
-    </article>
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F/">kubeflow准备--拉取镜像</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2019年1月7日
-        </date>
-        
-        <div class="post-meta meta-category">
-            |
-            
-            <a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a>
-            
-        </div>
-        
-        <div class="post-content">
-            目的 某些情况下，我们可能需要让服务器能够下载到gcr.io，比如安装k8s/kubeflow的时候。这里设置ubuntu服务器环境下能让docker pull gcr.io镜像。 说在前面的话 如果服务器直接能直接下载，这个安装教程不适合你。 如果有shadowsocks服务器，可以参考这个教程……
-            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F/">阅读全文</a></p>
-        </div>
-    </article>
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/">kubeflow国内环境安装</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2019年1月7日
-        </date>
-        
-        <div class="post-meta meta-category">
-            |
-            
-            <a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a>
-            
-        </div>
-        
-        <div class="post-content">
-            最近一直在想在自己集群上搭建Kubeflow环境，兜兜转转最终终于装好了。这个过程中遇到了很多坑，而在整个过程中发现网上关于如何在国内环境下安装kubeflow的教程非常少。故在此记录我的搭建过程，希望能对想搭建kubeflow环境的小伙伴们一些帮助。这里特意感谢实验室董师兄的指……
-            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/">阅读全文</a></p>
-        </div>
-    </article>
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/">kubeflow准备--搭建私有仓库</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2019年1月6日
-        </date>
-        
-        <div class="post-meta meta-category">
-            |
-            
-            <a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a>
-            
-        </div>
-        
-        <div class="post-content">
-            在很多情况下，我们需要使用自己的docker仓库。接下来是在本地k8s集群上搭建本地仓库的过程。 假设我们将本地仓库搭建在k8s主节点上。 这里假设主节点是：192.168.14.84 运行registry镜像 1 dockerrun-d-p5000:5000--restartalways--nameregistryregistry:2 直接运行该命令即可，本地没有registry:2，会自动pull 修改配置……
-            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/">阅读全文</a></p>
-        </div>
-    </article>
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
                 <a href="https://zoux86.github.io/post/2019-11-24-ubuntu%E6%9C%BA%E5%99%A8%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">ubuntu机器之间免密登录</a>
             </h1>
         </header>
@@ -309,30 +171,79 @@
         </div>
     </article>
     
-
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/ubuntu%E4%BF%A9%E5%8F%B0%E6%9C%BA%E5%99%A8%E4%B9%8B%E9%97%B4%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">ubuntu俩台机器之间免密登录</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2018年7月17日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a>
+            
+        </div>
+        
+        <div class="post-content">
+            1.首先使用 ipconfig 命令查看俩台电脑的ip地址 图中的192.168.111.136 就是这个机器的ip地址。 2.安装ssh 使用 ps -e | grep ssh 命令查看是否安装了ssh。没有的话，使用 sudo apt-get install openssh-server命令安装即可。 3.生成A机器的公钥 输入ssh-keygen，然后一路回车下去。……
+            <p class="readmore"><a href="https://zoux86.github.io/post/ubuntu%E4%BF%A9%E5%8F%B0%E6%9C%BA%E5%99%A8%E4%B9%8B%E9%97%B4%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">阅读全文</a></p>
+        </div>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/vmware%E5%AE%89%E8%A3%85/">VM 安装VMware tools</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2018年7月10日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a>
+            
+        </div>
+        
+        <div class="post-content">
+            在VM安装ubuntu的朋友都会发现, 安装好的ubuntu用起来会很不方便，不能全屏放大，本机系统和ubuntu系统传输文件也不方便。所以这个时候就很需要一个工具，VMware tools。 1.首先，我们要打开运行一个虚拟机系统，然后如图所示点击“安装VMware tools”。 2.……
+            <p class="readmore"><a href="https://zoux86.github.io/post/vmware%E5%AE%89%E8%A3%85/">阅读全文</a></p>
+        </div>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/vmware%E9%BB%91%E5%B1%8F/">VM解决黑屏问题</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2018年7月10日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a>
+            
+        </div>
+        
+        <div class="post-content">
+            VMware 解决所有所有虚拟机都黑屏的办法 以前电脑安装了VM，在VM上也安装了好几个虚拟机，都能正常使用。 隔了几个月没有使用这几个虚拟机，今天发现所有的虚拟机打开都是黑屏状态，没有一点反应。 解决办法： 管理员身份运行cmd，输入如下命令，作用：重置winsock网络规范。 cmd命令：nets……
+            <p class="readmore"><a href="https://zoux86.github.io/post/vmware%E9%BB%91%E5%B1%8F/">阅读全文</a></p>
+        </div>
+    </article>
     
 
-
-
-<ol class="page-navigator">
     
 
-    
-    <li  class="current">
-        <a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">1</a>
-    </li>
-    
-    <li >
-        <a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/page/2/">2</a>
-    </li>
-    
 
-    
-    <li class="next">
-        <a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/page/2/">下一页</a>
-    </li>
-    
-</ol>
 
 
 
@@ -448,13 +359,13 @@
     
     <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/kubeflow/">kubeflow (6)</a></li>
+    <li><a href="https://zoux86.github.io/categories/kubeflow/">kubeflow (11)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/volcano/">volcano (4)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/%E4%B8%AA%E4%BA%BA%E6%84%9F%E6%82%9F/">个人感悟 (2)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建 (13)</a></li>
+    <li><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建 (7)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题 (2)</a></li>
     
@@ -479,19 +390,11 @@
     
     <a href="https://zoux86.github.io/tags/hadoop/">Hadoop</a>
     
-    <a href="https://zoux86.github.io/tags/jupyter/">jupyter</a>
-    
     <a href="https://zoux86.github.io/tags/k8s/">k8s</a>
-    
-    <a href="https://zoux86.github.io/tags/ks/">ks</a>
     
     <a href="https://zoux86.github.io/tags/kube-batch/">kube-batch</a>
     
     <a href="https://zoux86.github.io/tags/kubeflow/">kubeflow</a>
-    
-    <a href="https://zoux86.github.io/tags/nfs/">NFS</a>
-    
-    <a href="https://zoux86.github.io/tags/pipelines/">pipelines</a>
     
     <a href="https://zoux86.github.io/tags/tf-operator/">tf-operator</a>
     
@@ -513,15 +416,11 @@
     
     <a href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建</a>
     
-    <a href="https://zoux86.github.io/tags/%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/">私有仓库</a>
-    
     <a href="https://zoux86.github.io/tags/%E7%AC%94%E8%AE%B0/">笔记</a>
     
     <a href="https://zoux86.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题</a>
     
     <a href="https://zoux86.github.io/tags/%E8%B0%83%E5%BA%A6/">调度</a>
-    
-    <a href="https://zoux86.github.io/tags/%E9%95%9C%E5%83%8F/">镜像</a>
     
 </div>
     </section>
