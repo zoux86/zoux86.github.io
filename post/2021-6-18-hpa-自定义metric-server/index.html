@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>自定义metric server | zoux的博客</title>
+    <meta property="og:title" content="自定义metric server - zoux的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2021-06-18T00:31:20&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2021-06-18T00:31:20&#43;08:00'>
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
+    <meta name="description" content="自定义metric server">
+        
+    <meta name="author" content="zoux">
+    <meta property="og:url" content="https://zoux86.github.io/post/2021-6-18-hpa-%E8%87%AA%E5%AE%9A%E4%B9%89metric-server/">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+    
+    
+    
+</head>
+
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zoux86.github.io/">
+                        zoux的博客
+                    </a>
+                
+                <p class="description">对Go语言(golang)、k8s、kubeflow，容器云，云原生感兴趣</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zoux86.github.io/">首页</a>
+                    
+                    <a  href="https://zoux86.github.io/tools/" title="工具">工具</a>
+                    
+                    <a  href="https://zoux86.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://zoux86.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">自定义metric server</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年6月18日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/k8s'>k8s</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            
+
+<p><strong>本章重点：</strong> 如何基于 custom-metrics-apiserver 项目，打造自己的 metric server</p>
+
+<h3 id="1-custom-metrics-apiserver简介">1. custom-metrics-apiserver简介</h3>
+
+<p>项目地址： <a href="https://github.com/kubernetes-sigs/custom-metrics-apiserver/tree/master">https://github.com/kubernetes-sigs/custom-metrics-apiserver/tree/master</a></p>
+
+<p><strong>自定义metric server，具体来说需要做以下几个事情：</strong></p>
+
+<p>（1）实现  custom-metrics-apiserver 的 三个接口，如下：</p>
+<pre><code>type CustomMetricsProvider interface {
+    // 定义metric。 例如 pod_cpu_used_1m
+    ListAllMetrics() []CustomMetricInfo
+	
+	// 如何根据 metric的信息，得到具体的值
+    GetMetricByName(name types.NamespacedName, info CustomMetricInfo) (*custom_metrics.MetricValue, error)
+    
+    // 如何根据 metric selector的信息，得到具体的值
+    GetMetricBySelector(namespace string, selector labels.Selector, info CustomMetricInfo) (*custom_metrics.MetricValueList, error)
+}</code></pre>
+<p>GetMetricBySelectorm, GetMetricByName 在reststorage.go被使用。</p>
+
+<p><a href="https://github.com/kubernetes-sigs/custom-metrics-apiserver/blob/master/pkg/registry/custom_metrics/reststorage.go">https://github.com/kubernetes-sigs/custom-metrics-apiserver/blob/master/pkg/registry/custom_metrics/reststorage.go</a></p>
+
+<p>restful接口在installer.go中被定义。</p>
+
+<p><a href="https://github.com/kubernetes-sigs/custom-metrics-apiserver/blob/master/pkg/apiserver/installer/installer.go">https://github.com/kubernetes-sigs/custom-metrics-apiserver/blob/master/pkg/apiserver/installer/installer.go</a></p>
+
+<p><strong>总的来说，可以认为</strong></p>
+
+<p>（1）基于custom-metrics-apiserver这个项目，你只要实现上述三个接口就行。其他的事情这个包在你new provider的时候都自动实现了。</p>
+
+<p>（2）ListAllMetrics 注册了所有的Metric，让api-server 知道有哪些自定义metric。</p>
+
+<p>（3）GetMetricByName， GetMetricBySelector 都是返回具体的Metric数据。</p>
+
+<p>（4）一般api server都是 调用GetMetricBySelector，因为hpa的对象基本都是deploy, GetMetricBySelector会循环调用GetMetricByName取得deploy所有pod的metric信息。</p>
+
+<p><br></p>
+
+<h3 id="2-定制自己的metric-server">2. 定制自己的metric server</h3>
+
+<h4 id="2-1-代码部署和编译">2.1 代码部署和编译</h4>
+
+<p>这里我做了如下的修改。对于metric server而言，无论访问什么metric，都返回10。</p>
+<pre><code>func (p *monitorProvider) GetMetricByName(
+	name types.NamespacedName,
+	info provider.CustomMetricInfo,
+	metricSelector labels.Selector,
+) (*custom_metrics.MetricValue, error) {
+	ref, err := helpers.ReferenceFor(p.mapper, name, info)
+	if err != nil {
+		return nil, err
+	}
+	return &amp;custom_metrics.MetricValue{
+		DescribedObject: ref,
+		// MetricName:      info.Metric,
+		Metric: custom_metrics.MetricIdentifier{
+			Name: info.Metric,
+		},
+		Timestamp: metav1.Time{time.Unix(int64(10), 0)},
+		Value:     *resource.NewMilliQuantity(int64(10*1000.0), resource.DecimalSI),
+	}, nil
+}</code></pre>
+<p>更详细的可以参考:  <a href="https://github.com/kubernetes-sigs/custom-metrics-apiserver/tree/master/test-adapter">https://github.com/kubernetes-sigs/custom-metrics-apiserver/tree/master/test-adapter</a></p>
+
+<p><br></p>
+
+<p>编译生成自己的镜像：zoux/hpa:v1。然后生成一下的deployment。</p>
+<pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kube-hpa
+  name: kube-hpa
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-hpa
+  template:
+    metadata:
+      labels:
+        app: kube-hpa
+      name: kube-hpa
+    spec:
+      hostNetwork: true
+      containers:
+      - name: kube-hpa
+        image: zoux/hpa:v1
+        imagePullPolicy: IfNotPresent
+        command:
+        - /metric-server
+        args:
+        - --master-url=XXX
+        - --kube-config=/pkc/config
+        - --tls-private-key-file=/pkc/server-key.pem
+        - --secure-port=9997
+        - --v=10
+        ports:
+        - containerPort: 9997
+        resources:
+          limits:
+            cpu: 2
+            memory: 2048Mi
+          requests:
+            cpu: 0.5
+            memory: 500Mi
+        volumeMounts:
+        - name: pkc
+          mountPath: /pkc
+          readOnly: true
+      volumes:
+      - name: pkc
+        hostPath:
+          path: /opt/kubernetes/ssl</code></pre>
+<p><br></p>
+
+<p>验证部署成功</p>
+<pre><code>root@k8s-master:~/testyaml/hpa# kubectl get pod -n kube-system -o wide
+NAME                        READY   STATUS    RESTARTS   AGE     IP            NODE          NOMINATED NODE   READINESS GATES
+kube-hpa-84c884f994-gd5fl   1/1     Running   0          3d13h   192.168.0.5   192.168.0.5   &lt;none&gt;           &lt;none&gt;</code></pre>
+<h4 id="2-2-创建-sv-and-apiservice">2.2 创建 Sv and APIService</h4>
+
+<p>上面虽然部署成功了，但是apiserver还是访问不到。</p>
+<pre><code>k8s-master:~/testyaml/hpa# kubectl get --raw &#34;/apis/custom.metrics.k8s.io/v1
+Error from server (NotFound): the server could not find the requested resource</code></pre>
+<p>原因在于，apiserver不知道如何找到kube-hpa-84c884f994-gd5fl这个pod进行访问。所以需要创建下面的svc和apiserver。</p>
+<pre><code>root@k8s-master:~/testyaml/hpa# cat tls.yaml 
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-hpa
+  namespace: kube-system
+spec:
+  clusterIP: None
+  ports:
+  - name: https-hpa-dont-edit-it
+    port: 9997
+    targetPort: 9997
+  selector:
+    app: kube-hpa
+---
+apiVersion: apiregistration.k8s.io/v1beta1
+kind: APIService
+metadata:
+  name: v1beta1.custom.metrics.k8s.io
+spec:
+  service:
+    name: kube-hpa
+    namespace: kube-system
+    port: 9997
+  group: custom.metrics.k8s.io
+  version: v1beta1
+  insecureSkipTLSVerify: true
+  groupPriorityMinimum: 100
+  versionPriority: 100</code></pre>
+<p><strong>创建完成，验证是否成功：</strong></p>
+<pre><code>root@k8s-master:~/testyaml/hpa# kubectl get --raw &#34;/apis/custom.metrics.k8s.io/v1beta1&#34;
+{&#34;kind&#34;:&#34;APIResourceList&#34;,&#34;apiVersion&#34;:&#34;v1&#34;,&#34;groupVersion&#34;:&#34;custom.metrics.k8s.io/v1beta1&#34;,&#34;resources&#34;:[{&#34;name&#34;:&#34;pods/pod_cpu_used_1m&#34;,&#34;singularName&#34;:&#34;&#34;,&#34;namespaced&#34;:true,&#34;kind&#34;:&#34;MetricValueList&#34;,&#34;verbs&#34;:[&#34;get&#34;]},{&#34;name&#34;:&#34;pods/pod_cpu_used_5m&#34;,&#34;singularName&#34;:&#34;&#34;,&#34;namespaced&#34;:true,&#34;kind&#34;:&#34;MetricValueList&#34;,&#34;verbs&#34;:[&#34;get&#34;]},{&#34;name&#34;:&#34;pods/container_cpu_used_1m&#34;,&#34;singularName&#34;:&#34;&#34;,&#34;namespaced&#34;:true,&#34;kind&#34;:&#34;MetricValueList&#34;,&#34;verbs&#34;:...}</code></pre>
+<p>如果报错。查看该apiserver哪里报错了</p>
+<pre><code>root@k8s-master:~/testyaml/hpa# kubectl get APIService v1beta1.custom.metrics.k8s.io  -oyaml
+apiVersion: apiregistration.k8s.io/v1
+kind: APIService
+metadata:
+  creationTimestamp: &#34;2021-06-13T13:22:01Z&#34;
+  name: v1beta1.custom.metrics.k8s.io
+  resourceVersion: &#34;1590641&#34;
+  selfLink: /apis/apiregistration.k8s.io/v1/apiservices/v1beta1.custom.metrics.k8s.io
+  uid: d488d6a8-7e79-4311-a1e9-0b12e4591375
+spec:
+  group: custom.metrics.k8s.io
+  groupPriorityMinimum: 100
+  insecureSkipTLSVerify: true
+  service:
+    name: kube-hpa
+    namespace: kube-system
+    port: 9997
+  version: v1beta1
+  versionPriority: 100
+status:
+  conditions:
+  - lastTransitionTime: &#34;2021-06-13T13:42:17Z&#34;
+    message: all checks passed
+    reason: Passed
+    status: &#34;True&#34;
+    type: Available</code></pre>
+<p>或者直接curl访问：</p>
+<pre><code>curl -k  https://nodeip:9997/apis/custom.metrics.k8s.io/v1beta1</code></pre>
+<p><br></p>
+
+<h4 id="2-3-system-anonymous授权">2.3 system:anonymous授权</h4>
+
+<p>如果没有出现类似问题，这一步直接跳过</p>
+
+<p>又是会出现如下的错误 或者 上述的APIService没有运行成功。都是因为system:anonymous权限不够</p>
+<pre><code>annotations:
+    autoscaling.alpha.kubernetes.io/conditions: &#39;[{&#34;type&#34;:&#34;AbleToScale&#34;,&#34;status&#34;:&#34;True&#34;,&#34;lastTransitionTime&#34;:&#34;2021-06-13T13:33:12Z&#34;,&#34;reason&#34;:&#34;SucceededGetScale&#34;,&#34;message&#34;:&#34;the
+      HPA controller was able to get the target&#39;&#39;s current scale&#34;},{&#34;type&#34;:&#34;ScalingActive&#34;,&#34;status&#34;:&#34;False&#34;,&#34;lastTransitionTime&#34;:&#34;2021-06-13T13:33:12Z&#34;,&#34;reason&#34;:&#34;FailedGetPodsMetric&#34;,&#34;message&#34;:&#34;the
+      HPA was unable to compute the replica count: unable to get metric pod_cpu_usage_for_limit_1m:
+      unable to fetch metrics from custom metrics API: pods.custom.metrics.k8s.io
+      \&#34;*\&#34; is forbidden: User \&#34;system:anonymous\&#34; cannot get resource \&#34;pods/pod_cpu_usage_for_limit_1m\&#34;
+      in API group \&#34;custom.metrics.k8s.io\&#34; in the namespace \&#34;default\&#34;&#34;}]&#39;
+    autoscaling.alpha.kubernetes.io/metrics: &#39;[{&#34;type&#34;:&#34;Pods&#34;,&#34;pods&#34;:{&#34;metricName&#34;:&#34;pod_cpu_usage_for_limit_1m&#34;,&#34;targetAverageValue&#34;:&#34;60&#34;}}]&#39;
+    metric-containerName: zx-hpa
+  creationTimestamp: &#34;2021-06-13T13:32:56Z&#34;
+  name: nginx-hpa-zx-1
+  namespace: default
+  resourceVersion: &#34;1589301&#34;
+  selfLink: /apis/autoscaling/v1/namespaces/default/horizontalpodautoscalers/</code></pre>
+<p>这是可以直接绑定clusterrole <a href="https://github.com/kubernetes-sigs/metrics-server/issues/81">https://github.com/kubernetes-sigs/metrics-server/issues/81</a></p>
+
+<p>我这里是直接给了 cluster-admin 权限，实际情况可以按照需求赋权。</p>
+<pre><code>kubectl create clusterrolebinding anonymous-role-binding --clusterrole=cluster-admin --user=system:anonymous</code></pre>
+<p><br></p>
+
+<h3 id="3-创建hpa验证是否成功">3. 创建hpa验证是否成功</h3>
+
+<p>可以看出来都是10</p>
+<pre><code>root@k8s-master:~/testyaml/hpa# kubectl get hpa
+NAME             REFERENCE           TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+nginx-hpa-zx-1   Deployment/zx-hpa   10/60     1         3         3          9m55s
+root@k8s-master:~/testyaml/hpa# kubectl get hpa
+NAME             REFERENCE           TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+nginx-hpa-zx-1   Deployment/zx-hpa   10/60     1         3         3          9m57s</code></pre>
+<p><br></p>
+
+<h3 id="4-追踪整个过程">4. 追踪整个过程</h3>
+
+<p><strong>第一步</strong>  Kcm（hpa controller）发送的请求。</p>
+<pre><code>I0613 23:12:36.498740    9879 httplog.go:90] GET /apis/custom.metrics.k8s.io/v1beta1/namespaces/default/pods/%2A/pod_aa_100m?labelSelector=app%3Dzx-hpa-test: (35.302304ms) 200 [kube-controller-manager/v1.17.4 (linux/amd64) kubernetes/8d8aa39/horizontal-pod-autoscaler 192.168.0.4:42750]</code></pre>
+<p>要在url里使用不安全字符，就需要使用转义。</p>
+
+<p>%2A = *</p>
+
+<p>%3D = =（等号）</p>
+
+<p><br></p>
+
+<p><strong>第二步</strong>  apiserver进行了 url转换。</p>
+
+<p>kcm访问的是： /apis/custom.metrics.k8s.io/v1beta1/namespaces/default/pods/%2A/pod_aa_100m?labelSelector=app%3Dzx-hpa-test</p>
+
+<p>但是由于第二步创建了 Sv and APIService。所以访问这个url会被转换为：</p>
+
+<p><a href="https://192.168.0.5:9997/apis/custom.metrics.k8s.io/v1beta1/namespaces/default/pods/%2A/pod_aa_100m?labelSelector=app%3Dzx-hpa-test">https://192.168.0.5:9997/apis/custom.metrics.k8s.io/v1beta1/namespaces/default/pods/%2A/pod_aa_100m?labelSelector=app%3Dzx-hpa-test</a></p>
+
+<p>192.168.0.5是pod kube-hpa-84c884f994-gd5fl 所在的节点ip也是podia(hostNetwork模式)。 9997是定义的端口。</p>
+
+<p><br></p>
+
+<p><strong>第三步：</strong>  访问 <a href="https://192.168.0.5:9997/apis/custom.metrics.k8s.io/v1beta1/namespaces/default/pods/%2A/pod_aa_100m?labelSelector=app%3Dzx-hpa-test">https://192.168.0.5:9997/apis/custom.metrics.k8s.io/v1beta1/namespaces/default/pods/%2A/pod_aa_100m?labelSelector=app%3Dzx-hpa-test</a></p>
+
+<p>直接在master节点上（masterip=192.168.0.4）通过curl模拟</p>
+<pre><code>root@k8s-master:~/testyaml/hpa# curl -k  https://192.168.0.5:9997/apis/custom.metrics.k8s.io/v1beta1/namespaces/default/pods/%2A/pod_aa_100m?labelSelector=app%3Dzx-hpa-test
+{
+  &#34;kind&#34;: &#34;MetricValueList&#34;,
+  &#34;apiVersion&#34;: &#34;custom.metrics.k8s.io/v1beta1&#34;,
+  &#34;metadata&#34;: {
+    &#34;selfLink&#34;: &#34;/apis/custom.metrics.k8s.io/v1beta1/namespaces/default/pods/%2A/pod_aa_100m&#34;
+  },
+  &#34;items&#34;: [
+    {
+      &#34;describedObject&#34;: {
+        &#34;kind&#34;: &#34;Pod&#34;,
+        &#34;namespace&#34;: &#34;default&#34;,
+        &#34;name&#34;: &#34;zx-hpa-7b56cddd95-5j6r4|&#34;,
+        &#34;apiVersion&#34;: &#34;/v1&#34;
+      },
+      &#34;metricName&#34;: &#34;pod_aa_100m&#34;,
+      &#34;timestamp&#34;: &#34;1970-01-01T00:00:10Z&#34;,
+      &#34;value&#34;: &#34;10&#34;,
+      &#34;selector&#34;: null
+    },
+    {
+      &#34;describedObject&#34;: {
+        &#34;kind&#34;: &#34;Pod&#34;,
+        &#34;namespace&#34;: &#34;default&#34;,
+        &#34;name&#34;: &#34;zx-hpa-7b56cddd95-lthbz|&#34;,
+        &#34;apiVersion&#34;: &#34;/v1&#34;
+      },
+      &#34;metricName&#34;: &#34;pod_aa_100m&#34;,
+      &#34;timestamp&#34;: &#34;1970-01-01T00:00:10Z&#34;,
+      &#34;value&#34;: &#34;10&#34;,
+      &#34;selector&#34;: null
+    },
+    {
+      &#34;describedObject&#34;: {
+        &#34;kind&#34;: &#34;Pod&#34;,
+        &#34;namespace&#34;: &#34;default&#34;,
+        &#34;name&#34;: &#34;zx-hpa-7b56cddd95-n9ft9|&#34;,
+        &#34;apiVersion&#34;: &#34;/v1&#34;
+      },
+      &#34;metricName&#34;: &#34;pod_aa_100m&#34;,
+      &#34;timestamp&#34;: &#34;1970-01-01T00:00:10Z&#34;,
+      &#34;value&#34;: &#34;10&#34;,
+      &#34;selector&#34;: null
+    }
+  ]
+}</code></pre>
+<p><br></p>
+
+<h3 id="5-总结">5. 总结</h3>
+
+<p>（1）如何定制自己的metric-server，包括代码编写和环境搭建</p>
+
+<p>（2）Kubernetes 里的 Custom Metrics 机制，也是借助 Aggregator APIServer 扩展机制来实现的。这里的具体原理是，当你把 Custom Metrics APIServer 启动之后，Kubernetes 里就会出现一个叫作custom.metrics.k8s.io的 API。而当你访问这个 URL 时，Aggregator 就会把你的请求转发给 Custom Metrics APIServer 。</p>
+
+<p>这里一定要注意： kube-apiserver启动参数一定要包含： -enable-swagger-ui=true</p>
+
+<p>（3）ListAllMetrics()并没有将metric注册到apiserver。 apiserver并没有对metric进行验证。上文中，我metric server的ListAllMetrics()并没有注册  pod_aa_100m这个metric，但是可以正常使用。</p>
+
+<p>原因：apiserver并没有进行验证，apiserver只进行url转发，如果有返回数据，apiserver就认为这个metric是正确的。所以这一点可以用来自定义metric。</p>
+
+        </div>
+
+        
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/2021-6-18-hpa%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">hpa 源码分析</a></li>
+        
+        <li><a href="/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/">k8s的基本组件</a></li>
+        
+        <li><a href="/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B01/">k8s源码学习 - Scheduler笔记（1）</a></li>
+        
+        <li><a href="/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B02/">k8s源码学习 - Scheduler笔记（2）</a></li>
+        
+        <li><a href="/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84/">k8s源码学习--代码结构</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/k8s'>k8s</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zoux86/blog"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-6-18-hpa-%E8%87%AA%E5%AE%9A%E4%B9%89metric-server/" title="自定义metric server">自定义metric server</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-6-18-hpa%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="hpa 源码分析">hpa 源码分析</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/" title="k8s的基本组件">k8s的基本组件</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-10-go%E7%9A%84%E5%90%84%E7%A7%8D%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" title="go的各种类型转换">go的各种类型转换</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-07-c&#43;&#43;-stl/" title="C&#43;&#43; STL">C&#43;&#43; STL</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-07-b%E6%A0%91b&#43;%E5%92%8Cb-/" title="B树,B&#43;和B-">B树,B&#43;和B-</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1/" title="C&#43;&#43;类和对象">C&#43;&#43;类和对象</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E6%8C%87%E9%92%88%E4%BD%A0%E8%A6%81%E4%BA%86%E8%A7%A3%E7%9A%84%E4%BA%8B/" title="C&#43;&#43;指针你要了解的事">C&#43;&#43;指针你要了解的事</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-05-%E5%87%A0%E9%81%93%E9%9D%9E%E5%B8%B8%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84c&#43;&#43;%E9%A2%98%E7%9B%AE/" title="几道非常有意思的C&#43;&#43;题目">几道非常有意思的C&#43;&#43;题目</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-04-c&#43;&#43;%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83/" title="C&#43;&#43;类对象的内存分布">C&#43;&#43;类对象的内存分布</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/c&#43;&#43;/">C&#43;&#43; (7)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/docker/">docker (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/go/">go (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (6)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kubeflow/">kubeflow (11)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/volcano/">volcano (4)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E4%B8%AA%E4%BA%BA%E6%84%9F%E6%82%9F/">个人感悟 (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建 (7)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题 (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记 (1)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
+    
+    <a href="https://zoux86.github.io/tags/clean-code/">clean code</a>
+    
+    <a href="https://zoux86.github.io/tags/docker/">docker</a>
+    
+    <a href="https://zoux86.github.io/tags/go/">go</a>
+    
+    <a href="https://zoux86.github.io/tags/golang/">golang</a>
+    
+    <a href="https://zoux86.github.io/tags/hadoop/">Hadoop</a>
+    
+    <a href="https://zoux86.github.io/tags/k8s/">k8s</a>
+    
+    <a href="https://zoux86.github.io/tags/kube-batch/">kube-batch</a>
+    
+    <a href="https://zoux86.github.io/tags/kubeflow/">kubeflow</a>
+    
+    <a href="https://zoux86.github.io/tags/tf-operator/">tf-operator</a>
+    
+    <a href="https://zoux86.github.io/tags/tfjob/">tfjob</a>
+    
+    <a href="https://zoux86.github.io/tags/ubuntu/">ubuntu</a>
+    
+    <a href="https://zoux86.github.io/tags/volcano/">volcano</a>
+    
+    <a href="https://zoux86.github.io/tags/%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93/">代码整洁之道</a>
+    
+    <a href="https://zoux86.github.io/tags/%E5%8D%9A%E5%AE%A2/">博客</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%84%9F%E6%82%9F/">感悟</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%A0%A1%E6%8B%9B/">校招</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%BA%90%E7%A0%81/">源码</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%AC%94%E8%AE%B0/">笔记</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题</a>
+    
+    <a href="https://zoux86.github.io/tags/%E8%B0%83%E5%BA%A6/">调度</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://www.jianshu.com/u/305d8226ced4" title="个人简书主页">个人简书主页</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zoux86.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

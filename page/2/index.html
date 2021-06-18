@@ -73,6 +73,52 @@
     <article class="post">
         <header>
             <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-12-02-volcano-scheduler%E4%BB%A3%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE/" title="volcano的代码流程图">volcano的代码流程图</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年12月2日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/volcano'>volcano</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            代码入口 1 2 3 4 cmd/sheduler/main.go:46main-&gt; cmd/sheduler/main.go:62app.Runcmd/sheduler/main.go:62app.Run-&gt; cmd/app/server.go:106sched.Runcmd/app/server.go:106sched.Run-&gt; pkg/scheduler/scheduler.go:64Runpkg/scheduler/scheduler.go:64Run-&gt; pkg/scheduler/scheduler.go:69Run 代码 pkg/scheduler/scheduler.go:69 中的Run 才是开启调度程序的真正入口，它的实现如下： 1 2 3 4 5 6 7 8 9 // Run runs the Scheduler func(pc*Scheduler)Run(stopCh&lt;-chanstruct{}){// 同步cache，缓存节点，pod，job等信息 gopc.cache.Run(stopCh)pc.cache.WaitForCacheSync(stopCh)//真正的……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2019-12-02-volcano-scheduler%E4%BB%A3%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE/">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-12-02-%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84volcano/" title="部署自己的volcano">部署自己的volcano</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年12月2日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/volcano'>volcano</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            搭建说明 有时候，我们需要对volcano二次开发，所有需要部署自己的volcano 准备工作 (1) 安装好 k8s集群 部署过程 （1）在go的安装目录下，创建volcano目录，并下载 mkdir -p $GOPATH/src/volcano.sh/ cd $GOPATH/src/volcano.sh/ git clone https://github.com/volcano-sh/volcano.git PS: 这里是官网的volcano，你可以在这里修改，也可以git你自己的代码。 (2)在$GOPA……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2019-12-02-%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84volcano/">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
                 <a href="https://zoux86.github.io/post/2019-12-02-volcano%E7%AE%80%E4%BB%8B/" title="volcano简介">volcano简介</a>
             </h1>
         </header>
@@ -254,52 +300,6 @@
         <p class="readmore"><a href="https://zoux86.github.io/post/2019-%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/">阅读全文</a></p>
     </article>
     
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-%E5%95%86%E6%B1%A4%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019商汤面经">2019商汤面经</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2019年11月8日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/2019%E6%A0%A1%E6%8B%9B'>2019校招</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            面试时间：2019年9月 岗位：容器云研发 形式：现场面试 一二三面 因为参加了商汤的交流活动获得的面试机会，面试是三个面试官一起面的，一下子面完了。并且有个项目和他们做的事情很像，所以仔细想了想也没有其他能参考的点。……
-        </div>
-        <p class="readmore"><a href="https://zoux86.github.io/post/2019-%E5%95%86%E6%B1%A4%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/">阅读全文</a></p>
-    </article>
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-%E5%BE%AE%E8%BD%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/" title="2019微软面经">2019微软面经</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2019年11月8日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/2019%E6%A0%A1%E6%8B%9B'>2019校招</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            面试时间：2019年10月 岗位：微软亚洲工程院-软件工程师 形式：视频面试 一面 1.英文自我介绍 2.项目介绍 3.手写代码： 特殊质数的定义：本身是质数，并且他的所有的组合也全是质数。例如13就是特殊的质数，因为（13,31）都是质数。而123不是，因为（123,132,213,231,……
-        </div>
-        <p class="readmore"><a href="https://zoux86.github.io/post/2019-%E5%BE%AE%E8%BD%AF%E6%A0%A1%E6%8B%9B%E9%9D%A2%E7%BB%8F/">阅读全文</a></p>
-    </article>
-    
     
 
 
@@ -338,6 +338,10 @@
     
     <li >
         <a href="https://zoux86.github.io/page/7/">7</a>
+    </li>
+    
+    <li >
+        <a href="https://zoux86.github.io/page/8/">8</a>
     </li>
     
 
@@ -400,6 +404,14 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://zoux86.github.io/post/2021-6-18-hpa-%E8%87%AA%E5%AE%9A%E4%B9%89metric-server/" title="自定义metric server">自定义metric server</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-6-18-hpa%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="hpa 源码分析">hpa 源码分析</a>
+    </li>
+    
+    <li>
         <a href="https://zoux86.github.io/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/" title="k8s的基本组件">k8s的基本组件</a>
     </li>
     
@@ -431,14 +443,6 @@
         <a href="https://zoux86.github.io/post/2019-12-04-c&#43;&#43;%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83/" title="C&#43;&#43;类对象的内存分布">C&#43;&#43;类对象的内存分布</a>
     </li>
     
-    <li>
-        <a href="https://zoux86.github.io/post/2019-12-02-volcano-scheduler%E4%BB%A3%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE/" title="volcano的代码流程图">volcano的代码流程图</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-12-02-%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84volcano/" title="部署自己的volcano">部署自己的volcano</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -458,7 +462,7 @@
     
     <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (4)</a></li>
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (6)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
     

@@ -6,7 +6,25 @@
     <description>Recent content in Posts on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 15 Dec 2019 01:31:20 +0800</lastBuildDate><atom:link href="https://zoux86.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 18 Jun 2021 00:31:20 +0800</lastBuildDate><atom:link href="https://zoux86.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>自定义metric server</title>
+      <link>https://zoux86.github.io/post/2021-6-18-hpa-%E8%87%AA%E5%AE%9A%E4%B9%89metric-server/</link>
+      <pubDate>Fri, 18 Jun 2021 00:31:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2021-6-18-hpa-%E8%87%AA%E5%AE%9A%E4%B9%89metric-server/</guid>
+      <description>本章重点： 如何基于 custom-metrics-apiserver 项目，打造自己的 metric server 1. custom-metrics-apiserver简介 项目地址： https://github.com/kubernetes-sigs/custom-metrics-apiserver/tree/master 自定义metric server，具体来说需要做以下几个事情： （1）实现 custom-metrics-apiserver 的 三个接口，如下： type CustomMetricsProvider interface { // 定义metric。 例如 pod_cpu_used_1m ListAllMetrics() []CustomMetricInfo // 如何根据 metric的信息，得到具体的值 GetMetricByName(name types.NamespacedName,</description>
+    </item>
+    
+    <item>
+      <title>hpa 源码分析</title>
+      <link>https://zoux86.github.io/post/2021-6-18-hpa%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
+      <pubDate>Fri, 18 Jun 2021 00:30:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2021-6-18-hpa%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
+      <description>本章重点： 从源码角度分析hpa的计算逻辑 1. hpa介绍 1.1 hpa是什么 hpa指的是 Pod 水平自动扩缩，全名是Horizontal Pod Autoscaler简称HPA。它可以基于 CPU 利用率或其他指标自动扩缩 ReplicationController、Deployment 和 ReplicaSet 中的 Pod 数量。 用处： 用户</description>
+    </item>
+    
     <item>
       <title>k8s的基本组件</title>
       <link>https://zoux86.github.io/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/</link>

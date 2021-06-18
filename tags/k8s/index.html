@@ -82,6 +82,52 @@
     <article class="post">
         <header>
             <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2021-6-18-hpa-%E8%87%AA%E5%AE%9A%E4%B9%89metric-server/">自定义metric server</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年6月18日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/k8s'>k8s</a>
+            
+        </div>
+        
+        <div class="post-content">
+            本章重点： 如何基于 custom-metrics-apiserver 项目，打造自己的 metric server 1. custom-metrics-apiserver简介 项目地址： https://github.com/kubernetes-sigs/custom-metrics-apiserver/tree/master 自定义metric server，具体来说需要做以下几个事情： （1）实现 custom-metrics-apiserver 的 三个接口，如下： type CustomMetricsProvider interface { // 定义metric。 例如 pod_cpu_used_1m ListAllMetrics() []CustomMetricInfo // 如何根据 metric的信息，得到具体的值 GetMetricByName(name types.NamespacedName,……
+            <p class="readmore"><a href="https://zoux86.github.io/post/2021-6-18-hpa-%E8%87%AA%E5%AE%9A%E4%B9%89metric-server/">阅读全文</a></p>
+        </div>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2021-6-18-hpa%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">hpa 源码分析</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年6月18日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/k8s'>k8s</a>
+            
+        </div>
+        
+        <div class="post-content">
+            本章重点： 从源码角度分析hpa的计算逻辑 1. hpa介绍 1.1 hpa是什么 hpa指的是 Pod 水平自动扩缩，全名是Horizontal Pod Autoscaler简称HPA。它可以基于 CPU 利用率或其他指标自动扩缩 ReplicationController、Deployment 和 ReplicaSet 中的 Pod 数量。 用处： 用户……
+            <p class="readmore"><a href="https://zoux86.github.io/post/2021-6-18-hpa%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">阅读全文</a></p>
+        </div>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
                 <a href="https://zoux86.github.io/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/">k8s的基本组件</a>
             </h1>
         </header>
@@ -297,6 +343,14 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://zoux86.github.io/post/2021-6-18-hpa-%E8%87%AA%E5%AE%9A%E4%B9%89metric-server/" title="自定义metric server">自定义metric server</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-6-18-hpa%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="hpa 源码分析">hpa 源码分析</a>
+    </li>
+    
+    <li>
         <a href="https://zoux86.github.io/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/" title="k8s的基本组件">k8s的基本组件</a>
     </li>
     
@@ -328,14 +382,6 @@
         <a href="https://zoux86.github.io/post/2019-12-04-c&#43;&#43;%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83/" title="C&#43;&#43;类对象的内存分布">C&#43;&#43;类对象的内存分布</a>
     </li>
     
-    <li>
-        <a href="https://zoux86.github.io/post/2019-12-02-volcano-scheduler%E4%BB%A3%E7%A0%81%E6%B5%81%E7%A8%8B%E5%9B%BE/" title="volcano的代码流程图">volcano的代码流程图</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-12-02-%E5%9C%A8%E9%9B%86%E7%BE%A4%E4%B8%AD%E9%83%A8%E7%BD%B2%E8%87%AA%E5%B7%B1%E7%9A%84volcano/" title="部署自己的volcano">部署自己的volcano</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -355,7 +401,7 @@
     
     <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (4)</a></li>
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (6)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
     
