@@ -75,6 +75,56 @@
     <article class="post">
         <header>
             <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B02/" title="k8s源码学习 - Scheduler笔记（2）">k8s源码学习 - Scheduler笔记（2）</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年4月21日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/k8s'>k8s</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            接上文的工作，上文是找到了scheduler的入口。接下来看scheduler具体的执行。 1 2 3 4 5 cmd/kube-scheduler/scheduler.go:34main函数-&gt; cmd/kube-scheduler/app/server.go:70NewSchedulerCommand-&gt; cmd/kube-scheduler/app/server.go:117runCommand-&gt; cmd/kube-scheduler/app/server.go:167Run-&gt; pkg/scheduler/scheduler.go:276run-&gt; 这是上文的工作 1 2 pkg/scheduler/scheduler.go:501scheduleOne-&gt; pkg/scheduler/scheduler.go:291schedule-&gt; 这里schedule只是一个街口，定义在 schedule/a……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B02/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B01/" title="k8s源码学习 - Scheduler笔记（1）">k8s源码学习 - Scheduler笔记（1）</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年4月21日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/k8s'>k8s</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            任务：找到scheduler的入口 k8s 代码目录结构 cmd：所有的二进制可执行文件入口代码，也就是各种命令的接口代码。 pkg：项目diamante主目录，cmd只是接口，这里是具体实现。cmd类似业务代码，pkg类似核心 寻找k8s入口函数 1 2 3 4 5 6 cmd/kube-schedule……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B01/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
                 <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BB%8E%E4%BB%A3%E7%A0%81%E4%B8%AD%E6%89%BE%E5%87%BAgang-scheduler%E8%BF%99%E4%B8%AA%E8%BF%87%E7%A8%8B/" title="kube-batch 从代码中找出gang scheduler这个过程">kube-batch 从代码中找出gang scheduler这个过程</a>
             </h1>
         </header>
@@ -272,56 +322,6 @@
     
     
     
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%9E%E4%BE%8B/" title="kubeflow pipelines--实现自己的实例">kubeflow pipelines--实现自己的实例</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2019年2月1日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/kubeflow'>kubeflow</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            上篇文章实现了运行系统给出的pipelines实例。通过挂载自己的卷，以及使用自己的镜像总算可以运行官方给的ML实例了。但是我们的最终目的是运行自己的ML程序。 接下来是实现自己的pipelines实例。 根据官方文档的建议： https://www.kubeflow.org/docs/pipelines/sdk/build-component/](https://www.kubeflow.org/docs/pipelines/sdk/build-component/) 实现自己的ML实例，总共有两点： （1）Client code （在……
-        </div>
-        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%9E%E4%BE%8B/">阅读全文</a></p>
-    </article>
-    
-    
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E7%AE%80%E4%BB%8B/" title="kubeflow简介">kubeflow简介</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2019年1月23日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/kubeflow'>kubeflow</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            前面都是在介绍如何安装Kubeflow和pipelines，今天补一下Kubeflow的pipelines的知识，让大家知道他们是什么，能做什么。 背景 Kubernetes 本来是一个用来管理无状态应用的容器平台，但是在近两年，有越来越多的公司用它来运行各种各样的工作负载，尤其是机器学习炼丹。各种 AI 公……
-        </div>
-        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E7%AE%80%E4%BB%8B/">阅读全文</a></p>
-    </article>
-    
-    
-    
 
 
 
@@ -425,6 +425,14 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://zoux86.github.io/post/2020-6-26-kubelet%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/" title="kubelet事件处理机制详解">kubelet事件处理机制详解</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-6-26-k8s-event%E4%BB%8B%E7%BB%8D/" title="k8s event介绍">k8s event介绍</a>
+    </li>
+    
+    <li>
         <a href="https://zoux86.github.io/post/2021-6-18-hpa-%E8%87%AA%E5%AE%9A%E4%B9%89metric-server/" title="自定义metric server">自定义metric server</a>
     </li>
     
@@ -456,14 +464,6 @@
         <a href="https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E6%8C%87%E9%92%88%E4%BD%A0%E8%A6%81%E4%BA%86%E8%A7%A3%E7%9A%84%E4%BA%8B/" title="C&#43;&#43;指针你要了解的事">C&#43;&#43;指针你要了解的事</a>
     </li>
     
-    <li>
-        <a href="https://zoux86.github.io/post/2019-12-05-%E5%87%A0%E9%81%93%E9%9D%9E%E5%B8%B8%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84c&#43;&#43;%E9%A2%98%E7%9B%AE/" title="几道非常有意思的C&#43;&#43;题目">几道非常有意思的C&#43;&#43;题目</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-12-04-c&#43;&#43;%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83/" title="C&#43;&#43;类对象的内存分布">C&#43;&#43;类对象的内存分布</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -483,7 +483,7 @@
     
     <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (6)</a></li>
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (8)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
     

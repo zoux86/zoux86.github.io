@@ -6,7 +6,25 @@
     <description>Recent content in k8s on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 18 Jun 2021 00:31:20 +0800</lastBuildDate><atom:link href="https://zoux86.github.io/tags/k8s/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 26 Jun 2021 00:32:20 +0800</lastBuildDate><atom:link href="https://zoux86.github.io/tags/k8s/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>kubelet事件处理机制详解</title>
+      <link>https://zoux86.github.io/post/2020-6-26-kubelet%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/</link>
+      <pubDate>Sat, 26 Jun 2021 00:32:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2020-6-26-kubelet%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/</guid>
+      <description>本文从kubelet组件源码角度入手，分析kubelet中的事件处理机制 1. kubelet事件处理机制入口 // RunKubelet is responsible for setting up and running a kubelet. It is used in three different applications: // 1 Integration tests // 2 Kubelet binary // 3 Standalone &amp;#39;kubernetes&amp;#39; binary // Eventually, #2 will be replaced with instances of #3 // 第一步调用 makeEventRecorder，这里就表示 事件处理机制 产生了 func RunKubelet(kubeServer *options.KubeletServer, kubeDeps *kubelet.Dependencies, runOnce bool) error {</description>
+    </item>
+    
+    <item>
+      <title>k8s event介绍</title>
+      <link>https://zoux86.github.io/post/2021-6-26-k8s-event%E4%BB%8B%E7%BB%8D/</link>
+      <pubDate>Sat, 26 Jun 2021 00:30:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2021-6-26-k8s-event%E4%BB%8B%E7%BB%8D/</guid>
+      <description>k8s集群中，controller-manage、kube-proxy、kube-scheduler、kubelet等组件都会产生大量的event。这些event对查看集群对象状态或者监控告警等等都非常有用。本章写一下自己对k8s中event的理解。 1. event的定义 event定</description>
+    </item>
+    
     <item>
       <title>自定义metric server</title>
       <link>https://zoux86.github.io/post/2021-6-18-hpa-%E8%87%AA%E5%AE%9A%E4%B9%89metric-server/</link>

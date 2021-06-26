@@ -73,6 +73,52 @@
     <article class="post">
         <header>
             <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%9E%E4%BE%8B/" title="kubeflow pipelines--实现自己的实例">kubeflow pipelines--实现自己的实例</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年2月1日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/kubeflow'>kubeflow</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            上篇文章实现了运行系统给出的pipelines实例。通过挂载自己的卷，以及使用自己的镜像总算可以运行官方给的ML实例了。但是我们的最终目的是运行自己的ML程序。 接下来是实现自己的pipelines实例。 根据官方文档的建议： https://www.kubeflow.org/docs/pipelines/sdk/build-component/](https://www.kubeflow.org/docs/pipelines/sdk/build-component/) 实现自己的ML实例，总共有两点： （1）Client code （在……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%9E%E4%BE%8B/">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E4%BD%BF%E7%94%A8ui%E7%95%8C%E9%9D%A2/" title="kubeflow pipelines--使用UI界面">kubeflow pipelines--使用UI界面</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年1月23日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/kubeflow'>kubeflow</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            前面的文章已经安装好了pipelines，接下来是体验如何使用pipelines了。 这是官网的图，进入Pipelines的图形界面就会出现这个。 但是官网给出的都是怎样在gcp上使用图形界面。所以怎么在自己本地集群使用Pipelines图形界面还得靠自己摸索。 既然我们都装好pipe……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E4%BD%BF%E7%94%A8ui%E7%95%8C%E9%9D%A2/">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
                 <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/" title="kubeflow pipelines--国内环境安装">kubeflow pipelines--国内环境安装</a>
             </h1>
         </header>
@@ -254,52 +300,6 @@
         <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow-%E5%9B%BD%E5%86%85%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/">阅读全文</a></p>
     </article>
     
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/" title="kubeflow准备--搭建私有仓库">kubeflow准备--搭建私有仓库</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2019年1月6日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/kubeflow'>kubeflow</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            在很多情况下，我们需要使用自己的docker仓库。接下来是在本地k8s集群上搭建本地仓库的过程。 假设我们将本地仓库搭建在k8s主节点上。 这里假设主节点是：192.168.14.84 运行registry镜像 1 dockerrun-d-p5000:5000--restartalways--nameregistryregistry:2 直接运行该命令即可，本地没有registry:2，会自动pull 修改配置……
-        </div>
-        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/">阅读全文</a></p>
-    </article>
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/hadoop-%E5%90%AF%E5%8A%A8%E9%9B%86%E7%BE%A4%E8%83%8C%E5%90%8E%E7%9A%84%E4%BA%8B/" title="Hadoop 启动集群背后的事">Hadoop 启动集群背后的事</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2018年11月12日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/hadoop'>Hadoop</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            在我们布置好Hadoop环境后我们做的第一件就是 执行 start-all.sh 命令。 那么这个命令都做了什么，今天来探讨一下这个。 start-all.sh内容 Start all hadoop daemons. Run this on master node. bin=`dirname &#34;$0&#34;` bin=`cd &#34;$bin&#34;; pwd` . &#34;$bin&#34;/hadoop-config.sh start dfs daemons &#34;$bin&#34;/start-dfs.sh --config $HADOOP_CONF_DIR start mapred daemons &#34;$bin&#34;/start-mapred.sh --config $HADOOP_CONF_DIR 从上面可以看出来这个脚本，执行了三个脚本，分别是： hadoop-config.sh start-dfs.sh start-mapred.sh hadoop-config.sh 内容 this=&#34;$0&#34; while [ -h &#34;$this&#34; ]; do ls=`ls -ld &#34;$this&#34;` link=`expr &#34;$ls&#34; : &#39;.*-&gt; \(.*\)$&#39;`……
-        </div>
-        <p class="readmore"><a href="https://zoux86.github.io/post/hadoop-%E5%90%AF%E5%8A%A8%E9%9B%86%E7%BE%A4%E8%83%8C%E5%90%8E%E7%9A%84%E4%BA%8B/">阅读全文</a></p>
-    </article>
-    
     
 
 
@@ -404,6 +404,14 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://zoux86.github.io/post/2020-6-26-kubelet%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/" title="kubelet事件处理机制详解">kubelet事件处理机制详解</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-6-26-k8s-event%E4%BB%8B%E7%BB%8D/" title="k8s event介绍">k8s event介绍</a>
+    </li>
+    
+    <li>
         <a href="https://zoux86.github.io/post/2021-6-18-hpa-%E8%87%AA%E5%AE%9A%E4%B9%89metric-server/" title="自定义metric server">自定义metric server</a>
     </li>
     
@@ -435,14 +443,6 @@
         <a href="https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E6%8C%87%E9%92%88%E4%BD%A0%E8%A6%81%E4%BA%86%E8%A7%A3%E7%9A%84%E4%BA%8B/" title="C&#43;&#43;指针你要了解的事">C&#43;&#43;指针你要了解的事</a>
     </li>
     
-    <li>
-        <a href="https://zoux86.github.io/post/2019-12-05-%E5%87%A0%E9%81%93%E9%9D%9E%E5%B8%B8%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84c&#43;&#43;%E9%A2%98%E7%9B%AE/" title="几道非常有意思的C&#43;&#43;题目">几道非常有意思的C&#43;&#43;题目</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-12-04-c&#43;&#43;%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83/" title="C&#43;&#43;类对象的内存分布">C&#43;&#43;类对象的内存分布</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -462,7 +462,7 @@
     
     <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (6)</a></li>
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (8)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
     

@@ -9,21 +9,21 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
     
 
-    <title>kubeflow | zoux的博客</title>
-    <meta property="og:title" content="kubeflow - zoux的博客">
+    <title>k8s | zoux的博客</title>
+    <meta property="og:title" content="k8s - zoux的博客">
     <meta property="og:type" content="article">
         
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
-    <meta name="description" content="kubeflow">
+    <meta name="description" content="k8s">
         
     <meta name="author" content="zoux">
-    <meta property="og:url" content="https://zoux86.github.io/tags/kubeflow/">
+    <meta property="og:url" content="https://zoux86.github.io/tags/k8s/">
     <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
     <link rel="stylesheet" href='/css/normalize.css'>
     <link rel="stylesheet" href='/css/style.css'>
-    <link rel="alternate" type="application/rss+xml" href="https://zoux86.github.io/tags/kubeflow/index.xml" title="zoux的博客" />
+    <link rel="alternate" type="application/rss+xml" href="https://zoux86.github.io/tags/k8s/index.xml" title="zoux的博客" />
     <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     
@@ -73,7 +73,7 @@
     
     <h3 class="archive-title">
         包含标签
-        <span class="keyword">kubeflow</span>
+        <span class="keyword">k8s</span>
         的文章
     </h3>
     
@@ -82,23 +82,23 @@
     <article class="post">
         <header>
             <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/">kubeflow准备--搭建私有仓库</a>
+                <a href="https://zoux86.github.io/post/2019-11-24-ubuntu%E6%9C%BA%E5%99%A8%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">ubuntu机器之间免密登录</a>
             </h1>
         </header>
         <date class="post-meta meta-date">
-            2019年1月6日
+            2018年11月5日
         </date>
         
         <div class="post-meta meta-category">
             |
             
-            <a href='/categories/kubeflow'>kubeflow</a>
+            <a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a>
             
         </div>
         
         <div class="post-content">
-            在很多情况下，我们需要使用自己的docker仓库。接下来是在本地k8s集群上搭建本地仓库的过程。 假设我们将本地仓库搭建在k8s主节点上。 这里假设主节点是：192.168.14.84 运行registry镜像 1 dockerrun-d-p5000:5000--restartalways--nameregistryregistry:2 直接运行该命令即可，本地没有registry:2，会自动pull 修改配置……
-            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/">阅读全文</a></p>
+            在自己动手搭建k8s集群环境之前，经常遇到的一个问题就是，集群机器之间能互相免密登录。故在此记录整个搭建过程。 假设有俩台机器： 192.168.115.70 zx-1 master 192.168.115.66 zx-2 现在要修改成密码登录，并且这俩台机器免密登录。步骤如下： 修改 etc/hosts zx-1机器上 127.0.0.1 localhost zx-1 192.168.14.70 zx-1 192.168.14.66 zx-2 zx-2机器上 127.0.0.1 localhost zx-2 192.168.14.70 zx-1 192.168.14.66 zx-2 修改登录密码 修改root密……
+            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-ubuntu%E6%9C%BA%E5%99%A8%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">阅读全文</a></p>
         </div>
     </article>
     
@@ -110,17 +110,17 @@
 <ol class="page-navigator">
     
     <li class="prev">
-        <a href="https://zoux86.github.io/tags/kubeflow/">上一页</a>
+        <a href="https://zoux86.github.io/tags/k8s/">上一页</a>
     </li>
     
 
     
     <li >
-        <a href="https://zoux86.github.io/tags/kubeflow/">1</a>
+        <a href="https://zoux86.github.io/tags/k8s/">1</a>
     </li>
     
     <li  class="current">
-        <a href="https://zoux86.github.io/tags/kubeflow/page/2/">2</a>
+        <a href="https://zoux86.github.io/tags/k8s/page/2/">2</a>
     </li>
     
 

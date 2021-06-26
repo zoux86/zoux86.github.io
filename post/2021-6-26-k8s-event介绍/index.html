@@ -9,21 +9,24 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
     
 
-    <title>kubeflow | zoux的博客</title>
-    <meta property="og:title" content="kubeflow - zoux的博客">
+    <title>k8s event介绍 | zoux的博客</title>
+    <meta property="og:title" content="k8s event介绍 - zoux的博客">
     <meta property="og:type" content="article">
         
+    <meta property="article:published_time" content='2021-06-26T00:30:20&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2021-06-26T00:30:20&#43;08:00'>
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
-    <meta name="description" content="kubeflow">
+    <meta name="description" content="k8s event介绍">
         
     <meta name="author" content="zoux">
-    <meta property="og:url" content="https://zoux86.github.io/tags/kubeflow/">
+    <meta property="og:url" content="https://zoux86.github.io/post/2021-6-26-k8s-event%E4%BB%8B%E7%BB%8D/">
     <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
     <link rel="stylesheet" href='/css/normalize.css'>
     <link rel="stylesheet" href='/css/style.css'>
-    <link rel="alternate" type="application/rss+xml" href="https://zoux86.github.io/tags/kubeflow/index.xml" title="zoux的博客" />
     <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     
@@ -49,7 +52,7 @@
             </div>
             <div>
                 <nav id="nav-menu" class="clearfix">
-                    <a class="" href="https://zoux86.github.io/">首页</a>
+                    <a class="current" href="https://zoux86.github.io/">首页</a>
                     
                     <a  href="https://zoux86.github.io/tools/" title="工具">工具</a>
                     
@@ -71,64 +74,200 @@
                     
 <div class="res-cons">
     
-    <h3 class="archive-title">
-        包含标签
-        <span class="keyword">kubeflow</span>
-        的文章
-    </h3>
-    
-
-    
     <article class="post">
         <header>
-            <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/">kubeflow准备--搭建私有仓库</a>
-            </h1>
+            <h1 class="post-title">k8s event介绍</h1>
         </header>
         <date class="post-meta meta-date">
-            2019年1月6日
+            2021年6月26日
         </date>
         
-        <div class="post-meta meta-category">
-            |
+        <div class="post-meta">
+            <span>|</span>
             
-            <a href='/categories/kubeflow'>kubeflow</a>
+            <span class="meta-category"><a href='/categories/k8s'>k8s</a></span>
             
         </div>
         
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
         <div class="post-content">
-            在很多情况下，我们需要使用自己的docker仓库。接下来是在本地k8s集群上搭建本地仓库的过程。 假设我们将本地仓库搭建在k8s主节点上。 这里假设主节点是：192.168.14.84 运行registry镜像 1 dockerrun-d-p5000:5000--restartalways--nameregistryregistry:2 直接运行该命令即可，本地没有registry:2，会自动pull 修改配置……
-            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93/">阅读全文</a></p>
+            
+
+<p>k8s集群中，controller-manage、kube-proxy、kube-scheduler、kubelet等组件都会产生大量的event。这些event对查看集群对象状态或者监控告警等等都非常有用。本章写一下自己对k8s中event的理解。</p>
+
+<h3 id="1-event的定义">1. event的定义</h3>
+
+<p>event定义在：k8s.io/api/core/v1/types.go中</p>
+<pre><code>type Event struct {
+    metav1.TypeMeta `json:&#34;,inline&#34;`
+    metav1.ObjectMeta `json:&#34;metadata&#34; protobuf:&#34;bytes,1,opt,name=metadata&#34;`
+    InvolvedObject ObjectReference `json:&#34;involvedObject&#34; protobuf:&#34;bytes,2,opt,name=involvedObject&#34;`
+    Reason string `json:&#34;reason,omitempty&#34; protobuf:&#34;bytes,3,opt,name=reason&#34;`
+    Message string `json:&#34;message,omitempty&#34; protobuf:&#34;bytes,4,opt,name=message&#34;`
+    Source EventSource `json:&#34;source,omitempty&#34; protobuf:&#34;bytes,5,opt,name=source&#34;`
+    FirstTimestamp metav1.Time `json:&#34;firstTimestamp,omitempty&#34; protobuf:&#34;bytes,6,opt,name=firstTimestamp&#34;`
+    LastTimestamp metav1.Time `json:&#34;lastTimestamp,omitempty&#34; protobuf:&#34;bytes,7,opt,name=lastTimestamp&#34;`
+    Count int32 `json:&#34;count,omitempty&#34; protobuf:&#34;varint,8,opt,name=count&#34;`
+    Type string `json:&#34;type,omitempty&#34; protobuf:&#34;bytes,9,opt,name=type&#34;`
+    EventTime metav1.MicroTime `json:&#34;eventTime,omitempty&#34; protobuf:&#34;bytes,10,opt,name=eventTime&#34;`
+    Series *EventSeries `json:&#34;series,omitempty&#34; protobuf:&#34;bytes,11,opt,name=series&#34;`
+    Action string `json:&#34;action,omitempty&#34; protobuf:&#34;bytes,12,opt,name=action&#34;`
+    Related *ObjectReference `json:&#34;related,omitempty&#34; protobuf:&#34;bytes,13,opt,name=related&#34;`
+    ReportingController string `json:&#34;reportingComponent&#34; protobuf:&#34;bytes,14,opt,name=reportingComponent&#34;`
+    ReportingInstance string `json:&#34;reportingInstance&#34; protobuf:&#34;bytes,15,opt,name=reportingInstance&#34;`
+    ReportingInstance string `json:&#34;reportingInstance&#34; protobuf:&#34;bytes,15,opt,name=reportingInstance&#34;`
+}</code></pre>
+<p>Count，firstTimestamp和lasteTimestamp 表示事件重复了多少次</p>
+
+<p>Message 详细的事件信息</p>
+
+<p>Reason 简单的事件原因</p>
+
+<p>Type  目前只支持：Normal和Warning俩种</p>
+
+<p>Source 事件发出的来源</p>
+
+<p>InvolvedObject 引用的另一个Kubernetes对象，例如Pod或者Deployment</p>
+
+<p><br></p>
+
+<h3 id="2-kubectl自定义输出k8s事件-该方法适用于所有对象">2. kubectl自定义输出k8s事件 - （该方法适用于所有对象）</h3>
+
+<p>通常我们是通过kubectl  查看事件，如下：</p>
+<pre><code>root@k8s-master:~# kubectl get event
+LAST SEEN   TYPE     REASON    OBJECT                        MESSAGE
+40m         Normal   Pulled    pod/zx-hpa-7b56cddd95-5j6r4   Container image &#34;busybox:latest&#34; already present on machine
+40m         Normal   Created   pod/zx-hpa-7b56cddd95-5j6r4   Created container busybox
+40m         Normal   Started   pod/zx-hpa-7b56cddd95-5j6r4   Started container busybox
+40m         Normal   Pulled    pod/zx-hpa-7b56cddd95-lthbz   Container image &#34;busybox:latest&#34; already present on machine
+40m         Normal   Created   pod/zx-hpa-7b56cddd95-lthbz   Created container busybox
+40m         Normal   Started   pod/zx-hpa-7b56cddd95-lthbz   Started container busybox
+29m         Normal   Pulled    pod/zx-hpa-7b56cddd95-n9ft9   Container image &#34;busybox:latest&#34; already present on machine
+29m         Normal   Created   pod/zx-hpa-7b56cddd95-n9ft9   Created container busybox
+29m         Normal   Started   pod/zx-hpa-7b56cddd95-n9ft9   Started container busybox</code></pre>
+<p>补充俩点注意：</p>
+
+<p>（1）event也有ns，所以kubectl get event 没有找到预期的事件，看看是否加上了 ns</p>
+
+<p>（2）自定义event的输出</p>
+
+<p>默认的kubectl get event只输出了五列，有时并没有我们想看到的内容，这个时候可以利用kubectl 的强大输出功能，输出自己想看到的信息。</p>
+<pre><code>根据 kubectl 操作，支持以下输出格式：
+
+Output format	Description
+-o custom-columns=&lt;spec&gt;	使用逗号分隔的自定义列列表打印表。
+-o custom-columns-file=&lt;filename&gt;	使用 &lt;filename&gt; 文件中的自定义列模板打印表。
+-o json	输出 JSON 格式的 API 对象
+-o jsonpath=&lt;template&gt;	打印 jsonpath 表达式定义的字段
+-o jsonpath-file=&lt;filename&gt;	打印 &lt;filename&gt; 文件中 jsonpath 表达式定义的字段。
+-o name	仅打印资源名称而不打印任何其他内容。
+-o wide	以纯文本格式输出，包含任何附加信息。对于 pod 包含节点名。
+-o yaml	输出 YAML 格式的 API 对象。</code></pre>
+<p>举例：这里我们想看到 event的 Count 和 name, 以及namespaces。</p>
+
+<p><strong>首先</strong>，我通过 kubectl get event -oyaml查看到了event的所有字段，这里发现 count 和  metadata.name, metadata.namespace</p>
+<pre><code>- apiVersion: v1
+  count: 308
+  eventTime: null
+  firstTimestamp: &#34;2021-06-13T13:42:19Z&#34;
+  involvedObject:
+    apiVersion: v1
+    fieldPath: spec.containers{busybox}
+    kind: Pod
+    name: zx-hpa-7b56cddd95-n9ft9
+    namespace: default
+    resourceVersion: &#34;1590656&#34;
+    uid: 379ef34e-3277-4367-a0e2-34645397590c
+  kind: Event
+  lastTimestamp: &#34;2021-06-26T08:46:33Z&#34;
+  message: Container image &#34;busybox:latest&#34; already present on machine
+  metadata:
+    creationTimestamp: &#34;2021-06-13T13:42:19Z&#34;
+    name: zx-hpa-7b56cddd95-n9ft9.16882815c5dbca52
+    namespace: default
+    resourceVersion: &#34;4136244&#34;
+    selfLink: /api/v1/namespaces/default/events/zx-hpa-7b56cddd95-n9ft9.16882815c5dbca52
+    uid: 9f4becb5-984d-4b3d-9308-aa6bde3e3d87
+  reason: Pulled
+  reportingComponent: &#34;&#34;
+  reportingInstance: &#34;&#34;
+  source:
+    component: kubelet
+    host: 192.168.0.5
+  type: Normal</code></pre>
+<p><br></p>
+
+<p><strong>然后</strong> kubectl 自定义输出</p>
+<pre><code>root@k8s-master:~# kubectl get event -o custom-columns=count:count,ns:metadata.namespace,name:metadata.name
+count   ns        name
+51      default   test-pod2.1685b3d2de5432c9
+51      default   test-pod2.1685b3d2e7bdb58c
+50      default   test-pod2.1685d490dface300
+309     default   zx-hpa-7b56cddd95-5j6r4.168827811e1dfc40
+309     default   zx-hpa-7b56cddd95-5j6r4.168827812259f1fc
+309     default   zx-hpa-7b56cddd95-5j6r4.168827812ae481ff
+309     default   zx-hpa-7b56cddd95-lthbz.168827811fb9b32d
+309     default   zx-hpa-7b56cddd95-lthbz.16882781231b0eaf
+309     default   zx-hpa-7b56cddd95-lthbz.168827812adf08c9
+309     default   zx-hpa-7b56cddd95-n9ft9.16882815c5dbca52
+309     default   zx-hpa-7b56cddd95-n9ft9.16882815ca83dabb
+309     default   zx-hpa-7b56cddd95-n9ft9.16882815d2c77d3b</code></pre>
+        </div>
+
+        
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/2021-6-18-hpa-%E8%87%AA%E5%AE%9A%E4%B9%89metric-server/">自定义metric server</a></li>
+        
+        <li><a href="/post/2021-6-18-hpa%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">hpa 源码分析</a></li>
+        
+        <li><a href="/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/">k8s的基本组件</a></li>
+        
+        <li><a href="/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B01/">k8s源码学习 - Scheduler笔记（1）</a></li>
+        
+        <li><a href="/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B02/">k8s源码学习 - Scheduler笔记（2）</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/k8s'>k8s</a></li>
+                
+            </ul>
+            
         </div>
     </article>
     
-
-    
-
-
-
-<ol class="page-navigator">
-    
-    <li class="prev">
-        <a href="https://zoux86.github.io/tags/kubeflow/">上一页</a>
-    </li>
     
 
     
-    <li >
-        <a href="https://zoux86.github.io/tags/kubeflow/">1</a>
-    </li>
     
-    <li  class="current">
-        <a href="https://zoux86.github.io/tags/kubeflow/page/2/">2</a>
-    </li>
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zoux86/blog"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
     
-
-    
-</ol>
-
-
-
 </div>
 
                     <footer id="footer">
@@ -151,6 +290,16 @@
 </footer>
 
 
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
 
 <a id="rocket" href="#top"></a>
 <script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
