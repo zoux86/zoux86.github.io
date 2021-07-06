@@ -73,6 +73,52 @@
     <article class="post">
         <header>
             <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-ubuntu%E6%9C%BA%E5%99%A8%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/" title="ubuntu机器之间免密登录">ubuntu机器之间免密登录</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2018年11月5日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            在自己动手搭建k8s集群环境之前，经常遇到的一个问题就是，集群机器之间能互相免密登录。故在此记录整个搭建过程。 假设有俩台机器： 192.168.115.70 zx-1 master 192.168.115.66 zx-2 现在要修改成密码登录，并且这俩台机器免密登录。步骤如下： 修改 etc/hosts zx-1机器上 127.0.0.1 localhost zx-1 192.168.14.70 zx-1 192.168.14.66 zx-2 zx-2机器上 127.0.0.1 localhost zx-2 192.168.14.70 zx-1 192.168.14.66 zx-2 修改登录密码 修改root密……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-ubuntu%E6%9C%BA%E5%99%A8%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/%E7%AE%97%E6%B3%95-%E6%95%B0%E5%AD%97%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97/" title="算法 ： 数字转罗马数字">算法 ： 数字转罗马数字</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2018年10月14日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E7%AE%97%E6%B3%95%E9%A2%98'>算法题</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            https://www.cnblogs.com/masterlibin/p/5531399.html……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/%E7%AE%97%E6%B3%95-%E6%95%B0%E5%AD%97%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97/">阅读全文</a></p>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
                 <a href="https://zoux86.github.io/post/ubuntu%E4%BF%A9%E5%8F%B0%E6%9C%BA%E5%99%A8%E4%B9%8B%E9%97%B4%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/" title="ubuntu俩台机器之间免密登录">ubuntu俩台机器之间免密登录</a>
             </h1>
         </header>
@@ -262,6 +308,14 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://zoux86.github.io/post/2021-7-6-k8s-rs-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="k8s rs controller源码分析">k8s rs controller源码分析</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-7-6-deployment-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="k8s deploy controller源码分析">k8s deploy controller源码分析</a>
+    </li>
+    
+    <li>
         <a href="https://zoux86.github.io/post/2020-6-26-kubelet%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/" title="kubelet事件处理机制详解">kubelet事件处理机制详解</a>
     </li>
     
@@ -293,14 +347,6 @@
         <a href="https://zoux86.github.io/post/2019-12-07-b%E6%A0%91b&#43;%E5%92%8Cb-/" title="B树,B&#43;和B-">B树,B&#43;和B-</a>
     </li>
     
-    <li>
-        <a href="https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1/" title="C&#43;&#43;类和对象">C&#43;&#43;类和对象</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E6%8C%87%E9%92%88%E4%BD%A0%E8%A6%81%E4%BA%86%E8%A7%A3%E7%9A%84%E4%BA%8B/" title="C&#43;&#43;指针你要了解的事">C&#43;&#43;指针你要了解的事</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -320,7 +366,7 @@
     
     <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (8)</a></li>
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (10)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
     

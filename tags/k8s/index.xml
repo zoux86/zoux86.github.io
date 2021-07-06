@@ -6,7 +6,25 @@
     <description>Recent content in k8s on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 26 Jun 2021 00:32:20 +0800</lastBuildDate><atom:link href="https://zoux86.github.io/tags/k8s/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 06 Jul 2021 00:30:20 +0800</lastBuildDate><atom:link href="https://zoux86.github.io/tags/k8s/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>k8s rs controller源码分析</title>
+      <link>https://zoux86.github.io/post/2021-7-6-k8s-rs-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
+      <pubDate>Tue, 06 Jul 2021 00:30:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2021-7-6-k8s-rs-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
+      <description>1. startReplicaSetController 和deployController一样，kcm中定义了startReplicaSetController，startReplicaSetController和所有的控制器一样，先New一个对象，然后调用run函数。 这里可以看出来，rs控制器监听rs, 和pod的变化。 func startReplicaSetController(ctx ControllerContext) (http.Handler, bool,</description>
+    </item>
+    
+    <item>
+      <title>k8s deploy controller源码分析</title>
+      <link>https://zoux86.github.io/post/2021-7-6-deployment-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
+      <pubDate>Tue, 06 Jul 2021 00:20:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2021-7-6-deployment-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
+      <description>1. deploy基础概念 root@k8s-master# kubectl get deploy nginx-deployment -oyaml apiVersion: apps/v1 kind: Deployment metadata: annotations: deployment.kubernetes.io/revision: &amp;#34;2&amp;#34; // 这个是版本号，说明这是第二个版本。 generation: 4 // 这里有个 generation labels: app: nginx name: nginx-deployment resourceVersion: &amp;#34;59522723&amp;#34; selfLink: /apis/apps/v1/namespaces/default/deployments/nginx-deployment uid: a6830e24-a479-452d-bbb2-3cb3cad82ebf spec: progressDeadlineSeconds: 600 replicas: 2 revisionHistoryLimit: 2 // 这个表明只保留2个版本。 selector: matchLabels: app: nginx strategy: rollingUpdate: maxSurge: 25% // 滚动更新的时候，不是一次就更新完了，而是一批一批的更新 maxUnavailable: 25% // 升级过程中最多有多少个 pod 处于无法提供服</description>
+    </item>
+    
     <item>
       <title>kubelet事件处理机制详解</title>
       <link>https://zoux86.github.io/post/2020-6-26-kubelet%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/</link>

@@ -1,0 +1,1967 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>k8s deploy controller源码分析 | zoux的博客</title>
+    <meta property="og:title" content="k8s deploy controller源码分析 - zoux的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2021-07-06T00:20:20&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2021-07-06T00:20:20&#43;08:00'>
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
+    <meta name="description" content="k8s deploy controller源码分析">
+        
+    <meta name="author" content="zoux">
+    <meta property="og:url" content="https://zoux86.github.io/post/2021-7-6-deployment-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+    
+    
+    
+</head>
+
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zoux86.github.io/">
+                        zoux的博客
+                    </a>
+                
+                <p class="description">对Go语言(golang)、k8s、kubeflow，容器云，云原生感兴趣</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zoux86.github.io/">首页</a>
+                    
+                    <a  href="https://zoux86.github.io/tools/" title="工具">工具</a>
+                    
+                    <a  href="https://zoux86.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://zoux86.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">k8s deploy controller源码分析</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年7月6日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/k8s'>k8s</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            
+
+<h3 id="1-deploy基础概念">1. deploy基础概念</h3>
+<pre><code>root@k8s-master# kubectl get deploy nginx-deployment -oyaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: &#34;2&#34;            // 这个是版本号，说明这是第二个版本。
+  generation: 4                                       // 这里有个 generation 
+  labels:
+    app: nginx
+  name: nginx-deployment
+  resourceVersion: &#34;59522723&#34;
+  selfLink: /apis/apps/v1/namespaces/default/deployments/nginx-deployment
+  uid: a6830e24-a479-452d-bbb2-3cb3cad82ebf
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 2
+  revisionHistoryLimit: 2                            // 这个表明只保留2个版本。
+  selector:
+    matchLabels:
+      app: nginx
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%                          // 滚动更新的时候，不是一次就更新完了，而是一批一批的更新
+      maxUnavailable: 25%                    //  升级过程中最多有多少个 pod 处于无法提供服务的状态
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx
+        imagePullPolicy: Always
+        name: nginx
+        ports:
+        - containerPort: 8080
+          name: test1
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 2
+  conditions:
+  - lastTransitionTime: &#34;2020-11-28T08:35:07Z&#34;
+    lastUpdateTime: &#34;2020-12-01T02:36:27Z&#34;
+    message: ReplicaSet &#34;nginx-deployment-59bc6679cd&#34; has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: &#34;True&#34;
+    type: Progressing
+  - lastTransitionTime: &#34;2020-12-01T02:44:17Z&#34;
+    lastUpdateTime: &#34;2020-12-01T02:44:17Z&#34;
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: &#34;True&#34;
+    type: Available
+  observedGeneration: 4      //这里也有一个
+  readyReplicas: 2
+  replicas: 2
+  updatedReplicas: 2</code></pre>
+<h4 id="1-1-metadata-generation-status-observedgeneration">1.1. metadata.generation &amp; status.observedGeneration</h4>
+
+<p>这两个是对应的，metadata.generation 就是这个 ReplicationSet 的元配置数据被修改了多少次。这里就有个版本迭代的概念。每次我们使用 kuberctl edit 来修改 ReplicationSet 的配置文件，或者更新镜像，这个generation都会增长1，表示增加了一个版本。</p>
+
+<p>这个版本迭代是配置文件只要有改动就进行版本迭代。observedGeneration就是最近观察到的可用的版本迭代。这两个只有在镜像升级的时候有可能不同，当我们使用 <code>kubectl rollout status</code> 来探测一个deployment的状态的时候，就是检查observedGeneration是否大于等于generation。</p>
+<pre><code>root@k8s-master:~# kubectl rollout status deployment kube-hpa -n kube-system
+deployment &#34;kube-hpa&#34; successfully rolled out</code></pre>
+<p><br></p>
+
+<h4 id="1-2-metadata-resourceversion">1.2. metadata.resourceVersion</h4>
+
+<p>每个资源在底层数据库都有版本的概念，我们可以使用 watch 来看某个资源，某个版本之后的操作。这些操作是存储在 etcd 中的。当让，并不是所有的操作都会永久存储，只会保留有限的时间的操作。这个 resourceVersion 就是这个资源对象当前的版本号。</p>
+
+<h4 id="1-3-status">1.3 status</h4>
+
+<p>replicas 实际的 pod 副本数
+availableReplicas 现在可用的 Pod 的副本数量，有的副本可能还处在未准备好，或者初始化状态
+readyReplicas 是处于 ready 状态的 Pod 的副本数量
+fullyLabeledReplicas 意思是这个 ReplicaSet 的标签 selector 对应的副本数量，不同纬度的一种统计</p>
+
+<p><br></p>
+
+<h3 id="2-startdeploymentcontroller">2. startDeploymentController</h3>
+
+<p>kcm启动时，NewControllerInitializers里面定义了所有要启动的manager，如下：</p>
+<pre><code>// NewControllerInitializers is a public map of named controller groups (you can start more than one in an init func)
+// paired to their InitFunc.  This allows for structured downstream composition and subdivision.
+func NewControllerInitializers(loopMode ControllerLoopMode) map[string]InitFunc {
+	controllers := map[string]InitFunc{}
+	controllers[&#34;endpoint&#34;] = startEndpointController
+	controllers[&#34;endpointslice&#34;] = startEndpointSliceController
+	controllers[&#34;replicationcontroller&#34;] = startReplicationController
+	controllers[&#34;podgc&#34;] = startPodGCController
+	controllers[&#34;resourcequota&#34;] = startResourceQuotaController
+	controllers[&#34;namespace&#34;] = startNamespaceController
+	controllers[&#34;serviceaccount&#34;] = startServiceAccountController
+	controllers[&#34;garbagecollector&#34;] = startGarbageCollectorController
+	controllers[&#34;daemonset&#34;] = startDaemonSetController
+	controllers[&#34;job&#34;] = startJobController
+	controllers[&#34;deployment&#34;] = startDeploymentController   //启动 deploymentController
+	controllers[&#34;replicaset&#34;] = startReplicaSetController
+	controllers[&#34;horizontalpodautoscaling&#34;] = startHPAController
+	controllers[&#34;disruption&#34;] = startDisruptionController
+	controllers[&#34;statefulset&#34;] = startStatefulSetController
+	controllers[&#34;cronjob&#34;] = startCronJobController
+	controllers[&#34;csrsigning&#34;] = startCSRSigningController
+	controllers[&#34;csrapproving&#34;] = startCSRApprovingController
+	controllers[&#34;csrcleaner&#34;] = startCSRCleanerController
+	controllers[&#34;ttl&#34;] = startTTLController
+	controllers[&#34;bootstrapsigner&#34;] = startBootstrapSignerController
+	controllers[&#34;tokencleaner&#34;] = startTokenCleanerController
+	controllers[&#34;nodeipam&#34;] = startNodeIpamController
+	controllers[&#34;nodelifecycle&#34;] = startNodeLifecycleController
+	if loopMode == IncludeCloudLoops {
+		controllers[&#34;service&#34;] = startServiceController
+		controllers[&#34;route&#34;] = startRouteController
+		controllers[&#34;cloud-node-lifecycle&#34;] = startCloudNodeLifecycleController
+		// TODO: volume controller into the IncludeCloudLoops only set.
+	}
+	controllers[&#34;persistentvolume-binder&#34;] = startPersistentVolumeBinderController
+	controllers[&#34;attachdetach&#34;] = startAttachDetachController
+	controllers[&#34;persistentvolume-expander&#34;] = startVolumeExpandController
+	controllers[&#34;clusterrole-aggregation&#34;] = startClusterRoleAggregrationController
+	controllers[&#34;pvc-protection&#34;] = startPVCProtectionController
+	controllers[&#34;pv-protection&#34;] = startPVProtectionController
+	controllers[&#34;ttl-after-finished&#34;] = startTTLAfterFinishedController
+	controllers[&#34;root-ca-cert-publisher&#34;] = startRootCACertPublisher
+
+	return controllers
+}</code></pre>
+<p><br></p>
+
+<p>deployment 的本质是控制 replicaSet，replicaSet 会控制 pod，然后由 controller 驱动各个对象达到期望状态。所以deployController需要监听pod, rs, deploy三种资源的变化。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">cmd<span style="color:#000;font-weight:bold">/</span>kube<span style="color:#000;font-weight:bold">-</span>controller<span style="color:#000;font-weight:bold">-</span>manager<span style="color:#000;font-weight:bold">/</span>app<span style="color:#000;font-weight:bold">/</span>apps.<span style="color:#000;font-weight:bold">go</span>
+<span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">startDeploymentController</span>(ctx ControllerContext) (http.Handler, <span style="color:#458;font-weight:bold">bool</span>, <span style="color:#458;font-weight:bold">error</span>) {
+   <span style="color:#998;font-style:italic">// 判断当前是否支持deployment这种资源
+</span><span style="color:#998;font-style:italic"></span>   <span style="color:#000;font-weight:bold">if</span> !ctx.AvailableResources[schema.GroupVersionResource{Group: <span style="color:#d14">&#34;apps&#34;</span>, Version: <span style="color:#d14">&#34;v1&#34;</span>, Resource: <span style="color:#d14">&#34;deployments&#34;</span>}] {
+      <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">nil</span>, <span style="color:#000;font-weight:bold">false</span>, <span style="color:#000;font-weight:bold">nil</span>
+   }
+   dc, err <span style="color:#000;font-weight:bold">:=</span> deployment.<span style="color:#900;font-weight:bold">NewDeploymentController</span>(
+      ctx.InformerFactory.<span style="color:#900;font-weight:bold">Apps</span>().<span style="color:#900;font-weight:bold">V1</span>().<span style="color:#900;font-weight:bold">Deployments</span>(),
+      ctx.InformerFactory.<span style="color:#900;font-weight:bold">Apps</span>().<span style="color:#900;font-weight:bold">V1</span>().<span style="color:#900;font-weight:bold">ReplicaSets</span>(),
+      ctx.InformerFactory.<span style="color:#900;font-weight:bold">Core</span>().<span style="color:#900;font-weight:bold">V1</span>().<span style="color:#900;font-weight:bold">Pods</span>(),
+      ctx.ClientBuilder.<span style="color:#900;font-weight:bold">ClientOrDie</span>(<span style="color:#d14">&#34;deployment-controller&#34;</span>),
+   )
+   <span style="color:#000;font-weight:bold">if</span> err <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+      <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">nil</span>, <span style="color:#000;font-weight:bold">true</span>, fmt.<span style="color:#900;font-weight:bold">Errorf</span>(<span style="color:#d14">&#34;error creating Deployment controller: %v&#34;</span>, err)
+   }
+   <span style="color:#000;font-weight:bold">go</span> dc.<span style="color:#900;font-weight:bold">Run</span>(<span style="color:#0086b3">int</span>(ctx.ComponentConfig.DeploymentController.ConcurrentDeploymentSyncs), ctx.Stop)
+   <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">nil</span>, <span style="color:#000;font-weight:bold">true</span>, <span style="color:#000;font-weight:bold">nil</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<p>和其他控制器一样。new deploycontroller之后，就是run。run调用如下：</p>
+
+<p>run-&gt;work-&gt;processNextItem-&gt;syncHandler</p>
+
+<p>定义时（new deploy），dc.syncHandler = dc.syncDeployment</p>
+
+<p><br></p>
+
+<h3 id="3-newdeploymentcontroller">3. NewDeploymentController</h3>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#998;font-style:italic">// NewDeploymentController creates a new DeploymentController.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">NewDeploymentController</span>(dInformer appsinformers.DeploymentInformer, rsInformer appsinformers.ReplicaSetInformer, podInformer coreinformers.PodInformer, client clientset.Interface) (<span style="color:#000;font-weight:bold">*</span>DeploymentController, <span style="color:#458;font-weight:bold">error</span>) {
+   <span style="color:#998;font-style:italic">// 记录event
+</span><span style="color:#998;font-style:italic"></span>   eventBroadcaster <span style="color:#000;font-weight:bold">:=</span> record.<span style="color:#900;font-weight:bold">NewBroadcaster</span>()
+   eventBroadcaster.<span style="color:#900;font-weight:bold">StartLogging</span>(glog.Infof)
+   eventBroadcaster.<span style="color:#900;font-weight:bold">StartRecordingToSink</span>(<span style="color:#000;font-weight:bold">&amp;</span>v1core.EventSinkImpl{Interface: client.<span style="color:#900;font-weight:bold">CoreV1</span>().<span style="color:#900;font-weight:bold">Events</span>(<span style="color:#d14">&#34;&#34;</span>)})
+
+   <span style="color:#000;font-weight:bold">if</span> client <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> <span style="color:#000;font-weight:bold">&amp;&amp;</span> client.<span style="color:#900;font-weight:bold">CoreV1</span>().<span style="color:#900;font-weight:bold">RESTClient</span>().<span style="color:#900;font-weight:bold">GetRateLimiter</span>() <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+      <span style="color:#000;font-weight:bold">if</span> err <span style="color:#000;font-weight:bold">:=</span> metrics.<span style="color:#900;font-weight:bold">RegisterMetricAndTrackRateLimiterUsage</span>(<span style="color:#d14">&#34;deployment_controller&#34;</span>, client.<span style="color:#900;font-weight:bold">CoreV1</span>().<span style="color:#900;font-weight:bold">RESTClient</span>().<span style="color:#900;font-weight:bold">GetRateLimiter</span>()); err <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+         <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">nil</span>, err
+      }
+   }
+   dc <span style="color:#000;font-weight:bold">:=</span> <span style="color:#000;font-weight:bold">&amp;</span>DeploymentController{
+      client:        client,
+      eventRecorder: eventBroadcaster.<span style="color:#900;font-weight:bold">NewRecorder</span>(scheme.Scheme, v1.EventSource{Component: <span style="color:#d14">&#34;deployment-controller&#34;</span>}),
+      queue:         workqueue.<span style="color:#900;font-weight:bold">NewNamedRateLimitingQueue</span>(workqueue.<span style="color:#900;font-weight:bold">DefaultControllerRateLimiter</span>(), <span style="color:#d14">&#34;deployment&#34;</span>),
+   }
+   dc.rsControl = controller.RealRSControl{
+      KubeClient: client,
+      Recorder:   dc.eventRecorder,
+   }
+
+   dInformer.<span style="color:#900;font-weight:bold">Informer</span>().<span style="color:#900;font-weight:bold">AddEventHandler</span>(cache.ResourceEventHandlerFuncs{
+      AddFunc:    dc.addDeployment,
+      UpdateFunc: dc.updateDeployment,
+      <span style="color:#998;font-style:italic">// This will enter the sync loop and no-op, because the deployment has been deleted from the store.
+</span><span style="color:#998;font-style:italic"></span>      DeleteFunc: dc.deleteDeployment,
+   })
+   rsInformer.<span style="color:#900;font-weight:bold">Informer</span>().<span style="color:#900;font-weight:bold">AddEventHandler</span>(cache.ResourceEventHandlerFuncs{
+      AddFunc:    dc.addReplicaSet,
+      UpdateFunc: dc.updateReplicaSet,
+      DeleteFunc: dc.deleteReplicaSet,
+   })
+   
+  <span style="color:#998;font-style:italic">// pod只关注删除？
+</span><span style="color:#998;font-style:italic"></span>   podInformer.<span style="color:#900;font-weight:bold">Informer</span>().<span style="color:#900;font-weight:bold">AddEventHandler</span>(cache.ResourceEventHandlerFuncs{
+      DeleteFunc: dc.deletePod,
+   })
+
+   dc.syncHandler = dc.syncDeployment
+   dc.enqueueDeployment = dc.enqueue
+
+   dc.dLister = dInformer.<span style="color:#900;font-weight:bold">Lister</span>()
+   dc.rsLister = rsInformer.<span style="color:#900;font-weight:bold">Lister</span>()
+   dc.podLister = podInformer.<span style="color:#900;font-weight:bold">Lister</span>()
+   dc.dListerSynced = dInformer.<span style="color:#900;font-weight:bold">Informer</span>().HasSynced
+   dc.rsListerSynced = rsInformer.<span style="color:#900;font-weight:bold">Informer</span>().HasSynced
+   dc.podListerSynced = podInformer.<span style="color:#900;font-weight:bold">Informer</span>().HasSynced
+   <span style="color:#000;font-weight:bold">return</span> dc, <span style="color:#000;font-weight:bold">nil</span>
+}</code></pre></td></tr></table>
+</div>
+</div>
+<p>从这里看出来，这里关注：</p>
+
+<p>deploy的增删改，rs的增删改，pod的删除。</p>
+
+<p>接下来就是 run-&gt;works-&gt;processNextWorkItem()-&gt;syncDeployment()</p>
+
+<p><br></p>
+
+<h3 id="4-对deploy-rs-pod的处理">4. 对deploy, rs, pod的处理</h3>
+
+<p>在之前的分析中，有addDeployment，deleteDeployment，addReplicaSet等函数。这里看一下这些函数做了什么事情。</p>
+
+<h4 id="4-1-add-update-del-deploy">4.1 add,update, del deploy</h4>
+
+<p>deploy相关的变化都是入队列</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000;font-weight:bold">func</span> (dc <span style="color:#000;font-weight:bold">*</span>DeploymentController) <span style="color:#900;font-weight:bold">addDeployment</span>(obj <span style="color:#000;font-weight:bold">interface</span>{}) {
+	d <span style="color:#000;font-weight:bold">:=</span> obj.(<span style="color:#000;font-weight:bold">*</span>apps.Deployment)
+	glog.<span style="color:#900;font-weight:bold">V</span>(<span style="color:#099">4</span>).<span style="color:#900;font-weight:bold">Infof</span>(<span style="color:#d14">&#34;Adding deployment %s&#34;</span>, d.Name)
+	dc.<span style="color:#900;font-weight:bold">enqueueDeployment</span>(d)
+}
+
+<span style="color:#000;font-weight:bold">func</span> (dc <span style="color:#000;font-weight:bold">*</span>DeploymentController) <span style="color:#900;font-weight:bold">updateDeployment</span>(old, cur <span style="color:#000;font-weight:bold">interface</span>{}) {
+	oldD <span style="color:#000;font-weight:bold">:=</span> old.(<span style="color:#000;font-weight:bold">*</span>apps.Deployment)
+	curD <span style="color:#000;font-weight:bold">:=</span> cur.(<span style="color:#000;font-weight:bold">*</span>apps.Deployment)
+	glog.<span style="color:#900;font-weight:bold">V</span>(<span style="color:#099">4</span>).<span style="color:#900;font-weight:bold">Infof</span>(<span style="color:#d14">&#34;Updating deployment %s&#34;</span>, oldD.Name)
+	dc.<span style="color:#900;font-weight:bold">enqueueDeployment</span>(curD)
+}
+
+<span style="color:#000;font-weight:bold">func</span> (dc <span style="color:#000;font-weight:bold">*</span>DeploymentController) <span style="color:#900;font-weight:bold">deleteDeployment</span>(obj <span style="color:#000;font-weight:bold">interface</span>{}) {
+	d, ok <span style="color:#000;font-weight:bold">:=</span> obj.(<span style="color:#000;font-weight:bold">*</span>apps.Deployment)
+	<span style="color:#000;font-weight:bold">if</span> !ok {
+		tombstone, ok <span style="color:#000;font-weight:bold">:=</span> obj.(cache.DeletedFinalStateUnknown)
+		<span style="color:#000;font-weight:bold">if</span> !ok {
+			utilruntime.<span style="color:#900;font-weight:bold">HandleError</span>(fmt.<span style="color:#900;font-weight:bold">Errorf</span>(<span style="color:#d14">&#34;Couldn&#39;t get object from tombstone %#v&#34;</span>, obj))
+			<span style="color:#000;font-weight:bold">return</span>
+		}
+		d, ok = tombstone.Obj.(<span style="color:#000;font-weight:bold">*</span>apps.Deployment)
+		<span style="color:#000;font-weight:bold">if</span> !ok {
+			utilruntime.<span style="color:#900;font-weight:bold">HandleError</span>(fmt.<span style="color:#900;font-weight:bold">Errorf</span>(<span style="color:#d14">&#34;Tombstone contained object that is not a Deployment %#v&#34;</span>, obj))
+			<span style="color:#000;font-weight:bold">return</span>
+		}
+	}
+	glog.<span style="color:#900;font-weight:bold">V</span>(<span style="color:#099">4</span>).<span style="color:#900;font-weight:bold">Infof</span>(<span style="color:#d14">&#34;Deleting deployment %s&#34;</span>, d.Name)
+	dc.<span style="color:#900;font-weight:bold">enqueueDeployment</span>(d)
+}</code></pre></td></tr></table>
+</div>
+</div>
+<p><br></p>
+
+<h4 id="4-2-add-update-del-replicaset">4.2 add,update,del ReplicaSet</h4>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#998;font-style:italic">// addReplicaSet enqueues the deployment that manages a ReplicaSet when the ReplicaSet is created.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">func</span> (dc <span style="color:#000;font-weight:bold">*</span>DeploymentController) <span style="color:#900;font-weight:bold">addReplicaSet</span>(obj <span style="color:#000;font-weight:bold">interface</span>{}) {
+	rs <span style="color:#000;font-weight:bold">:=</span> obj.(<span style="color:#000;font-weight:bold">*</span>apps.ReplicaSet)
+    <span style="color:#998;font-style:italic">// 1.如果是删除，删除后返回
+</span><span style="color:#998;font-style:italic"></span>	<span style="color:#000;font-weight:bold">if</span> rs.DeletionTimestamp <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+		<span style="color:#998;font-style:italic">// On a restart of the controller manager, it&#39;s possible for an object to
+</span><span style="color:#998;font-style:italic"></span>		<span style="color:#998;font-style:italic">// show up in a state that is already pending deletion.
+</span><span style="color:#998;font-style:italic"></span>		dc.<span style="color:#900;font-weight:bold">deleteReplicaSet</span>(rs)
+		<span style="color:#000;font-weight:bold">return</span>
+	}
+    
+    <span style="color:#998;font-style:italic">// 2.判断owneref是否是deploy，是的话，讲对应的rs加入队列。
+</span><span style="color:#998;font-style:italic"></span>	<span style="color:#998;font-style:italic">// If it has a ControllerRef, that&#39;s all that matters.
+</span><span style="color:#998;font-style:italic"></span>	<span style="color:#000;font-weight:bold">if</span> controllerRef <span style="color:#000;font-weight:bold">:=</span> metav1.<span style="color:#900;font-weight:bold">GetControllerOf</span>(rs); controllerRef <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+		d <span style="color:#000;font-weight:bold">:=</span> dc.<span style="color:#900;font-weight:bold">resolveControllerRef</span>(rs.Namespace, controllerRef)
+		<span style="color:#000;font-weight:bold">if</span> d <span style="color:#000;font-weight:bold">==</span> <span style="color:#000;font-weight:bold">nil</span> {
+			<span style="color:#000;font-weight:bold">return</span>
+		}
+		klog.<span style="color:#900;font-weight:bold">V</span>(<span style="color:#099">4</span>).<span style="color:#900;font-weight:bold">Infof</span>(<span style="color:#d14">&#34;ReplicaSet %s added.&#34;</span>, rs.Name)
+		dc.<span style="color:#900;font-weight:bold">enqueueDeployment</span>(d)
+		<span style="color:#000;font-weight:bold">return</span>
+	}
+
+    <span style="color:#998;font-style:italic">// 3. 否则，就是孤儿rs，通过label判断 rs是否属于某个deploy
+</span><span style="color:#998;font-style:italic"></span>	<span style="color:#998;font-style:italic">// Otherwise, it&#39;s an orphan. Get a list of all matching Deployments and sync
+</span><span style="color:#998;font-style:italic"></span>	<span style="color:#998;font-style:italic">// them to see if anyone wants to adopt it.
+</span><span style="color:#998;font-style:italic"></span>	ds <span style="color:#000;font-weight:bold">:=</span> dc.<span style="color:#900;font-weight:bold">getDeploymentsForReplicaSet</span>(rs)
+	<span style="color:#000;font-weight:bold">if</span> <span style="color:#0086b3">len</span>(ds) <span style="color:#000;font-weight:bold">==</span> <span style="color:#099">0</span> {
+		<span style="color:#000;font-weight:bold">return</span>
+	}
+	klog.<span style="color:#900;font-weight:bold">V</span>(<span style="color:#099">4</span>).<span style="color:#900;font-weight:bold">Infof</span>(<span style="color:#d14">&#34;Orphan ReplicaSet %s added.&#34;</span>, rs.Name)
+	<span style="color:#000;font-weight:bold">for</span> _, d <span style="color:#000;font-weight:bold">:=</span> <span style="color:#000;font-weight:bold">range</span> ds {
+		dc.<span style="color:#900;font-weight:bold">enqueueDeployment</span>(d)
+	}
+}</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#998;font-style:italic">// updateReplicaSet figures out what deployment(s) manage a ReplicaSet when the ReplicaSet
+</span><span style="color:#998;font-style:italic">// is updated and wake them up. If the anything of the ReplicaSets have changed, we need to
+</span><span style="color:#998;font-style:italic">// awaken both the old and new deployments. old and cur must be *apps.ReplicaSet
+</span><span style="color:#998;font-style:italic">// types.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">func</span> (dc <span style="color:#000;font-weight:bold">*</span>DeploymentController) <span style="color:#900;font-weight:bold">updateReplicaSet</span>(old, cur <span style="color:#000;font-weight:bold">interface</span>{}) {
+	curRS <span style="color:#000;font-weight:bold">:=</span> cur.(<span style="color:#000;font-weight:bold">*</span>apps.ReplicaSet)
+	oldRS <span style="color:#000;font-weight:bold">:=</span> old.(<span style="color:#000;font-weight:bold">*</span>apps.ReplicaSet)
+	<span style="color:#998;font-style:italic">// 1. 同样的，ResourceVersion可以判断资源有没有发生改变
+</span><span style="color:#998;font-style:italic"></span>	<span style="color:#000;font-weight:bold">if</span> curRS.ResourceVersion <span style="color:#000;font-weight:bold">==</span> oldRS.ResourceVersion {
+		<span style="color:#998;font-style:italic">// Periodic resync will send update events for all known replica sets.
+</span><span style="color:#998;font-style:italic"></span>		<span style="color:#998;font-style:italic">// Two different versions of the same replica set will always have different RVs.
+</span><span style="color:#998;font-style:italic"></span>		<span style="color:#000;font-weight:bold">return</span>
+	}
+
+	curControllerRef <span style="color:#000;font-weight:bold">:=</span> metav1.<span style="color:#900;font-weight:bold">GetControllerOf</span>(curRS)
+	oldControllerRef <span style="color:#000;font-weight:bold">:=</span> metav1.<span style="color:#900;font-weight:bold">GetControllerOf</span>(oldRS)
+	controllerRefChanged <span style="color:#000;font-weight:bold">:=</span> !reflect.<span style="color:#900;font-weight:bold">DeepEqual</span>(curControllerRef, oldControllerRef)
+	<span style="color:#998;font-style:italic">// 2.先将旧对象删除。旧对象是deploy
+</span><span style="color:#998;font-style:italic"></span>	<span style="color:#000;font-weight:bold">if</span> controllerRefChanged <span style="color:#000;font-weight:bold">&amp;&amp;</span> oldControllerRef <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+		<span style="color:#998;font-style:italic">// The ControllerRef was changed. Sync the old controller, if any.
+</span><span style="color:#998;font-style:italic"></span>		<span style="color:#000;font-weight:bold">if</span> d <span style="color:#000;font-weight:bold">:=</span> dc.<span style="color:#900;font-weight:bold">resolveControllerRef</span>(oldRS.Namespace, oldControllerRef); d <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+			dc.<span style="color:#900;font-weight:bold">enqueueDeployment</span>(d)
+		}
+	}
+   
+    <span style="color:#998;font-style:italic">// 3. 处理新对象，如果新对象还是受deploy管，加入队列
+</span><span style="color:#998;font-style:italic"></span>	<span style="color:#998;font-style:italic">// If it has a ControllerRef, that&#39;s all that matters.
+</span><span style="color:#998;font-style:italic"></span>	<span style="color:#000;font-weight:bold">if</span> curControllerRef <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+		d <span style="color:#000;font-weight:bold">:=</span> dc.<span style="color:#900;font-weight:bold">resolveControllerRef</span>(curRS.Namespace, curControllerRef)
+		<span style="color:#000;font-weight:bold">if</span> d <span style="color:#000;font-weight:bold">==</span> <span style="color:#000;font-weight:bold">nil</span> {
+			<span style="color:#000;font-weight:bold">return</span>
+		}
+		klog.<span style="color:#900;font-weight:bold">V</span>(<span style="color:#099">4</span>).<span style="color:#900;font-weight:bold">Infof</span>(<span style="color:#d14">&#34;ReplicaSet %s updated.&#34;</span>, curRS.Name)
+		dc.<span style="color:#900;font-weight:bold">enqueueDeployment</span>(d)
+		<span style="color:#000;font-weight:bold">return</span>
+	}
+   
+    <span style="color:#998;font-style:italic">// 4. 孤儿rs。因为是更新，所以如果label都没有改，肯定就不用动。
+</span><span style="color:#998;font-style:italic"></span>	<span style="color:#998;font-style:italic">// Otherwise, it&#39;s an orphan. If anything changed, sync matching controllers
+</span><span style="color:#998;font-style:italic"></span>	<span style="color:#998;font-style:italic">// to see if anyone wants to adopt it now.
+</span><span style="color:#998;font-style:italic"></span>	labelChanged <span style="color:#000;font-weight:bold">:=</span> !reflect.<span style="color:#900;font-weight:bold">DeepEqual</span>(curRS.Labels, oldRS.Labels)
+	<span style="color:#000;font-weight:bold">if</span> labelChanged <span style="color:#000;font-weight:bold">||</span> controllerRefChanged {
+		ds <span style="color:#000;font-weight:bold">:=</span> dc.<span style="color:#900;font-weight:bold">getDeploymentsForReplicaSet</span>(curRS)
+		<span style="color:#000;font-weight:bold">if</span> <span style="color:#0086b3">len</span>(ds) <span style="color:#000;font-weight:bold">==</span> <span style="color:#099">0</span> {
+			<span style="color:#000;font-weight:bold">return</span>
+		}
+		klog.<span style="color:#900;font-weight:bold">V</span>(<span style="color:#099">4</span>).<span style="color:#900;font-weight:bold">Infof</span>(<span style="color:#d14">&#34;Orphan ReplicaSet %s updated.&#34;</span>, curRS.Name)
+		<span style="color:#000;font-weight:bold">for</span> _, d <span style="color:#000;font-weight:bold">:=</span> <span style="color:#000;font-weight:bold">range</span> ds {
+			dc.<span style="color:#900;font-weight:bold">enqueueDeployment</span>(d)
+		}
+	}
+}</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#998;font-style:italic">// deleteReplicaSet enqueues the deployment that manages a ReplicaSet when
+</span><span style="color:#998;font-style:italic">// the ReplicaSet is deleted. obj could be an *apps.ReplicaSet, or
+</span><span style="color:#998;font-style:italic">// a DeletionFinalStateUnknown marker item.
+</span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">func</span> (dc <span style="color:#000;font-weight:bold">*</span>DeploymentController) <span style="color:#900;font-weight:bold">deleteReplicaSet</span>(obj <span style="color:#000;font-weight:bold">interface</span>{}) {
+	rs, ok <span style="color:#000;font-weight:bold">:=</span> obj.(<span style="color:#000;font-weight:bold">*</span>apps.ReplicaSet)
+
+	<span style="color:#998;font-style:italic">// When a delete is dropped, the relist will notice a pod in the store not
+</span><span style="color:#998;font-style:italic"></span>	<span style="color:#998;font-style:italic">// in the list, leading to the insertion of a tombstone object which contains
+</span><span style="color:#998;font-style:italic"></span>	<span style="color:#998;font-style:italic">// the deleted key/value. Note that this value might be stale. If the ReplicaSet
+</span><span style="color:#998;font-style:italic"></span>	<span style="color:#998;font-style:italic">// changed labels the new deployment will not be woken up till the periodic resync.
+</span><span style="color:#998;font-style:italic"></span>	<span style="color:#000;font-weight:bold">if</span> !ok {
+		tombstone, ok <span style="color:#000;font-weight:bold">:=</span> obj.(cache.DeletedFinalStateUnknown)
+		<span style="color:#000;font-weight:bold">if</span> !ok {
+			utilruntime.<span style="color:#900;font-weight:bold">HandleError</span>(fmt.<span style="color:#900;font-weight:bold">Errorf</span>(<span style="color:#d14">&#34;Couldn&#39;t get object from tombstone %#v&#34;</span>, obj))
+			<span style="color:#000;font-weight:bold">return</span>
+		}
+		rs, ok = tombstone.Obj.(<span style="color:#000;font-weight:bold">*</span>apps.ReplicaSet)
+		<span style="color:#000;font-weight:bold">if</span> !ok {
+			utilruntime.<span style="color:#900;font-weight:bold">HandleError</span>(fmt.<span style="color:#900;font-weight:bold">Errorf</span>(<span style="color:#d14">&#34;Tombstone contained object that is not a ReplicaSet %#v&#34;</span>, obj))
+			<span style="color:#000;font-weight:bold">return</span>
+		}
+	}
+
+	controllerRef <span style="color:#000;font-weight:bold">:=</span> metav1.<span style="color:#900;font-weight:bold">GetControllerOf</span>(rs)
+	<span style="color:#000;font-weight:bold">if</span> controllerRef <span style="color:#000;font-weight:bold">==</span> <span style="color:#000;font-weight:bold">nil</span> {
+		<span style="color:#998;font-style:italic">// No controller should care about orphans being deleted.
+</span><span style="color:#998;font-style:italic"></span>		<span style="color:#000;font-weight:bold">return</span>
+	}
+	d <span style="color:#000;font-weight:bold">:=</span> dc.<span style="color:#900;font-weight:bold">resolveControllerRef</span>(rs.Namespace, controllerRef)
+	<span style="color:#000;font-weight:bold">if</span> d <span style="color:#000;font-weight:bold">==</span> <span style="color:#000;font-weight:bold">nil</span> {
+		<span style="color:#000;font-weight:bold">return</span>
+	}
+	klog.<span style="color:#900;font-weight:bold">V</span>(<span style="color:#099">4</span>).<span style="color:#900;font-weight:bold">Infof</span>(<span style="color:#d14">&#34;ReplicaSet %s deleted.&#34;</span>, rs.Name)
+	<span style="color:#998;font-style:italic">// 加入队列
+</span><span style="color:#998;font-style:italic"></span>	dc.<span style="color:#900;font-weight:bold">enqueueDeployment</span>(d)
+}</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="4-3-del-pod">4.3 del pod</h4>
+<pre><code>// deletePod will enqueue a Recreate Deployment once all of its pods have stopped running.
+func (dc *DeploymentController) deletePod(obj interface{}) {
+	pod, ok := obj.(*v1.Pod)
+
+	// When a delete is dropped, the relist will notice a pod in the store not
+	// in the list, leading to the insertion of a tombstone object which contains
+	// the deleted key/value. Note that this value might be stale. If the Pod
+	// changed labels the new deployment will not be woken up till the periodic resync.
+	if !ok {
+		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
+		if !ok {
+			utilruntime.HandleError(fmt.Errorf(&#34;Couldn&#39;t get object from tombstone %#v&#34;, obj))
+			return
+		}
+		pod, ok = tombstone.Obj.(*v1.Pod)
+		if !ok {
+			utilruntime.HandleError(fmt.Errorf(&#34;Tombstone contained object that is not a pod %#v&#34;, obj))
+			return
+		}
+	}
+	glog.V(4).Infof(&#34;Pod %s deleted.&#34;, pod.Name)
+	// 只有当pod全删除，才更新 deploy。这个判断说明是 recreate 了
+	if d := dc.getDeploymentForPod(pod); d != nil &amp;&amp; d.Spec.Strategy.Type == apps.RecreateDeploymentStrategyType {
+		// Sync if this Deployment now has no more Pods.
+		rsList, err := util.ListReplicaSets(d, util.RsListFromClient(dc.client.AppsV1()))
+		if err != nil {
+			return
+		}
+		podMap, err := dc.getPodMapForDeployment(d, rsList)
+		if err != nil {
+			return
+		}
+		numPods := 0
+		for _, podList := range podMap {
+			numPods += len(podList.Items)
+		}
+		if numPods == 0 {
+			dc.enqueueDeployment(d)
+		}
+	}
+}</code></pre>
+<p>deployment升级方案：</p>
+
+<p>Recreate：删除所有已存在的pod,重新创建新的;</p>
+
+<p>RollingUpdate：滚动升级，逐步替换的策略，同时滚动升级时，支持更多的附加参数，例如设置最大不可用pod数量，最小升级间隔时间等等。</p>
+
+<p><br></p>
+
+<h4 id="4-4-getdeploymentforpod">4.4 getDeploymentForPod</h4>
+
+<p>更加pod或得 rs，然后更加rs 或得deployment</p>
+<pre><code>// getDeploymentForPod returns the deployment managing the given Pod.
+func (dc *DeploymentController) getDeploymentForPod(pod *v1.Pod) *apps.Deployment {
+   // Find the owning replica set
+   var rs *apps.ReplicaSet
+   var err error
+   controllerRef := metav1.GetControllerOf(pod)
+   if controllerRef == nil {
+      // No controller owns this Pod.
+      return nil
+   }
+   if controllerRef.Kind != apps.SchemeGroupVersion.WithKind(&#34;ReplicaSet&#34;).Kind {
+      // Not a pod owned by a replica set.
+      return nil
+   }
+   rs, err = dc.rsLister.ReplicaSets(pod.Namespace).Get(controllerRef.Name)
+   if err != nil || rs.UID != controllerRef.UID {
+      klog.V(4).Infof(&#34;Cannot get replicaset %q for pod %q: %v&#34;, controllerRef.Name, pod.Name, err)
+      return nil
+   }
+
+   // Now find the Deployment that owns that ReplicaSet.
+   controllerRef = metav1.GetControllerOf(rs)
+   if controllerRef == nil {
+      return nil
+   }
+   return dc.resolveControllerRef(rs.Namespace, controllerRef)
+}</code></pre>
+<h4 id="4-5-总结">4.5 总结</h4>
+
+<p>从这里也可以看出来，deployment, rs的add, del, update都可能会导致deployment入队列，然后进入syncDeployment。</p>
+
+<p>pod这里只关注删除，原因在于如果是recreate更新的时候，deploy等旧pod删除完才能创建新的pod。</p>
+
+<p><br></p>
+
+<h3 id="5-syncdeployment">5. syncDeployment</h3>
+
+<p><br></p>
+<pre><code>// syncDeployment will sync the deployment with the given key.
+// This function is not meant to be invoked concurrently with the same key.
+func (dc *DeploymentController) syncDeployment(key string) error {
+	startTime := time.Now()
+	klog.V(4).Infof(&#34;Started syncing deployment %q (%v)&#34;, key, startTime)
+	defer func() {
+		klog.V(4).Infof(&#34;Finished syncing deployment %q (%v)&#34;, key, time.Since(startTime))
+	}()
+
+	namespace, name, err := cache.SplitMetaNamespaceKey(key)
+	if err != nil {
+		return err
+	}
+	deployment, err := dc.dLister.Deployments(namespace).Get(name)
+	if errors.IsNotFound(err) {
+		klog.V(2).Infof(&#34;Deployment %v has been deleted&#34;, key)
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+
+	// Deep-copy otherwise we are mutating our cache.
+	// TODO: Deep-copy only when needed.
+	d := deployment.DeepCopy()
+  
+  // 1. 如果一个deploy的label是everything，会直接返回。（虽然会有判断是否要更新状态的说法）
+	everything := metav1.LabelSelector{}
+	if reflect.DeepEqual(d.Spec.Selector, &amp;everything) {
+		dc.eventRecorder.Eventf(d, v1.EventTypeWarning, &#34;SelectingAll&#34;, &#34;This deployment is selecting all pods. A non-empty selector is required.&#34;)
+		if d.Status.ObservedGeneration &lt; d.Generation {
+			d.Status.ObservedGeneration = d.Generation
+			dc.client.AppsV1().Deployments(d.Namespace).UpdateStatus(d)
+		}
+		return nil
+	}
+  
+  // 2. 根据deploy获得rslist。以及根据rslist获得所有的pod（pod是一个map）
+	// List ReplicaSets owned by this Deployment, while reconciling ControllerRef
+	// through adoption/orphaning.
+	rsList, err := dc.getReplicaSetsForDeployment(d)
+	if err != nil {
+		return err
+	}
+	// List all Pods owned by this Deployment, grouped by their ReplicaSet.
+	// Current uses of the podMap are:
+	//
+	// * check if a Pod is labeled correctly with the pod-template-hash label.
+	// * check that no old Pods are running in the middle of Recreate Deployments.
+	podMap, err := dc.getPodMapForDeployment(d, rsList)
+	if err != nil {
+		return err
+	}
+  
+  // 3.如果是删除，则直接调用syncStatusOnly
+	if d.DeletionTimestamp != nil {
+		return dc.syncStatusOnly(d, rsList)
+	}
+
+  // 4.检查是否处于 pause 状态
+	// Update deployment conditions with an Unknown condition when pausing/resuming
+	// a deployment. In this way, we can be sure that we won&#39;t timeout when a user
+	// resumes a Deployment with a set progressDeadlineSeconds.
+	if err = dc.checkPausedConditions(d); err != nil {
+		return err
+	}
+
+  // 如果是 pause 状态,同步状态
+	if d.Spec.Paused {
+		return dc.sync(d, rsList)
+	}
+
+	// rollback is not re-entrant in case the underlying replica sets are updated with a new
+	// revision so we should ensure that we won&#39;t proceed to update replica sets until we
+	// make sure that the deployment has cleaned up its rollback spec in subsequent enqueues.
+	// 5.如果annotations中有 deprecated.deployment.rollback.to 这个字段，则进行回滚
+	if getRollbackTo(d) != nil {
+		return dc.rollback(d, rsList)
+	}
+
+  // 6.检查 deployment 是否处于 scale 状态
+	scalingEvent, err := dc.isScalingEvent(d, rsList)
+	if err != nil {
+		return err
+	}
+	if scalingEvent {
+		return dc.sync(d, rsList)
+	}
+
+  // 7.更新deployment状态
+	switch d.Spec.Strategy.Type {
+	case apps.RecreateDeploymentStrategyType:
+		return dc.rolloutRecreate(d, rsList, podMap)
+	case apps.RollingUpdateDeploymentStrategyType:
+		return dc.rolloutRolling(d, rsList)
+	}
+	return fmt.Errorf(&#34;unexpected deployment strategy type: %s&#34;, d.Spec.Strategy.Type)
+}</code></pre>
+<p>syncDeployment的大流程如下：</p>
+
+<p>（1）如果一个deploy的label是everything，会直接返回。</p>
+
+<p>（2）根据deploy获得rslist。以及根据deploy的label获得所有的pod，然后以rs为key，返回一个podMap（pod是一个map）</p>
+
+<p>（3）如果是删除，则直接调用syncStatusOnly，并返回</p>
+
+<p>（4）检查是否处于 pause 状态，如果是pause，同步状态，并返回</p>
+
+<p>（5）如果需要rollback，进行rollback,然后返回</p>
+
+<p>（5）检查 deployment 是否处于 scale 状态，如果是scale, 同步状态，并返回</p>
+
+<p>（6）如果是滚动更新或者是recreate更新，更新deployment状态，并返回</p>
+
+<p><br></p>
+
+<p>接下来从第三步开始，具体做了什么。</p>
+
+<h4 id="5-1-删除deploy">5.1 删除deploy</h4>
+
+<p>删除deploy调用了syncStatusOnly函数。</p>
+
+<p>syncStatusOn函数中主要调用了 getAllReplicaSetsAndSyncRevision 和 syncDeploymentStatus 函数。</p>
+
+<h5 id="5-1-1-getallreplicasetsandsyncrevision">5.1.1 getAllReplicaSetsAndSyncRevision</h5>
+
+<p>getAllReplicaSetsAndSyncRevision 就是找出来 newRS, oldRSs。</p>
+
+<p>newRs 就是：<strong>最近的</strong>，满足  rs.spec.template =  deploy.spec.temp  的rs。 **使用最近的原因在于rs.spec.template =  deploy.spec.temp  的rs可能有多个 **</p>
+
+<p>oldRss 就是所有的rs中去掉 newRs。</p>
+<pre><code>// syncStatusOnly only updates Deployments Status and doesn&#39;t take any mutating actions.
+func (dc *DeploymentController) syncStatusOnly(d *apps.Deployment, rsList []*apps.ReplicaSet) error {
+	newRS, oldRSs, err := dc.getAllReplicaSetsAndSyncRevision(d, rsList, false)
+	if err != nil {
+		return err
+	}
+  // 这里有点没看懂。 oldRSs + newRS = rsList。 为啥又要来一个allRSs
+	allRSs := append(oldRSs, newRS)
+	return dc.syncDeploymentStatus(allRSs, newRS, d)
+}
+
+
+
+// rsList should come from getReplicaSetsForDeployment(d).
+//
+// 1. Get all old RSes this deployment targets, and calculate the max revision number among them (maxOldV).
+// 2. Get new RS this deployment targets (whose pod template matches deployment&#39;s), and update new RS&#39;s revision number to (maxOldV + 1),
+//    only if its revision number is smaller than (maxOldV + 1). If this step failed, we&#39;ll update it in the next deployment sync loop.
+// 3. Copy new RS&#39;s revision number to deployment (update deployment&#39;s revision). If this step failed, we&#39;ll update it in the next deployment sync loop.
+//
+// Note that currently the deployment controller is using caches to avoid querying the server for reads.
+// This may lead to stale reads of replica sets, thus incorrect deployment status.
+func (dc *DeploymentController) getAllReplicaSetsAndSyncRevision(d *apps.Deployment, rsList []*apps.ReplicaSet, createIfNotExisted bool) (*apps.ReplicaSet, []*apps.ReplicaSet, error) {
+	_, allOldRSs := deploymentutil.FindOldReplicaSets(d, rsList)
+
+	// Get new replica set with the updated revision number
+	newRS, err := dc.getNewReplicaSet(d, rsList, allOldRSs, createIfNotExisted)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return newRS, allOldRSs, nil
+}
+
+
+// FindOldReplicaSets returns the old replica sets targeted by the given Deployment, with the given slice of RSes.
+// Note that the first set of old replica sets doesn&#39;t include the ones with no pods, and the second set of old replica sets include all old replica sets.
+func FindOldReplicaSets(deployment *apps.Deployment, rsList []*apps.ReplicaSet) ([]*apps.ReplicaSet, []*apps.ReplicaSet) {
+	var requiredRSs []*apps.ReplicaSet
+	var allRSs []*apps.ReplicaSet
+	newRS := FindNewReplicaSet(deployment, rsList)
+	for _, rs := range rsList {
+		// Filter out new replica set
+		if newRS != nil &amp;&amp; rs.UID == newRS.UID {
+			continue
+		}
+		allRSs = append(allRSs, rs)
+		if *(rs.Spec.Replicas) != 0 {
+			requiredRSs = append(requiredRSs, rs)
+		}
+	}
+	return requiredRSs, allRSs
+}
+
+// FindNewReplicaSet returns the new RS this given deployment targets (the one with the same pod template).
+func FindNewReplicaSet(deployment *apps.Deployment, rsList []*apps.ReplicaSet) *apps.ReplicaSet {
+	sort.Sort(controller.ReplicaSetsByCreationTimestamp(rsList))
+	for i := range rsList {
+		if EqualIgnoreHash(&amp;rsList[i].Spec.Template, &amp;deployment.Spec.Template) {
+			// In rare cases, such as after cluster upgrades, Deployment may end up with
+			// having more than one new ReplicaSets that have the same template as its template,
+			// see https://github.com/kubernetes/kubernetes/issues/40415
+			// We deterministically choose the oldest new ReplicaSet.
+			return rsList[i]
+		}
+	}
+	// new ReplicaSet does not exist.
+	return nil
+}</code></pre>
+<h5 id="5-1-2-syncdeploymentstatus">5.1.2 syncDeploymentStatus</h5>
+
+<p>calculateStatus 就是根据allRSs，newRS得到deploy最新的状态。然后再更新。</p>
+<pre><code>// syncDeploymentStatus checks if the status is up-to-date and sync it if necessary
+func (dc *DeploymentController) syncDeploymentStatus(allRSs []*apps.ReplicaSet, newRS *apps.ReplicaSet, d *apps.Deployment) error {
+	newStatus := calculateStatus(allRSs, newRS, d)
+
+	if reflect.DeepEqual(d.Status, newStatus) {
+		return nil
+	}
+
+	newDeployment := d
+	newDeployment.Status = newStatus
+	_, err := dc.client.AppsV1().Deployments(newDeployment.Namespace).UpdateStatus(newDeployment)
+	return err
+}
+
+
+// calculateStatus calculates the latest status for the provided deployment by looking into the provided replica sets.
+func calculateStatus(allRSs []*apps.ReplicaSet, newRS *apps.ReplicaSet, deployment *apps.Deployment) apps.DeploymentStatus {
+	availableReplicas := deploymentutil.GetAvailableReplicaCountForReplicaSets(allRSs)
+	totalReplicas := deploymentutil.GetReplicaCountForReplicaSets(allRSs)
+	unavailableReplicas := totalReplicas - availableReplicas
+	// If unavailableReplicas is negative, then that means the Deployment has more available replicas running than
+	// desired, e.g. whenever it scales down. In such a case we should simply default unavailableReplicas to zero.
+	if unavailableReplicas &lt; 0 {
+		unavailableReplicas = 0
+	}
+
+	status := apps.DeploymentStatus{
+		// TODO: Ensure that if we start retrying status updates, we won&#39;t pick up a new Generation value.
+		ObservedGeneration:  deployment.Generation,
+		Replicas:            deploymentutil.GetActualReplicaCountForReplicaSets(allRSs),
+		UpdatedReplicas:     deploymentutil.GetActualReplicaCountForReplicaSets([]*apps.ReplicaSet{newRS}),
+		ReadyReplicas:       deploymentutil.GetReadyReplicaCountForReplicaSets(allRSs),
+		AvailableReplicas:   availableReplicas,
+		UnavailableReplicas: unavailableReplicas,
+		CollisionCount:      deployment.Status.CollisionCount,
+	}
+
+	// Copy conditions one by one so we won&#39;t mutate the original object.
+	conditions := deployment.Status.Conditions
+	for i := range conditions {
+		status.Conditions = append(status.Conditions, conditions[i])
+	}
+
+	if availableReplicas &gt;= *(deployment.Spec.Replicas)-deploymentutil.MaxUnavailable(*deployment) {
+		minAvailability := deploymentutil.NewDeploymentCondition(apps.DeploymentAvailable, v1.ConditionTrue, deploymentutil.MinimumReplicasAvailable, &#34;Deployment has minimum availability.&#34;)
+		deploymentutil.SetDeploymentCondition(&amp;status, *minAvailability)
+	} else {
+		noMinAvailability := deploymentutil.NewDeploymentCondition(apps.DeploymentAvailable, v1.ConditionFalse, deploymentutil.MinimumReplicasUnavailable, &#34;Deployment does not have minimum availability.&#34;)
+		deploymentutil.SetDeploymentCondition(&amp;status, *noMinAvailability)
+	}
+
+	return status
+}</code></pre>
+<p><br></p>
+
+<h5 id="5-1-3-总结">5.1.3 总结</h5>
+
+<p>deploy 根据DeletionTimestamp判断该pod是否需要删除，deploy controller并没有进行deploy的删除，而是仅仅更新了状态。deploy的删除时gc来做的。后文在详细分析。</p>
+
+<p>这里注意一个问题就是deploy的DeletionTimestamp到底是谁加上去的。</p>
+
+<p>答案是：APIsever。 当kubectl delete 的时候。最终kubelet调用了会调用到 store里面的DELETE函数，这里的的操作就是给DeletionTimestamp赋值。</p>
+
+<p><br></p>
+
+<h4 id="5-2-pause操作">5.2 pause操作</h4>
+
+<p>目前比较少用到。暂时忽略。</p>
+
+<h4 id="5-3-rollback操作">5.3 Rollback操作</h4>
+
+<p>（1）判断deploy的annotations中是否有&rdquo;deprecated.deployment.rollback.to&rdquo; 字段的key，如果有需要rollback</p>
+
+<p>（2）获取deprecated.deployment.rollback.to对应的value, 这个就是表示是需要rollback到哪个rs</p>
+
+<p>（3）将rs.sepc.template 赋值给 deployment.spec.template</p>
+
+<p>（4）更新deploy, 删除annotations中 deprecated.deployment.rollback.to字段</p>
+
+<p>特殊情况：如果value=0，则更新到最近的版本。如果value不存在，则忽略。</p>
+<pre><code>if getRollbackTo(d) != nil {
+   return dc.rollback(d, rsList)
+}
+
+// getRollbackTo 就是判断deploy的annotations中是否有&#34;deprecated.deployment.rollback.to&#34; 字段的key
+// TODO: Remove this when extensions/v1beta1 and apps/v1beta1 Deployment are dropped.
+func getRollbackTo(d *apps.Deployment) *extensions.RollbackConfig {
+	// Extract the annotation used for round-tripping the deprecated RollbackTo field.
+	revision := d.Annotations[apps.DeprecatedRollbackTo]
+	if revision == &#34;&#34; {
+		return nil
+	}
+	revision64, err := strconv.ParseInt(revision, 10, 64)
+	if err != nil {
+		// If it&#39;s invalid, ignore it.
+		return nil
+	}
+	return &amp;extensions.RollbackConfig{
+		Revision: revision64,
+	}
+}
+
+// 这里的核心思想就是找到对应版本的rs。然后将rs.sepc.template 赋值给 deployment.spec.template
+// 然后更新deploy, 删除annotations中 deprecated.deployment.rollback.to
+// rollback the deployment to the specified revision. In any case cleanup the rollback spec.
+func (dc *DeploymentController) rollback(d *apps.Deployment, rsList []*apps.ReplicaSet) error {
+	newRS, allOldRSs, err := dc.getAllReplicaSetsAndSyncRevision(d, rsList, true)
+	if err != nil {
+		return err
+	}
+
+	allRSs := append(allOldRSs, newRS)
+	rollbackTo := getRollbackTo(d)
+	// If rollback revision is 0, rollback to the last revision
+	if rollbackTo.Revision == 0 {
+		if rollbackTo.Revision = deploymentutil.LastRevision(allRSs); rollbackTo.Revision == 0 {
+			// If we still can&#39;t find the last revision, gives up rollback
+			dc.emitRollbackWarningEvent(d, deploymentutil.RollbackRevisionNotFound, &#34;Unable to find last revision.&#34;)
+			// Gives up rollback
+			return dc.updateDeploymentAndClearRollbackTo(d)
+		}
+	}
+	for _, rs := range allRSs {
+		v, err := deploymentutil.Revision(rs)
+		if err != nil {
+			klog.V(4).Infof(&#34;Unable to extract revision from deployment&#39;s replica set %q: %v&#34;, rs.Name, err)
+			continue
+		}
+		if v == rollbackTo.Revision {
+			klog.V(4).Infof(&#34;Found replica set %q with desired revision %d&#34;, rs.Name, v)
+			// rollback by copying podTemplate.Spec from the replica set
+			// revision number will be incremented during the next getAllReplicaSetsAndSyncRevision call
+			// no-op if the spec matches current deployment&#39;s podTemplate.Spec
+			performedRollback, err := dc.rollbackToTemplate(d, rs)
+			if performedRollback &amp;&amp; err == nil {
+				dc.emitRollbackNormalEvent(d, fmt.Sprintf(&#34;Rolled back deployment %q to revision %d&#34;, d.Name, rollbackTo.Revision))
+			}
+			return err
+		}
+	}
+	dc.emitRollbackWarningEvent(d, deploymentutil.RollbackRevisionNotFound, &#34;Unable to find the revision to rollback to.&#34;)
+	// Gives up rollback
+	return dc.updateDeploymentAndClearRollbackTo(d)
+}</code></pre>
+<p><br></p>
+
+<h4 id="5-4-scale操作">5.4 scale操作</h4>
+
+<p>（1）判断是否需要scale, 这里通过deploy.spec.Replicas是否等于 rs中的annotations中的desired来判断，不相等就要scale</p>
+
+<p>（2）调用scale进行扩缩</p>
+<pre><code>scalingEvent, err := dc.isScalingEvent(d, rsList)
+	if err != nil {
+		return err
+	}
+	if scalingEvent {
+		return dc.sync(d, rsList)
+	}
+	
+// 这里就是判断 deploy.spec.Replicas是否等于 rs中的annotations中的desired，不相等就要scale
+// isScalingEvent checks whether the provided deployment has been updated with a scaling event
+// by looking at the desired-replicas annotation in the active replica sets of the deployment.
+//
+// rsList should come from getReplicaSetsForDeployment(d).
+// podMap should come from getPodMapForDeployment(d, rsList).
+func (dc *DeploymentController) isScalingEvent(d *apps.Deployment, rsList []*apps.ReplicaSet) (bool, error) {
+	newRS, oldRSs, err := dc.getAllReplicaSetsAndSyncRevision(d, rsList, false)
+	if err != nil {
+		return false, err
+	}
+	allRSs := append(oldRSs, newRS)
+	for _, rs := range controller.FilterActiveReplicaSets(allRSs) {
+		desired, ok := deploymentutil.GetDesiredReplicasAnnotation(rs)
+		if !ok {
+			continue
+		}
+		if desired != *(d.Spec.Replicas) {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
+//以一个rs为例，annotations中确实有desired-replicas
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  annotations:
+    deployment.kubernetes.io/desired-replicas: &#34;1&#34;
+    deployment.kubernetes.io/max-replicas: &#34;2&#34;
+    deployment.kubernetes.io/revision: &#34;1&#34;
+  creationTimestamp: &#34;2021-06-12T14:47:22Z&#34;</code></pre>
+<p><br></p>
+
+<p>调用sync-&gt;scale 进行扩缩，主要逻辑如下：</p>
+
+<p>（1） 获得最新的一个activeRs，进行扩缩容</p>
+
+<p>（2）如果newRS已经是期望状态，将所有的oldRS缩到0</p>
+
+<p>（3）如果是滚动更新，根据MaxSurge等字段，一步一步的更新，oldRs和newRs。最终的状态是newrs是期望状态，oldrs都是0。</p>
+
+<p>这里如果是recreate更新，则什么都不会做，等到旧pod删除完了之后，自然会进入（1），就直接扩缩容就行了。</p>
+<pre><code>// sync is responsible for reconciling deployments on scaling events or when they
+// are paused.
+func (dc *DeploymentController) sync(d *apps.Deployment, rsList []*apps.ReplicaSet) error {
+	newRS, oldRSs, err := dc.getAllReplicaSetsAndSyncRevision(d, rsList, false)
+	if err != nil {
+		return err
+	}
+	if err := dc.scale(d, newRS, oldRSs); err != nil {
+		// If we get an error while trying to scale, the deployment will be requeued
+		// so we can abort this resync
+		return err
+	}
+
+	// Clean up the deployment when it&#39;s paused and no rollback is in flight.
+	if d.Spec.Paused &amp;&amp; getRollbackTo(d) == nil {
+		if err := dc.cleanupDeployment(oldRSs, d); err != nil {
+			return err
+		}
+	}
+
+	allRSs := append(oldRSs, newRS)
+	return dc.syncDeploymentStatus(allRSs, newRS, d)
+}
+
+
+// scale scales proportionally in order to mitigate risk. Otherwise, scaling up can increase the size
+// of the new replica set and scaling down can decrease the sizes of the old ones, both of which would
+// have the effect of hastening the rollout progress, which could produce a higher proportion of unavailable
+// replicas in the event of a problem with the rolled out template. Should run only on scaling events or
+// when a deployment is paused and not during the normal rollout process.
+func (dc *DeploymentController) scale(deployment *apps.Deployment, newRS *apps.ReplicaSet, oldRSs []*apps.ReplicaSet) error {
+	// If there is only one active replica set then we should scale that up to the full count of the
+	// deployment. If there is no active replica set, then we should scale up the newest replica set.
+	// 1. 获得最新的一个activeRs，进行扩缩容
+	if activeOrLatest := deploymentutil.FindActiveOrLatest(newRS, oldRSs); activeOrLatest != nil {
+		if *(activeOrLatest.Spec.Replicas) == *(deployment.Spec.Replicas) {
+			return nil
+		}
+		_, _, err := dc.scaleReplicaSetAndRecordEvent(activeOrLatest, *(deployment.Spec.Replicas), deployment)
+		return err
+	}
+  
+  // 2. 如果newRS已经是期望状态，将所有的oldRS缩到0
+	// If the new replica set is saturated, old replica sets should be fully scaled down.
+	// This case handles replica set adoption during a saturated new replica set.
+	if deploymentutil.IsSaturated(deployment, newRS) {
+		for _, old := range controller.FilterActiveReplicaSets(oldRSs) {
+			if _, _, err := dc.scaleReplicaSetAndRecordEvent(old, 0, deployment); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+
+  // 3. 如果是滚动更新，根据MaxSurge等字段，一步一步的更新，oldRs和newRs。最终的状态是newrs是期望状态，oldrs都是0。
+	// There are old replica sets with pods and the new replica set is not saturated.
+	// We need to proportionally scale all replica sets (new and old) in case of a
+	// rolling deployment.
+	if deploymentutil.IsRollingUpdate(deployment) {
+		allRSs := controller.FilterActiveReplicaSets(append(oldRSs, newRS))
+		allRSsReplicas := deploymentutil.GetReplicaCountForReplicaSets(allRSs)
+
+		allowedSize := int32(0)
+		if *(deployment.Spec.Replicas) &gt; 0 {
+			allowedSize = *(deployment.Spec.Replicas) + deploymentutil.MaxSurge(*deployment)
+		}
+
+		// Number of additional replicas that can be either added or removed from the total
+		// replicas count. These replicas should be distributed proportionally to the active
+		// replica sets.
+		deploymentReplicasToAdd := allowedSize - allRSsReplicas
+
+		// The additional replicas should be distributed proportionally amongst the active
+		// replica sets from the larger to the smaller in size replica set. Scaling direction
+		// drives what happens in case we are trying to scale replica sets of the same size.
+		// In such a case when scaling up, we should scale up newer replica sets first, and
+		// when scaling down, we should scale down older replica sets first.
+		var scalingOperation string
+		switch {
+		case deploymentReplicasToAdd &gt; 0:
+			sort.Sort(controller.ReplicaSetsBySizeNewer(allRSs))
+			scalingOperation = &#34;up&#34;
+
+		case deploymentReplicasToAdd &lt; 0:
+			sort.Sort(controller.ReplicaSetsBySizeOlder(allRSs))
+			scalingOperation = &#34;down&#34;
+		}
+
+		// Iterate over all active replica sets and estimate proportions for each of them.
+		// The absolute value of deploymentReplicasAdded should never exceed the absolute
+		// value of deploymentReplicasToAdd.
+		deploymentReplicasAdded := int32(0)
+		nameToSize := make(map[string]int32)
+		for i := range allRSs {
+			rs := allRSs[i]
+
+			// Estimate proportions if we have replicas to add, otherwise simply populate
+			// nameToSize with the current sizes for each replica set.
+			if deploymentReplicasToAdd != 0 {
+				proportion := deploymentutil.GetProportion(rs, *deployment, deploymentReplicasToAdd, deploymentReplicasAdded)
+
+				nameToSize[rs.Name] = *(rs.Spec.Replicas) + proportion
+				deploymentReplicasAdded += proportion
+			} else {
+				nameToSize[rs.Name] = *(rs.Spec.Replicas)
+			}
+		}
+
+		// Update all replica sets
+		for i := range allRSs {
+			rs := allRSs[i]
+
+			// Add/remove any leftovers to the largest replica set.
+			if i == 0 &amp;&amp; deploymentReplicasToAdd != 0 {
+				leftover := deploymentReplicasToAdd - deploymentReplicasAdded
+				nameToSize[rs.Name] = nameToSize[rs.Name] + leftover
+				if nameToSize[rs.Name] &lt; 0 {
+					nameToSize[rs.Name] = 0
+				}
+			}
+
+			// TODO: Use transactions when we have them.
+			if _, _, err := dc.scaleReplicaSet(rs, nameToSize[rs.Name], deployment, scalingOperation); err != nil {
+				// Return as soon as we fail, the deployment is requeued
+				return err
+			}
+		}
+	}
+	return nil
+}</code></pre>
+<p><br></p>
+
+<h5 id="5-4-1-获得最新的一个activers">5.4.1 获得最新的一个activeRs</h5>
+
+<p>从这里可以看出来：activeRs 就是 rs.Spec.Replica&gt;0 的rs</p>
+
+<p>这里的逻辑就是：</p>
+
+<ul>
+<li>如果没有一个rs是active的，那就当newRS是当前要扩缩容的。newRs 就是：<strong>最近的</strong>，满足  rs.spec.template =  deploy.spec.temp  的rs。</li>
+<li>如果有一个active的rs。那么当其作为要扩缩容的。</li>
+<li>如果找到多个active的rs, 那么表示这个可能是滚动更新等复杂情况，走后面的逻辑。</li>
+
+<li><p>扩缩容直接调用了scaleReplicaSetAndRecordEvent函数，这个最后分析。</p>
+<pre><code>	if activeOrLatest := deploymentutil.FindActiveOrLatest(newRS, oldRSs); activeOrLatest != nil {
+		if *(activeOrLatest.Spec.Replicas) == *(deployment.Spec.Replicas) {
+			return nil
+		}
+		_, _, err := dc.scaleReplicaSetAndRecordEvent(activeOrLatest, *(deployment.Spec.Replicas), deployment)
+		return err
+	}
+	
+	
+// FindActiveOrLatest returns the only active or the latest replica set in case there is at most one active
+// replica set. If there are more active replica sets, then we should proportionally scale them.
+func FindActiveOrLatest(newRS *apps.ReplicaSet, oldRSs []*apps.ReplicaSet) *apps.ReplicaSet {
+	if newRS == nil &amp;&amp; len(oldRSs) == 0 {
+		return nil
+	}
+
+	sort.Sort(sort.Reverse(controller.ReplicaSetsByCreationTimestamp(oldRSs)))
+	allRSs := controller.FilterActiveReplicaSets(append(oldRSs, newRS))
+
+	switch len(allRSs) {
+	case 0:
+		// If there is no active replica set then we should return the newest.
+		if newRS != nil {
+			return newRS
+		}
+		return oldRSs[0]
+	case 1:
+		return allRSs[0]
+	default:
+		return nil
+	}
+}
+
+
+// FilterActiveReplicaSets returns replica sets that have (or at least ought to have) pods.
+func FilterActiveReplicaSets(replicaSets []*apps.ReplicaSet) []*apps.ReplicaSet {
+	activeFilter := func(rs *apps.ReplicaSet) bool {
+		return rs != nil &amp;&amp; *(rs.Spec.Replicas) &gt; 0
+	}
+	return FilterReplicaSets(replicaSets, activeFilter)
+}
+
+type filterRS func(rs *apps.ReplicaSet) bool
+
+// FilterReplicaSets returns replica sets that are filtered by filterFn (all returned ones should match filterFn).
+func FilterReplicaSets(RSes []*apps.ReplicaSet, filterFn filterRS) []*apps.ReplicaSet {
+	var filtered []*apps.ReplicaSet
+	for i := range RSes {
+		if filterFn(RSes[i]) {
+			filtered = append(filtered, RSes[i])
+		}
+	}
+	return filtered
+}</code></pre></li>
+</ul>
+
+<p><br></p>
+
+<h5 id="5-4-2-如果newrs已经是期望状态-将所有的oldrs缩到0">5.4.2 如果newRS已经是期望状态，将所有的oldRS缩到0</h5>
+
+<p>从这里很直观就可以看出来</p>
+<pre><code>	// If the new replica set is saturated, old replica sets should be fully scaled down.
+	// This case handles replica set adoption during a saturated new replica set.
+	if deploymentutil.IsSaturated(deployment, newRS) {
+		for _, old := range controller.FilterActiveReplicaSets(oldRSs) {
+			if _, _, err := dc.scaleReplicaSetAndRecordEvent(old, 0, deployment); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+	
+	// IsSaturated checks if the new replica set is saturated by comparing its size with its deployment size.
+// Both the deployment and the replica set have to believe this replica set can own all of the desired
+// replicas in the deployment and the annotation helps in achieving that. All pods of the ReplicaSet
+// need to be available.
+func IsSaturated(deployment *apps.Deployment, rs *apps.ReplicaSet) bool {
+	if rs == nil {
+		return false
+	}
+	desiredString := rs.Annotations[DesiredReplicasAnnotation]
+	desired, err := strconv.Atoi(desiredString)
+	if err != nil {
+		return false
+	}
+	return *(rs.Spec.Replicas) == *(deployment.Spec.Replicas) &amp;&amp;
+		int32(desired) == *(deployment.Spec.Replicas) &amp;&amp;
+		rs.Status.AvailableReplicas == *(deployment.Spec.Replicas)
+}	</code></pre>
+<p><br></p>
+
+<h4 id="5-5-recreate更新">5.5 recreate更新</h4>
+
+<p>这种策略就非常简单。先将所有旧rs scaledown到0。然后再将newRs扩到期望值。这里需要注意的是，如果旧rs还有pod running，这这个时候是再次同步，也就是说新的rs是等所有旧pod全部删除完了之后，才会开始创建。</p>
+<pre><code>// rolloutRecreate implements the logic for recreating a replica set.
+func (dc *DeploymentController) rolloutRecreate(d *apps.Deployment, rsList []*apps.ReplicaSet, podMap map[types.UID][]*v1.Pod) error {
+	// Don&#39;t create a new RS if not already existed, so that we avoid scaling up before scaling down.
+	newRS, oldRSs, err := dc.getAllReplicaSetsAndSyncRevision(d, rsList, false)
+	if err != nil {
+		return err
+	}
+	allRSs := append(oldRSs, newRS)
+	activeOldRSs := controller.FilterActiveReplicaSets(oldRSs)
+
+	// scale down old replica sets.
+	scaledDown, err := dc.scaleDownOldReplicaSetsForRecreate(activeOldRSs, d)
+	if err != nil {
+		return err
+	}
+	if scaledDown {
+		// Update DeploymentStatus.
+		return dc.syncRolloutStatus(allRSs, newRS, d)
+	}
+
+   // 如果旧rs还有pod running，这个时候是再次同步。
+	// Do not process a deployment when it has old pods running.
+	if oldPodsRunning(newRS, oldRSs, podMap) {
+		return dc.syncRolloutStatus(allRSs, newRS, d)
+	}
+
+	// If we need to create a new RS, create it now.
+	if newRS == nil {
+		newRS, oldRSs, err = dc.getAllReplicaSetsAndSyncRevision(d, rsList, true)
+		if err != nil {
+			return err
+		}
+		allRSs = append(oldRSs, newRS)
+	}
+
+	// scale up new replica set.
+	if _, err := dc.scaleUpNewReplicaSetForRecreate(newRS, d); err != nil {
+		return err
+	}
+
+	if util.DeploymentComplete(d, &amp;d.Status) {
+		if err := dc.cleanupDeployment(oldRSs, d); err != nil {
+			return err
+		}
+	}
+
+	// Sync deployment status.
+	return dc.syncRolloutStatus(allRSs, newRS, d)
+}
+
+
+
+// scaleDownOldReplicaSetsForRecreate scales down old replica sets when deployment strategy is &#34;Recreate&#34;.
+func (dc *DeploymentController) scaleDownOldReplicaSetsForRecreate(oldRSs []*apps.ReplicaSet, deployment *apps.Deployment) (bool, error) {
+	scaled := false
+	for i := range oldRSs {
+		rs := oldRSs[i]
+		// Scaling not required.
+		if *(rs.Spec.Replicas) == 0 {
+			continue
+		}
+		scaledRS, updatedRS, err := dc.scaleReplicaSetAndRecordEvent(rs, 0, deployment)
+		if err != nil {
+			return false, err
+		}
+		if scaledRS {
+			oldRSs[i] = updatedRS
+			scaled = true
+		}
+	}
+	return scaled, nil
+}</code></pre>
+<p><br></p>
+
+<h4 id="5-6-rolloutrolling更新">5.6 rolloutRolling更新</h4>
+
+<p>（1）获得newRS, oldRSs</p>
+
+<p>（2）如果是scaledUp，返回 syncRolloutStatus</p>
+
+<p>（3）如果是scaledDown，返回syncRolloutStatus</p>
+
+<p>（4）如果到了这里，说明不是scaledUp也不是scaledDown，那说明可能是达到了期望值，通过DeploymentComplete判断一下</p>
+
+<p>（5）同步状态</p>
+<pre><code>// rolloutRolling implements the logic for rolling a new replica set.
+func (dc *DeploymentController) rolloutRolling(d *apps.Deployment, rsList []*apps.ReplicaSet) error {
+   newRS, oldRSs, err := dc.getAllReplicaSetsAndSyncRevision(d, rsList, true)
+   if err != nil {
+      return err
+   }
+   allRSs := append(oldRSs, newRS)
+
+   // Scale up, if we can.
+   scaledUp, err := dc.reconcileNewReplicaSet(allRSs, newRS, d)
+   if err != nil {
+      return err
+   }
+   if scaledUp {
+      // Update DeploymentStatus
+      return dc.syncRolloutStatus(allRSs, newRS, d)
+   }
+
+   // Scale down, if we can.
+   scaledDown, err := dc.reconcileOldReplicaSets(allRSs, controller.FilterActiveReplicaSets(oldRSs), newRS, d)
+   if err != nil {
+      return err
+   }
+   if scaledDown {
+      // Update DeploymentStatus
+      return dc.syncRolloutStatus(allRSs, newRS, d)
+   }
+
+   if deploymentutil.DeploymentComplete(d, &amp;d.Status) {
+      if err := dc.cleanupDeployment(oldRSs, d); err != nil {
+         return err
+      }
+   }
+
+   // Sync deployment status
+   return dc.syncRolloutStatus(allRSs, newRS, d)
+}</code></pre>
+<p><br></p>
+
+<h5 id="5-6-1-如果是scaledup-针对news-返回-syncrolloutstatus">5.6.1 如果是scaledUp（针对news），返回 syncRolloutStatus</h5>
+
+<p>这里就是判断是否是scaleup，如果是，还计算了一下需要扩容的副本数。这里更加了更新策略，以及MaxSurge等因素来计算。</p>
+
+<p>然后通过scaleReplicaSetAndRecordEvent来修改rs并发送事件。</p>
+<pre><code>func (dc *DeploymentController) reconcileNewReplicaSet(allRSs []*apps.ReplicaSet, newRS *apps.ReplicaSet, deployment *apps.Deployment) (bool, error) {
+	if *(newRS.Spec.Replicas) == *(deployment.Spec.Replicas) {
+		// Scaling not required.
+		return false, nil
+	}
+	if *(newRS.Spec.Replicas) &gt; *(deployment.Spec.Replicas) {
+		// Scale down.
+		scaled, _, err := dc.scaleReplicaSetAndRecordEvent(newRS, *(deployment.Spec.Replicas), deployment)
+		return scaled, err
+	}
+	newReplicasCount, err := deploymentutil.NewRSNewReplicas(deployment, allRSs, newRS)
+	if err != nil {
+		return false, err
+	}
+	scaled, _, err := dc.scaleReplicaSetAndRecordEvent(newRS, newReplicasCount, deployment)
+	return scaled, err
+}
+
+
+// NewRSNewReplicas calculates the number of replicas a deployment&#39;s new RS should have.
+// When one of the followings is true, we&#39;re rolling out the deployment; otherwise, we&#39;re scaling it.
+// 1) The new RS is saturated: newRS&#39;s replicas == deployment&#39;s replicas
+// 2) Max number of pods allowed is reached: deployment&#39;s replicas + maxSurge == all RSs&#39; replicas
+func NewRSNewReplicas(deployment *apps.Deployment, allRSs []*apps.ReplicaSet, newRS *apps.ReplicaSet) (int32, error) {
+	switch deployment.Spec.Strategy.Type {
+	case apps.RollingUpdateDeploymentStrategyType:
+		// Check if we can scale up.
+		maxSurge, err := intstrutil.GetValueFromIntOrPercent(deployment.Spec.Strategy.RollingUpdate.MaxSurge, int(*(deployment.Spec.Replicas)), true)
+		if err != nil {
+			return 0, err
+		}
+		// Find the total number of pods
+		currentPodCount := GetReplicaCountForReplicaSets(allRSs)
+		maxTotalPods := *(deployment.Spec.Replicas) + int32(maxSurge)
+		if currentPodCount &gt;= maxTotalPods {
+			// Cannot scale up.
+			return *(newRS.Spec.Replicas), nil
+		}
+		// Scale up.
+		scaleUpCount := maxTotalPods - currentPodCount
+		// Do not exceed the number of desired replicas.
+		scaleUpCount = int32(integer.IntMin(int(scaleUpCount), int(*(deployment.Spec.Replicas)-*(newRS.Spec.Replicas))))
+		return *(newRS.Spec.Replicas) + scaleUpCount, nil
+	case apps.RecreateDeploymentStrategyType:
+		return *(deployment.Spec.Replicas), nil
+	default:
+		return 0, fmt.Errorf(&#34;deployment type %v isn&#39;t supported&#34;, deployment.Spec.Strategy.Type)
+	}
+}</code></pre>
+<p><br></p>
+
+<p>scaledown同样也是差不多的逻辑。计算的是当前旧rs应该减少的部分。</p>
+
+<p><br></p>
+
+<h4 id="5-7-scalereplicasetandrecordevent">5.7 scaleReplicaSetAndRecordEvent</h4>
+
+<p>这个函数作用和名字一样。通过restful 对rs进行 scale。 然后用事件记录。</p>
+<pre><code>func (dc *DeploymentController) scaleReplicaSetAndRecordEvent(rs *apps.ReplicaSet, newScale int32, deployment *apps.Deployment) (bool, *apps.ReplicaSet, error) {
+	// No need to scale
+	if *(rs.Spec.Replicas) == newScale {
+		return false, rs, nil
+	}
+	var scalingOperation string
+	if *(rs.Spec.Replicas) &lt; newScale {
+		scalingOperation = &#34;up&#34;
+	} else {
+		scalingOperation = &#34;down&#34;
+	}
+	scaled, newRS, err := dc.scaleReplicaSet(rs, newScale, deployment, scalingOperation)
+	return scaled, newRS, err
+}
+
+
+func (dc *DeploymentController) scaleReplicaSet(rs *apps.ReplicaSet, newScale int32, deployment *apps.Deployment, scalingOperation string) (bool, *apps.ReplicaSet, error) {
+
+	sizeNeedsUpdate := *(rs.Spec.Replicas) != newScale
+
+	annotationsNeedUpdate := deploymentutil.ReplicasAnnotationsNeedUpdate(rs, *(deployment.Spec.Replicas), *(deployment.Spec.Replicas)+deploymentutil.MaxSurge(*deployment))
+
+	scaled := false
+	var err error
+	if sizeNeedsUpdate || annotationsNeedUpdate {
+		rsCopy := rs.DeepCopy()
+		*(rsCopy.Spec.Replicas) = newScale
+		deploymentutil.SetReplicasAnnotations(rsCopy, *(deployment.Spec.Replicas), *(deployment.Spec.Replicas)+deploymentutil.MaxSurge(*deployment))
+		rs, err = dc.client.AppsV1().ReplicaSets(rsCopy.Namespace).Update(rsCopy)
+		if err == nil &amp;&amp; sizeNeedsUpdate {
+			scaled = true
+			dc.eventRecorder.Eventf(deployment, v1.EventTypeNormal, &#34;ScalingReplicaSet&#34;, &#34;Scaled %s replica set %s to %d&#34;, scalingOperation, rs.Name, newScale)
+		}
+	}
+	return scaled, rs, err
+}</code></pre>
+<p><br></p>
+
+        </div>
+
+        
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/2020-6-26-kubelet%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/">kubelet事件处理机制详解</a></li>
+        
+        <li><a href="/post/2021-6-26-k8s-event%E4%BB%8B%E7%BB%8D/">k8s event介绍</a></li>
+        
+        <li><a href="/post/2021-6-18-hpa-%E8%87%AA%E5%AE%9A%E4%B9%89metric-server/">自定义metric server</a></li>
+        
+        <li><a href="/post/2021-6-18-hpa%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">hpa 源码分析</a></li>
+        
+        <li><a href="/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/">k8s的基本组件</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/k8s'>k8s</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zoux86/blog"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-7-6-k8s-rs-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="k8s rs controller源码分析">k8s rs controller源码分析</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-7-6-deployment-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="k8s deploy controller源码分析">k8s deploy controller源码分析</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2020-6-26-kubelet%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/" title="kubelet事件处理机制详解">kubelet事件处理机制详解</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-6-26-k8s-event%E4%BB%8B%E7%BB%8D/" title="k8s event介绍">k8s event介绍</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-6-18-hpa-%E8%87%AA%E5%AE%9A%E4%B9%89metric-server/" title="自定义metric server">自定义metric server</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-6-18-hpa%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="hpa 源码分析">hpa 源码分析</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/" title="k8s的基本组件">k8s的基本组件</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-10-go%E7%9A%84%E5%90%84%E7%A7%8D%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" title="go的各种类型转换">go的各种类型转换</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-07-c&#43;&#43;-stl/" title="C&#43;&#43; STL">C&#43;&#43; STL</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-07-b%E6%A0%91b&#43;%E5%92%8Cb-/" title="B树,B&#43;和B-">B树,B&#43;和B-</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/c&#43;&#43;/">C&#43;&#43; (7)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/docker/">docker (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/go/">go (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (10)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kubeflow/">kubeflow (11)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/volcano/">volcano (4)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E4%B8%AA%E4%BA%BA%E6%84%9F%E6%82%9F/">个人感悟 (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建 (7)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题 (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记 (1)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
+    
+    <a href="https://zoux86.github.io/tags/clean-code/">clean code</a>
+    
+    <a href="https://zoux86.github.io/tags/docker/">docker</a>
+    
+    <a href="https://zoux86.github.io/tags/go/">go</a>
+    
+    <a href="https://zoux86.github.io/tags/golang/">golang</a>
+    
+    <a href="https://zoux86.github.io/tags/hadoop/">Hadoop</a>
+    
+    <a href="https://zoux86.github.io/tags/k8s/">k8s</a>
+    
+    <a href="https://zoux86.github.io/tags/kube-batch/">kube-batch</a>
+    
+    <a href="https://zoux86.github.io/tags/kubeflow/">kubeflow</a>
+    
+    <a href="https://zoux86.github.io/tags/tf-operator/">tf-operator</a>
+    
+    <a href="https://zoux86.github.io/tags/tfjob/">tfjob</a>
+    
+    <a href="https://zoux86.github.io/tags/ubuntu/">ubuntu</a>
+    
+    <a href="https://zoux86.github.io/tags/volcano/">volcano</a>
+    
+    <a href="https://zoux86.github.io/tags/%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93/">代码整洁之道</a>
+    
+    <a href="https://zoux86.github.io/tags/%E5%8D%9A%E5%AE%A2/">博客</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%84%9F%E6%82%9F/">感悟</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%A0%A1%E6%8B%9B/">校招</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%BA%90%E7%A0%81/">源码</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%AC%94%E8%AE%B0/">笔记</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题</a>
+    
+    <a href="https://zoux86.github.io/tags/%E8%B0%83%E5%BA%A6/">调度</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://www.jianshu.com/u/305d8226ced4" title="个人简书主页">个人简书主页</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zoux86.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

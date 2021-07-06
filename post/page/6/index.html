@@ -75,6 +75,56 @@
     <article class="post">
         <header>
             <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/%E9%93%BE%E8%A1%A8%E5%B8%B8%E8%80%83%E7%82%B9/" title="链表常考点">链表常考点</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年3月8日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E7%AE%97%E6%B3%95%E9%A2%98'>算法题</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            最近一口气刷完了Leetcode上链表专栏下的所有题。有好几题非常有意思，记录一下： 感觉链表的题，大部分都是考察细心的题。你定义好的遍历指针，一定要细心的检查当它遍历时，它的子节点正确赋值，同时要非常注意链表指针非空的情况。 寻找链表的倒数第K个，或者类似的题目。类似的比如：输出链……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/%E9%93%BE%E8%A1%A8%E5%B8%B8%E8%80%83%E7%82%B9/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-%E6%90%AD%E5%BB%BAk8s%E9%9B%86%E7%BE%A4/" title="ubuntu搭建k8s机器">ubuntu搭建k8s机器</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年3月5日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA'>环境搭建</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            本次在搭建k8s集群的过程中，遇到了很多问题，幸好最后终于成功。故将整个过程记录下来，希望对大家有所帮助。 环境说明 环境：4台ubuntu16.04 1个master 3个node k8s版本：V1.13.2 搭建说明 本教程采用kubeadm的方式安装，主要针对的是国内用户，因为安装k8s……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-%E6%90%AD%E5%BB%BAk8s%E9%9B%86%E7%BE%A4/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
                 <a href="https://zoux86.github.io/post/2019-11-24-kubeflow-pipelines-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%9E%E4%BE%8B/" title="kubeflow pipelines--实现自己的实例">kubeflow pipelines--实现自己的实例</a>
             </h1>
         </header>
@@ -272,56 +322,6 @@
     
     
     
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87%E5%B7%A5%E5%85%B7-ksonnet-%E5%AE%89%E8%A3%85/" title="kubeflow准备--下载ks">kubeflow准备--下载ks</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2019年1月7日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/kubeflow'>kubeflow</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            最近需要了解Kubeflow方面的知识，故需要自己配置kubeflow。安装Kubeflow需要按照以下的依赖: ksonnet version 0.11.0 or later. Kubernetes 1.8 or later kubectl 由于，k8s,kubectl的安装网上已经有很多教程了，而本人安装ksonnet时绕了一些弯，所以在此记录一些本人的安装过程。 安装环境介绍： 本人的k……
-        </div>
-        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87%E5%B7%A5%E5%85%B7-ksonnet-%E5%AE%89%E8%A3%85/">阅读全文</a></p>
-    </article>
-    
-    
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-nfs%E5%81%9A%E5%90%8E%E7%AB%AF%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/" title="kubeflow准备--NFS环境搭建">kubeflow准备--NFS环境搭建</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2019年1月7日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/kubeflow'>kubeflow</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            目的 在搭建kubeflow的时候，要需要搭建存储卷。为了以后能更好的共享文件，我这里使用了NFS作为文件存储系统。 操作如下： 针对master节点： master节点上安装NFS服务 1 sudoapt-getupdate&amp;&amp;sudoapt-getinstall-ynfs-server 建立一个共享的文件夹 1 sudomkdir/nfs-data/kubeflow-pv1 修改/etc/exports文件 (末尾添加) 1 /nfs-data/kubeflow-pv1*(rw,sync,no_root_squash,no_subtree_check) 这一行的意思是将/nfs-……
-        </div>
-        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kubeflow%E5%87%86%E5%A4%87-nfs%E5%81%9A%E5%90%8E%E7%AB%AF%E5%AD%98%E5%82%A8%E7%B3%BB%E7%BB%9F/">阅读全文</a></p>
-    </article>
-    
-    
-    
 
 
 
@@ -425,6 +425,14 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://zoux86.github.io/post/2021-7-6-k8s-rs-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="k8s rs controller源码分析">k8s rs controller源码分析</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-7-6-deployment-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="k8s deploy controller源码分析">k8s deploy controller源码分析</a>
+    </li>
+    
+    <li>
         <a href="https://zoux86.github.io/post/2020-6-26-kubelet%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/" title="kubelet事件处理机制详解">kubelet事件处理机制详解</a>
     </li>
     
@@ -456,14 +464,6 @@
         <a href="https://zoux86.github.io/post/2019-12-07-b%E6%A0%91b&#43;%E5%92%8Cb-/" title="B树,B&#43;和B-">B树,B&#43;和B-</a>
     </li>
     
-    <li>
-        <a href="https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1/" title="C&#43;&#43;类和对象">C&#43;&#43;类和对象</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-12-06-c&#43;&#43;%E6%8C%87%E9%92%88%E4%BD%A0%E8%A6%81%E4%BA%86%E8%A7%A3%E7%9A%84%E4%BA%8B/" title="C&#43;&#43;指针你要了解的事">C&#43;&#43;指针你要了解的事</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -483,7 +483,7 @@
     
     <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (8)</a></li>
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (10)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
     

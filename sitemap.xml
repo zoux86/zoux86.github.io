@@ -3,24 +3,30 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://zoux86.github.io/categories/</loc>
-    <lastmod>2021-06-26T00:32:20+08:00</lastmod>
+    <lastmod>2021-07-06T00:30:20+08:00</lastmod>
   </url><url>
     <loc>https://zoux86.github.io/tags/k8s/</loc>
-    <lastmod>2021-06-26T00:32:20+08:00</lastmod>
+    <lastmod>2021-07-06T00:30:20+08:00</lastmod>
   </url><url>
     <loc>https://zoux86.github.io/categories/k8s/</loc>
-    <lastmod>2021-06-26T00:32:20+08:00</lastmod>
+    <lastmod>2021-07-06T00:30:20+08:00</lastmod>
   </url><url>
-    <loc>https://zoux86.github.io/post/2020-6-26-kubelet%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/</loc>
-    <lastmod>2021-06-26T00:32:20+08:00</lastmod>
+    <loc>https://zoux86.github.io/post/2021-7-6-k8s-rs-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</loc>
+    <lastmod>2021-07-06T00:30:20+08:00</lastmod>
   </url><url>
     <loc>https://zoux86.github.io/post/</loc>
-    <lastmod>2021-06-26T00:32:20+08:00</lastmod>
+    <lastmod>2021-07-06T00:30:20+08:00</lastmod>
   </url><url>
     <loc>https://zoux86.github.io/tags/</loc>
-    <lastmod>2021-06-26T00:32:20+08:00</lastmod>
+    <lastmod>2021-07-06T00:30:20+08:00</lastmod>
   </url><url>
     <loc>https://zoux86.github.io/</loc>
+    <lastmod>2021-07-06T00:30:20+08:00</lastmod>
+  </url><url>
+    <loc>https://zoux86.github.io/post/2021-7-6-deployment-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</loc>
+    <lastmod>2021-07-06T00:20:20+08:00</lastmod>
+  </url><url>
+    <loc>https://zoux86.github.io/post/2020-6-26-kubelet%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/</loc>
     <lastmod>2021-06-26T00:32:20+08:00</lastmod>
   </url><url>
     <loc>https://zoux86.github.io/post/2021-6-26-k8s-event%E4%BB%8B%E7%BB%8D/</loc>
