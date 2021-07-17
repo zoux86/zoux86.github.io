@@ -82,6 +82,52 @@
     <article class="post">
         <header>
             <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B02/">k8s源码学习 - Scheduler笔记（2）</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年4月21日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/k8s'>k8s</a>
+            
+        </div>
+        
+        <div class="post-content">
+            接上文的工作，上文是找到了scheduler的入口。接下来看scheduler具体的执行。 1 2 3 4 5 cmd/kube-scheduler/scheduler.go:34main函数-&gt; cmd/kube-scheduler/app/server.go:70NewSchedulerCommand-&gt; cmd/kube-scheduler/app/server.go:117runCommand-&gt; cmd/kube-scheduler/app/server.go:167Run-&gt; pkg/scheduler/scheduler.go:276run-&gt; 这是上文的工作 1 2 pkg/scheduler/scheduler.go:501scheduleOne-&gt; pkg/scheduler/scheduler.go:291schedule-&gt; 这里schedule只是一个街口，定义在 schedule/a……
+            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-scheduler%E7%AC%94%E8%AE%B02/">阅读全文</a></p>
+        </div>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84/">k8s源码学习--代码结构</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年4月21日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/k8s'>k8s</a>
+            
+        </div>
+        
+        <div class="post-content">
+            k8s版本：v1.13 k8s代码的结构 api: 输出接口文档用，基本是json源码 build：构建脚本 cmd：所有的二进制可执行文件入口代码，也就是各种命令的接口代码。 pkg：项目diamante主目录，cmd只是接口，这里是具体实现。cmd类似业务代码，pkg类似核心 plugin：插件……
+            <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-k8s%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84/">阅读全文</a></p>
+        </div>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
                 <a href="https://zoux86.github.io/post/2019-11-24-k8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85helm/">k8s集群安装helm</a>
             </h1>
         </header>
@@ -225,6 +271,14 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://zoux86.github.io/post/2021-7-17-k8s%E4%B8%AD%E4%BB%A5%E4%B8%8D%E5%90%8C%E7%9A%84%E7%AD%96%E7%95%A5%E5%88%A0%E9%99%A4%E8%B5%84%E6%BA%90%E6%97%B6%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88/" title="k8s中以不同的策略删除资源时发生了什么">k8s中以不同的策略删除资源时发生了什么</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-7-17-k8s-gc%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="k8s gc controller源码分析">k8s gc controller源码分析</a>
+    </li>
+    
+    <li>
         <a href="https://zoux86.github.io/post/2021-7-6-k8s-rs-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="k8s rs controller源码分析">k8s rs controller源码分析</a>
     </li>
     
@@ -256,14 +310,6 @@
         <a href="https://zoux86.github.io/post/2019-12-10-go%E7%9A%84%E5%90%84%E7%A7%8D%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" title="go的各种类型转换">go的各种类型转换</a>
     </li>
     
-    <li>
-        <a href="https://zoux86.github.io/post/2019-12-07-c&#43;&#43;-stl/" title="C&#43;&#43; STL">C&#43;&#43; STL</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-12-07-b%E6%A0%91b&#43;%E5%92%8Cb-/" title="B树,B&#43;和B-">B树,B&#43;和B-</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -283,7 +329,7 @@
     
     <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (10)</a></li>
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (12)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
     

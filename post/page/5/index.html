@@ -75,6 +75,56 @@
     <article class="post">
         <header>
             <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-24-%E5%AE%89%E8%A3%85kubeflow-tfjob%E5%B9%B6%E8%AE%A9-%E6%90%AD%E9%85%8D-volcano-%E7%9A%84%E6%95%99%E7%A8%8B/" title="安装kubeflow tfjob并让 搭配 volcano 的教程">安装kubeflow tfjob并让 搭配 volcano 的教程</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年9月10日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/volcano'>volcano</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            搭建说明 最终目的：修改深度学习作业的调度算法 当前要搭建的环境： （1）能运行kubeflow的tfjob的集群 （2）kubeflow进行gang-scheduler的调度算法 volcano 准备工作 (1) 安装好 k8s集群，安装好kfctl (2) 确认你是否有一个默认StorageClass且也配置好了动态……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-%E5%AE%89%E8%A3%85kubeflow-tfjob%E5%B9%B6%E8%AE%A9-%E6%90%AD%E9%85%8D-volcano-%E7%9A%84%E6%95%99%E7%A8%8B/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2019-11-25-%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93%E7%AC%94%E8%AE%B0/" title="代码整洁之道笔记">代码整洁之道笔记</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2019年4月21日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0'>读书笔记</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            动机 最近在回顾自己之前写的代码时，发现之前的惨不忍睹。最大的问题是，几个月前自己写的居然都看不懂。 有些问题自己能避免，例如有意义的变量命名问题，但是由于当时英文卡住了，直接就随便命名了，当时以为自己看得懂，以后就能懂，最后发现是自己想多了。 刚好今天没事翻了一下之前买的书籍《代码整……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-25-%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93%E7%AC%94%E8%AE%B0/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
                 <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E7%9A%84%E9%85%8D%E7%BD%AE/" title="kube-batch 修改默认的配置">kube-batch 修改默认的配置</a>
             </h1>
         </header>
@@ -272,56 +322,6 @@
     
     
     
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E7%AE%80%E4%BB%8B/" title="kube-batch--简介">kube-batch--简介</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2019年3月25日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/kube-batch'>kube-batch</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            1.背景介绍 K8s本身的调度器具有一些缺陷： （1） 默认的调度器是以 pod 为粒度的，对机器学习任务很不利。 （2）默认的调度器无法提供队列调度的功能 2.kube-batch介绍 Kube-batch 目前是 Kubernetes SIGs 旗下的一个孵化项目，是一个运行在 Kubernetes 上面向机器学习 / 大数据 /HPC 的批调度器（batch scheduler）……
-        </div>
-        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E7%AE%80%E4%BB%8B/">阅读全文</a></p>
-    </article>
-    
-    
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/" title="kube-batch--启动过程">kube-batch--启动过程</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2019年3月25日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/kube-batch'>kube-batch</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            追踪整个代码跳过过程 1 2 3 4 cmd/kube-batch/main.go:39main-&gt; cmd/kube-batch/main.go:53app.Runcmd/kube-batch/app/server.go:60Run-&gt; cmd/kube-batch/app/server.go:86sched.Runcmd/kube-batch/app/server.go:86sched.Run-&gt; pkg/scheduler/scheduler.go:59cmd/kube-batch/app/server.go:59sched.Run-&gt; pkg/scheduler/scheduler.runOnce:84 cmd/kube-batch/app/server.go:59 行代码 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 func(pc*Scheduler)Run(stopCh&lt;-chanstruct{}){varerrerror// Start cache for policy. gopc.cache.Run(stopCh)pc.cache.WaitForCacheSync(stopCh)// Load configuration of scheduler schedConf:=defaultSchedulerConfiflen(pc.schedulerConf)!=0{ifschedConf,err=readSchedulerConf(pc.schedulerConf);err!=nil{glog.Errorf(&#34;Failed to read scheduler configuration &#39;%s&#39;, using default configuration: %v&#34;,pc.schedulerConf,err)schedConf=defaultSchedulerConf}}pc.actions,pc.plugins,err=loadSchedulerConf(schedConf)iferr!=nil{panic(err)}// 这里又开始周期性调用 runOnce了。开始调用 gowait.Until(pc.runOnce,pc.schedulePeriod,stopCh)} cmd/kube-batch/app/server.go:84 行代码 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 func(pc*Scheduler)runOnce(){glog.V(4).Infof(&#34;Start scheduling ...&#34;)scheduleStartTime:=time.Now()deferglog.V(4).Infof(&#34;End scheduling ...&#34;)defermetrics.UpdateE2eDuration(metrics.Duration(scheduleStartTime))ssn:=framework.OpenSession(pc.cache,pc.plugins)deferframework.CloseSession(ssn)for_,action:=rangepc.actions{actionStartTime:=time.Now()action.Execute(ssn)metrics.UpdateActionDuration(action.Name(),metrics.Duration(actionStartTime))}} 这里主要 defer 是延迟函数，就是返回值之前执行。所以上面……
-        </div>
-        <p class="readmore"><a href="https://zoux86.github.io/post/2019-11-24-kube-batch-%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B/">阅读全文</a></p>
-    </article>
-    
-    
-    
 
 
 
@@ -425,6 +425,14 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://zoux86.github.io/post/2021-7-17-k8s%E4%B8%AD%E4%BB%A5%E4%B8%8D%E5%90%8C%E7%9A%84%E7%AD%96%E7%95%A5%E5%88%A0%E9%99%A4%E8%B5%84%E6%BA%90%E6%97%B6%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88/" title="k8s中以不同的策略删除资源时发生了什么">k8s中以不同的策略删除资源时发生了什么</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-7-17-k8s-gc%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="k8s gc controller源码分析">k8s gc controller源码分析</a>
+    </li>
+    
+    <li>
         <a href="https://zoux86.github.io/post/2021-7-6-k8s-rs-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="k8s rs controller源码分析">k8s rs controller源码分析</a>
     </li>
     
@@ -456,14 +464,6 @@
         <a href="https://zoux86.github.io/post/2019-12-10-go%E7%9A%84%E5%90%84%E7%A7%8D%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" title="go的各种类型转换">go的各种类型转换</a>
     </li>
     
-    <li>
-        <a href="https://zoux86.github.io/post/2019-12-07-c&#43;&#43;-stl/" title="C&#43;&#43; STL">C&#43;&#43; STL</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-12-07-b%E6%A0%91b&#43;%E5%92%8Cb-/" title="B树,B&#43;和B-">B树,B&#43;和B-</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -483,7 +483,7 @@
     
     <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (10)</a></li>
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (12)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
     

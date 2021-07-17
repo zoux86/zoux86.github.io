@@ -6,7 +6,25 @@
     <description>Recent content in k8s on zoux的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 06 Jul 2021 00:30:20 +0800</lastBuildDate><atom:link href="https://zoux86.github.io/categories/k8s/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 17 Jul 2021 00:30:20 +0800</lastBuildDate><atom:link href="https://zoux86.github.io/categories/k8s/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>k8s中以不同的策略删除资源时发生了什么</title>
+      <link>https://zoux86.github.io/post/2021-7-17-k8s%E4%B8%AD%E4%BB%A5%E4%B8%8D%E5%90%8C%E7%9A%84%E7%AD%96%E7%95%A5%E5%88%A0%E9%99%A4%E8%B5%84%E6%BA%90%E6%97%B6%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88/</link>
+      <pubDate>Sat, 17 Jul 2021 00:30:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2021-7-17-k8s%E4%B8%AD%E4%BB%A5%E4%B8%8D%E5%90%8C%E7%9A%84%E7%AD%96%E7%95%A5%E5%88%A0%E9%99%A4%E8%B5%84%E6%BA%90%E6%97%B6%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88/</guid>
+      <description>接上篇gc源码分析，这篇主要总结以在不同的删除策略（孤儿，前台，后台）模式下，删除k8s资源发生了什么。 以下都是以 deployA , rsA, podA作为介绍。（这个可以类比为任何有这种依赖关系的资源） 1. 孤儿模式 孤儿模式删除deployA： deployA会被删除，rsA不会删除，但是rsA的Owner</description>
+    </item>
+    
+    <item>
+      <title>k8s gc controller源码分析</title>
+      <link>https://zoux86.github.io/post/2021-7-17-k8s-gc%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
+      <pubDate>Sat, 17 Jul 2021 00:20:20 +0800</pubDate>
+      
+      <guid>https://zoux86.github.io/post/2021-7-17-k8s-gc%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
+      <description>1. K8s 的垃圾回收策略 k8s目前支持三种回收策略： （1）前台级联删除（Foreground Cascading Deletion）：在这种删除策略中，所有者对象的删除将会持续到其所有从属对象都被删除为止。当所有者被删除时，会进入“正在删除”（deletion in progress）状态，此时： 对象仍然可以通</description>
+    </item>
+    
     <item>
       <title>k8s rs controller源码分析</title>
       <link>https://zoux86.github.io/post/2021-7-6-k8s-rs-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>

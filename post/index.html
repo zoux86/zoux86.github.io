@@ -75,6 +75,56 @@
     <article class="post">
         <header>
             <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2021-7-17-k8s%E4%B8%AD%E4%BB%A5%E4%B8%8D%E5%90%8C%E7%9A%84%E7%AD%96%E7%95%A5%E5%88%A0%E9%99%A4%E8%B5%84%E6%BA%90%E6%97%B6%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88/" title="k8s中以不同的策略删除资源时发生了什么">k8s中以不同的策略删除资源时发生了什么</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年7月17日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/k8s'>k8s</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            接上篇gc源码分析，这篇主要总结以在不同的删除策略（孤儿，前台，后台）模式下，删除k8s资源发生了什么。 以下都是以 deployA , rsA, podA作为介绍。（这个可以类比为任何有这种依赖关系的资源） 1. 孤儿模式 孤儿模式删除deployA： deployA会被删除，rsA不会删除，但是rsA的Owner……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2021-7-17-k8s%E4%B8%AD%E4%BB%A5%E4%B8%8D%E5%90%8C%E7%9A%84%E7%AD%96%E7%95%A5%E5%88%A0%E9%99%A4%E8%B5%84%E6%BA%90%E6%97%B6%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://zoux86.github.io/post/2021-7-17-k8s-gc%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="k8s gc controller源码分析">k8s gc controller源码分析</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年7月17日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/k8s'>k8s</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            1. K8s 的垃圾回收策略 k8s目前支持三种回收策略： （1）前台级联删除（Foreground Cascading Deletion）：在这种删除策略中，所有者对象的删除将会持续到其所有从属对象都被删除为止。当所有者被删除时，会进入“正在删除”（deletion in progress）状态，此时： 对象仍然可以通……
+        </div>
+        <p class="readmore"><a href="https://zoux86.github.io/post/2021-7-17-k8s-gc%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
                 <a href="https://zoux86.github.io/post/2021-7-6-k8s-rs-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="k8s rs controller源码分析">k8s rs controller源码分析</a>
             </h1>
         </header>
@@ -272,56 +322,6 @@
     
     
     
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-12-07-c&#43;&#43;-stl/" title="C&#43;&#43; STL">C&#43;&#43; STL</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2019年12月7日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/c&#43;&#43;'>C&#43;&#43;</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            1.vector Vector是顺序容器，是一个动态数组，支持随机存取、插入、删除、查找等操作，在内存中是一块连续的空间。 注意：vector动态增加大小时，并不是在原空间之后持续新空间（因为无法保证原空间之后尚有可供配置的空间），而是以原大小的两倍另外配置一块较大的空间，然后将原内容拷贝过来，然……
-        </div>
-        <p class="readmore"><a href="https://zoux86.github.io/post/2019-12-07-c&#43;&#43;-stl/">阅读全文</a></p>
-    </article>
-    
-    
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://zoux86.github.io/post/2019-12-07-b%E6%A0%91b&#43;%E5%92%8Cb-/" title="B树,B&#43;和B-">B树,B&#43;和B-</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2019年12月7日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/c&#43;&#43;'>C&#43;&#43;</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            二叉搜索树 二叉搜索树，BST（Binary Search Tree），即为特殊的二叉树。 对于二叉树的任意一个节点，其左子树中所有的值均小于该节点；右子树中所有的值均大于该节点。 二叉搜索树按照中序遍历的方式（左 - 中 - 右）得到的序列为从小到大的有序序列。 B数 二叉搜索树，树如其名，它在搜索一个值的时……
-        </div>
-        <p class="readmore"><a href="https://zoux86.github.io/post/2019-12-07-b%E6%A0%91b&#43;%E5%92%8Cb-/">阅读全文</a></p>
-    </article>
-    
-    
-    
 
 
 
@@ -421,6 +421,14 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://zoux86.github.io/post/2021-7-17-k8s%E4%B8%AD%E4%BB%A5%E4%B8%8D%E5%90%8C%E7%9A%84%E7%AD%96%E7%95%A5%E5%88%A0%E9%99%A4%E8%B5%84%E6%BA%90%E6%97%B6%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88/" title="k8s中以不同的策略删除资源时发生了什么">k8s中以不同的策略删除资源时发生了什么</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-7-17-k8s-gc%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="k8s gc controller源码分析">k8s gc controller源码分析</a>
+    </li>
+    
+    <li>
         <a href="https://zoux86.github.io/post/2021-7-6-k8s-rs-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="k8s rs controller源码分析">k8s rs controller源码分析</a>
     </li>
     
@@ -452,14 +460,6 @@
         <a href="https://zoux86.github.io/post/2019-12-10-go%E7%9A%84%E5%90%84%E7%A7%8D%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" title="go的各种类型转换">go的各种类型转换</a>
     </li>
     
-    <li>
-        <a href="https://zoux86.github.io/post/2019-12-07-c&#43;&#43;-stl/" title="C&#43;&#43; STL">C&#43;&#43; STL</a>
-    </li>
-    
-    <li>
-        <a href="https://zoux86.github.io/post/2019-12-07-b%E6%A0%91b&#43;%E5%92%8Cb-/" title="B树,B&#43;和B-">B树,B&#43;和B-</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -479,7 +479,7 @@
     
     <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
     
-    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (10)</a></li>
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (12)</a></li>
     
     <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
     

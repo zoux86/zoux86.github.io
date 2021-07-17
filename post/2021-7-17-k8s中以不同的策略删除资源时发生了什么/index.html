@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>k8s中以不同的策略删除资源时发生了什么 | zoux的博客</title>
+    <meta property="og:title" content="k8s中以不同的策略删除资源时发生了什么 - zoux的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2021-07-17T00:30:20&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2021-07-17T00:30:20&#43;08:00'>
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,zoux,k8s,Kubernetes,docker,kubeflow">
+    <meta name="description" content="k8s中以不同的策略删除资源时发生了什么">
+        
+    <meta name="author" content="zoux">
+    <meta property="og:url" content="https://zoux86.github.io/post/2021-7-17-k8s%E4%B8%AD%E4%BB%A5%E4%B8%8D%E5%90%8C%E7%9A%84%E7%AD%96%E7%95%A5%E5%88%A0%E9%99%A4%E8%B5%84%E6%BA%90%E6%97%B6%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88/">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+    
+    
+    
+</head>
+
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://zoux86.github.io/">
+                        zoux的博客
+                    </a>
+                
+                <p class="description">对Go语言(golang)、k8s、kubeflow，容器云，云原生感兴趣</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://zoux86.github.io/">首页</a>
+                    
+                    <a  href="https://zoux86.github.io/tools/" title="工具">工具</a>
+                    
+                    <a  href="https://zoux86.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://zoux86.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">k8s中以不同的策略删除资源时发生了什么</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2021年7月17日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/k8s'>k8s</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            
+
+<p>接上篇gc源码分析，这篇主要总结以在不同的删除策略（孤儿，前台，后台）模式下，删除k8s资源发生了什么。</p>
+
+<p>以下都是以 deployA , rsA, podA作为介绍。（这个可以类比为任何有这种依赖关系的资源）</p>
+
+<h3 id="1-孤儿模式">1. 孤儿模式</h3>
+
+<p>孤儿模式删除deployA： deployA会被删除，rsA不会删除，但是rsA的OwnerReference里deployA会被删除。</p>
+
+<p>具体的流程如下：</p>
+
+<p>（1)  客户端发起kubectl delete deploy deployA &ndash;cascade=false</p>
+
+<p>（2）apiserver接收到请求，发现删除模式是organ。这个时候apiserver会做俩件事情：</p>
+
+<ul>
+<li>设置deployA的deletionStamp</li>
+<li>增加一个finalizer，organ</li>
+</ul>
+
+<p><strong>这个时候apiserver会直接返回，不会一直阻塞在这里等</strong></p>
+
+<p>（3）这个时候由于apiserver对deployA更新了。所以gc收到了deployA的<strong>更新</strong>事件，然后开始处理工作：</p>
+
+<ul>
+<li>一，维护uidToNode图，就是删除了deployA这个node节点，并且将rsA节点的onwer删除。</li>
+<li>二，将rsA这个对象的OwnerReference中的deployA删除；</li>
+<li>三，将deployA这个对象的organ finalizer删除</li>
+</ul>
+
+<p>（4）将deployA这个对象的organ finalizer删除实际上是一个更新事件。这个时候apiserver收到这个更新事件，发现deployA的所以finalizer被删除了，这个时候调用restful接口真正的删除 deployA。</p>
+
+<p><br></p>
+
+<h3 id="2-后台模式">2. 后台模式</h3>
+
+<p>后台模式删除deployA： deployA会被马上删除，然后删除rsA，最后删除pod</p>
+
+<p>具体的流程如下：</p>
+
+<p>（1)  客户端发起kubectl delete deployA propagationPolicy&rdquo;:&ldquo;Background&rdquo;</p>
+
+<p>（2）apiserver接收到请求，发现删除模式是Background。这个时候apiserver会直接将deployA删除。</p>
+
+<p>（3）这个时候由于apiserver删除了deployA。所以gc收到了deployA的<strong>删除</strong>事件，然后开始处理工作：</p>
+
+<ul>
+<li>一，维护uidToNode图，就是删除了deployA这个node节点，并且将rsA扔进attemptToDelete队列</li>
+<li>二，处理rsA时，发现它的owner已经不存在了，所以马上以backgroud的方式，再删除rsA。</li>
+<li>三，然后就是同样的操作，先删除了rsA，然后删除了pod。</li>
+</ul>
+
+<p><br></p>
+
+<h3 id="3-前台模式">3. 前台模式</h3>
+
+<p>前台模式删除deployA： podA会先删除，然后是rsA，最后是deployA。</p>
+
+<p>具体的流程如下：</p>
+
+<p>（1)  客户端发起kubectl delete  deployA  propagationPolicy:Foreground</p>
+
+<p>（2）apiserver接收到请求，发现删除模式是Foreground。这个时候apiserver会做俩件事情：</p>
+
+<ul>
+<li>设置deployA的deletionStamp</li>
+<li>增加一个finalizer，Foreground</li>
+</ul>
+
+<p><strong>这个时候apiserver会直接返回，不会一直阻塞在这里等</strong></p>
+
+<p>（3）这个时候由于apiserver对deployA更新了。所以gc收到了deployA的更新事件，然后开始处理工作。</p>
+
+<p>具体为：</p>
+
+<p>一，维护uidToNode图。</p>
+
+<p>首先是deployA这个node节点，会标记为 删除depents中。然后将 deployA的依赖（rsA）加入 attempToDelete队列。</p>
+
+<p>处理rsA时，发现rsA的owner在等待删除depents。并且rsA还有自己的 depends。所以这个时候就调用<strong>前台删除</strong>接口删除 来删除rsA。</p>
+
+<p>同样，前台删除rsA时，先标记rsA这个node节点，为 删除depents中，然后将 rsA的依赖（podA）加入 attempToDelete队列。</p>
+
+<p>处理podA时，发现PodA的owner在等待删除depents。但是podA没有自己的 depends。所以这个时候就调用<strong>后台删除</strong>接口删除 来删除podA。</p>
+
+<p>后台删除podA后，apiserver会直接将podA这个对象删除。所以gc收到了 删除事件。这个时候会将 podA这个节点删除，然后再将rsA加入删除队列。</p>
+
+<p>接下来rsA发现自己的depents删除了，所以rsA的finalizer就会删除。然后apiserver就会将rsA删除。</p>
+
+<p>然后gc收到了rsA的删除事件，同样的操作再将deployA删除。</p>
+
+<p><br></p>
+
+<h3 id="4-总结">4. 总结</h3>
+
+<p>gc的机制非常巧妙，而且和apiserver进行了联动。在实际过程中运用这种gc机制也非常有用。比如有俩个不相关的对象，通过设置OwnerReference, 就可以实现，俩个对象的级联删除。</p>
+
+<p><br></p>
+
+<h3 id="5-方法论">5. 方法论</h3>
+
+<p>以上的流程，通过代码和实践进行验证。</p>
+
+<p>代码分析见上一篇。实践就是通过实验，主要做了以下观察：</p>
+
+<p>（1）看deployA的yaml发生了什么变化</p>
+
+<p>（2）增大kcm的日志等级，查看gc的日志</p>
+
+<p>（3）增大apiserver的日志等级，查看apiserver的处理</p>
+
+<h4 id="5-1-看deploya的yaml发生了什么变化">5.1 看deployA的yaml发生了什么变化</h4>
+<pre><code>// -w 一直监控删除前后的变化
+root@k8s-master:~/testyaml/hpa# kubectl get deploy zx-hpa -oyaml -w
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: &#34;1&#34;
+  creationTimestamp: &#34;2021-07-09T07:21:48Z&#34;
+  generation: 1
+  labels:
+    app: zx-hpa-test
+  name: zx-hpa
+  namespace: default
+  resourceVersion: &#34;6975175&#34;
+  selfLink: /apis/apps/v1/namespaces/default/deployments/zx-hpa
+  uid: 6ccbe990-e4d3-4ba1-b67f-56a9bfbd69a0
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 2
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: zx-hpa-test
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: zx-hpa-test
+      name: zx-hpa-test
+    spec:
+      containers:
+      - command:
+        - sleep
+        - &#34;3600&#34;
+        image: busybox:latest
+        imagePullPolicy: IfNotPresent
+        name: busybox
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 5
+status:
+  availableReplicas: 2
+  conditions:
+  - lastTransitionTime: &#34;2021-07-09T07:21:50Z&#34;
+    lastUpdateTime: &#34;2021-07-09T07:21:50Z&#34;
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: &#34;True&#34;
+    type: Available
+  - lastTransitionTime: &#34;2021-07-09T07:21:49Z&#34;
+    lastUpdateTime: &#34;2021-07-09T07:21:50Z&#34;
+    message: ReplicaSet &#34;zx-hpa-7b56cddd95&#34; has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: &#34;True&#34;
+    type: Progressing
+  observedGeneration: 1
+  readyReplicas: 2
+  replicas: 2
+  updatedReplicas: 2
+
+
+
+
+
+
+
+
+
+
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: &#34;1&#34;
+  creationTimestamp: &#34;2021-07-09T07:21:48Z&#34;
+  generation: 1
+  labels:
+    app: zx-hpa-test
+  name: zx-hpa
+  namespace: default
+  resourceVersion: &#34;6975316&#34;
+  selfLink: /apis/apps/v1/namespaces/default/deployments/zx-hpa
+  uid: 6ccbe990-e4d3-4ba1-b67f-56a9bfbd69a0
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 2
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: zx-hpa-test
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: zx-hpa-test
+      name: zx-hpa-test
+    spec:
+      containers:
+      - command:
+        - sleep
+        - &#34;3600&#34;
+        image: busybox:latest
+        imagePullPolicy: IfNotPresent
+        name: busybox
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 5
+status:
+  availableReplicas: 2
+  conditions:
+  - lastTransitionTime: &#34;2021-07-09T07:21:50Z&#34;
+    lastUpdateTime: &#34;2021-07-09T07:21:50Z&#34;
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: &#34;True&#34;
+    type: Available
+  - lastTransitionTime: &#34;2021-07-09T07:21:49Z&#34;
+    lastUpdateTime: &#34;2021-07-09T07:21:50Z&#34;
+    message: ReplicaSet &#34;zx-hpa-7b56cddd95&#34; has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: &#34;True&#34;
+    type: Progressing
+  observedGeneration: 1
+  readyReplicas: 2
+  replicas: 2
+  updatedReplicas: 2</code></pre>
+<h4 id="5-2-增大kcm的日志等级-查看gc的日志">5.2 增大kcm的日志等级，查看gc的日志</h4>
+<pre><code>I0709 15:17:45.089271    3183 resource_quota_monitor.go:354] QuotaMonitor process object: apps/v1, Resource=deployments, namespace kube-system, name kube-hpa, uid 639d5269-d73d-4964-a7de-d6f386c9c7e4, event type delete
+I0709 15:17:45.089320    3183 graph_builder.go:543] GraphBuilder process object: apps/v1/Deployment, namespace kube-system, name kube-hpa, uid 639d5269-d73d-4964-a7de-d6f386c9c7e4, event type delete
+I0709 15:17:45.089346    3183 garbagecollector.go:404] processing item [apps/v1/ReplicaSet, namespace: kube-system, name: kube-hpa-84c884f994, uid: e66e45c0-5695-4c93-82f1-067b20aa035f]
+I0709 15:17:45.089576    3183 deployment_controller.go:193] Deleting deployment kube-hpa
+I0709 15:17:45.089591    3183 deployment_controller.go:564] Started syncing deployment &#34;kube-system/kube-hpa&#34; (2021-07-09 15:17:45.089588305 +0800 CST m=+38.708727198)
+I0709 15:17:45.089611    3183 deployment_controller.go:575] Deployment kube-system/kube-hpa has been deleted
+I0709 15:17:45.089615    3183 deployment_controller.go:566] Finished syncing deployment &#34;kube-system/kube-hpa&#34; (24.606µs)
+I0709 15:17:45.093463    3183 garbagecollector.go:329] according to the absentOwnerCache, object e66e45c0-5695-4c93-82f1-067b20aa035f&#39;s owner apps/v1/Deployment, kube-hpa does not exist
+I0709 15:17:45.093480    3183 garbagecollector.go:455] classify references of [apps/v1/ReplicaSet, namespace: kube-system, name: kube-hpa-84c884f994, uid: e66e45c0-5695-4c93-82f1-067b20aa035f].
+solid: []v1.OwnerReference(nil)
+dangling: []v1.OwnerReference{v1.OwnerReference{APIVersion:&#34;apps/v1&#34;, Kind:&#34;Deployment&#34;, Name:&#34;kube-hpa&#34;, UID:&#34;639d5269-d73d-4964-a7de-d6f386c9c7e4&#34;, Controller:(*bool)(0xc000ab3817), BlockOwnerDeletion:(*bool)(0xc000ab3818)}}
+waitingForDependentsDeletion: []v1.OwnerReference(nil)
+I0709 15:17:45.093517    3183 garbagecollector.go:517] delete object [apps/v1/ReplicaSet, namespace: kube-system, name: kube-hpa-84c884f994, uid: e66e45c0-5695-4c93-82f1-067b20aa035f] with propagation policy Background
+I0709 15:17:45.107563    3183 resource_quota_monitor.go:354] QuotaMonitor process object: apps/v1, Resource=replicasets, namespace kube-system, name kube-hpa-84c884f994, uid e66e45c0-5695-4c93-82f1-067b20aa035f, event type delete
+I0709 15:17:45.107635    3183 replica_set.go:349] Deleting ReplicaSet &#34;kube-system/kube-hpa-84c884f994&#34;
+I0709 15:17:45.107687    3183 replica_set.go:658] ReplicaSet kube-system/kube-hpa-84c884f994 has been deleted
+I0709 15:17:45.107692    3183 replica_set.go:649] Finished syncing ReplicaSet &#34;kube-system/kube-hpa-84c884f994&#34; (16.069µs)
+I0709 15:17:45.107720    3183 graph_builder.go:543] GraphBuilder process object: apps/v1/ReplicaSet, namespace kube-system, name kube-hpa-84c884f994, uid e66e45c0-5695-4c93-82f1-067b20aa035f, event type delete
+I0709 15:17:45.107753    3183 garbagecollector.go:404] processing item [v1/Pod, namespace: kube-system, name: kube-hpa-84c884f994-7gwpz, uid: 9833c399-b139-4432-98f7-cec13158f804]
+I0709 15:17:45.111155    3183 garbagecollector.go:329] according to the absentOwnerCache, object 9833c399-b139-4432-98f7-cec13158f804&#39;s owner apps/v1/ReplicaSet, kube-hpa-84c884f994 does not exist
+I0709 15:17:45.111174    3183 garbagecollector.go:455] classify references of [v1/Pod, namespace: kube-system, name: kube-hpa-84c884f994-7gwpz, uid: 9833c399-b139-4432-98f7-cec13158f804].
+solid: []v1.OwnerReference(nil)
+dangling: []v1.OwnerReference{v1.OwnerReference{APIVersion:&#34;apps/v1&#34;, Kind:&#34;ReplicaSet&#34;, Name:&#34;kube-hpa-84c884f994&#34;, UID:&#34;e66e45c0-5695-4c93-82f1-067b20aa035f&#34;, Controller:(*bool)(0xc000bde7bf), BlockOwnerDeletion:(*bool)(0xc000bde800)}}
+waitingForDependentsDeletion: []v1.OwnerReference(nil)
+I0709 15:17:45.111213    3183 garbagecollector.go:517] delete object [v1/Pod, namespace: kube-system, name: kube-hpa-84c884f994-7gwpz, uid: 9833c399-b139-4432-98f7-cec13158f804] with propagation policy Background
+I0709 15:17:45.124112    3183 graph_builder.go:543] GraphBuilder process object: v1/Pod, namespace kube-system, name kube-hpa-84c884f994-7gwpz, uid 9833c399-b139-4432-98f7-cec13158f804, event type update
+I0709 15:17:45.124236    3183 endpoints_controller.go:385] About to update endpoints for service &#34;kube-system/kube-hpa&#34;
+I0709 15:17:45.124275    3183 endpoints_controller.go:420] Pod is being deleted kube-system/kube-hpa-84c884f994-7gwpz
+I0709 15:17:45.124293    3183 endpoints_controller.go:512] Update endpoints for kube-system/kube-hpa, ready: 0 not ready: 0
+I0709 15:17:45.124481    3183 disruption.go:394] updatePod called on pod &#34;kube-hpa-84c884f994-7gwpz&#34;
+I0709 15:17:45.124523    3183 disruption.go:457] No PodDisruptionBudgets found for pod kube-hpa-84c884f994-7gwpz, PodDisruptionBudget controller will avoid syncing.
+I0709 15:17:45.124527    3183 disruption.go:397] No matching pdb for pod &#34;kube-hpa-84c884f994-7gwpz&#34;
+I0709 15:17:45.131011    3183 graph_builder.go:543] GraphBuilder process object: v1/Endpoints, namespace kube-system, name kube-hpa, uid 17a8623b-2bd6-4253-b7cd-88a7af615220, event type update
+I0709 15:17:45.132261    3183 endpoints_controller.go:353] Finished syncing service &#34;kube-system/kube-hpa&#34; endpoints. (8.020508ms)
+I0709 15:17:45.132951    3183 graph_builder.go:543] GraphBuilder process object: events.k8s.io/v1beta1/Event, namespace kube-system, name kube-hpa-84c884f994-7gwpz.16900e30134087ab, uid 7c55e936-801b-4eb9-a828-085d92983134, event type add
+I0709 15:17:45.310041    3183 graph_builder.go:543] GraphBuilder process object: apiregistration.k8s.io/v1/APIService, namespace , name v1beta1.custom.metrics.k8s.io, uid 71617a10-8136-4a2a-af65-d64bcd6c78c3, event type update
+I0709 15:17:45.660593    3183 graph_builder.go:543] GraphBuilder process object: v1/Endpoints, namespace kube-system, name kube-scheduler, uid d1e00c1e-7803-4c0f-ab8a-b3eeb0644879, event type update
+I0709 15:17:45.668379    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-system, name kube-scheduler, uid 9aed1771-031a-4fce-826a-11d98ee81740, event type update
+I0709 15:17:46.143691    3183 graph_builder.go:543] GraphBuilder process object: v1/Endpoints, namespace kube-system, name kube-controller-manager, uid 5d530096-9b10-45bb-a11e-43f1f8733fa5, event type update
+I0709 15:17:46.143962    3183 graph_builder.go:543] GraphBuilder process object: v1/Pod, namespace kube-system, name kube-hpa-84c884f994-7gwpz, uid 9833c399-b139-4432-98f7-cec13158f804, event type update
+I0709 15:17:46.144055    3183 endpoints_controller.go:385] About to update endpoints for service &#34;kube-system/kube-hpa&#34;
+I0709 15:17:46.144095    3183 endpoints_controller.go:420] Pod is being deleted kube-system/kube-hpa-84c884f994-7gwpz
+I0709 15:17:46.144126    3183 endpoints_controller.go:512] Update endpoints for kube-system/kube-hpa, ready: 0 not ready: 0
+I0709 15:17:46.144329    3183 disruption.go:394] updatePod called on pod &#34;kube-hpa-84c884f994-7gwpz&#34;
+I0709 15:17:46.144347    3183 disruption.go:457] No PodDisruptionBudgets found for pod kube-hpa-84c884f994-7gwpz, PodDisruptionBudget controller will avoid syncing.
+I0709 15:17:46.144350    3183 disruption.go:397] No matching pdb for pod &#34;kube-hpa-84c884f994-7gwpz&#34;
+I0709 15:17:46.144361    3183 pvc_protection_controller.go:342] Enqueuing PVCs for Pod kube-system/kube-hpa-84c884f994-7gwpz (UID=9833c399-b139-4432-98f7-cec13158f804)
+I0709 15:17:46.150410    3183 graph_builder.go:543] GraphBuilder process object: v1/Endpoints, namespace kube-system, name kube-hpa, uid 17a8623b-2bd6-4253-b7cd-88a7af615220, event type update
+I0709 15:17:46.150749    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-system, name kube-controller-manager, uid 036d9292-1152-4f8c-8a85-0879c5424cfb, event type update
+I0709 15:17:46.151231    3183 leaderelection.go:283] successfully renewed lease kube-system/kube-controller-manager
+I0709 15:17:46.151321    3183 endpoints_controller.go:353] Finished syncing service &#34;kube-system/kube-hpa&#34; endpoints. (7.269404ms)
+
+
+
+I0709 15:17:46.978486    3183 cronjob_controller.go:129] Found 4 jobs
+I0709 15:17:46.978503    3183 cronjob_controller.go:135] Found 1 groups
+I0709 15:17:46.982118    3183 event.go:281] Event(v1.ObjectReference{Kind:&#34;CronJob&#34;, Namespace:&#34;default&#34;, Name:&#34;hello&#34;, UID:&#34;b9648456-0b0a-44a4-b4c7-4c1db9be4085&#34;, APIVersion:&#34;batch/v1beta1&#34;, ResourceVersion:&#34;6974347&#34;, FieldPath:&#34;&#34;}): type: &#39;Normal&#39; reason: &#39;SawCompletedJob&#39; Saw completed job: hello-1625815020, status: Complete
+I0709 15:17:46.986941    3183 graph_builder.go:543] GraphBuilder process object: batch/v1beta1/CronJob, namespace default, name hello, uid b9648456-0b0a-44a4-b4c7-4c1db9be4085, event type update
+I0709 15:17:46.987073    3183 cronjob_controller.go:278] No unmet start times for default/hello
+I0709 15:17:46.987091    3183 cronjob_controller.go:203] Cleaning up 1/4 jobs from default/hello
+I0709 15:17:46.987096    3183 cronjob_controller.go:207] Removing job hello-1625814840 from default/hello
+I0709 15:17:46.987694    3183 graph_builder.go:543] GraphBuilder process object: events.k8s.io/v1beta1/Event, namespace default, name hello.16900e3081ed9288, uid 21dc6f32-9c3b-479a-8a69-c71946be3b7a, event type add
+I0709 15:17:46.998396    3183 job_controller.go:452] Job has been deleted: default/hello-1625814840
+I0709 15:17:46.998407    3183 job_controller.go:439] Finished syncing job &#34;default/hello-1625814840&#34; (42.057µs)
+I0709 15:17:46.998436    3183 graph_builder.go:543] GraphBuilder process object: batch/v1/Job, namespace default, name hello-1625814840, uid ce65b016-b3c4-4a65-b01d-f81381fca20a, event type delete
+I0709 15:17:46.998463    3183 garbagecollector.go:404] processing item [v1/Pod, namespace: default, name: hello-1625814840-9tmbk, uid: 7aabf04b-31c5-4602-af5e-87a7e0079d1a]
+I0709 15:17:46.998715    3183 resource_quota_monitor.go:354] QuotaMonitor process object: batch/v1, Resource=jobs, namespace default, name hello-1625814840, uid ce65b016-b3c4-4a65-b01d-f81381fca20a, event type delete
+I0709 15:17:46.999144    3183 event.go:281] Event(v1.ObjectReference{Kind:&#34;CronJob&#34;, Namespace:&#34;default&#34;, Name:&#34;hello&#34;, UID:&#34;b9648456-0b0a-44a4-b4c7-4c1db9be4085&#34;, APIVersion:&#34;batch/v1beta1&#34;, ResourceVersion:&#34;6974464&#34;, FieldPath:&#34;&#34;}): type: &#39;Normal&#39; reason: &#39;SuccessfulDelete&#39; Deleted job hello-1625814840
+I0709 15:17:47.002267    3183 garbagecollector.go:329] according to the absentOwnerCache, object 7aabf04b-31c5-4602-af5e-87a7e0079d1a&#39;s owner batch/v1/Job, hello-1625814840 does not exist
+I0709 15:17:47.002298    3183 garbagecollector.go:455] classify references of [v1/Pod, namespace: default, name: hello-1625814840-9tmbk, uid: 7aabf04b-31c5-4602-af5e-87a7e0079d1a].
+solid: []v1.OwnerReference(nil)
+dangling: []v1.OwnerReference{v1.OwnerReference{APIVersion:&#34;batch/v1&#34;, Kind:&#34;Job&#34;, Name:&#34;hello-1625814840&#34;, UID:&#34;ce65b016-b3c4-4a65-b01d-f81381fca20a&#34;, Controller:(*bool)(0xc000bdf480), BlockOwnerDeletion:(*bool)(0xc000bdf481)}}
+waitingForDependentsDeletion: []v1.OwnerReference(nil)
+I0709 15:17:47.002325    3183 garbagecollector.go:517] delete object [v1/Pod, namespace: default, name: hello-1625814840-9tmbk, uid: 7aabf04b-31c5-4602-af5e-87a7e0079d1a] with propagation policy Background
+I0709 15:17:47.005713    3183 graph_builder.go:543] GraphBuilder process object: events.k8s.io/v1beta1/Event, namespace default, name hello.16900e3082f15365, uid 903283d1-63da-4ba7-b200-69d6a30a1d5c, event type add
+I0709 15:17:47.011868    3183 graph_builder.go:543] GraphBuilder process object: v1/Pod, namespace default, name hello-1625814840-9tmbk, uid 7aabf04b-31c5-4602-af5e-87a7e0079d1a, event type update
+I0709 15:17:47.011938    3183 disruption.go:394] updatePod called on pod &#34;hello-1625814840-9tmbk&#34;
+I0709 15:17:47.011960    3183 disruption.go:457] No PodDisruptionBudgets found for pod hello-1625814840-9tmbk, PodDisruptionBudget controller will avoid syncing.
+I0709 15:17:47.011964    3183 disruption.go:397] No matching pdb for pod &#34;hello-1625814840-9tmbk&#34;
+I0709 15:17:47.011977    3183 pvc_protection_controller.go:342] Enqueuing PVCs for Pod default/hello-1625814840-9tmbk (UID=7aabf04b-31c5-4602-af5e-87a7e0079d1a)
+I0709 15:17:47.026287    3183 graph_builder.go:543] GraphBuilder process object: v1/Pod, namespace default, name hello-1625814840-9tmbk, uid 7aabf04b-31c5-4602-af5e-87a7e0079d1a, event type delete
+I0709 15:17:47.026312    3183 deployment_controller.go:356] Pod hello-1625814840-9tmbk deleted.
+I0709 15:17:47.026350    3183 taint_manager.go:383] Noticed pod deletion: types.NamespacedName{Namespace:&#34;default&#34;, Name:&#34;hello-1625814840-9tmbk&#34;}
+I0709 15:17:47.026389    3183 disruption.go:423] deletePod called on pod &#34;hello-1625814840-9tmbk&#34;
+I0709 15:17:47.026409    3183 disruption.go:457] No PodDisruptionBudgets found for pod hello-1625814840-9tmbk, PodDisruptionBudget controller will avoid syncing.
+I0709 15:17:47.026413    3183 disruption.go:426] No matching pdb for pod &#34;hello-1625814840-9tmbk&#34;
+I0709 15:17:47.026425    3183 pvc_protection_controller.go:342] Enqueuing PVCs for Pod default/hello-1625814840-9tmbk (UID=7aabf04b-31c5-4602-af5e-87a7e0079d1a)
+I0709 15:17:47.026449    3183 resource_quota_monitor.go:354] QuotaMonitor process object: /v1, Resource=pods, namespace default, name hello-1625814840-9tmbk, uid 7aabf04b-31c5-4602-af5e-87a7e0079d1a, event type delete
+I0709 15:17:47.164797    3183 graph_builder.go:543] GraphBuilder process object: v1/Pod, namespace kube-system, name kube-hpa-84c884f994-7gwpz, uid 9833c399-b139-4432-98f7-cec13158f804, event type update
+I0709 15:17:47.164886    3183 endpoints_controller.go:385] About to update endpoints for service &#34;kube-system/kube-hpa&#34;
+I0709 15:17:47.164929    3183 endpoints_controller.go:420] Pod is being deleted kube-system/kube-hpa-84c884f994-7gwpz
+I0709 15:17:47.164945    3183 endpoints_controller.go:512] Update endpoints for kube-system/kube-hpa, ready: 0 not ready: 0
+I0709 15:17:47.165093    3183 disruption.go:394] updatePod called on pod &#34;kube-hpa-84c884f994-7gwpz&#34;
+I0709 15:17:47.165108    3183 disruption.go:457] No PodDisruptionBudgets found for pod kube-hpa-84c884f994-7gwpz, PodDisruptionBudget controller will avoid syncing.
+I0709 15:17:47.165111    3183 disruption.go:397] No matching pdb for pod &#34;kube-hpa-84c884f994-7gwpz&#34;
+I0709 15:17:47.165122    3183 pvc_protection_controller.go:342] Enqueuing PVCs for Pod kube-system/kube-hpa-84c884f994-7gwpz (UID=9833c399-b139-4432-98f7-cec13158f804)
+I0709 15:17:47.165142    3183 resource_quota_monitor.go:354] QuotaMonitor process object: /v1, Resource=pods, namespace kube-system, name kube-hpa-84c884f994-7gwpz, uid 9833c399-b139-4432-98f7-cec13158f804, event type update
+I0709 15:17:47.169973    3183 endpoints_controller.go:353] Finished syncing service &#34;kube-system/kube-hpa&#34; endpoints. (5.082912ms)
+I0709 15:17:47.172446    3183 graph_builder.go:543] GraphBuilder process object: v1/Pod, namespace kube-system, name kube-hpa-84c884f994-7gwpz, uid 9833c399-b139-4432-98f7-cec13158f804, event type delete
+I0709 15:17:47.172467    3183 deployment_controller.go:356] Pod kube-hpa-84c884f994-7gwpz deleted.
+I0709 15:17:47.172474    3183 deployment_controller.go:424] Cannot get replicaset &#34;kube-hpa-84c884f994&#34; for pod &#34;kube-hpa-84c884f994-7gwpz&#34;: replicaset.apps &#34;kube-hpa-84c884f994&#34; not found
+I0709 15:17:47.172507    3183 taint_manager.go:383] Noticed pod deletion: types.NamespacedName{Namespace:&#34;kube-system&#34;, Name:&#34;kube-hpa-84c884f994-7gwpz&#34;}
+I0709 15:17:47.172564    3183 endpoints_controller.go:385] About to update endpoints for service &#34;kube-system/kube-hpa&#34;
+I0709 15:17:47.172614    3183 endpoints_controller.go:512] Update endpoints for kube-system/kube-hpa, ready: 0 not ready: 0
+I0709 15:17:47.172779    3183 disruption.go:423] deletePod called on pod &#34;kube-hpa-84c884f994-7gwpz&#34;
+I0709 15:17:47.172796    3183 disruption.go:457] No PodDisruptionBudgets found for pod kube-hpa-84c884f994-7gwpz, PodDisruptionBudget controller will avoid syncing.
+I0709 15:17:47.172799    3183 disruption.go:426] No matching pdb for pod &#34;kube-hpa-84c884f994-7gwpz&#34;
+I0709 15:17:47.172808    3183 pvc_protection_controller.go:342] Enqueuing PVCs for Pod kube-system/kube-hpa-84c884f994-7gwpz (UID=9833c399-b139-4432-98f7-cec13158f804)
+I0709 15:17:47.172843    3183 resource_quota_monitor.go:354] QuotaMonitor process object: /v1, Resource=pods, namespace kube-system, name kube-hpa-84c884f994-7gwpz, uid 9833c399-b139-4432-98f7-cec13158f804, event type delete
+I0709 15:17:47.173978    3183 graph_builder.go:543] GraphBuilder process object: v1/Endpoints, namespace kube-system, name kube-hpa, uid 17a8623b-2bd6-4253-b7cd-88a7af615220, event type update
+I0709 15:17:47.178093    3183 endpoints_controller.go:353] Finished syncing service &#34;kube-system/kube-hpa&#34; endpoints. (5.525822ms)
+I0709 15:17:47.178107    3183 endpoints_controller.go:340] Error syncing endpoints for service &#34;kube-system/kube-hpa&#34;, retrying. Error: Operation cannot be fulfilled on endpoints &#34;kube-hpa&#34;: the object has been modified; please apply your changes to the latest version and try again
+I0709 15:17:47.178372    3183 event.go:281] Event(v1.ObjectReference{Kind:&#34;Endpoints&#34;, Namespace:&#34;kube-system&#34;, Name:&#34;kube-hpa&#34;, UID:&#34;17a8623b-2bd6-4253-b7cd-88a7af615220&#34;, APIVersion:&#34;v1&#34;, ResourceVersion:&#34;6974462&#34;, FieldPath:&#34;&#34;}): type: &#39;Warning&#39; reason: &#39;FailedToUpdateEndpoint&#39; Failed to update endpoint kube-system/kube-hpa: Operation cannot be fulfilled on endpoints &#34;kube-hpa&#34;: the object has been modified; please apply your changes to the latest version and try again
+I0709 15:17:47.182381    3183 graph_builder.go:543] GraphBuilder process object: events.k8s.io/v1beta1/Event, namespace kube-system, name kube-hpa.16900e308da0917a, uid d136415c-0a51-40e2-b1ba-f63587af89a6, event type add
+I0709 15:17:47.183280    3183 endpoints_controller.go:385] About to update endpoints for service &#34;kube-system/kube-hpa&#34;
+I0709 15:17:47.183318    3183 endpoints_controller.go:512] Update endpoints for kube-system/kube-hpa, ready: 0 not ready: 0
+I0709 15:17:47.186538    3183 endpoints_controller.go:353] Finished syncing service &#34;kube-system/kube-hpa&#34; endpoints. (3.266428ms)
+I0709 15:17:47.679672    3183 graph_builder.go:543] GraphBuilder process object: v1/Endpoints, namespace kube-system, name kube-scheduler, uid d1e00c1e-7803-4c0f-ab8a-b3eeb0644879, event type update
+I0709 15:17:47.686259    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-system, name kube-scheduler, uid 9aed1771-031a-4fce-826a-11d98ee81740, event type update
+I0709 15:17:48.166708    3183 graph_builder.go:543] GraphBuilder process object: v1/Endpoints, namespace kube-system, name kube-controller-manager, uid 5d530096-9b10-45bb-a11e-43f1f8733fa5, event type update
+I0709 15:17:48.175956    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-system, name kube-controller-manager, uid 036d9292-1152-4f8c-8a85-0879c5424cfb, event type update
+I0709 15:17:48.176356    3183 leaderelection.go:283] successfully renewed lease kube-system/kube-controller-manager
+I0709 15:17:49.277193    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-node-lease, name 192.168.0.5, uid 71ce7519-2999-4dbf-9118-227e5cb6d9ef, event type update
+I0709 15:17:49.701416    3183 graph_builder.go:543] GraphBuilder process object: v1/Endpoints, namespace kube-system, name kube-scheduler, uid d1e00c1e-7803-4c0f-ab8a-b3eeb0644879, event type update
+I0709 15:17:49.721102    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-system, name kube-scheduler, uid 9aed1771-031a-4fce-826a-11d98ee81740, event type update
+I0709 15:17:50.189139    3183 graph_builder.go:543] GraphBuilder process object: v1/Endpoints, namespace kube-system, name kube-controller-manager, uid 5d530096-9b10-45bb-a11e-43f1f8733fa5, event type update
+I0709 15:17:50.199890    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-system, name kube-controller-manager, uid 036d9292-1152-4f8c-8a85-0879c5424cfb, event type update
+I0709 15:17:50.200028    3183 leaderelection.go:283] successfully renewed lease kube-system/kube-controller-manager
+I0709 15:17:51.046632    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-node-lease, name 192.168.0.4, uid a6c1c902-8d7f-442e-89d2-407f1677247e, event type update
+I0709 15:17:51.734474    3183 graph_builder.go:543] GraphBuilder process object: v1/Endpoints, namespace kube-system, name kube-scheduler, uid d1e00c1e-7803-4c0f-ab8a-b3eeb0644879, event type update
+I0709 15:17:51.742571    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-system, name kube-scheduler, uid 9aed1771-031a-4fce-826a-11d98ee81740, event type update
+I0709 15:17:51.949675    3183 reflector.go:268] k8s.io/client-go/informers/factory.go:135: forcing resync
+E0709 15:17:51.960736    3183 horizontal.go:214] failed to query scale subresource for Deployment/default/zx-hpa: deployments/scale.apps &#34;zx-hpa&#34; not found
+I0709 15:17:51.961135    3183 event.go:281] Event(v1.ObjectReference{Kind:&#34;HorizontalPodAutoscaler&#34;, Namespace:&#34;default&#34;, Name:&#34;nginx-hpa-zx-1&#34;, UID:&#34;d49c5146-c5ef-4ac8-8039-c9b15f094360&#34;, APIVersion:&#34;autoscaling/v2beta2&#34;, ResourceVersion:&#34;4763928&#34;, FieldPath:&#34;&#34;}): type: &#39;Warning&#39; reason: &#39;FailedGetScale&#39; deployments/scale.apps &#34;zx-hpa&#34; not found
+I0709 15:17:51.965206    3183 graph_builder.go:543] GraphBuilder process object: events.k8s.io/v1beta1/Event, namespace default, name nginx-hpa-zx-1.16900e31aab074d5, uid 3c9d8d3b-d63f-463c-8f8f-b8d2ba3f4fb3, event type add
+I0709 15:17:52.215733    3183 graph_builder.go:543] GraphBuilder process object: v1/Endpoints, namespace kube-system, name kube-controller-manager, uid 5d530096-9b10-45bb-a11e-43f1f8733fa5, event type update
+I0709 15:17:52.224070    3183 leaderelection.go:283] successfully renewed lease kube-system/kube-controller-manager
+I0709 15:17:52.224234    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-system, name kube-controller-manager, uid 036d9292-1152-4f8c-8a85-0879c5424cfb, event type update
+I0709 15:17:52.461003    3183 pv_controller_base.go:514] resyncing PV controller
+I0709 15:17:53.755870    3183 graph_builder.go:543] GraphBuilder process object: v1/Endpoints, namespace kube-system, name kube-scheduler, uid d1e00c1e-7803-4c0f-ab8a-b3eeb0644879, event type update
+I0709 15:17:53.766095    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-system, name kube-scheduler, uid 9aed1771-031a-4fce-826a-11d98ee81740, event type update
+I0709 15:17:53.886970    3183 discovery.go:214] Invalidating discovery information
+I0709 15:17:54.236384    3183 graph_builder.go:543] GraphBuilder process object: v1/Endpoints, namespace kube-system, name kube-controller-manager, uid 5d530096-9b10-45bb-a11e-43f1f8733fa5, event type update
+I0709 15:17:54.244313    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-system, name kube-controller-manager, uid 036d9292-1152-4f8c-8a85-0879c5424cfb, event type update
+I0709 15:17:54.244924    3183 leaderelection.go:283] successfully renewed lease kube-system/kube-controller-manager
+I0709 15:17:55.778133    3183 graph_builder.go:543] GraphBuilder process object: v1/Endpoints, namespace kube-system, name kube-scheduler, uid d1e00c1e-7803-4c0f-ab8a-b3eeb0644879, event type update
+I0709 15:17:55.785242    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-system, name kube-scheduler, uid 9aed1771-031a-4fce-826a-11d98ee81740, event type update
+I0709 15:17:56.264037    3183 graph_builder.go:543] GraphBuilder process object: v1/Endpoints, namespace kube-system, name kube-controller-manager, uid 5d530096-9b10-45bb-a11e-43f1f8733fa5, event type update
+I0709 15:17:56.271400    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-system, name kube-controller-manager, uid 036d9292-1152-4f8c-8a85-0879c5424cfb, event type update
+I0709 15:17:56.271774    3183 leaderelection.go:283] successfully renewed lease kube-system/kube-controller-manager
+I0709 15:17:57.011460    3183 cronjob_controller.go:129] Found 3 jobs
+I0709 15:17:57.011484    3183 cronjob_controller.go:135] Found 1 groups
+I0709 15:17:57.018598    3183 cronjob_controller.go:278] No unmet start times for default/hello
+I0709 15:17:57.436623    3183 gc_controller.go:163] GC&#39;ing orphaned
+I0709 15:17:57.436642    3183 gc_controller.go:226] GC&#39;ing unscheduled pods which are terminating.
+I0709 15:17:57.799012    3183 graph_builder.go:543] GraphBuilder process object: v1/Endpoints, namespace kube-system, name kube-scheduler, uid d1e00c1e-7803-4c0f-ab8a-b3eeb0644879, event type update
+I0709 15:17:57.807268    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-system, name kube-scheduler, uid 9aed1771-031a-4fce-826a-11d98ee81740, event type update
+I0709 15:17:58.282260    3183 graph_builder.go:543] GraphBuilder process object: v1/Endpoints, namespace kube-system, name kube-controller-manager, uid 5d530096-9b10-45bb-a11e-43f1f8733fa5, event type update
+I0709 15:17:58.288233    3183 leaderelection.go:283] successfully renewed lease kube-system/kube-controller-manager
+I0709 15:17:58.288746    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-system, name kube-controller-manager, uid 036d9292-1152-4f8c-8a85-0879c5424cfb, event type update
+I0709 15:17:59.286621    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-node-lease, name 192.168.0.5, uid 71ce7519-2999-4dbf-9118-227e5cb6d9ef, event type update
+I0709 15:17:59.819587    3183 graph_builder.go:543] GraphBuilder process object: v1/Endpoints, namespace kube-system, name kube-scheduler, uid d1e00c1e-7803-4c0f-ab8a-b3eeb0644879, event type update
+I0709 15:17:59.827855    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-system, name kube-scheduler, uid 9aed1771-031a-4fce-826a-11d98ee81740, event type update
+I0709 15:18:00.301289    3183 graph_builder.go:543] GraphBuilder process object: v1/Endpoints, namespace kube-system, name kube-controller-manager, uid 5d530096-9b10-45bb-a11e-43f1f8733fa5, event type update
+I0709 15:18:00.310096    3183 leaderelection.go:283] successfully renewed lease kube-system/kube-controller-manager
+I0709 15:18:00.310445    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-system, name kube-controller-manager, uid 036d9292-1152-4f8c-8a85-0879c5424cfb, event type update
+I0709 15:18:01.054003    3183 graph_builder.go:543] GraphBuilder process object: coordination.k8s.io/v1/Lease, namespace kube-node-lease, name 192.168.0.4, uid a6c1c902-8d7f-442e-89d2-407f1677247e, event type update
+^Z</code></pre>
+<p><br></p>
+
+<h4 id="5-3-增大apiserver的日志等级-查看apiserver的处理">5.3 增大apiserver的日志等级，查看apiserver的处理</h4>
+
+<p>至少开到5</p>
+<pre><code>I0709 16:43:48.411395   28901 handler.go:143] kube-apiserver: PUT &#34;/apis/apps/v1/namespaces/default/deployments/zx-hpa/status&#34; satisfied by gorestful with webservice /apis/apps/v1
+I0709 16:43:48.413431   28901 httplog.go:90] GET /apis/apps/v1/namespaces/default/deployments/zx-hpa: (2.677854ms) 200 [kube-controller-manager/v1.17.4 (linux/amd64) kubernetes/8d8aa39/generic-garbage-collector 192.168.0.4:48978]
+I0709 16:43:48.414076   28901 handler.go:153] kube-aggregator: GET &#34;/apis/apps/v1/namespaces/default/deployments/zx-hpa&#34; satisfied by nonGoRestful
+I0709 16:43:48.414089   28901 pathrecorder.go:247] kube-aggregator: &#34;/apis/apps/v1/namespaces/default/deployments/zx-hpa&#34; satisfied by prefix /apis/apps/v1/
+I0709 16:43:48.414119   28901 handler.go:143] kube-apiserver: GET &#34;/apis/apps/v1/namespaces/default/deployments/zx-hpa&#34; satisfied by gorestful with webservice /apis/apps/v1
+I0709 16:43:48.418663   28901 httplog.go:90] PUT /apis/apps/v1/namespaces/default/deployments/zx-hpa/status: (7.370204ms) 200 [kube-controller-manager/v1.17.4 (linux/amd64) kubernetes/8d8aa39/deployment-controller 192.168.0.4:49000]
+I0709 16:43:48.420303   28901 httplog.go:90] GET /apis/apps/v1/namespaces/default/deployments/zx-hpa: (6.309997ms) 200 [kube-controller-manager/v1.17.4 (linux/amd64) kubernetes/8d8aa39/generic-garbage-collector 192.168.0.4:48978]
+I0709 16:43:48.420817   28901 handler.go:153] kube-aggregator: PATCH &#34;/apis/apps/v1/namespaces/default/deployments/zx-hpa&#34; satisfied by nonGoRestful
+I0709 16:43:48.420828   28901 pathrecorder.go:247] kube-aggregator: &#34;/apis/apps/v1/namespaces/default/deployments/zx-hpa&#34; satisfied by prefix /apis/apps/v1/
+I0709 16:43:48.420855   28901 handler.go:143] kube-apiserver: PATCH &#34;/apis/apps/v1/namespaces/default/deployments/zx-hpa&#34; satisfied by gorestful with webservice /apis/apps/v1
+I0709 16:43:48.425221   28901 store.go:428] going to delete zx-hpa from registry, triggered by update</code></pre>
+        </div>
+
+        
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/2021-7-17-k8s-gc%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">k8s gc controller源码分析</a></li>
+        
+        <li><a href="/post/2021-7-6-k8s-rs-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">k8s rs controller源码分析</a></li>
+        
+        <li><a href="/post/2021-7-6-deployment-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">k8s deploy controller源码分析</a></li>
+        
+        <li><a href="/post/2020-6-26-kubelet%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/">kubelet事件处理机制详解</a></li>
+        
+        <li><a href="/post/2021-6-26-k8s-event%E4%BB%8B%E7%BB%8D/">k8s event介绍</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/k8s'>k8s</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "zoux86/blog"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2021 <a href="https://zoux86.github.io/">zoux的博客 By zoux</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://zoux86.github.io/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://zoux86.github.io/">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-7-17-k8s%E4%B8%AD%E4%BB%A5%E4%B8%8D%E5%90%8C%E7%9A%84%E7%AD%96%E7%95%A5%E5%88%A0%E9%99%A4%E8%B5%84%E6%BA%90%E6%97%B6%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88/" title="k8s中以不同的策略删除资源时发生了什么">k8s中以不同的策略删除资源时发生了什么</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-7-17-k8s-gc%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="k8s gc controller源码分析">k8s gc controller源码分析</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-7-6-k8s-rs-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="k8s rs controller源码分析">k8s rs controller源码分析</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-7-6-deployment-controller-manager%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="k8s deploy controller源码分析">k8s deploy controller源码分析</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2020-6-26-kubelet%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/" title="kubelet事件处理机制详解">kubelet事件处理机制详解</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-6-26-k8s-event%E4%BB%8B%E7%BB%8D/" title="k8s event介绍">k8s event介绍</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-6-18-hpa-%E8%87%AA%E5%AE%9A%E4%B9%89metric-server/" title="自定义metric server">自定义metric server</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2021-6-18-hpa%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" title="hpa 源码分析">hpa 源码分析</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-15-k8s%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6/" title="k8s的基本组件">k8s的基本组件</a>
+    </li>
+    
+    <li>
+        <a href="https://zoux86.github.io/post/2019-12-10-go%E7%9A%84%E5%90%84%E7%A7%8D%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2/" title="go的各种类型转换">go的各种类型转换</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://zoux86.github.io/categories/2019%E6%A0%A1%E6%8B%9B/">2019校招 (17)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/c&#43;&#43;/">C&#43;&#43; (7)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/docker/">docker (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/go/">go (1)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/hadoop/">Hadoop (7)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/k8s/">k8s (12)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kube-batch/">kube-batch (5)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/kubeflow/">kubeflow (11)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/volcano/">volcano (4)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E4%B8%AA%E4%BA%BA%E6%84%9F%E6%82%9F/">个人感悟 (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建 (7)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题 (2)</a></li>
+    
+    <li><a href="https://zoux86.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记 (1)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://zoux86.github.io/tags/c&#43;&#43;/">C&#43;&#43;</a>
+    
+    <a href="https://zoux86.github.io/tags/clean-code/">clean code</a>
+    
+    <a href="https://zoux86.github.io/tags/docker/">docker</a>
+    
+    <a href="https://zoux86.github.io/tags/go/">go</a>
+    
+    <a href="https://zoux86.github.io/tags/golang/">golang</a>
+    
+    <a href="https://zoux86.github.io/tags/hadoop/">Hadoop</a>
+    
+    <a href="https://zoux86.github.io/tags/k8s/">k8s</a>
+    
+    <a href="https://zoux86.github.io/tags/kube-batch/">kube-batch</a>
+    
+    <a href="https://zoux86.github.io/tags/kubeflow/">kubeflow</a>
+    
+    <a href="https://zoux86.github.io/tags/tf-operator/">tf-operator</a>
+    
+    <a href="https://zoux86.github.io/tags/tfjob/">tfjob</a>
+    
+    <a href="https://zoux86.github.io/tags/ubuntu/">ubuntu</a>
+    
+    <a href="https://zoux86.github.io/tags/volcano/">volcano</a>
+    
+    <a href="https://zoux86.github.io/tags/%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93/">代码整洁之道</a>
+    
+    <a href="https://zoux86.github.io/tags/%E5%8D%9A%E5%AE%A2/">博客</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%84%9F%E6%82%9F/">感悟</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%A0%A1%E6%8B%9B/">校招</a>
+    
+    <a href="https://zoux86.github.io/tags/%E6%BA%90%E7%A0%81/">源码</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%AC%94%E8%AE%B0/">笔记</a>
+    
+    <a href="https://zoux86.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题</a>
+    
+    <a href="https://zoux86.github.io/tags/%E8%B0%83%E5%BA%A6/">调度</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://www.jianshu.com/u/305d8226ced4" title="个人简书主页">个人简书主页</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://zoux86.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
